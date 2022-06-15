@@ -20,3 +20,7 @@ Start learning Temporal concepts in our self-paced courses.
 
 Take what you've learned and build some real-world applications that use some of Temporal's features.
 
+## [Example Applications](/docs/examples/index.md)
+
+Explore example applications that use Temporal and gain a clearer understanding of how everything fits together..
+
