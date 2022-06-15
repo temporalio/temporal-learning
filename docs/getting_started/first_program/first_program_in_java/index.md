@@ -293,7 +293,7 @@ Click **Stack trace** to  see a stack trace showing you the errors:
 
 Select the **Pending Activities** link to see more details including its state, the number of times it has been attempted, and the next scheduled run time:
 
-![More details about the activity](/img/tutorials/go/run-your-first-app-tutorial/activity_failure_details.png)
+![More details about the activity](images/activity_failure_details.png)
 
 <br/>
 
@@ -317,7 +317,7 @@ On the next scheduled attempt, the Worker will pick up right where the Workflow 
 
 Visit the [UI](http://localhost:8080) again and you'll see the workflow has completed:
 
-![Both workflows completed successfully](/img/tutorials/go/run-your-first-app-tutorial/completed_workflows.png)
+![Both workflows completed successfully](images/completed_workflows.png)
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 

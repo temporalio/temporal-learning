@@ -22,6 +22,7 @@ sidebar_position: 1' \
 # Java
 mkdir -p docs/getting_started/first_program/first_program_in_java/images/
 cp -r ~/dev/documentation/static/img/tutorials/java/run-your-first-app-tutorial/* docs/getting_started/first_program/first_program_in_java/images/
+cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/first_program/first_program_in_java/images/
 cp ~/dev/documentation/docs/java/run-your-first-app-tutorial.md docs/getting_started/first_program/first_program_in_java/index_tmp.md
 # rewrite images
 sed -e '/^id\:/a\
@@ -29,6 +30,7 @@ sidebar_position: 1' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/img/tutorials/java/run-your-first-app-tutorial/|images/|g' \
+    -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide/|https://docs.temporal.io/application-development-guide/|g' \
     -e 's|/tctl|https://docs.temporal.io/tctl|g' \
