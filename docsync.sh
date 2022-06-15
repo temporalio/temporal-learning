@@ -174,7 +174,8 @@ sidebar_position: 3' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/learning-paths/background-checks/||g' \
-    docs/examples/background-checks/application-requirements.md \
+    -e 's|/diagrams/background-checks/|images/|g' \
+    docs/examples/background-checks/application-requirements.md2 \
     > docs/examples/background-checks/application-requirements.md
 rm  docs/examples/background-checks/application-requirements.md2
 
@@ -185,7 +186,8 @@ sidebar_position: 4' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/learning-paths/background-checks/||g' \
-    docs/examples/background-checks/application-design-and-implementation.md \
+    -e 's|/diagrams/background-checks/|images/|g' \
+    docs/examples/background-checks/application-design-and-implementation.md2 \
     > docs/examples/background-checks/application-design-and-implementation.md
 rm  docs/examples/background-checks/application-design-and-implementation.md2
 
