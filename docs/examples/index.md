@@ -1,5 +1,5 @@
 ---
-title: "Example Applications
+title: "Example Applications"
 sidebar_position: 5
 ---
 
