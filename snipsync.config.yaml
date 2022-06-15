@@ -35,8 +35,9 @@ origins:
     repo: background-checks
 
 targets:
-  - tutorials
-  - getting_started
+  - docs/tutorials
+  - docs/getting_started
+  - docs/examples
 
 features:
   enable_source_link: true

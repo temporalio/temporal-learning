@@ -14,3 +14,4 @@ When you've completed the course, you'll be able to:
 - Interpret workflow execution event histories
 - Use Temporal’s tooling to manage the lifecycle of your application
   
+  

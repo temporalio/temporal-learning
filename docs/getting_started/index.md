@@ -4,7 +4,6 @@ title: "Getting Started with Temporal"
 sidebar_position: 2
 ---
 
-import Details from '@theme/Details';
 
 # Getting Started
 
