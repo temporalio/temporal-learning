@@ -7,6 +7,7 @@ cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* 
 cp ~/dev/documentation/docs/go/run-your-first-app-tutorial.md docs/getting_started/first_program/first_program_in_go/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e '/^sidebar_label/d' \
@@ -210,7 +211,7 @@ rm docs/examples/background-checks/main-background-check.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/candidate-acceptance.md docs/examples/background-checks/candidate-acceptance.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 6' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -220,7 +221,7 @@ rm docs/examples/background-checks/candidate-acceptance.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/ssn-trace.md docs/examples/background-checks/ssn-trace.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 7' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -230,7 +231,7 @@ rm docs/examples/background-checks/ssn-trace.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/federal-criminal.md docs/examples/background-checks/federal-criminal.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 8' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -240,7 +241,7 @@ rm docs/examples/background-checks/federal-criminal.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/state-criminal-search.md docs/examples/background-checks/state-criminal-search.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 9' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -250,7 +251,7 @@ rm docs/examples/background-checks/state-criminal-search.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/motor-vehicle-search.md docs/examples/background-checks/motor-vehicle-search.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 10' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -260,7 +261,7 @@ rm docs/examples/background-checks/motor-vehicle-search.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/employment-verification.md docs/examples/background-checks/employment-verification.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 11' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -270,7 +271,7 @@ rm docs/examples/background-checks/employment-verification.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/application-deployment.md docs/examples/background-checks/application-deployment.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 12' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
@@ -280,7 +281,7 @@ rm docs/examples/background-checks/application-deployment.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/api-reference.md docs/examples/background-checks/api-reference.md2
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 13' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     docs/examples/background-checks/api-reference.md2 \
