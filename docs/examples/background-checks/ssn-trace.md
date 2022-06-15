@@ -1,6 +1,6 @@
 ---
 id: ssn-trace
-sidebar_position: 1
+sidebar_position: 7
 title: What does the SSN Trace Workflow Definition look like?
 description: The SSN Trace Workflow calls an external API via an Activity Execution and returns the results.
 ---

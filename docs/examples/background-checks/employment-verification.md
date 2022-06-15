@@ -1,6 +1,6 @@
 ---
 id: employment-verification
-sidebar_position: 1
+sidebar_position: 11
 title: What does the Employment Verification Workflow Definition look like?
 description: The Employment Verification Workflow sends email to a Researcher via an Activity Execution and waits on a Signal.
 ---

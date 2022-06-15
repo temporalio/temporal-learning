@@ -7,7 +7,6 @@ cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* 
 cp ~/dev/documentation/docs/go/run-your-first-app-tutorial.md docs/getting_started/first_program/first_program_in_go/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
-
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e '/^sidebar_label/d' \
@@ -195,7 +194,6 @@ sidebar_position: 4' \
 rm  docs/examples/background-checks/application-design-and-implementation.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/main-background-check.md docs/examples/background-checks/main-background-check.md2
-
 sed -e '/^id\:/a\
 sidebar_position: 5' \
     -e '/^sidebar_label/d' \

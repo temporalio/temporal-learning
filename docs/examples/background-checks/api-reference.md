@@ -1,6 +1,6 @@
 ---
 id: api-reference
-sidebar_position: 1
+sidebar_position: 13
 title: Background Checks API reference
 tags:
   - reference

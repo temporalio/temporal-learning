@@ -1,6 +1,6 @@
 ---
 id: application-deployment
-sidebar_position: 1
+sidebar_position: 12
 title: How do we deploy the Background Check application?
 description: The application and anything the application needs for the demo is deployed using Docker Compose.
 tags:

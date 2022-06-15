@@ -1,6 +1,6 @@
 ---
 id: candidate-acceptance
-sidebar_position: 1
+sidebar_position: 6
 title: What does the Candidate Acceptance Workflow Definition look like?
 description: The Candidate Acceptance Workflow sends email to the Candidate via an Activity Execution and waits on a Signal.
 ---
