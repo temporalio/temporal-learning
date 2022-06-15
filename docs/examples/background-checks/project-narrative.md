@@ -1,9 +1,8 @@
 ---
 id: project-narrative
+sidebar_position: 1
 title: Welcome to the Background Check project
 description: The goal of this project is to teach you, the developer, how to think about building Temporal Applications that have Human-Driven Long-Running Workflows using a Temporal SDK, by leading you through a comprehensive implementation within the context of a real-life use case.
-sidebar_label: Introduction
-sidebar_position: 1
 ---
 
 ## What is the goal of this project?
@@ -19,7 +18,7 @@ A Human-Driven Long-Running Workflow is a Temporal Workflow Execution that could
 Checkr launched in 2014 and has since become the leading tech company in the Background Check industry.
 Checkr’s intention is to make Background Checks fast, easy, and efficient for countries around the world.
 
-A [Temporal case study from October 2020](/blog/how-temporal-simplified-checkr-workflows) touches on the demand for automated Background Checks due to a surge in gig economy employment.
+A [Temporal case study from October 2020](https://docs.temporal.io/blog/how-temporal-simplified-checkr-workflows) touches on the demand for automated Background Checks due to a surge in gig economy employment.
 The case study explores the interesting problem space that presented itself as demand scaled.
 
 Depending on the type of employment, the needs of a Background Checks for any given Candidate can vary.
@@ -83,40 +82,40 @@ And the Temporal Platform has built-in Visibility APIs to view the status and ge
 
 This project introduces the following concepts:
 
-- [Activity Definition](/concepts/what-is-an-activity-definition)
-- [Activity Execution](/concepts/what-is-an-activity-execution)
-- [Advanced Visibility](/concepts/what-is-advanced-visibility)
-- [Child Workflow Execution](/concepts/what-is-a-child-workflow-execution)
-- [Custom Data Converter](/concepts/what-is-a-data-converter)
-- [List Filters](/concepts/what-is-a-list-filter)
-- [Search Attributes](/concepts/what-is-a-search-attribute)
-- [Side Effect](/concepts/what-is-a-side-effect)
-- [Task Queue](/concepts/what-is-a-task-queue)
+- [Activity Definition](https://docs.temporal.io/concepts/what-is-an-activity-definition)
+- [Activity Execution](https://docs.temporal.io/concepts/what-is-an-activity-execution)
+- [Advanced Visibility](https://docs.temporal.io/concepts/what-is-advanced-visibility)
+- [Child Workflow Execution](https://docs.temporal.io/concepts/what-is-a-child-workflow-execution)
+- [Custom Data Converter](https://docs.temporal.io/concepts/what-is-a-data-converter)
+- [List Filters](https://docs.temporal.io/concepts/what-is-a-list-filter)
+- [Search Attributes](https://docs.temporal.io/concepts/what-is-a-search-attribute)
+- [Side Effect](https://docs.temporal.io/concepts/what-is-a-side-effect)
+- [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue)
 - [Temporal Client](#)
 - [Temporal Web UI](#)
-- [Worker](/concepts/what-is-a-worker)
-- [Workflow Definition](/concepts/what-is-a-workflow-definition)
-- [Workflow Execution](/concepts/what-is-a-workflow-execution)
-- [Workflow Id](/concepts/what-is-a-workflow-id)
-- [Workflow Id Reuse Policy](/concepts/what-is-a-workflow-id-reuse-policy)
-- [Workflow Type](/concepts/what-is-a-workflow-type)
+- [Worker](https://docs.temporal.io/concepts/what-is-a-worker)
+- [Workflow Definition](https://docs.temporal.io/concepts/what-is-a-workflow-definition)
+- [Workflow Execution](https://docs.temporal.io/concepts/what-is-a-workflow-execution)
+- [Workflow Id](https://docs.temporal.io/concepts/what-is-a-workflow-id)
+- [Workflow Id Reuse Policy](https://docs.temporal.io/concepts/what-is-a-workflow-id-reuse-policy)
+- [Workflow Type](https://docs.temporal.io/concepts/what-is-a-workflow-type)
 
 ## What are the technical how-tos introduced in this application?
 
 The following development "how-tos" provide a foundation for the development patterns expressed in this project:
 
-- [How to develop a Workflow Definition in Go](/go/how-to-develop-a-workflow-definition-in-go)
-- [How to spawn a Workflow Execution in Go](/go/how-to-spawn-a-workflow-execution-in-go)
-- [How to set StartWorkflowOptions in Go](/go/startworkflowoptions-reference)
-- [How to get the result of a Workflow Execution in Go](/go/how-to-get-the-result-of-a-workflow-execution-in-go)
-- [How to send a Cancellation Request to a Workflow Execution in Go](/go/how-to-request-cancellation-of-a-workflow-execution-in-go)
-- [How to use Signals in Go](/go/how-to-use-signals-in-go)
+- [How to develop a Workflow Definition in Go](https://docs.temporal.io/go/how-to-develop-a-workflow-definition-in-go)
+- [How to spawn a Workflow Execution in Go](https://docs.temporal.io/go/how-to-spawn-a-workflow-execution-in-go)
+- [How to set StartWorkflowOptions in Go](https://docs.temporal.io/go/startworkflowoptions-reference)
+- [How to get the result of a Workflow Execution in Go](https://docs.temporal.io/go/how-to-get-the-result-of-a-workflow-execution-in-go)
+- [How to send a Cancellation Request to a Workflow Execution in Go](https://docs.temporal.io/go/how-to-request-cancellation-of-a-workflow-execution-in-go)
+- [How to use Signals in Go](https://docs.temporal.io/go/how-to-use-signals-in-go)
 - [How to send a Query to a Workflow Execution in Go](#)
 - [How to handle a Query in a Workflow in Go](#)
-- [How to spawn a Child Workflow Execution in Go](/go/how-to-spawn-a-child-workflow-execution-in-go)
-- [How to spawn an Activity Execution in Go](/go/how-to-spawn-an-activity-execution-in-go)
-- [How to develop an Activity Definition in Go](/go/how-to-develop-an-activity-definition-in-go)
-- [How to set ActivityOptions in Go](/go/activityoptions-reference)
-- [How to develop a Worker Program in Go](/go/how-to-develop-a-worker-program-in-go)
+- [How to spawn a Child Workflow Execution in Go](https://docs.temporal.io/go/how-to-spawn-a-child-workflow-execution-in-go)
+- [How to spawn an Activity Execution in Go](https://docs.temporal.io/go/how-to-spawn-an-activity-execution-in-go)
+- [How to develop an Activity Definition in Go](https://docs.temporal.io/go/how-to-develop-an-activity-definition-in-go)
+- [How to set ActivityOptions in Go](https://docs.temporal.io/go/activityoptions-reference)
+- [How to develop a Worker Program in Go](https://docs.temporal.io/go/how-to-develop-a-worker-program-in-go)
 - [How to provide a custom Data Converter in Go](#)
-- [How to execute a Side Effect in Go](/go/how-to-execute-a-side-effect-in-go)
+- [How to execute a Side Effect in Go](https://docs.temporal.io/go/how-to-execute-a-side-effect-in-go)

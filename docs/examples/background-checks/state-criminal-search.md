@@ -1,8 +1,7 @@
 ---
 id: state-criminal-search
-sidebar_position: 9
+sidebar_position: 1
 title: What does the State Criminal Search Workflow Definition Look Like?
-sidebar_label: State Criminal Search
 description: The State Criminal Search Workflow calls an external API via an Activity Execution and returns the results.
 ---
 

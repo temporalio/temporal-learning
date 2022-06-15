@@ -2,7 +2,6 @@
 id: main-background-check
 sidebar_position: 5
 title: What does the main Background Check Workflow Definition look like?
-sidebar_label: Main Background Check
 description: This is the entry point of the Temporal Application.
 ---
 

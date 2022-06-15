@@ -1,8 +1,7 @@
 ---
 id: api-reference
-sidebar_position: 13
+sidebar_position: 1
 title: Background Checks API reference
-sidebar_label: API reference
 tags:
   - reference
   - learning-path

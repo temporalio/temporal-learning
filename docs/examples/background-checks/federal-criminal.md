@@ -1,8 +1,7 @@
 ---
 id: federal-criminal-search
-sidebar_position: 8
+sidebar_position: 1
 title: What does the Federal Criminal Search Workflow Definition look like?
-sidebar_label: Federal Criminal Search
 description: The Federal Criminal Search Workflow calls an external API via an Activity Execution and returns the results.
 ---
 

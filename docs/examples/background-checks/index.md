@@ -1,5 +1,6 @@
 ---
 id: index
+sidebar_position: 1
 title: Background Check project
 ---
 

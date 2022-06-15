@@ -1,8 +1,7 @@
 ---
 id: motor-vehicle-search
-sidebar_position: 10
+sidebar_position: 1
 title: What does the Motor Vehicle Search Workflow Definition look like?
-sidebar_label: Motor Vehicle
 description: The Motor Vehicle Search Workflow calls an external API via an Activity Execution and returns the results.
 ---
 

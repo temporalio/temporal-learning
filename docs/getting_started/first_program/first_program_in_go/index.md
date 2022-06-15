@@ -1,9 +1,12 @@
 ---
 id: run-your-first-app-tutorial
+sidebar_position: 1
 title: Run your first Temporal application with the Go SDK
 ---
 
+import { ResponsivePlayer } from '@site/src/components'
 
+<img alt="" class="docs-image-centered" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/rocket-launch-go.jpg" />
 
 :::note Tutorial information
 
@@ -14,6 +17,7 @@ title: Run your first Temporal application with the Go SDK
   - Practice reviewing the state of the Workflow.
   - Understand the inherent reliability of Workflow functions.
   - Learn many of Temporal's core terminology and concepts.
+
 :::
 
 The Temporal server and a language specific SDK, in this case the [Go SDK](https://github.com/temporalio/go-sdk), provide a comprehensive solution to the complexities which arise from modern application development. You can think of Temporal as a sort of "cure all" for the pains you experience as a developer when trying to build reliable applications. Temporal provides reliability primitives right out of the box, such as seamless and fault tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
@@ -22,6 +26,7 @@ In this tutorial you'll run your first Temporal Workflow application and forever
 
 Keep reading or follow along with this video walkthrough:
 
+<ResponsivePlayer url='https://www.youtube.com/watch?v=aUUhFAupUbk' />
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
 
@@ -68,14 +73,14 @@ When you "start" a Workflow you are basically telling the Temporal server, "trac
 
 ### Initiate transfer
 
-There are two ways to start a Workflow with Temporal, either via the SDK or via the [CLI](/tctl). For this tutorial we used the SDK to start the Workflow, which is how most Workflows get started in a live environment. The call to the Temporal server can be done [synchronously or asynchronously](https://docs.temporal.io/go/workflows/#how-to-start-a-workflow). Here we do it asynchronously, so you will see the program run, tell you the transaction is processing, and exit.
+There are two ways to start a Workflow with Temporal, either via the SDK or via the [CLI](https://docs.temporal.io/tctl). For this tutorial we used the SDK to start the Workflow, which is how most Workflows get started in a live environment. The call to the Temporal server can be done [synchronously or asynchronously](https://docs.temporal.io/go/workflows/#how-to-start-a-workflow). Here we do it asynchronously, so you will see the program run, tell you the transaction is processing, and exit.
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
 <!--SNIPEND-->
 
 ### Running the Workflow
 
-Make sure the [Temporal server](/clusters/quick-install) is running in a terminal, and then run start/main.go from the project root using the following command:
+Make sure the [Temporal server](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run start/main.go from the project root using the following command:
 
 ```bash
 go run start/main.go
@@ -164,6 +169,8 @@ If you check the Temporal Web UI again, you will see one Worker registered where
 > Each of these are **History Events** that can be audited in Temporal Web (under the `History` tab next to `Summary`). Once a workflow is completed and closed, the full history will persist for a set retention period (typically 7-30 days) before being deleted. You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send them to long term storage for compliance/audit needs.
 
 :::
+
+<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/confetti.png" />
 
 You've just ran a Temporal Workflow application!
 
@@ -276,6 +283,7 @@ Visit the [UI](http://localhost:8080) again and you'll see the workflow has comp
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 
+<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/boost.png" />
 
 ## Review
 
