@@ -5,6 +5,7 @@ title: Run your first Temporal application with the Java SDK
 ---
 
 import { ResponsivePlayer } from '@site/src/components'
+import { Expander } from '@site/src/components'
 
 <img alt="" class="docs-image-centered" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/rocket-launch-java.jpg" />
 

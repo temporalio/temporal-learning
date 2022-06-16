@@ -7,14 +7,7 @@ sidebar_position: 2
 
 # Getting Started
 
-<Details>
-  <Summary>
-    Take your first steps into building apps with Temporal.
-  </Summary>
-  <div>
-  This is amazing.
-  </div>
-</Details>
+Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';

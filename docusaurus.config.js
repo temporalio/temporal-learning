@@ -13,8 +13,7 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
-  favicon: 'img/favicon.ico',
-
+  favicon: "img/favicon.png",
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'temporal', // Usually your GitHub org/user name.
@@ -48,19 +47,16 @@ const config = {
         docs: {
           routeBasePath: '/', // Serve the docs at the site's root
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: "https://github.com/temporalio/temporal-learning/blob/master",
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        gtag: {
-          trackingID: "UA-163137879-1",
-          // Optional fields.
-          anonymizeIP: true, // Should IPs be anonymized?
-        },
+        // gtag: {
+          // trackingID: "UA-163137879-1",
+          // // Optional fields.
+          // anonymizeIP: true, // Should IPs be anonymized?
+        // },
         // Will be passed to @docusaurus/plugin-content-sitemap
         sitemap: {
           // Per v2.0.0-alpha.72 cacheTime is now deprecated
@@ -77,18 +73,35 @@ const config = {
       navbar: {
         title: 'Temporal Learning',
         logo: {
-          alt: 'Temporal',
-          src: 'img/logo.svg',
+          alt: "Temporal logo",
+          src: "img/temporal-logo-dark.svg",
+          srcDark: "img/temporal-logo.svg",
         },
         items: [
           {to: '/getting_started', label: 'Getting Started', position: 'left'},
           {to: '/courses', label: 'Courses', position: 'left'},
           {to: '/tutorials', label: 'Tutorials', position: 'left'},
+          {to: '/examples', label: 'Example Applications', position: 'left'},
           {
             href: 'https://docs.temporal.com',
             label: 'Docs',
             position: 'right',
           },
+          {
+            href: 'https://docs.temporal.com/blog',
+            label: 'Blog',
+            position: 'right',
+          },
+          {
+            href: "https://temporal.io/use-cases",
+            label: 'Use cases',
+            position: 'right',
+          },
+          {
+            href: "https://temporal.io/community",
+            label: 'Community',
+            position: 'right',
+          }
         ],
       },
       footer: {
