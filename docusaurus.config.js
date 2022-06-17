@@ -48,6 +48,11 @@ const config = {
           routeBasePath: '/', // Serve the docs at the site's root
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: "https://github.com/temporalio/temporal-learning/blob/master",
+          showLastUpdateAuthor: false,
+          /**
+           * Whether to display the last date the doc was updated.
+           */
+          showLastUpdateTime: true,
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -66,6 +71,23 @@ const config = {
         },
       }),
     ],
+  ],
+  scripts: [
+    {
+      src: "/scripts/googletag.js",
+      async: true,
+      defer: true,
+    },
+    // {
+    //   src: "/scripts/feedback.js",
+    //   async: true,
+    //   defer: true,
+    // },
+    // {
+    //   src: "/scripts/fullstory.js",
+    //   async: true,
+    //   defer: true,
+    // },
   ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */

@@ -1,11 +1,7 @@
 ---
-chapter: true
 title: "Getting Started with Temporal"
 sidebar_position: 2
 ---
-
-
-# Getting Started
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 
