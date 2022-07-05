@@ -10,6 +10,7 @@ sidebar_position: 1' \
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e '/^sidebar_label/d' \
+    -e 's|/activities|https://docs.temporal.io/activities|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/tctl|https://docs.temporal.io/tctl|g' \
     -e 's|/clusters/|https://docs.temporal.io/clusters/|g' \
@@ -76,6 +77,7 @@ cp ~/dev/documentation/docs/typescript/hello-world.md docs/getting_started/hello
 sed -e '/^id\:/a\
 sidebar_position: 1' \
     -e '/^sidebar_label/d' \
+    -e 's/^title:.*/title: Build a Temporal "Hello World!" app from scratch in TypeScript/g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
@@ -126,6 +128,49 @@ sidebar_position: 4' \
     docs/tutorials/typescript_chatbot/index.md2 \
     > docs/tutorials/typescript_chatbot/index.md
 rm docs/tutorials/typescript_chatbot/index.md2
+
+# PHP
+mkdir -p docs/getting_started/hello_world/hello_world_in_php/images/
+cp ~/dev/documentation/docs/php/hello-world.md docs/getting_started/hello_world/hello_world_in_php/index_tmp.md
+sed -e '/^id\:/a\
+sidebar_position: 1' \
+    -e '/^sidebar_label/d' \
+    -e 's/^title:.*/title: Build a Temporal "Hello World!" app from scratch in PHP/g' \
+    -e 's|../../src/components|@site/src/components|g' \
+    -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
+    -e 's|/web-ui|https://docs.temporal.io/web-ui|g' \
+    -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
+    -e 's|/php/|https://docs.temporal.io/php/|g' \
+  docs/getting_started/hello_world/hello_world_in_php/index_tmp.md > docs/getting_started/hello_world/hello_world_in_php/index.md
+rm docs/getting_started/hello_world/hello_world_in_php/index_tmp.md
+
+# PHP
+mkdir -p docs/tutorials/php/booking_saga/images/
+cp ~/dev/documentation/static/img/tutorials/booking-saga-flow.png docs/tutorials/php/booking_saga/images/
+cp ~/dev/documentation/docs/php/booking-saga-tutorial.md docs/tutorials/php/booking_saga/index_tmp.md
+sed -e '/^id\:/a\
+sidebar_position: 1' \
+    -e '/^sidebar_label/d' \
+    -e 's|/img/tutorials/|images/|g' \
+    -e 's|../../src/components|@site/src/components|g' \
+    -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
+    -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
+    -e 's|/php/|https://docs.temporal.io/php/|g' \
+  docs/tutorials/php/booking_saga/index_tmp.md > docs/tutorials/php/booking_saga/index.md
+rm docs/tutorials/php/booking_saga/index_tmp.md
+
+mkdir -p docs/tutorials/php/subscriptions/images/
+cp ~/dev/documentation/docs/php/subscription-tutorial.md docs/tutorials/php/subscriptions/index_tmp.md
+sed -e '/^id\:/a\
+sidebar_position: 1' \
+    -e '/^sidebar_label/d' \
+    -e 's|/php/hello-world|/getting_started/hello_world/hello_world_in_php/|g' \
+    -e 's|../../src/components|@site/src/components|g' \
+    -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
+    -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
+    -e 's|/php/|https://docs.temporal.io/php/|g' \
+  docs/tutorials/php/subscriptions/index_tmp.md > docs/tutorials/php/subscriptions/index.md
+rm docs/tutorials/php/subscriptions/index_tmp.md
 
 # background-check-app
 mkdir -p docs/examples/background-checks/images

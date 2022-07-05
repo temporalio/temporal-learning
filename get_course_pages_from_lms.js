@@ -64,7 +64,6 @@ custom_edit_url: null
 ${course.description}
 
 <a className="button button--primary" href="${url}">Go to Course</a>
-
   `;
 
   return str;
