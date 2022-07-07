@@ -2,7 +2,6 @@
 title: Temporal 101
 draft: false
 public: false
-courseUrl: https://temporal.talentlms.com/catalog/info/id:126
 custom_edit_url: null
 ---
 

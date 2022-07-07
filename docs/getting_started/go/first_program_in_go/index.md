@@ -1,6 +1,8 @@
 ---
 id: run-your-first-app-tutorial
 sidebar_position: 1
+description: In this tutorial you will run your first Temporal app using the Go SDK
+keywords: [go, golang, temporal, sdk, tutorial]
 title: Run your first Temporal application with the Go SDK
 ---
 

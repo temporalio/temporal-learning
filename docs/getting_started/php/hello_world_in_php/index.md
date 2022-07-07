@@ -1,6 +1,7 @@
 ---
 id: hello-world
 sidebar_position: 1
+keywords: [Java,java,temporal,sdk,tutorial,learn]
 title: Build a Temporal "Hello World!" app from scratch in PHP
 description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
 ---
@@ -169,7 +170,7 @@ $worker->registerActivity(MyActivity::class);
 On the last line of the _worker script_ we start the worker.
 From now, it starts communication with Temporal: receiving and sending data.
 
-## Conclusion and Next Steps
+## Conclusion
 
 Let's recap what was done in this "Hello world" example:
 
@@ -180,4 +181,3 @@ Let's recap what was done in this "Hello world" example:
 
 These reflect the 4 main APIs of Temporal's PHP SDK.
 
-As for next steps, you can proceed to [read the Workflows docs](https://docs.temporal.io/php/workflows) or [watch our longform workshops](https://docs.temporal.io/php/introduction#resources).

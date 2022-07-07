@@ -9,7 +9,7 @@ Let's build a realistic monthly subscription payments workflow that can be cance
 
 :::info Prerequisites
 
-We assume that you have gone through our [Hello World tutorial](/getting_started/hello_world/hello_world_in_php/) and understood the basics of
+We assume that you have gone through our [Hello World tutorial](https://docs.temporal.io/getting_started/php/hello_world_in_php/) and understood the basics of
 getting a Temporal PHP SDK project up and running. We don't assume knowledge of the Workflow APIs.
 
 :::

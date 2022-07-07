@@ -1,6 +1,8 @@
 ---
 id: hello-world-tutorial
 sidebar_position: 1
+description: In this tutorial you will build your first Temporal app using the Go SDK
+keywords: [golang,go,temporal,sdk,tutorial]
 title: Build a Temporal "Hello World!" app from scratch in Go
 tags:
   - helloworld

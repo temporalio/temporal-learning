@@ -1,12 +1,16 @@
-#!/usr/bin/env bash
+#va!/usr/bin/env bash
 
 # first_program
 # go
-mkdir -p docs/getting_started/first_program/first_program_in_go/images/
-cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/first_program/first_program_in_go/images/
-cp ~/dev/documentation/docs/go/run-your-first-app-tutorial.md docs/getting_started/first_program/first_program_in_go/index_tmp.md
+mkdir -p docs/getting_started/go/first_program_in_go/images/
+cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/go/first_program_in_go/images/
+cp ~/dev/documentation/docs/go/run-your-first-app-tutorial.md docs/getting_started/go/first_program_in_go/index_tmp.md
 sed -e '/^id\:/a\
-sidebar_position: 1' \
+sidebar_position: 1'\
+    -e '/^id\:/a\
+description: In this tutorial you will run your first Temporal app using the Go SDK' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e '/^sidebar_label/d' \
@@ -17,17 +21,21 @@ sidebar_position: 1' \
     -e 's|/application-development-guide/|https://docs.temporal.io/application-development-guide/|g' \
     -e 's|/go/|https://docs.temporal.io/go/|g' \
     -e 's|^##.*Lore check$|## Review|' \
-  docs/getting_started/first_program/first_program_in_go/index_tmp.md > docs/getting_started/first_program/first_program_in_go/index.md
-  rm docs/getting_started/first_program/first_program_in_go/index_tmp.md
+  docs/getting_started/go/first_program_in_go/index_tmp.md > docs/getting_started/go/first_program_in_go/index.md
+  rm docs/getting_started/go/first_program_in_go/index_tmp.md
 
 # Java
-mkdir -p docs/getting_started/first_program/first_program_in_java/images/
-cp -r ~/dev/documentation/static/img/tutorials/java/run-your-first-app-tutorial/* docs/getting_started/first_program/first_program_in_java/images/
-cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/first_program/first_program_in_java/images/
-cp ~/dev/documentation/docs/java/run-your-first-app-tutorial.md docs/getting_started/first_program/first_program_in_java/index_tmp.md
+mkdir -p docs/getting_started/java/first_program_in_java/images/
+cp -r ~/dev/documentation/static/img/tutorials/java/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
+cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
+cp ~/dev/documentation/docs/java/run-your-first-app-tutorial.md docs/getting_started/java/first_program_in_java/index_tmp.md
 # rewrite images
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+    -e '/^id\:/a\
+description: In this tutorial you will run your first Temporal app using the Java SDK' \
+    -e '/^id\:/a\
+keywords: [ava, temporal, sdk, tutorial]' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/img/tutorials/java/run-your-first-app-tutorial/|images/|g' \
@@ -38,44 +46,54 @@ sidebar_position: 1' \
     -e 's|/clusters/|https://docs.temporal.io/clusters/|g' \
     -e 's|/java/|https://docs.temporal.io/java/|g' \
     -e 's|^##.*Lore check$|## Review|' \
-  docs/getting_started/first_program/first_program_in_java/index_tmp.md > docs/getting_started/first_program/first_program_in_java/index.md
-rm docs/getting_started/first_program/first_program_in_java/index_tmp.md
+  docs/getting_started/java/first_program_in_java/index_tmp.md > docs/getting_started/java/first_program_in_java/index.md
+rm docs/getting_started/java/first_program_in_java/index_tmp.md
 
 # hello world
 # go
-mkdir -p docs/getting_started/hello_world/hello_world_in_go/images/
-cp ~/dev/documentation/docs/go/hello-world-tutorial.md docs/getting_started/hello_world/hello_world_in_go/index_tmp.md
+mkdir -p docs/getting_started/go/hello_world_in_go/images/
+cp ~/dev/documentation/docs/go/hello-world-tutorial.md docs/getting_started/go/hello_world_in_go/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+    -e '/^id\:/a\
+description: In this tutorial you will build your first Temporal app using the Go SDK' \
+    -e '/^id\:/a\
+keywords: [golang,go,temporal,sdk,tutorial]' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/go/|https://docs.temporal.io/go/|g' \
     -e 's|^##.*Lore check$|## Review|' \
-  docs/getting_started/hello_world/hello_world_in_go/index_tmp.md > docs/getting_started/hello_world/hello_world_in_go/index.md
-rm docs/getting_started/hello_world/hello_world_in_go/index_tmp.md
+  docs/getting_started/go/hello_world_in_go/index_tmp.md > docs/getting_started/go/hello_world_in_go/index.md
+rm docs/getting_started/go/hello_world_in_go/index_tmp.md
 
 # java
 
-mkdir -p docs/getting_started/hello_world/hello_world_in_java/images/
-cp ~/dev/documentation/docs/java/hello-world-tutorial.md docs/getting_started/hello_world/hello_world_in_java/index_tmp.md
+mkdir -p docs/getting_started/java/hello_world_in_java/images/
+cp ~/dev/documentation/docs/java/hello-world-tutorial.md docs/getting_started/java/hello_world_in_java/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+    -e '/^id\:/a\
+description: In this tutorial you will build your first Temporal app using the Java SDK' \
+    -e '/^id\:/a\
+keywords: [Java,java,temporal,sdk,tutorial,learn]' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/java/|https://docs.temporal.io/java/|g' \
     -e 's|^##.*Lore check$|## Review|' \
-  docs/getting_started/hello_world/hello_world_in_java/index_tmp.md > docs/getting_started/hello_world/hello_world_in_java/index.md
-rm docs/getting_started/hello_world/hello_world_in_java/index_tmp.md
+  docs/getting_started/java/hello_world_in_java/index_tmp.md > docs/getting_started/java/hello_world_in_java/index.md
+rm docs/getting_started/java/hello_world_in_java/index_tmp.md
 
 # typescript
-mkdir -p docs/getting_started/hello_world/hello_world_in_typescript/images/
-cp ~/dev/documentation/docs/typescript/hello-world.md docs/getting_started/hello_world/hello_world_in_typescript/index_tmp.md
+mkdir -p docs/getting_started/typescript/hello_world_in_typescript/images/
+cp ~/dev/documentation/docs/typescript/hello-world.md docs/getting_started/typescript/hello_world_in_typescript/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+    -e '/^id\:/a\
+keywords: [typescript, javascript,temporal,sdk,tutorial,learn]' \
     -e '/^sidebar_label/d' \
     -e 's/^title:.*/title: Build a Temporal "Hello World!" app from scratch in TypeScript/g' \
     -e 's|../../src/components|@site/src/components|g' \
@@ -83,8 +101,8 @@ sidebar_position: 1' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/typescript/nextjs-tutorial|/docs/tutorials/typescript_nextjs/index.md|g' \
     -e 's|/typescript/|https://docs.temporal.io/typescript/|g' \
-  docs/getting_started/hello_world/hello_world_in_typescript/index_tmp.md > docs/getting_started/hello_world/hello_world_in_typescript/index.md
-rm docs/getting_started/hello_world/hello_world_in_typescript/index_tmp.md
+  docs/getting_started/typescript/hello_world_in_typescript/index_tmp.md > docs/getting_started/typescript/hello_world_in_typescript/index.md
+rm docs/getting_started/typescript/hello_world_in_typescript/index_tmp.md
 
 
 mkdir -p docs/tutorials/typescript_nextjs/images
@@ -130,10 +148,12 @@ sidebar_position: 4' \
 rm docs/tutorials/typescript_chatbot/index.md2
 
 # PHP
-mkdir -p docs/getting_started/hello_world/hello_world_in_php/images/
-cp ~/dev/documentation/docs/php/hello-world.md docs/getting_started/hello_world/hello_world_in_php/index_tmp.md
+mkdir -p docs/getting_started/php/hello_world_in_php/images/
+cp ~/dev/documentation/docs/php/hello-world.md docs/getting_started/php/hello_world_in_php/index_tmp.md
 sed -e '/^id\:/a\
 sidebar_position: 1' \
+    -e '/^id\:/a\
+keywords: [Java,java,temporal,sdk,tutorial,learn]' \
     -e '/^sidebar_label/d' \
     -e 's/^title:.*/title: Build a Temporal "Hello World!" app from scratch in PHP/g' \
     -e 's|../../src/components|@site/src/components|g' \
@@ -141,8 +161,10 @@ sidebar_position: 1' \
     -e 's|/web-ui|https://docs.temporal.io/web-ui|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/php/|https://docs.temporal.io/php/|g' \
-  docs/getting_started/hello_world/hello_world_in_php/index_tmp.md > docs/getting_started/hello_world/hello_world_in_php/index.md
-rm docs/getting_started/hello_world/hello_world_in_php/index_tmp.md
+    -e 's|Conclusion and Next Steps|Conclusion|' \
+    -e '/longform workshops/d' \
+  docs/getting_started/php/hello_world_in_php/index_tmp.md > docs/getting_started/php/hello_world_in_php/index.md
+rm docs/getting_started/php/hello_world_in_php/index_tmp.md
 
 # PHP
 mkdir -p docs/tutorials/php/booking_saga/images/
@@ -164,11 +186,11 @@ cp ~/dev/documentation/docs/php/subscription-tutorial.md docs/tutorials/php/subs
 sed -e '/^id\:/a\
 sidebar_position: 1' \
     -e '/^sidebar_label/d' \
-    -e 's|/php/hello-world|/getting_started/hello_world/hello_world_in_php/|g' \
+    -e 's|/php/|https://docs.temporal.io/php/|g' \
+    -e 's|/php/hello-world|/getting_started/php/hello_world_in_php/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
-    -e 's|/php/|https://docs.temporal.io/php/|g' \
   docs/tutorials/php/subscriptions/index_tmp.md > docs/tutorials/php/subscriptions/index.md
 rm docs/tutorials/php/subscriptions/index_tmp.md
 

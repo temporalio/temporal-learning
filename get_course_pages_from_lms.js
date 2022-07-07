@@ -57,7 +57,6 @@ function generateMarkdown(course, base_url) {
 title: ${course.name}
 draft: ${draft}
 public: ${publicCourse}
-courseUrl: ${url}
 custom_edit_url: null
 ---
 

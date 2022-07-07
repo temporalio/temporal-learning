@@ -1,6 +1,7 @@
 ---
 id: hello-world
 sidebar_position: 1
+keywords: [typescript, javascript,temporal,sdk,tutorial,learn]
 title: Build a Temporal "Hello World!" app from scratch in TypeScript
 description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
 ---
