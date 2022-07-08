@@ -80,5 +80,5 @@ You should now be familiar with the Hello World project, which is the main way w
 Two paths from here:
 
 - **Go Full Stack**: Integrate the manually-run Temporal Client scripts you have into an Express.js app, or serverless function.
-  Our [Next.js Tutorial](/docs/tutorials/typescript_nextjs/index.md) should help show you how to integrate with the frontend, and give indications on how to deploy.
+  Our [Next.js Tutorial](https://docs.temporal.io/docs/tutorials/typescript/nextjs/index.md) should help show you how to integrate with the frontend, and give indications on how to deploy.
 - **Learn More**: Explore using Signals, Queries and Timers in our [Subscription Workflow tutorial](https://docs.temporal.io/typescript/subscription-tutorial/).

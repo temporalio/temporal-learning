@@ -99,14 +99,14 @@ keywords: [typescript, javascript,temporal,sdk,tutorial,learn]' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
-    -e 's|/typescript/nextjs-tutorial|/docs/tutorials/typescript_nextjs/index.md|g' \
     -e 's|/typescript/|https://docs.temporal.io/typescript/|g' \
+    -e 's|/typescript/nextjs-tutorial|/docs/tutorials/typescript/nextjs/index.md|g' \
   docs/getting_started/typescript/hello_world_in_typescript/index_tmp.md > docs/getting_started/typescript/hello_world_in_typescript/index.md
 rm docs/getting_started/typescript/hello_world_in_typescript/index_tmp.md
 
 
-mkdir -p docs/tutorials/typescript_nextjs/images
-cp -r ~/dev/documentation/docs/typescript/nextjs.md docs/tutorials/typescript_nextjs/index.md2
+mkdir -p docs/tutorials/typescript/nextjs/images
+cp -r ~/dev/documentation/docs/typescript/nextjs.md docs/tutorials/typescript/nextjs/index.md2
 sed -e '/^id\:/a\
 sidebar_position: 2' \
     -e '/^sidebar_label/d' \
@@ -115,27 +115,27 @@ sidebar_position: 2' \
     -e 's|/tctl/|https://docs.temporal.io/tctl/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/typescript/|https://docs.temporal.io/typescript/|g' \
-    docs/tutorials/typescript_nextjs/index.md2 \
-    > docs/tutorials/typescript_nextjs/index.md
-rm docs/tutorials/typescript_nextjs/index.md2
+    docs/tutorials/typescript/nextjs/index.md2 \
+    > docs/tutorials/typescript/nextjs/index.md
+rm docs/tutorials/typescript/nextjs/index.md2
 
 
-mkdir -p docs/tutorials/typescript_subscriptions/
-cp -r ~/dev/documentation/docs/typescript/tutorial-subscription.md docs/tutorials/typescript_subscriptions/index.md2
+mkdir -p docs/tutorials/typescript/subscriptions/
+cp -r ~/dev/documentation/docs/typescript/tutorial-subscription.md docs/tutorials/typescript/subscriptions/index.md2
 sed -e '/^id\:/a\
 sidebar_position: 3' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
-    -e 's|/typescript/nextjs-tutorial|/docs/tutorials/typescript_nextjs/index.md|g' \
     -e 's|/typescript/|https://docs.temporal.io/typescript/|g' \
-    docs/tutorials/typescript_subscriptions/index.md2 \
-    > docs/tutorials/typescript_subscriptions/index.md
-rm docs/tutorials/typescript_subscriptions/index.md2
+    -e 's|/typescript/nextjs-tutorial|/docs/tutorials/typescript/nextjs/index.md|g' \
+    docs/tutorials/typescript/subscriptions/index.md2 \
+    > docs/tutorials/typescript/subscriptions/index.md
+rm docs/tutorials/typescript/subscriptions/index.md2
 
-mkdir -p docs/tutorials/typescript_chatbot/
-cp -r ~/dev/documentation/docs/typescript/tutorial-chatbot.md docs/tutorials/typescript_chatbot/index.md2
+mkdir -p docs/tutorials/typescript/chatbot/
+cp -r ~/dev/documentation/docs/typescript/tutorial-chatbot.md docs/tutorials/typescript/chatbot/index.md2
 sed -e '/^id\:/a\
 sidebar_position: 4' \
     -e '/^sidebar_label/d' \
@@ -143,9 +143,9 @@ sidebar_position: 4' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
     -e 's|/typescript/|https://docs.temporal.io/typescript/|g' \
-    docs/tutorials/typescript_chatbot/index.md2 \
-    > docs/tutorials/typescript_chatbot/index.md
-rm docs/tutorials/typescript_chatbot/index.md2
+    docs/tutorials/typescript/chatbot/index.md2 \
+    > docs/tutorials/typescript/chatbot/index.md
+rm docs/tutorials/typescript/chatbot/index.md2
 
 # PHP
 mkdir -p docs/getting_started/php/hello_world_in_php/images/
