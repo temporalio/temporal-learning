@@ -1,6 +1,7 @@
 ---
 id: application-design
 sidebar_position: 4
+keywords: [go, golang, temporal, sdk, tutorial]
 title: How to design and implement the Background Check application
 description: We start by mapping business process to Workflows.
 tags:

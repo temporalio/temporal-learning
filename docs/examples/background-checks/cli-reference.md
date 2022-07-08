@@ -1,7 +1,8 @@
 ---
 id: cli-reference
+sidebar_position: 14
+keywords: [go, golang, temporal, sdk, tutorial]
 title: Background Checks CLI reference
-sidebar_label: CLI reference
 ---
 
 For this Learning Path, we use three distinct CLIs to represent the user interfaces (UI) that each user type would interact with.

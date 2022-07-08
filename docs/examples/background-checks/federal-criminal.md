@@ -1,6 +1,7 @@
 ---
 id: federal-criminal-search
 sidebar_position: 8
+keywords: [go, golang, temporal, sdk, tutorial]
 title: What does the Federal Criminal Search Workflow Definition look like?
 description: The Federal Criminal Search Workflow calls an external API via an Activity Execution and returns the results.
 ---

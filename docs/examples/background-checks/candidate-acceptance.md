@@ -1,6 +1,7 @@
 ---
 id: candidate-acceptance
 sidebar_position: 6
+keywords: [go, golang, temporal, sdk, tutorial]
 title: What does the Candidate Acceptance Workflow Definition look like?
 description: The Candidate Acceptance Workflow sends email to the Candidate via an Activity Execution and waits on a Signal.
 ---

@@ -198,7 +198,6 @@ rm docs/tutorials/php/subscriptions/index_tmp.md
 mkdir -p docs/examples/background-checks/images
 cp -r ~/dev/documentation/static/diagrams/background-checks/* docs/examples/background-checks/images
 
-cp ~/dev/documentation/docs/learning-paths/background-checks/cli-reference.md docs/examples/background-checks/cli-reference.md
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/index.md docs/examples/background-checks/index.md2
 sed -e '/^id\:/a\
@@ -210,7 +209,7 @@ sidebar_position: 1' \
 rm docs/examples/background-checks/index.md2
 
 # change paths
-cp ~/dev/documentation/docs/learning-paths/background-checks/project-narrative.md docs/examples/background-checks/project-narrative.md2
+cp ~/dev/documentation/docs/learning-paths/background-checks/project-narrative.md docs/examples/background-checks/index.md2
 sed -e '/^id\:/a\
 sidebar_position: 1' \
     -e '/^sidebar_label/d' \
@@ -220,9 +219,12 @@ sidebar_position: 1' \
     -e 's|/go/|https://docs.temporal.io/go/|g' \
     -e 's|/blog/|https://docs.temporal.io/blog/|g' \
     -e 's|/learning-paths/background-checks/||g' \
-    docs/examples/background-checks/project-narrative.md2 \
-    > docs/examples/background-checks/project-narrative.md
-rm docs/examples/background-checks/project-narrative.md2
+    -e 's/^title:.*/title: Background Check Application/' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
+    docs/examples/background-checks/index.md2 \
+    > docs/examples/background-checks/index.md
+rm docs/examples/background-checks/index.md2
 
 cp ~/dev/documentation/docs/learning-paths/background-checks/how-to-use.md docs/examples/background-checks/how-to-use.md2
 sed -e '/^id\:/a\
@@ -233,6 +235,8 @@ sidebar_position: 2' \
     -e 's|/application-development-guide/|https://docs.temporal.io/application-development-guide/|g' \
     -e 's|/go/|https://docs.temporal.io/go/|g' \
     -e 's|/learning-paths/background-checks/||g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/how-to-use.md2 \
     > docs/examples/background-checks/how-to-use.md
 rm  docs/examples/background-checks/how-to-use.md2
@@ -244,6 +248,8 @@ sidebar_position: 3' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/application-requirements.md2 \
     > docs/examples/background-checks/application-requirements.md
 rm  docs/examples/background-checks/application-requirements.md2
@@ -256,6 +262,8 @@ sidebar_position: 4' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/application-design-and-implementation.md2 \
     > docs/examples/background-checks/application-design-and-implementation.md
 rm  docs/examples/background-checks/application-design-and-implementation.md2
@@ -270,6 +278,8 @@ sidebar_position: 5' \
     -e 's|/go/|https://docs.temporal.io/go/|g' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/main-background-check.md2 \
     > docs/examples/background-checks/main-background-check.md
 rm docs/examples/background-checks/main-background-check.md2
@@ -280,6 +290,8 @@ sidebar_position: 6' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/candidate-acceptance.md2 \
     > docs/examples/background-checks/candidate-acceptance.md
 rm docs/examples/background-checks/candidate-acceptance.md2
@@ -290,6 +302,8 @@ sidebar_position: 7' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/ssn-trace.md2 \
     > docs/examples/background-checks/ssn-trace.md
 rm docs/examples/background-checks/ssn-trace.md2
@@ -300,6 +314,8 @@ sidebar_position: 8' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/federal-criminal.md2 \
     > docs/examples/background-checks/federal-criminal.md
 rm docs/examples/background-checks/federal-criminal.md2
@@ -310,6 +326,8 @@ sidebar_position: 9' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/state-criminal-search.md2 \
     > docs/examples/background-checks/state-criminal-search.md
 rm docs/examples/background-checks/state-criminal-search.md2
@@ -320,6 +338,8 @@ sidebar_position: 10' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/motor-vehicle-search.md2 \
     > docs/examples/background-checks/motor-vehicle-search.md
 rm docs/examples/background-checks/motor-vehicle-search.md2
@@ -330,6 +350,8 @@ sidebar_position: 11' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/employment-verification.md2 \
     > docs/examples/background-checks/employment-verification.md
 rm docs/examples/background-checks/employment-verification.md2
@@ -340,6 +362,8 @@ sidebar_position: 12' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
     -e 's|/diagrams/background-checks/|images/|g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/application-deployment.md2 \
     > docs/examples/background-checks/application-deployment.md
 rm docs/examples/background-checks/application-deployment.md2
@@ -349,6 +373,20 @@ sed -e '/^id\:/a\
 sidebar_position: 13' \
     -e '/^sidebar_label/d' \
     -e 's|/learning-paths/background-checks/||g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
     docs/examples/background-checks/api-reference.md2 \
     > docs/examples/background-checks/api-reference.md
 rm docs/examples/background-checks/api-reference.md2
+
+cp ~/dev/documentation/docs/learning-paths/background-checks/cli-reference.md docs/examples/background-checks/cli-reference.md2
+sed -e '/^id\:/a\
+sidebar_position: 14' \
+    -e '/^sidebar_label/d' \
+    -e 's|/learning-paths/background-checks/||g' \
+    -e '/^id\:/a\
+keywords: [go, golang, temporal, sdk, tutorial]' \
+    docs/examples/background-checks/cli-reference.md2 \
+    > docs/examples/background-checks/cli-reference.md
+rm docs/examples/background-checks/cli-reference.md2
+

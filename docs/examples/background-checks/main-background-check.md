@@ -1,6 +1,7 @@
 ---
 id: main-background-check
 sidebar_position: 5
+keywords: [go, golang, temporal, sdk, tutorial]
 title: What does the main Background Check Workflow Definition look like?
 description: This is the entry point of the Temporal Application.
 ---

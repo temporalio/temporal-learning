@@ -1,6 +1,7 @@
 ---
 id: api-reference
 sidebar_position: 13
+keywords: [go, golang, temporal, sdk, tutorial]
 title: Background Checks API reference
 tags:
   - reference

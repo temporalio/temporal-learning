@@ -1,6 +1,7 @@
 ---
 id: employment-verification
 sidebar_position: 11
+keywords: [go, golang, temporal, sdk, tutorial]
 title: What does the Employment Verification Workflow Definition look like?
 description: The Employment Verification Workflow sends email to a Researcher via an Activity Execution and waits on a Signal.
 ---
