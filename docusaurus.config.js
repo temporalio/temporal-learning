@@ -9,7 +9,7 @@ const FontPreloadPlugin = require("webpack-font-preload-plugin");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Temporal Learning',
+  title: 'Learn Temporal',
   tagline: "Build invincible applications",
   url: 'https://learn.temporal.io',
   baseUrl: '/',

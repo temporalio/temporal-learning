@@ -1,9 +1,11 @@
 ---
 slug: /
-title: Learn Temporal
+title: Home
 sidebar_position: 1
 custom_edit_url: null
 ---
+
+# Learn Temporal
 
 [Temporal](https://temporal.io) is a developer-first, open source platform that ensures the successful execution of services and applications.
 
