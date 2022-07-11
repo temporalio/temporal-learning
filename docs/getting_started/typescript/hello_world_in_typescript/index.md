@@ -22,7 +22,7 @@ Activities run in the Node.js execution environment, meaning you can easily port
 
 `src/activities.ts`
 
-<!--SNIPSTART typescript-hello-activity {"enable_source_link": false}-->
+<!--SNIPSTART typescript-hello-activity -->
 <!--SNIPEND-->
 
 ### Workflow
@@ -37,7 +37,7 @@ The snippet below uses `proxyActivities` to create a function that, when called,
 
 `src/workflows.ts`
 
-<!--SNIPSTART typescript-hello-workflow {"enable_source_link": false}-->
+<!--SNIPSTART typescript-hello-workflow -->
 <!--SNIPEND-->
 
 ### Worker
@@ -49,7 +49,7 @@ See the list of [WorkerOptions](https://typescript.temporal.io/api/interfaces/wo
 
 `src/worker.ts`
 
-<!--SNIPSTART typescript-hello-worker {"enable_source_link": false}-->
+<!--SNIPSTART typescript-hello-worker -->
 <!--SNIPEND-->
 
 ### Client
@@ -62,7 +62,7 @@ It can be used in any Node.js process (for example, an [Express](https://express
 
 `src/client.ts`
 
-<!--SNIPSTART typescript-hello-client {"enable_source_link": false}-->
+<!--SNIPSTART typescript-hello-client -->
 <!--SNIPEND-->
 
 ### Testing

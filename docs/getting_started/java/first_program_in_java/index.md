@@ -26,9 +26,7 @@ The [Temporal server](https://github.com/temporalio/temporal) and a language spe
 
 In this tutorial you'll run your first Temporal Workflow application and forever change the way you approach application development.
 
-Keep reading or follow along with this video walkthrough:
 
-<ResponsivePlayer url='https://youtu.be/jjRu8GJgL1k'/>
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
 

@@ -26,9 +26,7 @@ The Temporal server and a language specific SDK, in this case the [Go SDK](https
 
 In this tutorial you'll run your first Temporal Workflow application and forever change the way you approach application development.
 
-Keep reading or follow along with this video walkthrough:
 
-<ResponsivePlayer url='https://www.youtube.com/watch?v=aUUhFAupUbk' />
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
 

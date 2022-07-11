@@ -14,6 +14,8 @@ keywords: [go, golang, temporal, sdk, tutorial]' \
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e '/^sidebar_label/d' \
+    -e '/Keep reading or follow along with this video walkthrough:/d' \
+    -e '/<ResponsivePlayer/d' \
     -e 's|/activities|https://docs.temporal.io/activities|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/tctl|https://docs.temporal.io/tctl|g' \
@@ -38,6 +40,8 @@ description: In this tutorial you will run your first Temporal app using the Jav
 keywords: [ava, temporal, sdk, tutorial]' \
     -e '/^sidebar_label/d' \
     -e 's|../../src/components|@site/src/components|g' \
+    -e '/Keep reading or follow along with this video walkthrough:/d' \
+    -e '/<ResponsivePlayer/d' \
     -e 's|/img/tutorials/java/run-your-first-app-tutorial/|images/|g' \
     -e 's|/img/tutorials/go/run-your-first-app-tutorial/|images/|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
@@ -96,6 +100,7 @@ sidebar_position: 1' \
 keywords: [typescript, javascript,temporal,sdk,tutorial,learn]' \
     -e '/^sidebar_label/d' \
     -e 's/^title:.*/title: Build a Temporal "Hello World!" app from scratch in TypeScript/g' \
+    -e 's|{"enable_source_link": false}||g' \
     -e 's|../../src/components|@site/src/components|g' \
     -e 's|/concepts/|https://docs.temporal.io/concepts/|g' \
     -e 's|/application-development-guide|https://docs.temporal.io/application-development-guide|g' \
