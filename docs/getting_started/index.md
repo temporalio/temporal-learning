@@ -1,10 +1,20 @@
 ---
 title: "Getting Started with Temporal"
 sidebar_position: 2
+hide_table_of_contents: true
+pagination_prev: null
+pagination_next: null
 ---
 
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
+
+## Set up your development environment
+
+Make sure you have everything you need to start working with Temporal on your local machine.
+
+* [Go](go/dev_environment/index.md)
+* [Java](java/dev_environment/index.md)
 
 ## Run your first program
 
