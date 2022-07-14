@@ -37,6 +37,14 @@ const config = {
     },
   ],
   themeConfig: {
+    announcementBar: {
+      id: 'in_progress',
+      content:
+        'We\'re in the process of revising our tutorials.Thanks for your patience as we update things. ',
+      backgroundColor: '#141414',
+      textColor: '#f9fafb',
+      isCloseable: true,
+    },
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,

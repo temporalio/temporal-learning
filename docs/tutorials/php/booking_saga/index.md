@@ -1,6 +1,10 @@
 ---
 id: booking-saga-tutorial
 sidebar_position: 1
+keywords: [PHP, temporal, sdk, tutorial, saga pattern, transactions]
+tags: [PHP, SDK, Saga]
+last_update:
+  date: 2021-10-01
 title: Booking Saga Tutorial in PHP
 description: In this tutorial, we'll go over the different components that make up the Temporal Booking Saga code sample.
 ---

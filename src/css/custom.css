@@ -560,29 +560,6 @@ h1 {
 .aside-link {
   color: #2563eb;
 }
-/* Leadership page css */
-
-.leadership-container {
-  max-width: 800px;
-  margin: auto;
-  padding: 15px;
-  text-align: center;
-}
-.leadership-name {
-  font-size: 1.2em;
-  font-weight: 500;
-}
-.leadership-image {
-  max-width: 150px;
-}
-.leadership-list {
-  list-style-type: none;
-}
-.leadership-list-item {
-  margin-top: 15px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-}
 .menu__link,
 .navbar__link,
 .dropdown__link {

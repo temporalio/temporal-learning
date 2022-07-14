@@ -1,6 +1,10 @@
 ---
 id: subscription-tutorial
 sidebar_position: 3
+keywords: [TypeScript, temporal, sdk, tutorial]
+tags: [TypeScript, SDK]
+last_update:
+  date: 2021-10-01
 title: TypeScript Workflow APIs Tutorial with a Subscription Example
 description: In this tutorial, we will tour all of the Workflow APIs you should know, primarily Signals, Queries, `condition`, and `sleep`, by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
 ---

@@ -1,7 +1,10 @@
 ---
 id: hello-world
 sidebar_position: 1
-keywords: [Java,java,temporal,sdk,tutorial,learn]
+keywords: [PHP, temporal, sdk, tutorial]
+tags: [PHP, SDK]
+last_update:
+  date: 2021-10-01
 title: Build a Temporal "Hello World!" app from scratch in PHP
 description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
 ---
