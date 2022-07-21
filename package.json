@@ -12,6 +12,7 @@
     "serve": "docusaurus serve",
     "getsnips": "snipsync",
     "clearsnips": "snipsync --clear",
+    "get_courses": "node get_course_pages_from_lms.js",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
