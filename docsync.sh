@@ -110,8 +110,8 @@ rm docs/getting_started/java/dev_environment/index.md2
 # first program
 
 mkdir -p docs/getting_started/java/first_program_in_java/images/
-cp -r ~/dev/documentation/static/img/tutorials/java/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
-cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
+#cp -r ~/dev/documentation/static/img/tutorials/java/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
+#cp -r ~/dev/documentation/static/img/tutorials/go/run-your-first-app-tutorial/* docs/getting_started/java/first_program_in_java/images/
 cp ~/dev/documentation/docs/java/run-your-first-app-tutorial.md docs/getting_started/java/first_program_in_java/index_tmp.md
 # rewrite images
 sed -e '/^id\:/a\
