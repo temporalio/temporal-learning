@@ -5,7 +5,7 @@
 }
 
 @media (min-width: 997px) {
-  .lastUpdated {
+  .headerTags {
     text-align: right;
   }
 }
