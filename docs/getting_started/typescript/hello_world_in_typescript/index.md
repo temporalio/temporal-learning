@@ -5,20 +5,37 @@ keywords: [typescript, javascript,temporal,sdk,tutorial,learn]
 tags: [TypeScript, SDK]
 last_update:
   date: 2021-10-01
-title: Build a Temporal "Hello World!" app from scratch in TypeScript
+title: Temporal "Hello World!" app in TypeScript
 description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
 ---
 
-In this tutorial, we'll go over the different components that make up a Temporal project.
-All of the code on this page is included in our Hello World sample, which we set up in our [Getting Started](https://docs.temporal.io/typescript/introduction/#getting-started) (we recommend [following along on GitPod](https://gitpod.io/#https://github.com/temporalio/samples-typescript/)).
+In this tutorial, we'll go over the different components that make up a Temporal project.  All of the code on this page is included in our Hello World sample, which we set up in our [Getting Started](https://docs.temporal.io/typescript/introduction/#getting-started) (we recommend [following along on GitPod](https://gitpod.io/#https://github.com/temporalio/samples-typescript/)).
 
 The SDK steers developers to write their Workflows and Activities in TypeScript but vanilla JS is also supported.
 
-### Activity
+### Define a Workflow
 
-[@temporalio/activity API reference](https://typescript.temporal.io/api/namespaces/activity)
+In the TypeScript SDK, each Workflow execution is run in a separate V8 isolate context in order to provide a [deterministic runtime](https://docs.temporal.io/typescript/determinism).
+
+
+
+A Workflow is also an async function, but it has access to special Workflow APIs like [Signals](https://docs.temporal.io/concepts/what-is-a-signal), [Queries](https://docs.temporal.io/concepts/what-is-a-query), Timers, and Child Workflows.
+
+The following snippet uses `proxyActivities` to create a function that, when called, schedules an Activity in the system:
+
+`src/workflows.ts`
+
+<!--SNIPSTART typescript-hello-workflow -->
+<!--SNIPEND-->
+
+
+[@temporalio/workflow API reference](https://typescript.temporal.io/api/namespaces/workflow)
+
+### Define an activity
 
 Activities are called from Workflows in order to run non-deterministic code.
+
+[@temporalio/activity API reference](https://typescript.temporal.io/api/namespaces/activity)
 
 Any async function can be used as an Activity as long as its parameters and return value are serializable.
 Activities run in the Node.js execution environment, meaning you can easily port over any existing code into an Activity and it should work.
@@ -28,20 +45,6 @@ Activities run in the Node.js execution environment, meaning you can easily port
 <!--SNIPSTART typescript-hello-activity -->
 <!--SNIPEND-->
 
-### Workflow
-
-[@temporalio/workflow API reference](https://typescript.temporal.io/api/namespaces/workflow)
-
-In the TypeScript SDK, each Workflow execution is run in a separate V8 isolate context in order to provide a [deterministic runtime](https://docs.temporal.io/typescript/determinism).
-
-A Workflow is also an async function, but it has access to special Workflow APIs like [Signals](https://docs.temporal.io/concepts/what-is-a-signal), [Queries](https://docs.temporal.io/concepts/what-is-a-query), Timers, and Child Workflows.
-
-The snippet below uses `proxyActivities` to create a function that, when called, schedules an Activity in the system.
-
-`src/workflows.ts`
-
-<!--SNIPSTART typescript-hello-workflow -->
-<!--SNIPEND-->
 
 ### Worker
 

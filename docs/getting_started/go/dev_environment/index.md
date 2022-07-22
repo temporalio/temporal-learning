@@ -11,9 +11,9 @@ title: Set up a Local Development Environment for Temporal and Go
 
 To follow the Go SDK tutorials we recommend that you have the following environments set up.
 
-## Go
+## Install Go
 
-Make sure you have [Go](https://golang.org/doc/install) installed. These tutorials were produced using Go 1.14.
+Make sure you have [Go](https://golang.org/doc/install) installed. These tutorials were produced using Go 1.18.
 
 ## Run a Temporal Cluster
 

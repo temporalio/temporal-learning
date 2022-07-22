@@ -5,31 +5,28 @@ keywords: [PHP, temporal, sdk, tutorial]
 tags: [PHP, SDK]
 last_update:
   date: 2021-10-01
-title: Build a Temporal "Hello World!" app from scratch in PHP
-description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
+title: Temporal "Hello World!" app in PHP
+description: Explore the components that make up a Temporal project in PHP. 
 ---
 
-In this tutorial, we'll go over the different components that make up a Temporal project:
+In this tutorial, you'll explore the different components that make up a Temporal project using the PHP SDK, including:
 
 - Temporal Client
 - Workflow and Activity Code
 - Temporal Worker (running with [RoadRunner](https://roadrunner.dev))
 
-All the code on this page is included in our [SimpleActivity](https://github.com/temporalio/samples-php/tree/master/app/src/SimpleActivity) sample,
+All the code on this page is included in the [SimpleActivity](https://github.com/temporalio/samples-php/tree/master/app/src/SimpleActivity) sample,
 from our [Samples repository](https://github.com/temporalio/samples-php).
 
-First we'll get you running code, and then we'll explain the code.
-
-## Running this sample (using Docker)
-
-**1. Download the repository.**
-
-```bash
-$ git clone git@github.com:temporalio/samples-php.git
-$ cd samples-php
+```command
+git clone git@github.com:temporalio/samples-php.git
 ```
 
-**2. Start Temporal Server and application containers.**
+```
+cd samples-php
+```
+
+Start the Temporal Server and application containers.**
 
 ```bash
 $ docker-compose up
@@ -38,15 +35,18 @@ $ docker-compose up
 This starts Temporal Server with the [docker-compose.yml](https://github.com/temporalio/samples-php/blob/master/docker-compose.yml) that ships with the `samples-php` repo.
 When it's live, you can access [Temporal Web](https://docs.temporal.io/web-ui) at http://localhost:8080 although you won't see any Workflows run yet.
 
-**3. Run a sample**
+## Run the application
 
-To run a sample in docker use:
+The program you'll run is a console command that starts a workflow, prints its IDs, and then waits for its result.
 
-```bash
-$ docker-compose exec app php app.php simple-activity
+Execute the following command to run the program:
+
+```command
+docker-compose exec app php app.php simple-activity
 ```
 
-This should log the Workflow ID (and corresponding Run ID) that is started, and you should see it reflected in Temporal Web UI.
+This prints the Workflow ID (and corresponding Run ID) that is started, and you'll see it reflected in the Temporal Web UI.
+
 At the end it will log the result:
 
 ```bash
@@ -56,43 +56,46 @@ Result:
 Hello Antony
 ```
 
-## Example structure
+Let's explore each piece of the code and how it works with Temporal.
 
-### Temporal Client
+## The Workflow Client
 
-The example above represents a console command that starts a workflow, prints its IDs, and then waits for its result:
+In the following snippet,  `WorkflowClientInterface` is the entry point to get access to workflows. When you need to create, retrieve, or start a workflow you'll use an instance of `WorkflowClientInterface`.
+
+Here we create an instance of `GreetingWorkflowInterface` with execution timeout of 1 minute. Then we print some information and start the workflow.
 
 <!--SNIPSTART php-hello-client {"enable_source_link": true}-->
 <!--SNIPEND-->
 
-In the snippet above we use `WorkflowClientInterface` - an entry point to get access to workflows.
-Once you need to create, retrieve, or start a workflow you should use an instance of `WorkflowClientInterface`.
-Here we create an instance of `GreetingWorkflowInterface` with execution timeout of 1 minute.
+Now let's look at the workflow.
 
-Then we print some information and start the workflow.
+## Workflow interface and implementation
 
-### Workflow interface and implementation
+With the PHP SDK, yyou define an interface and an implementation.
 
 First, let's take a look at the workflow interface:
 
 <!--SNIPSTART php-hello-workflow-interface {"enable_source_link": true}-->
 <!--SNIPEND-->
 
-The important thing here - is attributes: `#[WorkflowInterface]` and `#[WorkflowMethod]`.
-Both of them define the "workflow".
+The important thing here are attributes `#[WorkflowInterface]` and `#[WorkflowMethod]`.  Both of them define the "workflow".
 The first one marks the class/interface, the second one marks the method in the class/interface.
-In our case the workflow is the method that accepts string `$name`.
-To see what it actually does we can continue to the implementation - class `GreetingWorkflow`:
+
+In our case the workflow is the method that accepts string `$name`.  To see what it actually does, look at the implementation in the class `GreetingWorkflow`:
 
 <!--SNIPSTART php-hello-workflow {"enable_source_link": true}-->
 <!--SNIPEND-->
 
-This is the implementation of our workflow.
-It communicates with one activity and delegates all the work to it.
+This is the implementation of our workflow.  It communicates with one activity and delegates all the work to it.
+
 In the constructor we create an instance of the `GreetingActivityInterface` with maximum execution time of 2 seconds.
+
 In method `greet()` we call our activity.
+
 Here the workflow pauses and waits until the activity is done and only then returns the result.
-It is achieved with `yield` call.
+
+It is achieved with a call to `yield`.
+
 To instantiate an instance of the activity we use a static helper `Workflow::newActivityStub()`.
 
 ### Activity interface and implementation
@@ -172,6 +175,7 @@ $worker->registerActivity(MyActivity::class);
 
 On the last line of the _worker script_ we start the worker.
 From now, it starts communication with Temporal: receiving and sending data.
+
 
 ## Conclusion
 

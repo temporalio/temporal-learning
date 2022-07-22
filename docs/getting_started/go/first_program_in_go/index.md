@@ -36,7 +36,7 @@ In this tutorial you'll run your first Temporal Workflow application and forever
 Before starting, make sure you have looked over the [tutorial prerequisites](https://docs.temporal.io/go/tutorial-prerequisites).
 
 - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-- Ensure you're using Go version v1.14 or later.
+- Ensure you're using Go version v1.18 or later.
 - Ensure you have Git installed to clone the project.
 
 This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's ["Creating a Repository from a Template" guide](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.

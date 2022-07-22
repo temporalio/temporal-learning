@@ -19,10 +19,19 @@ Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies
 java -version
 ```
 
-## Either Gradle or IntelliJ IDEA
+## Install Gradle
 
-Either download and install the [IntelliJ IDEA](https://www.jetbrains.com/idea/), install [Gradle](https://gradle.org/install/), or do both. The IDE comes packaged with Gradle, which is a dependency management and build tool that we use for Java projects.
+[Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
 
-## Temporal server
+You can install Gradle separately, or use [IntelliJ IDEA](https://www.jetbrains.com/idea/), which comes packaged with Gradle.
 
-Download, install, and run the [Temporal server](https://docs.temporal.io/clusters/quick-install) via docker-compose. It is easy to do and you can keep it running in the background while you build applications.
+Install Gradle by following the [installation instructions](https://gradle.org/install/).
+
+
+## Set up a Temporal development server
+
+Download and install the Temporal Server locally using Docker Compose by following [How to run a Temporal Cluster for local development using Docker Compose](https://docs.temporal.io/clusters/quick-install/#docker-compose).
+
+You'll run this server in the background while you develop your applications.
+
+Once you have everything installed, you're ready to build apps with Temporal on your local machine.
