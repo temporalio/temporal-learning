@@ -9,7 +9,8 @@ last_update:
 title: Set up a Local Development Environment for Temporal and Java
 ---
 
-To follow the Java SDK tutorials we recommend that you have the following environments set up.
+To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.
+
 
 ## Java JDK
 
@@ -19,13 +20,44 @@ Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies
 java -version
 ```
 
-## Install Gradle
+## Get the Temporal SDK for Java
+
+You can use Gradle or Maven for your projects, although we recommend Gradle.
+
+
+### Configuring Gradle
 
 [Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
 
 You can install Gradle separately, or use [IntelliJ IDEA](https://www.jetbrains.com/idea/), which comes packaged with Gradle.
 
 Install Gradle by following the [installation instructions](https://gradle.org/install/).
+
+Add the following lines to your Gradle configuration to configure the Temporal SDK.
+
+```groovy
+implementation 'io.temporal:temporal-sdk:1.11.0' 
+implementation 'io.temporal:temporal-sdk:1.12.0'test 
+implementation 'io.temporal:temporal-testing:1.12.0'
+```
+
+
+### Configuring Maven
+
+Apache Maven is another popular Java build tool. 
+
+Install Maven following the [official installation instructions](https://maven.apache.org/install.html).
+
+Add the following lines to your Maven configuration:
+
+```xml
+<dependency>
+  <groupId>io.temporal</groupId>
+  <artifactId>temporal-sdk</artifactId>
+  <version>1.11.0</version>
+</dependency>
+```
+
 
 
 ## Set up a Temporal development server
