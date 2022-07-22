@@ -114,7 +114,8 @@ const config = {
         href: "https://temporal.io",
         width: 24,
       },
-      copyright: `Copyright © ${new Date().getFullYear()}</span> Temporal Technologies Inc.</div>`,
+      copyright: `Copyright © ${new Date().getFullYear()}</span> Temporal Technologies Inc.</div><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSXFPF2"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`,
       links: [
         {
           items: [
