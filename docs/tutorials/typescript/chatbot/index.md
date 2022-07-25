@@ -12,7 +12,7 @@ In this tutorial, we'll integrate all the knowledge gained from Core and Logging
 
 This project will integrate and give context to your understanding of [Temporal SDK APIs](https://docs.temporal.io/typescript/workflows): logging with Sinks, Activity dependency injection, Timer and Promise.race design patterns, Signals (and HTTP Servers for them), Polling patterns, and `continueAsNew` for indefinitely long running Workflows.
 
-::: tip Skip ahead
+:::tip Skip ahead
 View the completed project on GitHub: https://github.com/JoshuaKGoldberg/temporal-adventure-bot
 :::
 

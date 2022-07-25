@@ -13,7 +13,7 @@ In this tutorial, you'll explore how Temporal integrates into an **existing Next
 
 This tutorial is written for a reasonably experienced TypeScript/Next.js developer.  Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
 
-::: tip Skip ahead
+:::tip Skip ahead
 **To skip straight to a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick)** or use the [package initializer](https://docs.temporal.io/typescript/package-initializer) to create a new project with the following command:
 
 ```command

@@ -31,7 +31,7 @@ Our task is to write a Workflow for a limited time Subscription (eg a 36 month P
 
 Of course, this all has to be fault tolerant, scalable to millions of customers, testable, maintainable, observable... yada yada, that's... why you're here!
 
-::: Tip Skip ahead
+:::Tip Skip ahead
 **To skip straight to a fully working example, you can check our [Subscription Workflow repo](https://github.com/temporalio/subscription-workflow-project-template-typescript)** (it is slightly different from the code explained below, as this tutorial has been edited for readability and assumes you are comfortable with Node.js so the difference is immaterial).
 :::
 
