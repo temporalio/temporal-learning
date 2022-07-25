@@ -22,14 +22,14 @@ from our [Samples repository](https://github.com/temporalio/samples-php).
 git clone git@github.com:temporalio/samples-php.git
 ```
 
-```
+```command
 cd samples-php
 ```
 
 Start the Temporal Server and application containers.**
 
-```bash
-$ docker-compose up
+```command
+docker-compose up
 ```
 
 This starts Temporal Server with the [docker-compose.yml](https://github.com/temporalio/samples-php/blob/master/docker-compose.yml) that ships with the `samples-php` repo.

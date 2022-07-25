@@ -1,26 +1,15 @@
 ---
 id: subscription-tutorial
 sidebar_position: 1
-keywords: [PHP, temporal, sdk, tutorial, subscriptions]
+keywords: [PHP, temporal, sdk, tutorial, subscriptions, signals]
 tags: [PHP, SDK]
 last_update:
   date: 2021-10-01
 title: Subscription Walkthrough in PHP
-description: In this tutorial, we'll go over the different components that make up the Temporal Subscription code sample.
+description: In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
 ---
 
-Let's build a realistic monthly subscription payments workflow that can be canceled while it runs.
-
-:::info Prerequisites
-
-We assume that you have gone through our [Hello World tutorial](https://docs.temporal.io/getting_started/php/hello_world_in_php/) and understood the basics of
-getting a Temporal PHP SDK project up and running. We don't assume knowledge of the Workflow APIs.
-
-:::
-
-**To skip straight to a fully working example, you can check our [Subscription Workflow repo](https://github.com/temporalio/samples-php/tree/master/app/src/Subscription)**.
-
-## Project requirements
+In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
 
 Our task is to write a Workflow for a limited time Subscription (eg a 12-month Phone plan) that satisfies the following conditions:
 
@@ -31,10 +20,21 @@ Our task is to write a Workflow for a limited time Subscription (eg a 12-month P
 
 Of course, this all has to be fault-tolerant, scalable to millions of customers, testable, maintainable, observable... and so on!
 
-## Run Workflow Command
+**To skip straight to a fully working example, you can check out the [Subscription Workflow repo](https://github.com/temporalio/samples-php/tree/master/app/src/Subscription)**.
 
-The whole task _"create a subscription"_ looks too complicated, thus we need to break it into small manageable peaces.
-We can start building the whole thing step by step. From the consumer's point of view workflow is very straightforward - subscribe a user (`subscribe($userId)`):
+## Prerequisites
+
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+- Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) and understood the basics of getting a Temporal PHP SDK project up and running. 
+
+## Create the Workflow
+
+The whole process of _"creating a subscription"_ is too complicated; we need to break it into small manageable peaces and build it up incrementally.
+
+We can start building the whole thing step by step. Start with subscribing a user (`subscribe($userId)`):
 
 ```php
 #[WorkflowInterface]
@@ -90,15 +90,11 @@ class SubscribeCommand extends Command
 }
 ```
 
-In the snippet above we grab userId as an input and use it to start the workflow. Also, userId
-is used as a workflow identifier (`'subscription:' . $userID`). Later it will be used to cancel the
-subscription. Now, let's implement the workflow - a long-running process that represents user subscription business process.
+In the snippet above we grab userId as an input and use it to start the workflow. Also, userId is used as a workflow identifier (`'subscription:' . $userID`). Later it will be used to cancel the subscription. Now, let's implement the workflow - a long-running process that represents user subscription business process.
 
 ### Start/End Trial
 
-The first requirement is about starting trial period and sending emails: when the trial period starts and ends.
-We don't have any activities yet, but we can start coding and think about the interface. Assume that we have `AccountActivityInterface` which
-handles all the subscription staff:
+The first requirement is about starting trial period and sending emails: when the trial period starts and ends.  We don't have any activities yet, but we can start coding and think about the interface. Assume that we have `AccountActivityInterface` which handles all the subscription components:
 
 ```php
 class SubscriptionWorkflow implements SubscriptionWorkflowInterface
@@ -123,13 +119,11 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
 
 :::info Activity implementation
 
-We consider activity implementation as an implementation detail, so it is out of scope.
-When building this subscription workflow we will walk through the business process and use only activity interfaces. It is up to you to implement all other details.
+We consider activity implementation as an implementation detail, so it is out of scope. When building this subscription workflow we will walk through the business process and use only activity interfaces. It is up to you to implement all other details.
 
 :::
 
-The method `subscribe(string $userID)` contains all the business logic. First, we send an email that the trial period
-has started. Then we start a trial for (let's say) 30 days. Once the period ends, we send a corresponding email:
+The method `subscribe(string $userID)` contains all the business logic. First, we send an email that the trial period has started. Then we start a trial for (let's say) 30 days. Once the period ends, we send a corresponding email:
 
 ```php
 public function subscribe(string $userID)
@@ -156,12 +150,9 @@ This is not possible when using native PHP `sleep()` function.
 
 ## Receive Cancellations
 
-Per Requirement 4, users can cancel during the trial.
-Once the trial period or subscription is cancelled, we should email the user.
+Per Requirement 4, users can cancel during the trial.  Once the trial period or subscription is cancelled, we should email the user.
 
-How can we implement subscription cancellation?
-There are several ways to do it, but the simplest is just to use Temporal's API to cancel the entire workflow.
-We will need a separate console command for cancellation:
+How can we implement subscription cancellation?  There are several ways to do it, but the simplest is just to use Temporal's API to cancel the entire workflow.  We will need a separate console command for cancellation:
 
 ```php
 class CancelCommand extends Command
@@ -191,9 +182,7 @@ class CancelCommand extends Command
 
 This command accepts `$userId` as an input argument, then fetches the workflow with id of `subscription:$userID` and tries to cancel it.
 
-Next, we can handle cancellation within the running workflow.
-Once the running workflow is cancelled `CancelledFailure` exception is thrown.
-We can catch it and send an email like this:
+Next, we can handle cancellation within the running workflow.  Once the running workflow is cancelled `CancelledFailure` exception is thrown.  We can catch it and send an email like this:
 
 ```php
 public function subscribe(string $userID)
@@ -285,18 +274,7 @@ In the snippet above we have a new flag `$isTrialPeriod = true`. After the first
 On the next iteration we again wait for 30 days, charge monthly fee and send email.
 The last thing we need to do is to handle subscription cancellation, where we just send our cancellation email, but you can do whatever other cleanup tasks you want.
 
-## Conclusion
-
-That's it, we have created a complete subscription workflow that can:
-
-- handle trial periods
-- charge monthly fee every N days
-- handle subscription cancellations
-
-:::note Testing With Activity
-
-Previously it was said that we are not going to cover any activity implementation details in this tutorial. But
-if you want to test things you may use this "dummy" activity implementation that just logs each step to the screen:
+If you want to test things you can use this "dummy" activity implementation that logs each step to the screen:
 
 ```php
 class AccountActivity implements AccountActivityInterface
@@ -350,8 +328,16 @@ class AccountActivity implements AccountActivityInterface
 }
 ```
 
-:::
+Register this Activity and add it to your workflow.
 
-The beauty of using Temporal is that a relatively complex business process is written with a few lines of code.
-The code of our `SubscriptionWorkflow` is very straight-forward.
-Workflow code provides us with a high-level view of the business process without digging into details.
+## Conclusion
+
+That's it, we have created a complete subscription workflow that can:
+
+- handle trial periods
+- charge monthly fee every N days
+- handle subscription cancellations
+
+
+
+With Temporal, you can write a relatively complex business process with fewer lines of code, and the Workflow code provides you with a high-level view of the business process without digging into deeper details.

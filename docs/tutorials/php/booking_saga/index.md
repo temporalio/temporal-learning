@@ -28,7 +28,13 @@ We cannot simply "delete" the prior transactions or "go back in time" - Particul
 
 Therefore, we should accumulate a list of compensating actions to execute when failure occurs.
 
-## Saga Architecture Pattern
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+- Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) to  understood the basics of getting a Temporal PHP SDK project up and running. 
+
+## Review the Saga Architecture Pattern
 
 Managing distributed transactions can be difficult to do well. Sagas are one of the most [tried and tested](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf) design patterns for long running work:
 

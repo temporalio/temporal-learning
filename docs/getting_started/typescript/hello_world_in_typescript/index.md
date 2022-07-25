@@ -6,18 +6,20 @@ tags: [TypeScript, SDK]
 last_update:
   date: 2021-10-01
 title: Temporal "Hello World!" app in TypeScript
-description: In this tutorial, we'll go over the different components that make up the Temporal Hello World code sample.
+description: Explore the components that make up the Hello World program in TypeScript..
 ---
 
-In this tutorial, we'll go over the different components that make up a Temporal project.  All of the code on this page is included in our Hello World sample, which we set up in our [Getting Started](https://docs.temporal.io/typescript/introduction/#getting-started) (we recommend [following along on GitPod](https://gitpod.io/#https://github.com/temporalio/samples-typescript/)).
+In this tutorial, you'll explore the different components that make up a Temporal project using the TypeScript SDK.  The SDK steers developers to write  Workflows and Activities in TypeScript but vanilla JS is also supported.
 
-The SDK steers developers to write their Workflows and Activities in TypeScript but vanilla JS is also supported.
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+  - Ensure you're using Node.js 14 or higher.
 
 ### Define a Workflow
 
-In the TypeScript SDK, each Workflow execution is run in a separate V8 isolate context in order to provide a [deterministic runtime](https://docs.temporal.io/typescript/determinism).
-
-
+In the TypeScript SDK, each Workflow execution is run in a separate V8 isolated context in order to provide a [deterministic runtime](https://docs.temporal.io/typescript/determinism).
 
 A Workflow is also an async function, but it has access to special Workflow APIs like [Signals](https://docs.temporal.io/concepts/what-is-a-signal), [Queries](https://docs.temporal.io/concepts/what-is-a-query), Timers, and Child Workflows.
 
@@ -86,5 +88,5 @@ You should now be familiar with the Hello World project, which is the main way w
 Two paths from here:
 
 - **Go Full Stack**: Integrate the manually-run Temporal Client scripts you have into an Express.js app, or serverless function.
-  Our [Next.js Tutorial](https://docs.temporal.io/docs/tutorials/typescript/nextjs/index.md) should help show you how to integrate with the frontend, and give indications on how to deploy.
-- **Learn More**: Explore using Signals, Queries and Timers in our [Subscription Workflow tutorial](https://docs.temporal.io/typescript/subscription-tutorial/).
+  Our [Next.js Tutorial](/tutorials/typescript/nextjs/index.md) should help show you how to integrate with the frontend, and give indications on how to deploy.
+- **Learn More**: Explore using Signals, Queries and Timers in our [Subscription Workflow tutorial](/tutorials/typescript/subscriptions/index.md).

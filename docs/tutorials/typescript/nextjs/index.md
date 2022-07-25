@@ -6,32 +6,31 @@ tags: [TypeScript, SDK]
 last_update:
   date: 2021-10-01
 title: Integrating Temporal into an Existing Next.js Application
-description: In this tutorial, we'll talk about how Temporal integrates into an existing Next.js application using Next.js API routes. This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
+description: Explore how Temporal integrates into an existing Next.js application using Next.js API routes. This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
 ---
 
-In this tutorial, we'll talk about how Temporal integrates into an **existing Next.js application** using Next.js API routes.
-This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
+In this tutorial, you'll explore how Temporal integrates into an **existing Next.js application** using Next.js API routes.  This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
 
-:::info Notes to user
+This tutorial is written for a reasonably experienced TypeScript/Next.js developer.  Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
 
-This tutorial is written for a reasonably experienced TypeScript/Next.js developer.
-Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
-If you run into trouble, you are welcome to reach out on the [Temporal Slack](https://temporal.io/slack) for help, but we cannot promise help with non-Temporal build tooling related questions.
+::: tip Skip ahead
+**To skip straight to a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick)** or use the [package initializer](https://docs.temporal.io/typescript/package-initializer) to create a new project with the following command:
 
-**To skip straight to a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick)**, which you can also clone from scratch with [package initializer](https://docs.temporal.io/typescript/package-initializer) skeleton:
-
-```bash
+```command
 npx @temporalio/create@latest nextjs-temporal-app --sample nextjs-ecommerce-oneclick
 ```
-
-- We go through the setup assuming you want to use TypeScript.
-  You should be able to skip some steps if you want to use vanilla JavaScript.
-- We also assume that you have [Temporal's prerequisites](https://docs.temporal.io/typescript/introduction#getting-started) already set up.
-- Temporal doesn't prescribe folder structure; feel free to ignore or modify these instructions per your own needs.
-
 :::
 
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+  - Ensure you're using Node.js 14 or higher.
+- Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
+
 ## Add Temporal to your Next.js project
+
+Temporal doesn't prescribe folder structure; feel free to ignore or modify these instructions per your own needs.
 
 You can install Temporal's packages with a single dependency, then set up folders and files for your Workflow, Activity, and Worker code:
 
@@ -42,12 +41,7 @@ cd temporal
 touch src/worker.ts src/workflows.ts src/activities.ts
 ```
 
-<details>
-<summary>
-
 Configure TypeScript to compile from `temporal/src` to `temporal/lib` with a `tsconfig.json`.
-
-</summary>
 
 Sample `tsconfig.json` to get you started:
 
@@ -71,14 +65,8 @@ Sample `tsconfig.json` to get you started:
 }
 ```
 
-</details>
-
-<details>
-<summary>
-
 For convenience, you may want to set up some npm scripts to run the builds in your project root `package.json`.
 
-</summary>
 
 ```js
 // /package.json
@@ -103,7 +91,6 @@ In the above example we use `npm-run-all` and `nodemon` so that we are able to d
 
 in a single `npm run dev` command.
 
-</details>
 
 ## Write your first Workflow, Activity and Worker
 
@@ -285,7 +272,7 @@ As you move into production with your app, please review our docs on:
 
 You will also want to have a plan for **monitoring and scaling your Temporal Workers** that host and execute your Activity and Workflow code (separately from monitoring and scaling Temporal Server itself).
 
-## Next Steps
+## Conclusion
 
 At this point, you have a working full stack example of a Temporal Workflow running inside your Next.js app.
 

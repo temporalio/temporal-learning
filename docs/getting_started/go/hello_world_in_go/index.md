@@ -25,13 +25,23 @@ tags:
 
 :::
 
-## Overview
 
-This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](https://docs.temporal.io/go/run-your-first-app-tutorial) to get a taste of its value propositions.
+Our app will consist of four pieces:
 
-Before starting, make sure you have looked over the [tutorial prerequisites](https://docs.temporal.io/go/tutorial-prerequisites).
+1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
+2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
+3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
+4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
 
 All of the code in this tutorial is available in the [hello-world Go template repository](https://github.com/temporalio/hello-world-project-template-go).
+
+This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](/getting_started/go/first_program_in_go/index.md) to get a taste of its value propositions.
+
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+  - Ensure you're using Go version v1.18 or later.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/harbor-crane.png) Scaffold Go project
 
@@ -39,21 +49,17 @@ In a terminal, create a new project directory named _hello-world-project-templat
 
 From the root of your new project directory, initialize a new Go module. Make sure the module path (for example, `hello-world-project-template-go`) matches that of the directory in which you are creating the module. Then, add the Temporal Go SDK as a project dependency:
 
-```bash
+```command
 go mod init hello-world-project-template-go/app
+```
+
+```command
 go get go.temporal.io/sdk@latest
 ```
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/apps.png) "Hello World!" app
 
-Now we are ready to build our Temporal Workflow application. Our app will consist of four pieces:
 
-1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
-2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
-3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
-
-### Activity
+## Create an Activity
 
 First, let's define our Activity. Activities are meant to handle non-deterministic code that could result in unexpected results or errors. But for this tutorial all we are doing is taking a string, appending it to "Hello", and returning it back to the Workflow.
 
@@ -64,7 +70,7 @@ Create activity.go in the project root and add the following code:
 <!--SNIPSTART hello-world-project-template-go-activity-->
 <!--SNIPEND-->
 
-### Workflow
+## Create a  Workflow
 
 Next is our Workflow. Workflow functions are where you configure and organize the execution of Activity functions. Again, the Workflow function is defined like any other Go function. Our Workflow just calls `ComposeGreeting()` and returns the result.
 
@@ -73,14 +79,13 @@ Create workflow.go and add the following code:
 <!--SNIPSTART hello-world-project-template-go-workflow-->
 <!--SNIPEND-->
 
-### Task Queue
 
 [Task Queues](https://docs.temporal.io/concepts/what-is-a-task-queue) are how the Temporal server supplies information to Workers. When you start a Workflow, you tell the server which Task Queue the Workflow and/or Activities use as an information queue. We will configure our Worker to listen to the same Task Queue that our Workflow and Activities use. Since the Task Queue name is used by multiple things, let's create shared.go and define our Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-go-shared-->
 <!--SNIPEND-->
 
-### Worker
+## Define the Worker
 
 Our [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Worker is instructed to execute a specific function via information it pulls from the Task Queue. After it runs the code, it communicates the results back to the server.
 
@@ -89,11 +94,11 @@ Create worker/main.go and add the following code:
 <!--SNIPSTART hello-world-project-template-go-worker-->
 <!--SNIPEND-->
 
-### Workflow starter
+## Create a  Workflow starter
 
 There are two ways to start a Workflow, via the Temporal CLI or Temporal SDK. In this tutorial we use the SDK to start the Workflow which is how most Workflows are started in live environments. Additionally, the call to the Temporal server can be made [synchronously or asynchronously](https://docs.temporal.io/go/workflows/#how-to-start-a-workflow). Here we do it synchronously, so you will see the caller wait for the result of the Workflow.
 
-Create start/main.go and add the following code:
+Create `start/main.go` and add the following code:
 
 <!--SNIPSTART hello-world-project-template-go-start-workflow-->
 <!--SNIPEND-->
@@ -107,15 +112,19 @@ Let's add a simple unit test to our application to make sure things are working 
 
 Add the required `testify` packages to your `go.mod` file by running the following:
 
-```
+```command
 go get github.com/stretchr/testify/mock
+```
+```command
 go get github.com/stretchr/testify/require
+```
+```command
 go mod tidy
 ```
 
 Run this command from the project root to execute the unit tests:
 
-```
+```command
 go test
 ```
 

@@ -14,24 +14,6 @@ In this tutorial, we will tour all of the [Workflow APIs](https://docs.temporal.
 - The goal is to give you a more accessible introduction to these APIs by explaining them in context of a realistic application.
 - We also give an example of how you break down project requirements into Activities and Workflow logic.
 
-:::info Prerequisites
-
-We assume that you have gone through our [Hello World tutorial](https://docs.temporal.io/typescript/hello-world) and understood the basics of getting a Temporal TypeScript SDK project up and running.
-
-We don't assume knowledge of the Workflow APIs, but we do expect that you are reasonably comfortable with TypeScript/Node.js.
-
-:::
-
-We'll start out this project with the Hello World example, which you can always scaffold out with our Package Initializer:
-
-```bash
-npx @temporalio/create@latest subscription-tutorial --sample hello-world
-```
-
-**To skip straight to a fully working example, you can check our [Subscription Workflow repo](https://github.com/temporalio/subscription-workflow-project-template-typescript)** (it is slightly different from the code explained below, as this tutorial has been edited for readability and assumes you are comfortable with Node.js so the difference is immaterial).
-
-## Project requirements
-
 Our task is to write a Workflow for a limited time Subscription (eg a 36 month Phone plan) that satisfies these conditions:
 
 1. When the user signs up, **send a welcome email** and start a free trial for `TrialPeriod`.
@@ -49,7 +31,31 @@ Our task is to write a Workflow for a limited time Subscription (eg a 36 month P
 
 Of course, this all has to be fault tolerant, scalable to millions of customers, testable, maintainable, observable... yada yada, that's... why you're here!
 
-In future, we will extend this tutorial to look at what is needed for indefinitely long Subscriptions (Child Workflows and `continueAsNew`).
+::: Tip Skip ahead
+**To skip straight to a fully working example, you can check our [Subscription Workflow repo](https://github.com/temporalio/subscription-workflow-project-template-typescript)** (it is slightly different from the code explained below, as this tutorial has been edited for readability and assumes you are comfortable with Node.js so the difference is immaterial).
+:::
+
+## Prerequisites
+
+- [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
+  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
+  - Ensure you're using Node.js 14 or higher.
+- Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
+
+We don't assume knowledge of the Workflow APIs, but we do expect that you are reasonably comfortable with TypeScript/Node.js.
+
+## Create the project
+
+
+
+We'll start out this project with the Hello World example, which you can always scaffold out with our Package Initializer:
+
+```command
+npx @temporalio/create@latest subscription-tutorial --sample hello-world
+```
+
+
+
 
 ## Write the Activities
 
@@ -402,5 +408,5 @@ These are meant to be low level primitives, and it is entirely expected that you
 Two paths from here:
 
 - **Go Full Stack**: Integrate the manually-run Temporal Client scripts you have written here into an Express.js app, or serverless function.
-  Our [Next.js Tutorial](https://docs.temporal.io/docs/tutorials/typescript/nextjs/index.md) should help show you how to integrate this with a frontend app, and give indications on how to deploy.
+  Our [Next.js Tutorial](/tutorials/typescript/nextjs/index.md) should help show you how to integrate this with a frontend app, and give indications on how to deploy.
 - **Learn More**: Explore using [Child Workflows](https://docs.temporal.io/typescript/workflows#child-workflows) and [`continueAsNew`](https://docs.temporal.io/typescript/workflows#continueasnew) so that your subscriptions can keep running indefinitely.
