@@ -87,8 +87,10 @@ last_update:
 `
 if (!active) {
   str += `:::tip Course coming soon!
-We're still building this course. Please come back soon!
-:::`
+We're still building this course. The course outcomes and content are subject to change.
+:::
+
+`
 }
 
 str += course.description;
