@@ -9,6 +9,10 @@ title: Temporal "Hello World!" app in PHP
 description: Explore the components that make up a Temporal project in PHP. 
 ---
 
+:::info WORK IN PROGRESS
+This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+:::
+
 In this tutorial, you'll explore the different components that make up a Temporal project using the PHP SDK, including:
 
 - Temporal Client

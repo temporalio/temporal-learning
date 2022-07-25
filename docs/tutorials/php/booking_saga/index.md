@@ -9,7 +9,9 @@ title: Booking Saga Tutorial in PHP
 description: In this tutorial, we'll go over the different components that make up the Temporal Booking Saga code sample.
 ---
 
-## The Project
+:::info WORK IN PROGRESS
+This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+:::
 
 Imagine that we provide a service where people can book a trip. Booking a regular trip often consists of several steps:
 
