@@ -2,11 +2,13 @@
 title: "Courses"
 sidebar_position: 3
 hide_table_of_contents: true
+draft: false
 ---
 
-Go deeper with these self-paced online courses that provide in-depth hands-on learning experiences.
+Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
-import DocCardList from '@theme/DocCardList';
-import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
+:::tip Courses coming soon!
+We're in the process of building out our self-paced courses. 
+:::
 
-<DocCardList items={useCurrentSidebarCategory().items}/>
+

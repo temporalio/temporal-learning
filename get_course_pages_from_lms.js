@@ -74,6 +74,7 @@ title: ${course.name}
 sidebar_position: ${index}
 sidebar_label: ${course.name}
 public: ${publicCourse}
+draft: ${!active}
 tags: [courses]
 custom_edit_url: null
 hide_table_of_contents: true
@@ -93,7 +94,7 @@ We're still building this course. The course outcomes and content are subject to
 `
 }
 
-str += course.description;
+str += course.description + '\n\n';
 
 
 if (active) {
