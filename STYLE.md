@@ -31,6 +31,7 @@ Using an en dash (`&ndash;` or the character `–`) in a range of numbers is acc
 Even better is to use words such as _from_, _to_, and _through_.
 
 Be consistent.
+
 If you use an en dash in one range, use en dashes in all ranges.
 Do not mix words and en dashes (or hyphens, for that matter).
 
@@ -57,3 +58,25 @@ Sentence casing means that only the first letter of the first word and proper no
 
 - Correct: "How to get started with Temporal"
 - Incorrect: "How To Get Started With Temporal"
+
+### Use "You/your" or the Imperative instead of "We/our""
+
+Keep focus on the reader. 
+
+- Correct: In the next step you'll add the Workflow.
+- Incorrect: In the next step we'll add the Workflow.
+
+In most cases when providing direct instruction, the imperative works better.
+
+- Correct: Next, add the following code:
+- Incorrect: Next, we add the following code:
+
+### Focus on specific outcomes rather than "Learn to/Learn how to" language.
+
+Focus on the skill the learner will gain rather than the act of gaining the skill. Look for "learn to/learn how to" and remove them and you'll have tighter sentences.
+
+- Correct: In this tutorial you will build a Workflow..."
+- Incorrect: In this tutorial you will learn how to build a workflow...."
+
+
+
