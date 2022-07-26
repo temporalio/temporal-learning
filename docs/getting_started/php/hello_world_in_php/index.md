@@ -22,6 +22,10 @@ In this tutorial, you'll explore the different components that make up a Tempora
 All the code on this page is included in the [SimpleActivity](https://github.com/temporalio/samples-php/tree/master/app/src/SimpleActivity) sample,
 from our [Samples repository](https://github.com/temporalio/samples-php).
 
+## Downloading the project
+
+Clone the project repository and navigate to the project directory:
+
 ```command
 git clone git@github.com:temporalio/samples-php.git
 ```
@@ -30,7 +34,7 @@ git clone git@github.com:temporalio/samples-php.git
 cd samples-php
 ```
 
-Start the Temporal Server and application containers.**
+Start the Temporal Server and application containers:
 
 ```command
 docker-compose up

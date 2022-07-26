@@ -42,8 +42,6 @@ Of course, this all has to be fault tolerant, scalable to millions of customers,
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-  - Ensure you're using Node.js 14 or higher.
 - Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
 
 We don't assume knowledge of the Workflow APIs, but we do expect that you are reasonably comfortable with TypeScript/Node.js.
@@ -338,7 +336,7 @@ Knowledge check time - Write scripts with Temporal Clients for:
 
 You can always [refer to our repo](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/scripts/query-billinginfo.ts) if you get stuck.
 
-Note that Signal handlers cannot return data, and Query handlers must not mutate state. These restrictions and other notes on type safety are [prominently noted in their documentation](http://localhost:3000/docshttps://docs.temporal.io/typescript/workflows#additional-signals-and-queries-notes).
+Note that Signal handlers cannot return data, and Query handlers must not mutate state. These restrictions and other notes on type safety are [prominently noted in their documentation](https://docs.temporal.io/typescript/workflows#additional-signals-and-queries-notes).
 
 ## End Result
 

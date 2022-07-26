@@ -33,7 +33,6 @@ Therefore, we should accumulate a list of compensating actions to execute when f
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
 - Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) to  understood the basics of getting a Temporal PHP SDK project up and running. 
 
 ## Review the Saga Architecture Pattern
