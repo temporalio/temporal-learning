@@ -14,11 +14,6 @@ $ yarn
 
 ### Local Development
 
-Get code snippets from repositories with
-
-```
-$ npx snipsync
-```
 
 Run the local server with:
 
@@ -40,6 +35,23 @@ node get_course_pages_from_lms.js
 
 to pull course pages from the LMS. 
 
+### Getting snippets
+
+Get code snippets from repositories with Snipsync, which will pull in code and inject it into the right locations:
+
+```
+$ yarn getsnips
+```
+
+Be sure to run
+
+```
+$ yarn clearsnips
+```
+
+to remove snippets prior to making a commit.
+
+
 ### Committing changes
 
 Build the site first to ensure all links are correct and everything compiles:
@@ -48,42 +60,38 @@ Build the site first to ensure all links are correct and everything compiles:
 $ yarn build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+This command fetches snippets with Snipsync and then generates static content into the `build` directory and can be served using any static contents hosting service.
 
-Test everything:
+Test everything with the local server:
 
 ```
-$ yarn run serve
+$ yarn serve
 ```
 
 Remove snippets:
 
 ```
-$ npx snipsync --clear
+$ yarn clearsnips
 ```
+
+Review your work for style and tone using the style guide in `STYLE.md`.
 
 Then make your commits to a new branch.
 
-
 ### Theme customizations
 
-The default docusaurus theme doesn't let us put author and date info at the top of the article. We swizzled the `DocItem` component and placed
-the items into the header:
-
-```
-src/theme/
-└── DocItem
-    ├── index.d.ts
-    ├── index.js
-    └── styles.module.css
-```
+The default docusaurus theme doesn't let us put author and date info at the top of the article. We swizzled the `DocItem/Content` component and placed
+the items into the header.
 
 To update this, swizzle the followiung components and **extract**, rather than **wrap** them:
 
-* DocItem
-* DocItemFooter
+* DocItem/Content
+* DocItem/Footer
 
-Copy the relevant bits out and test.
+Do a `diff` on  the relevant bits and test. Then remove the `DocItem/Footer` node.
+
+
+
 
 
 
