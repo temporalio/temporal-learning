@@ -20,7 +20,7 @@ tags:
 - **Level:** ⭐ Temporal beginner
 - **Time:** ⏱️ ~20 minutes
 - **Goals:** 🙌
-  - Learn how to set up, build, and test a Temporal application project from scratch using the [Go SDK](https://github.com/temporalio/sdk-go).
+  - Set up, build, and test a Temporal application project from scratch using the [Go SDK](https://github.com/temporalio/sdk-go).
   - Become more familiar with core concepts and the application structure.
 
 :::
@@ -33,15 +33,16 @@ Our app will consist of four pieces:
 3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
 4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
 
-All of the code in this tutorial is available in the [hello-world Go template repository](https://github.com/temporalio/hello-world-project-template-go).
+All of the code in this tutorial is available in the [hello-world Go template repository](https://github.com/temporalio/hello-world-project-template-go) repository.
 
-This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](/getting_started/go/first_program_in_go/index.md) to get a taste of its value propositions.
 
 ## Prerequisites
 
+Before starting this tutorial:
+
 - [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-  - Ensure you're using Go version v1.18 or later.
+
+This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](/getting_started/go/first_program_in_go/index.md) to get a taste of its value propositions.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/harbor-crane.png) Scaffold Go project
 
@@ -96,7 +97,7 @@ Create worker/main.go and add the following code:
 
 ## Create a  Workflow starter
 
-There are two ways to start a Workflow, via the Temporal CLI or Temporal SDK. In this tutorial we use the SDK to start the Workflow which is how most Workflows are started in live environments. Additionally, the call to the Temporal server can be made [synchronously or asynchronously](https://docs.temporal.io/go/workflows/#how-to-start-a-workflow). Here we do it synchronously, so you will see the caller wait for the result of the Workflow.
+There are two ways to start a Workflow, via the Temporal CLI or Temporal SDK. In this tutorial we use the SDK to start the Workflow which is how most Workflows are started in live environments. Additionally, the call to the Temporal server can be made [synchronously or asynchronously](https://docs.temporal.io/application-development/foundations/?lang=go#start-workflow-execution). Here we do it synchronously, so you will see the caller wait for the result of the Workflow.
 
 Create `start/main.go` and add the following code:
 

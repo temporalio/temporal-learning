@@ -32,19 +32,24 @@ The [Temporal server](https://github.com/temporalio/temporal) and a language spe
 Let's run our first Temporal Workflow application and forever change the way you approach application development.
 
 
+## Prerequisites
+
+Before starting this tutorial:
+
+- [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
+- Ensure you have Git installed to clone the project.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
 
-Before starting, make sure you have looked over the [tutorial prerequisites](https://docs.temporal.io/java/tutorial-prerequisites) setup.
 
-This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's [creating a repository from a template guide](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
+This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's [creating a repository from a template guide](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
 
 - [Github source](https://github.com/temporalio/money-transfer-project-template-java)
 - [Zip download](https://github.com/temporalio/money-transfer-project-template-java/archive/master.zip)
 
 To build the project, either open it with [IntelliJ](https://www.jetbrains.com/idea/) (the project will build automatically) or make sure you have [Gradle](https://gradle.org/install/) installed and run the Gradle build command from the root of the project:
 
-```
+```command
 ./gradlew build
 ```
 
@@ -81,7 +86,7 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 
 Run the InitiateMoneyTransfer class within IntelliJ or from the project root using the following command:
 
-```bash
+```command
 ./gradlew initiateTransfer
 ```
 
@@ -92,8 +97,11 @@ If you get `Connection refused: /127.0.0.1:7233` error, make sure the [Temporal 
 
 If you get `ALREADY_EXISTS: Workflow execution is already running. WorkflowId: money-transfer-workflow, RunId:<...>`, stop your Temporal docker-compose process [started earlier](https://docs.temporal.io/clusters/quick-install) and recreate Temporal docker-compose containers using:
 
-```bash
+```command
 docker-compose rm -f
+```
+
+```command
 docker-compose up
 ```
 
@@ -128,7 +136,7 @@ Task Queues are defined by a simple string name.
 
 Run the TransferMoneyWorker class from IntelliJ, or run the following command from the project root in separate terminal:
 
-```
+```command
 ./gradlew startWorker
 ```
 
@@ -138,7 +146,7 @@ The Worker communicates the event back to the server which then causes the serve
 The Worker then grabs each of the Activity Tasks in their respective order from the Task Queue and executes each of the corresponding Activities.
 You will get a console output showing that both activity tasks were executed by the Worker:
 
-```
+```bash
 Withdrawing $18.740000 from account 001-001. ReferenceId: 2ab46ccb-3791-4dd2-84e6-62319eb710a2
 
 Depositing $18.740000 into account 002-002. ReferenceId: 2ab46ccb-3791-4dd2-84e6-62319eb710a2

@@ -26,10 +26,7 @@ Let's dive in!
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-  - Ensure you're using Node.js 14 or higher.
 - Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
-
 
 ## Project Requirements
 

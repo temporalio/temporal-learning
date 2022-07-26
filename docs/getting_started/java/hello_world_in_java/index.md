@@ -22,18 +22,29 @@ tags:
 - **Level:** ⭐ Temporal beginner
 - **Time:** ⏱️ ~20 minutes
 - **Goals:** 🙌
-  - Learn how to set up, build, and test a Temporal application project from scratch using the [Java SDK](https://github.com/temporalio/java-sdk).
+  - Set up, build, and test a Temporal application project from scratch using the [Java SDK](https://github.com/temporalio/java-sdk).
   - Become more familiar with core concepts and the application structure.
 
 :::
 
-## Overview
 
-This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](https://docs.temporal.io/java/run-your-first-app-tutorial) to get a taste of its value propositions.
+Our app will consist of four pieces:
 
-Before starting, make sure you have looked over the [tutorial prerequisites](https://docs.temporal.io/java/tutorial-prerequisites).
+1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
+2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
+3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
+4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
 
-All of the code in this tutorial is available in the [Java "Hello World!" application template](https://github.com/temporalio/hello-world-project-template-java).
+All of the code in this tutorial is available in the [Java "Hello World!" application template](https://github.com/temporalio/hello-world-project-template-java) repository.
+
+
+## Prerequisites
+
+Before starting this tutorial:
+
+- [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
+
+This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](/getting_started/java/first_program_in_java/index.md) to get a taste of its value propositions.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/harbor-crane.png) Scaffold Gradle
 
@@ -66,16 +77,12 @@ To limit the logging output from the SDK, within src/main/resources/ create a lo
 
 If you are editing the files in IntelliJ, a "refresh" icon will appear on the screen. Click it to load the changes. Gradle will rebuild with the dependencies. Otherwise you can run `./gradlew build` from the root of the project again.
 
-All of the files for our application will be created in src/mainhttps://docs.temporal.io/java/helloworldapp/. However, if you have selected Gradle through IntelliJ instead of scaffolding it from the terminal, you may have to create the directory helloworldapp by yourself. If you have scaffolded Gradle through the terminal, Gradle will have generated a default App.java class in that location. Remove it before proceeding.
+All of the files for our application will be created in `src/main/java/helloworldapp/`. However, if you have selected Gradle through IntelliJ instead of scaffolding it from the terminal, you may have to create the directory `helloworldapp` by yourself. If you have scaffolded Gradle through the terminal, Gradle will have generated a default `App.java` class in that location. Remove it before proceeding.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/apps.png) "Hello World!" app
 
-Now we are ready to build our Temporal Workflow application. Our app will consist of four pieces:
+Now we are ready to build our Temporal Workflow application. 
 
-1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
-2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
-3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
 
 ### Activity
 
@@ -134,7 +141,7 @@ Create InitiateHelloWorld.java and use the SDK to define the start of the Workfl
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/check.png) Test the app
 
-Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in src/testhttps://docs.temporal.io/java/helloworldapp. If you don't see the helloworldapp-directory, go ahead and create it yourself. Gradle might have generated a default AppTest.java in that location. If AppTest.java is there, remove that file. Create a new class HelloWorldWorkflowTest.java that contains the following code:
+Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `src/test/java/helloworldapp`. If you don't see the `helloworldapp` directory, go ahead and create it yourself. Gradle might have generated a default AppTest.java in that location. If AppTest.java is there, remove that file. Create a new class HelloWorldWorkflowTest.java that contains the following code:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-test-->
 <!--SNIPEND-->
@@ -143,7 +150,7 @@ Let's add a simple unit test to our application to make sure things are working 
 
 From the root of the project, run this command:
 
-```
+```command
 ./gradlew test
 ```
 
@@ -155,7 +162,7 @@ Look for "BUILD SUCCESSFUL" in the output to confirm.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/running.png) Run the app
 
-To run the app we need to start the Workflow and the Worker. You can start them in any order. Make sure you have the [Temporal dev Cluster running](https://docs.temporal.io/application-development-guide#run-a-dev-cluster) in a terminal and have the [Temporal Web UI](localhost:8080) open in your browser
+To run the app we need to start the Workflow and the Worker. You can start them in any order. Make sure you have the Temporal development cluster running in a terminal and have the [Temporal Web UI](localhost:8080) open in your browser:
 
 If you are using the terminal, add tasks to the build.gradle file so that you can run the main methods from there.
 

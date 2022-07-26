@@ -5,7 +5,7 @@ description: In this tutorial you will run your first Temporal app using the Go 
 keywords: [go, golang, temporal, sdk, tutorial]
 tags: [Go, SDK]
 last_update:
-  date: 2021-10-01
+  date: 2022-10-01
 title: Run your first Temporal application with the Go SDK
 ---
 
@@ -30,20 +30,24 @@ The Temporal server and a language specific SDK, in this case the [Go SDK](https
 In this tutorial you'll run your first Temporal Workflow application and forever change the way you approach application development.
 
 
+## Prerequisites
+
+Before starting this tutorial:
+
+- [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
+- Ensure you have Git installed to clone the project.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
 
-- [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-  - Ensure you're using Go version v1.18 or later.
-- Ensure you have Git installed to clone the project.
-
-This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's ["Creating a Repository from a Template" guide](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
+This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's ["Creating a Repository from a Template" guide](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
 
 - To use the [Github project](https://github.com/temporalio/money-transfer-project-template-go), execute these commands in a new Terminal window:
 
-  ```bash
+  ```command
   git clone https://github.com/temporalio/money-transfer-project-template-go
+  ```
+
+  ```command
   cd money-transfer-project-template-go
   ```
 
@@ -53,7 +57,7 @@ If you convert the template to a new repo, make sure you use the same repository
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/workflow.png) Application overview
 
-This project template mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/go/workflows) which orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/activities).
+This project template mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/application-development/foundations/?lang=go#develop-workflows) which orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=go#develop-activities).
 
 To run the application you will do the following:
 

@@ -29,7 +29,6 @@ Of course, this all has to be fault-tolerant, scalable to millions of customers,
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
 - Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) and understood the basics of getting a Temporal PHP SDK project up and running. 
 
 ## Create the Workflow

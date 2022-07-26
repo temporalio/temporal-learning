@@ -18,8 +18,6 @@ In this tutorial, you'll explore the different components that make up a Tempora
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
-  - Ensure the Temporal Server is running (using [Docker is the fastest way](https://docs.temporal.io/application-development-guide/#run-a-dev-cluster))
-  - Ensure you're using Node.js 14 or higher.
 
 ### Define a Workflow
 
