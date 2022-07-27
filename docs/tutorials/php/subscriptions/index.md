@@ -5,7 +5,7 @@ keywords: [PHP, temporal, sdk, tutorial, subscriptions, signals]
 tags: [PHP, SDK]
 last_update:
   date: 2021-10-01
-title: Subscription Walkthrough in PHP
+title: Subscription walkthrough with Temporal in PHP
 description: In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
 ---
 

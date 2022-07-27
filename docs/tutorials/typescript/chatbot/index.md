@@ -5,7 +5,7 @@ keywords: [TypeScript, temporal, sdk, tutorial]
 tags: [TypeScript, SDK]
 last_update:
   date: 2021-10-01
-title: Choose Your Own Adventure Bot Walkthrough in TypeScript
+title: Choose Your Own Adventure Bot walkthrough in TypeScript
 description: In this tutorial, we'll integrate all the knowledge gained from Core and Production APIs in an end-to-end, complete demo application.
 ---
 
