@@ -1,5 +1,5 @@
 ---
-title: "PHP Tutorials"
+title: "PHP tutorials"
 sidebar_position: 4
 keywords: [PHP,tutorial,temporal,workflows,laravel,roadrunner]
 description: "Build Temporal applications with these PHP tutorials"

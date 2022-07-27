@@ -81,10 +81,10 @@ const config = {
         srcDark: "img/temporal-logo.svg",
       },
       items: [
-        {to: '/getting_started', label: 'Getting Started', position: 'left'},
+        {to: '/getting_started', label: 'Getting started', position: 'left'},
         {to: '/courses', label: 'Courses', position: 'left'},
-        {to: '/tutorials', label: 'Tutorials', position: 'left'},
-        {to: '/examples', label: 'Example Applications', position: 'left'},
+        {to: '/tutorials', label: 'Project-based tutorials', position: 'left'},
+        {to: '/examples', label: 'Example applications', position: 'left'},
         {
           href: 'https://docs.temporal.io',
           label: 'Docs',

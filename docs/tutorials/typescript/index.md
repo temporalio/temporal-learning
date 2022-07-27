@@ -1,5 +1,5 @@
 ---
-title: "TypeScript Tutorials"
+title: "TypeScript tutorials"
 sidebar_position: 2
 keywords: [TypeScript,tutorial,temporal,workflows,nextjs,express,node.js,javascript]
 description: "Build Temporal applications with these TypeScript tutorials"

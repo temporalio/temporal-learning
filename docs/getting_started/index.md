@@ -1,5 +1,5 @@
 ---
-title: "Getting Started with Temporal"
+title: "Getting started with Temporal"
 sidebar_position: 2
 hide_table_of_contents: true
 pagination_prev: null
