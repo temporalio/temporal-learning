@@ -224,6 +224,8 @@ const config = {
            * Whether to display the last date the doc was updated.
            */
           showLastUpdateTime: true,
+          // // below remark plugin disabled until we can figure out why it is not transpiling to ESNext properly - swyx
+          // // original PR https://github.com/temporalio/documentation/pull/496/files
           remarkPlugins: [
             [
               () =>
@@ -250,7 +252,6 @@ const config = {
                   tsconfig: path.join(
                     __dirname,
                     "docs",
-                    "typescript",
                     "tsconfig.json"
                   ),
                   externalResolutions: {},
