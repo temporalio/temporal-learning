@@ -11,13 +11,13 @@ tags: [Go, SDK]
 
 The application maps each of the following business processes to its own Workflow Definition:
 
-- [Main Background Check](main-background-check)
-- [Candidate Acceptance](candidate-acceptance)
-- [SSN Trace](ssn-trace)
-- [Federal Criminal Search](federal-criminal-search)
-- [State Criminal Search](state-criminal-search)
-- [Motor Vehicle Search](motor-vehicle-search)
-- [Employment Verification](employment-verification)
+- [Main Background Check](main-background-check.md)
+- [Candidate Acceptance](candidate-acceptance.md)
+- [SSN Trace](ssn-trace.md)
+- [Federal Criminal Search](federal-criminal.md)
+- [State Criminal Search](state-criminal-search.md)
+- [Motor Vehicle Search](motor-vehicle-search.md)
+- [Employment Verification](employment-verification.md)
 
 ## Why use Child Workflows for Searches instead of Activities?
 
@@ -112,7 +112,7 @@ Our Background Check actually provides the same object in response to a Query as
 Temporal automatically provides the result of the function if the Workflow Execution is in a closed state when the Query is processed by the Temporal Cluster.
 
 This means that we can use a Query to get the state of a Background Check at any time.
-We can see this implemented in the [Background Check Workflow Definition](main-background-check) where the Query Handler is set.
+We can see this implemented in the [Background Check Workflow Definition](main-background-check.md) where the Query Handler is set.
 
 We also use a Query to get the details of the Candidate from the Employer Verification Workflow Execution when the Researcher uses the Web UI to load and verify the Candidate information.
 
