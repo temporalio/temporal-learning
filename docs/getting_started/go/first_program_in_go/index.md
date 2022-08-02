@@ -25,6 +25,8 @@ import { ResponsivePlayer } from '@site/src/components'
 
 :::
 
+## Introduction
+
 The Temporal server and a language specific SDK, in this case the [Go SDK](https://github.com/temporalio/go-sdk), provide a comprehensive solution to the complexities which arise from modern application development. You can think of Temporal as a sort of "cure all" for the pains you experience as a developer when trying to build reliable applications. Temporal provides reliability primitives right out of the box, such as seamless and fault tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
 
 In this tutorial you'll run your first Temporal Workflow application and forever change the way you approach application development.
@@ -53,7 +55,7 @@ This tutorial uses a fully working template application which can be downloaded 
 
 - [Zip download](https://github.com/temporalio/money-transfer-project-template-go/archive/main.zip)
 
-If you convert the template to a new repo, make sure you use the same repository name in your own Github account so that you don't have to make changes to the Go module name when you clone it. Once you have it, open your terminal in the project's root directory and you are ready to go.
+If you convert the template to a new repository, make sure you use the same repository name in your own Github account so that you don't have to make changes to the Go module name when you clone it. Once you have it, open your terminal in the project's root directory and you are ready to go.
 
 ## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/workflow.png) Application overview
 
@@ -84,11 +86,11 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
 <!--SNIPEND-->
 
-### Running the Workflow
+### Run the Workflow
 
 Make sure the [Temporal server](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run start/main.go from the project root using the following command:
 
-```bash
+```command
 go run start/main.go
 ```
 
@@ -138,11 +140,11 @@ Task Queues are defined by a simple string name:
 <!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
 <!--SNIPEND-->
 
-### Running the Worker
+### Run the Worker
 
 Run worker/main.go from the project root using the following command:
 
-```bash
+```command
 go run worker/main.go
 ```
 
@@ -184,7 +186,7 @@ You've just ran a Temporal Workflow application!
 
 You just got a taste of one of Temporal's amazing value propositions: visibility into the Workflow and the status of the Workers executing the code. Let's explore another key value proposition, maintaining the state of a Workflow, even in the face of failures. To demonstrate this you will simulate some failures for your Workflow. Make sure your Worker is stopped before proceeding by pressing `CTRL+C`.
 
-### Recover from a Server crash
+### Recover from a server crash
 
 Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can easily test this by following these steps (again, make sure your Worker is stopped so your Workflow doesn't finish):
 
@@ -208,7 +210,7 @@ Open the `activity.go` file and switch out the comments on the `return` statemen
 
 Save your changes and run the Worker.
 
-```bash
+```command
 go run worker/main.go
 ```
 
@@ -270,11 +272,12 @@ Depositing $54.990002 into account 002-002. ReferenceId: aacea6de-c461-4883-a57b
 
 Then restart the worker:
 
-```bash
+```command
 go run worker/main.go
 ```
 
-On the next scheduled attempt, the Worker will pick up right where the Workflow was failing and successfully execute the newly compiled `Deposit()` Activity function, completing the Workflow. Basically, you have just fixed a bug "on the fly" with out losing the state of the Workflow:
+On the next scheduled attempt, the Worker will pick up right where the Workflow was failing and successfully execute the newly compiled `Deposit()` Activity function, completing the Workflow. 
+
 
 ```bash
 2022/05/18 12:17:52 INFO  No logger configured for temporal client. Created default one.
@@ -287,18 +290,22 @@ Visit the [UI](http://localhost:8080) again and you'll see the workflow has comp
 
 ![Both workflows completed successfully](images/completed_workflows.png)
 
-You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
+You have just fixed a bug "on the fly" without losing the state of the Workflow.
+
+## Conclusion
 
 <img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/boost.png" />
 
-## Review
+You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 
-Let's do a quick review to make sure you remember some of the more important pieces.
+### Review
+
+Answer the following questions to see if you remember some of the more important concepts from this tutorial:
 
 <details>
 <summary>
 
-![One](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/one.png) &nbsp;&nbsp; **What are four of Temporal's value propositions that you learned about in this tutorial?**
+**What are four of Temporal's value propositions that you learned about in this tutorial?**
 
 </summary>
 
@@ -312,7 +319,7 @@ Let's do a quick review to make sure you remember some of the more important pie
 <details>
 <summary>
 
-![Two](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/two.png) &nbsp;&nbsp; **How do you pair up Workflow initiation with a Worker that executes it?**
+**How do you pair up Workflow initiation with a Worker that executes it?**
 
 </summary>
 
@@ -323,7 +330,7 @@ Use the same Task Queue.
 <details>
 <summary>
 
-![Three](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/three.png) &nbsp;&nbsp; **What do you have to do if you make changes to Activity code for a Workflow that is running?**
+**What do you have to do if you make changes to Activity code for a Workflow that is running?**
 
 </summary>
 

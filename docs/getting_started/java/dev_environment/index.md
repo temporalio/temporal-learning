@@ -12,11 +12,11 @@ title: Set up a local development environment for Temporal and Java
 To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.
 
 
-## Java JDK
+## Get the Java JDK
 
 Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 14.0.1. You can check which version you have installed using this command:
 
-```
+```command
 java -version
 ```
 
@@ -25,7 +25,7 @@ java -version
 You can use Gradle or Maven for your projects, although we recommend Gradle.
 
 
-### Configuring Gradle
+### Configure Gradle
 
 [Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
 
@@ -42,7 +42,7 @@ implementation 'io.temporal:temporal-testing:1.12.0'
 ```
 
 
-### Configuring Maven
+### Configure Maven
 
 Apache Maven is another popular Java build tool. 
 
@@ -66,7 +66,7 @@ Download and install the Temporal development cluster locally using Docker Compo
 
 You must have [Docker](https://docs.docker.com/engine/install) and [Docker Compose](https://docs.docker.com/compose/install) installed.
 
-Then clone the [temporalio/docker-compose](https://github.com/temporalio/docker-compose) repository and run `docker-compose up` from the root of that repo:
+Then clone the [temporalio/docker-compose](https://github.com/temporalio/docker-compose) repository and run `docker-compose up` from the root of that repository:
 
 ```command
 git clone https://github.com/temporalio/docker-compose.git

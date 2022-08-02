@@ -2,7 +2,7 @@
 title: "Courses"
 sidebar_position: 3
 hide_table_of_contents: true
-draft: false
+custom_edit_url: null
 ---
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.

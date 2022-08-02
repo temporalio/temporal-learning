@@ -1,17 +1,19 @@
 ---
 id: booking-saga-tutorial
 sidebar_position: 1
-keywords: [PHP, temporal, sdk, tutorial, saga pattern, transactions]
+keywords: [PHP, temporal, sdk, tutorial, saga pattern, transactions, compensations]
 tags: [PHP, SDK, Saga]
 last_update:
   date: 2021-10-01
-title: Booking Saga Tutorial in PHP
-description: In this tutorial, we'll go over the different components that make up the Temporal Booking Saga code sample.
+title: Create a trip booking system with the Saga pattern and Temporal in PHP
+description: In this tutorial, you'll explore the different components that make up the Temporal Booking Saga code sample.
 ---
 
 :::info WORK IN PROGRESS
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
 :::
+
+## Introduction
 
 Imagine that we provide a service where people can book a trip. Booking a regular trip often consists of several steps:
 
@@ -19,23 +21,16 @@ Imagine that we provide a service where people can book a trip. Booking a regula
 - Booking a hotel.
 - Booking a flight.
 
-The customer either wants everything to be booked or nothing at all.
-There is no sense in booking a hotel without booking a plane.
-Also, imagine that each booking step in this transaction is represented via a dedicated service or microservice.
+The customer either wants everything to be booked or nothing at all.  There is no sense in booking a hotel without booking a plane.  Also, imagine that each booking step in this transaction is represented via a dedicated service or microservice.
 
-Thus, we may consider the whole thing, all these steps as a **distributed transaction** that crosses multiple services and databases.
-To ensure a successful booking, all three microservices must complete the individual local transactions.
-If any of the steps fail, all the completed preceding transactions should be reversed accordingly.
-We cannot simply "delete" the prior transactions or "go back in time" - Particularly where money and bookings are concerned, it is important to have an immutable record of attempts and failures.
-
-Therefore, we should accumulate a list of compensating actions to execute when failure occurs.
+All of these steps together make up a  **distributed transaction** that crosses multiple services and databases.  To ensure a successful booking, all three microservices must complete the individual local transactions.  If any of the steps fail, all the completed preceding transactions should be reversed accordingly.  We cannot simply "delete" the prior transactions or "go back in time" - Particularly where money and bookings are concerned, it is important to have an immutable record of attempts and failures. Therefore, we should accumulate a list of compensating actions to execute when failure occurs.
 
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
 - Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) to  understood the basics of getting a Temporal PHP SDK project up and running. 
 
-## Review the Saga Architecture Pattern
+## Review the Saga architecture pattern
 
 Managing distributed transactions can be difficult to do well. Sagas are one of the most [tried and tested](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf) design patterns for long running work:
 
@@ -51,7 +46,7 @@ It means that handling all the rollbacks and running compensation transactions a
 
 The above diagram shows how to visualize the Saga pattern for the previously discussed online trip booking scenario.
 
-## Workflow Implementation
+## Workflow implementation
 
 The first thing we need to do is to write a business process - the high-level flow of the trip booking. Let's call
 it `TripBookingWorkflow`:
@@ -91,7 +86,7 @@ invoking the necessary compensating transactions. Temporal plays the role of suc
 
 :::
 
-### Writing the Saga
+### Write the Saga
 
 ```php
 class TripBookingWorkflow implements TripBookingWorkflowInterface
@@ -138,7 +133,7 @@ public function bookTrip(string $name)
 }
 ```
 
-### Adding Compensations
+### Add compensations
 
 In the snippet above, we sequentially reserve a car, a hotel, and a flight. Each step here returns a corresponding ID.
 Later we will use this ID to make compensations:
@@ -172,7 +167,7 @@ public function bookTrip(string $name)
 To add a compensation, we use `Saga::addCompensation()` method and provide a callable that should be used, once we want
 to roll back a distributed transaction.
 
-### Running the compensation strategy
+### Run the compensation strategy
 
 Having that, we can finish our saga and fill `catch` block:
 

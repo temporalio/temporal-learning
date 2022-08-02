@@ -25,8 +25,11 @@ tags:
 
 :::
 
+### Introduction
 
-Our app will consist of four pieces:
+In this tutorial you will build your first Temporal from scratch using the Go SDK
+
+The app will consist of four pieces:
 
 1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
 2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
@@ -58,8 +61,6 @@ go mod init hello-world-project-template-go/app
 go get go.temporal.io/sdk@latest
 ```
 
-
-
 ## Create an Activity
 
 First, let's define our Activity. Activities are meant to handle non-deterministic code that could result in unexpected results or errors. But for this tutorial all we are doing is taking a string, appending it to "Hello", and returning it back to the Workflow.
@@ -71,7 +72,7 @@ Create activity.go in the project root and add the following code:
 <!--SNIPSTART hello-world-project-template-go-activity-->
 <!--SNIPEND-->
 
-## Create a  Workflow
+## Create a Workflow
 
 Next is our Workflow. Workflow functions are where you configure and organize the execution of Activity functions. Again, the Workflow function is defined like any other Go function. Our Workflow just calls `ComposeGreeting()` and returns the result.
 
@@ -95,7 +96,7 @@ Create worker/main.go and add the following code:
 <!--SNIPSTART hello-world-project-template-go-worker-->
 <!--SNIPEND-->
 
-## Create a  Workflow starter
+## Create a Workflow starter
 
 There are two ways to start a Workflow, via the Temporal CLI or Temporal SDK. In this tutorial we use the SDK to start the Workflow which is how most Workflows are started in live environments. Additionally, the call to the Temporal server can be made [synchronously or asynchronously](https://docs.temporal.io/application-development/foundations/?lang=go#start-workflow-execution). Here we do it synchronously, so you will see the caller wait for the result of the Workflow.
 
@@ -135,35 +136,60 @@ To run the app we need to start the Workflow and the Worker. You can start them 
 
 To start the Worker run this command from the project root:
 
-```
+```command
 go run worker/main.go
 ```
 
 To start the Workflow run this command from the project root:
 
-```
+```command
 go run start/main.go
 ```
 
 <img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/confetti.png" />
 
-**Congratulations** you have successfully built a Temporal application from scratch!
+You have successfully built a Temporal application from scratch.
 
-## Review
+## Conclusion
 
-Great work! You now know how to build a Temporal Workflow application using the Go SDK. Let's do a quick review to make sure you remember some of the more important pieces.
+You now know how to build a Temporal Workflow application using the Go SDK.
 
-![One](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/one.png) &nbsp;&nbsp; **What are the minimum four pieces of a Temporal Workflow application?**
+### Review
+
+Answer the following questions to see if you remember some of the more important concepts from this tutorial:
+
+<details>
+<summary>
+
+**What are the minimum four pieces of a Temporal Workflow application?**
+
+</summary>
 
 1. An Activity function.
 2. A Workflow function.
 3. A Worker to host the Activity and Workflow code.
 4. A frontend to start the Workflow.
 
-![Two](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/two.png) &nbsp;&nbsp; **How does the Temporal server get information to the Worker?**
+</details>
+
+<details>
+<summary>
+
+**How does the Temporal server get information to the Worker?**
+
+</summary>
 
 It adds the information to a Task Queue.
 
-![Three](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/three.png) &nbsp;&nbsp; **True or false, Temporal Activity and Workflow functions are just normal Go functions?**
+</details>
+
+<details>
+<summary>
+
+**True or false, Temporal Activity and Workflow functions are just normal Go functions?**
+
+</summary>
 
 True
+
+</details>

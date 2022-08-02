@@ -79,6 +79,7 @@ const config = {
         alt: "Temporal logo",
         src: "img/temporal-logo-dark.svg",
         srcDark: "img/temporal-logo.svg",
+        href: "https://temporal.io",
       },
       items: [
         {to: '/getting_started', label: 'Getting started', position: 'left'},

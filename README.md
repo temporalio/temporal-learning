@@ -1,6 +1,8 @@
-# Temporal Learning
+# learn.temporal.io
 
-Web site for <learn.temporal.io>
+This is the code and content for https://learn.temporal.io
+
+
 
 This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 

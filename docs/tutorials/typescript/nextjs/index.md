@@ -13,6 +13,8 @@ description: Explore how Temporal integrates into an existing Next.js applicatio
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
 :::
 
+## Introduction
+
 In this tutorial, you'll explore how Temporal integrates into an **existing Next.js application** using Next.js API routes.  This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
 
 This tutorial is written for a reasonably experienced TypeScript/Next.js developer.  Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
