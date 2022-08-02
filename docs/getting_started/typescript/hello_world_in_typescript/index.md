@@ -13,6 +13,8 @@ description: Explore the components that make up the Hello World program in Type
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
 :::
 
+## Introduction
+
 In this tutorial, you'll explore the different components that make up a Temporal project using the TypeScript SDK.  The SDK steers developers to write  Workflows and Activities in TypeScript but vanilla JS is also supported.
 
 ## Prerequisites
@@ -83,12 +85,12 @@ There is no official test suite for Workflows and Activities yet.
 - You can test Workflows by running them with a [WorkflowClient](https://typescript.temporal.io/api/classes/client.workflowclient).
 - Check [the SDK's own tests](https://github.com/temporalio/sdk-typescript/tree/52f67499860526cd180912797dc3e6d7fa4fc78f/packages/test/src) for more examples.
 
-## Next Steps
+## Conclusion
 
 You should now be familiar with the Hello World project, which is the main way we encourage scaffolding out new projects.
 
-Two paths from here:
+Dive deeper into developing with TypeScript with the following tutorials:
 
-- **Go Full Stack**: Integrate the manually-run Temporal Client scripts you have into an Express.js app, or serverless function.
-  Our [Next.js Tutorial](/tutorials/typescript/nextjs/index.md) should help show you how to integrate with the frontend, and give indications on how to deploy.
-- **Learn More**: Explore using Signals, Queries and Timers in our [Subscription Workflow tutorial](/tutorials/typescript/subscriptions/index.md).
+- Explore using Signals, Queries and Timers in our [Subscription Workflow tutorial](/tutorials/typescript/subscriptions/index.md).
+- Use Temporal in a larger Node.js app in [Integrate Temporal into an existing Next.js application
+](/tutorials/typescript/nextjs/index.md).

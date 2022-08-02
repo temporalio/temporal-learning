@@ -13,6 +13,8 @@ description: In this tutorial you'll build a realistic monthly subscription paym
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
 :::
 
+## Introduction
+
 In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
 
 Our task is to write a Workflow for a limited time Subscription (eg a 12-month Phone plan) that satisfies the following conditions:
@@ -333,12 +335,11 @@ Register this Activity and add it to your workflow.
 
 ## Conclusion
 
-That's it, we have created a complete subscription workflow that can:
+You have created a complete subscription workflow that can:
 
 - handle trial periods
 - charge monthly fee every N days
 - handle subscription cancellations
-
 
 
 With Temporal, you can write a relatively complex business process with fewer lines of code, and the Workflow code provides you with a high-level view of the business process without digging into deeper details.

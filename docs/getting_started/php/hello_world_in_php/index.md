@@ -40,8 +40,8 @@ Start the Temporal Server and application containers:
 docker-compose up
 ```
 
-This starts Temporal Server with the [docker-compose.yml](https://github.com/temporalio/samples-php/blob/master/docker-compose.yml) that ships with the `samples-php` repo.
-When it's live, you can access [Temporal Web](https://docs.temporal.io/web-ui) at http://localhost:8080 although you won't see any Workflows run yet.
+This starts Temporal Server with the [docker-compose.yml](https://github.com/temporalio/samples-php/blob/master/docker-compose.yml) that ships with the `samples-php` repository.
+When it's live, you can access [Temporal Web](https://docs.temporal.io/web-ui) at `http://localhost:8080` although you won't see any Workflows run yet.
 
 ## Run the application
 
@@ -79,7 +79,7 @@ Now let's look at the workflow.
 
 ## Workflow interface and implementation
 
-With the PHP SDK, yyou define an interface and an implementation.
+With the PHP SDK, you define an interface and an implementation.
 
 First, let's take a look at the workflow interface:
 
@@ -166,10 +166,7 @@ foreach ($declarations->getActivityTypes() as $activityType) {
 $factory->run();
 ```
 
-You may consider this script as a bridge between your PHP application and Temporal.
-Temporal needs to know about our activity and workflow implementations.
-Thus, they need to be registered within the worker with `registerWorkflowTypes()` and `registerActivity()`.
-The first one registers workflows and accepts a list of classes:
+You may consider this script as a bridge between your PHP application and Temporal.  Temporal needs to know about our activity and workflow implementations. Thus, they need to be registered within the worker with `registerWorkflowTypes()` and `registerActivity()`.  The first one registers workflows and accepts a list of classes:
 
 ```php
 $worker->registerWorkflowTypes(HelloWorldWorkflow::class);
@@ -181,8 +178,7 @@ The second one registers activities and accepts a list of activity classes, e.g.
 $worker->registerActivity(MyActivity::class);
 ```
 
-On the last line of the _worker script_ we start the worker.
-From now, it starts communication with Temporal: receiving and sending data.
+On the last line of the _worker script_ we start the worker.  From now, it starts communication with Temporal: receiving and sending data.
 
 
 ## Conclusion

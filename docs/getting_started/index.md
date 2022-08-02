@@ -19,7 +19,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 ## Run your first program
 
-Download and run a small application and explore how Temooral executes Workflows and Activities, and how you can recover from failures.
+Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
 * [Go](go/first_program_in_go/index.md)
 * [Java](java/first_program_in_java/index.md)

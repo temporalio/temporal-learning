@@ -30,7 +30,7 @@ Download and install the Temporal development cluster locally using Docker Compo
 
 You must have [Docker](https://docs.docker.com/engine/install) and [Docker Compose](https://docs.docker.com/compose/install) installed.
 
-Then clone the [temporalio/docker-compose](https://github.com/temporalio/docker-compose) repository and run `docker-compose up` from the root of that repo:
+Then clone the [temporalio/docker-compose](https://github.com/temporalio/docker-compose) repository and run `docker-compose up` from the root of that repository:
 
 ```command
 git clone https://github.com/temporalio/docker-compose.git

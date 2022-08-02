@@ -78,5 +78,72 @@ Focus on the skill the learner will gain rather than the act of gaining the skil
 - Correct: In this tutorial you will build a Workflow..."
 - Incorrect: In this tutorial you will learn how to build a workflow...."
 
+## Tutorial structure
+
+Tutorials should follow this structure:
+
+### Introduction
+
+Explain the problem, explain the solution, and explicitly state what the learner will do.
+
+### Prerequisites
+
+List other tutorials or documentation the learner needs to have done prior to this tutorial.
+
+### Section headings
+
+Level 2 headings that start with a verb. Sentence case, but capitalize all Temporal terms.
+
+Examples:
+
+  * Create the Workflow
+  * Define the Activity
+  * Test the application
+
+### Conclusion
+
+Wrap up the tutorial. Recap what the learner accomplished and provide next steps for them.
+
+Optionally add a review activity.
 
 
+## Formatting
+
+### Function/class/method/object/variable names
+
+Use code font for functions, classes, methods, objects, and other variable names.
+
+### Code blocks
+
+Code should be stored in repositories and linked through Snipsync whenever possible. Otherwise, place code in code fences and specify the programming language so it's properly highlighted.
+
+### CLI commands
+
+Use the `command` language and do **not** include a prompt character:
+
+```command
+go mod tidy
+```
+
+The command will be displayed with the prompt character.
+
+### Terminal output
+
+Display terminal output with an unlabeled code block. 
+
+**Do not** use screenshots to show terminal output.
+
+### Screen shots
+
+Screen shots are encouraged, especially when showing parts of the UI.
+
+Follow these guidelines for your images:
+
+* Use PNGs for screenshots.
+* Use JPGs for photographs.
+* Avoid showing any sensitive data like keys, customer usernames, IP addresses, payment information, addresses, etc.  Replace them before taking the screen shot or obscure them in the screenshot.
+* Avoid showing dates when possible. Dates can make content look outdated quickly.
+* Crop your screenshots as tight to the subject as possible so learners focus only on the components that matter.
+* Include descriptive alternative text. Avoid using "screenshot of" or "image of" in the alternative text, as screen readers will identify these as images anyway.
+
+    
