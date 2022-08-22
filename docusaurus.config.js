@@ -82,7 +82,7 @@ const config = {
         href: "https://temporal.io",
       },
       items: [
-        {to: '/getting_started', label: 'Getting started', position: 'left'},
+        {to: '/getting_started', label: 'Get started', position: 'left'},
         {to: '/courses', label: 'Courses', position: 'left'},
         {to: '/tutorials', label: 'Project-based tutorials', position: 'left'},
         {to: '/examples', label: 'Example applications', position: 'left'},

@@ -18,10 +18,10 @@ export default function Intro() {
     <div className="row">
       <div className="col col--6">
         <h2><Link to="getting_started" className="hover:underline" >
-          <a className="font-normal">Getting started with Temporal</a>
+          <a className="font-normal">Get started with Temporal</a>
         </Link></h2>
         <p>
-          New to Temporal? Start your journey by running an existing Temporal app, and then and build your first app from scratch using our SDKs.
+          New to Temporal? Start your journey by setting up your development environment, running an existing Temporal app, and then and build your first app from scratch using our SDKs.
         </p>
       </div>
       <div className="col col--6">
