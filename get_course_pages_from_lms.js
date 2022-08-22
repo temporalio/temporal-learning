@@ -87,8 +87,11 @@ last_update:
 
 `
 if (!active) {
-  str += `:::tip Course coming soon!
+  str += `:::info Course coming soon!
 We're still building this course. The course outcomes and content are subject to change.
+
+<a className="button button--primary" href="https://pages.temporal.io/get-updates-education">Get notified when we launch this course!</a>
+
 :::
 
 `
@@ -100,7 +103,8 @@ str += course.description + '\n\n';
 if (active) {
   str += ` <a className="button button--primary" href="${url}">Go to Course</a> `;
 }else{
-  str += "Course coming soon.";
+  str += "This course is coming soon.\n\n"
+  str += ` <a className="button button--primary" href="https://pages.temporal.io/get-updates-education">Get notified when we launch this course!</a> `;
 }
 
   return str;

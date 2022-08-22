@@ -51,7 +51,8 @@ html[data-theme="light"] {
   --ifm-footer-background-color: #ffffff;
   --ifm-navbar-background-color: #ffffff;
   /* --ifm-color: var(--ifm-color-primary-dark); */
-  --ifm-link-color: #111827;
+  --ifm-link-color: hsl(221, 39%, 11%);
+  --button-background-hover-color: hsl(221, 29%, 60%);
   --ifm-link-hover-color: var(--ifm-color-primary);
 
   /* --ifm-menu-color-active: var(--ifm-color-primary);
@@ -337,6 +338,12 @@ main.max-w-screen-lg {
   font-display: swap;
 }
 
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
 h1,
 h2,
 h3,
@@ -363,9 +370,9 @@ h1 {
 }
 
 .h2-landing {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 2.5rem;
-  letter-spacing: -2px;
+  letter-spacing: -0.5px;
   margin-top: 2.5rem;
 }
 
@@ -423,14 +430,14 @@ h1 {
   }
 }
 
-.logos {
-  /* margin-bottom: 2.5rem; */
-}
-
 .list-logo {
-  padding-left: 1rem;
+  --ifm-list-item-margin: 0;
+  padding: 0.5rem;
   display: flex;
   align-items: center;
+}
+.list-logo a {
+  display: flex;
 }
 
 .landing-card-list li {
@@ -485,9 +492,6 @@ h1 {
   margin-bottom: 0;
 }
 
-.code-logo {
-}
-
 .header-link {
   text-decoration: none;
 }
@@ -506,8 +510,8 @@ h1 {
   color: #6d28d9;
   background-color: #ede9fe;
   border-radius: 0.125rem;
-  margin: 0rem 1rem;
   padding: 0 0.5rem;
+  width: fit-content;
 }
 
 .badge-blue {
@@ -517,8 +521,34 @@ h1 {
   color: #1d4ed8;
   background-color: #dbeafe;
   border-radius: 0.125rem;
-  margin: 0rem 1rem;
   padding: 0 0.5rem;
+  width: fit-content;
+}
+
+.badge-header {
+  flex-direction: column;
+  display: flex;
+}
+
+@media (min-width: 640px) {
+  .badge-header {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .badge-purple {
+    margin: 0rem 1rem 0rem 0rem;
+  }
+
+  .badge-blue {
+    margin: 2.5rem 1rem 0rem 1rem;
+  }
+}
+
+@media (min-width: 710px) {
+  .badge-purple {
+    margin: 2.5rem 1rem 0rem 1rem;
+  }
 }
 
 .aside {
@@ -560,6 +590,36 @@ h1 {
 .aside-link {
   color: #2563eb;
 }
+/* Leadership page css */
+
+.main-subhead {
+  font-size: 24px;
+  position: relative;
+  top: -1.05%;
+  height: 0;
+}
+
+.leadership-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 15px;
+  text-align: center;
+}
+.leadership-name {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+.leadership-image {
+  max-width: 150px;
+}
+.leadership-list {
+  list-style-type: none;
+}
+.leadership-list-item {
+  margin-top: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
 .menu__link,
 .navbar__link,
 .dropdown__link {
@@ -572,8 +632,68 @@ h1 {
   text-decoration: none;
 }
 
-/* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
-pre.prism-code.language-command > code::before {
-  content: "$ ";
-  font-weight: bolder;
+.DocSearch-Hit-title,
+.DocSearch-Hit-icon,
+.DocSearch-Hit-action {
+  --docsearch-hit-active-color: black;
 }
+
+.announcementBar_node_modules-\@docusaurus-theme-classic-lib-next-theme-AnnouncementBar-styles-module {
+  --docusaurus-announcement-bar-height: 4rem;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.close {
+  color: #ffffff;
+}
+
+.app-dev-landing-page-lang-logo {
+  max-width: 100px;
+}
+
+.app-dev-landing-page-lang-logos {
+  display: flex;
+  flex-direction: row;
+}
+.app-dev-landing-page-lang-logos img {
+  max-width: 100px;
+  margin-right: 40px;
+}
+
+@media only screen and (min-width: 1400px) {
+  .navbar__items--right {
+    width: 35vw;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+
+  .DocSearch {
+    width: 30vw;
+  }
+}
+
+.DocSearch-Container {
+  min-width: 100vw;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+a.button { text-decoration: none; }
+
+html[data-theme="light"] a.button--primary {
+  background-color: var(--ifm-link-color);
+  border: 1px solid var(--ifm-link-color);
+}
+
+html[data-theme="light"] a.button--primary:hover {
+  background-color: var(--button-background-hover-color);
+  border: 1px solid var(--ifm-link-color);
+}
+ /* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
+ pre.prism-code.language-command > code::before {
+   content: "$ ";
+   font-weight: bolder;
+ }
