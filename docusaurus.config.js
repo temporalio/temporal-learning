@@ -74,7 +74,7 @@ const config = {
       },
     },
     navbar: {
-      title: 'Learn Temporal',
+      hideOnScroll: false,
       logo: {
         alt: "Temporal logo",
         src: "img/temporal-logo-dark.svg",
@@ -82,6 +82,7 @@ const config = {
         href: "https://temporal.io",
       },
       items: [
+        {to: '/', label: 'Home', position: 'left', activeBasePath: "none"},
         {to: '/getting_started', label: 'Get started', position: 'left'},
         {to: '/courses', label: 'Courses', position: 'left'},
         {to: '/tutorials', label: 'Project-based tutorials', position: 'left'},
@@ -91,21 +92,6 @@ const config = {
           label: 'Docs',
           position: 'right',
         },
-        {
-          href: 'https://docs.temporal.io/blog',
-          label: 'Blog',
-          position: 'right',
-        },
-        {
-          href: "https://temporal.io/use-cases",
-          label: 'Use cases',
-          position: 'right',
-        },
-        {
-          href: "https://temporal.io/community",
-          label: 'Community',
-          position: 'right',
-        }
       ],
     },
     footer: {
@@ -137,6 +123,10 @@ const config = {
         {
           items: [
             {
+              label: "Join our Slack group",
+              href: "https://temporal.io/slack",
+            },
+            {
               label: "Meetups",
               href: "https://lu.ma/temporal",
             },
@@ -145,7 +135,7 @@ const config = {
               href: "https://temporal.io/community#workshops",
             },
             {
-              label: "Support Forum",
+              label: "Community Forum",
               href: "https://community.temporal.io/",
             },
           ],
@@ -155,10 +145,6 @@ const config = {
             {
               label: "Use Cases",
               href: "https://temporal.io/use-cases",
-            },
-            {
-              label: "Case Studies",
-              href: "https://docs.temporal.io/blog/tags/case-study/",
             },
             {
               label: "Blog",
