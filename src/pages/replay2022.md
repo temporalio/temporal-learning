@@ -4,7 +4,7 @@ Thanks for attending the Temporal 101 workshop at Replay 2022.
 
 Here are the resources you'll need for the course:
 
-* [Slides](https://github.com/tomwheeler/temporal-101-go-code/raw/main/slides.pdf)
+* [Slides](https://github.com/tomwheeler/temporal-101-go-code/raw/main/slides.pdf) (PDF download)
 * [GitHub repository](https://github.com/tomwheeler/temporal-101-go-code)
 * [GitPod exercise environment](https://gitpod.io/#https://github.com/tomwheeler/temporal-101-go-code)
 * Sli.do link for part 1 of the workshop: https://app.sli.do/event/qhKQAtwUNSESTWg76VH7dn
