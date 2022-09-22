@@ -5,6 +5,7 @@ origins:
     repo: hello-world-project-template-java
   - owner: temporalio
     repo: money-transfer-project-template-go
+    ref: ae1fef1e016d1f06475fc538cb7a19d7e1880c5d
   - owner: temporalio
     repo: hello-world-project-template-go
   - owner: temporalio
