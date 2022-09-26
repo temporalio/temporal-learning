@@ -5,7 +5,7 @@ description: In this tutorial, you'll run your first Temporal app using the Go S
 keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors]
 tags: [Go, SDK]
 last_update:
-  date: 2022-09-22
+  date: 2022-09-26
 title: Run your first Temporal application with the Go SDK
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
 ---
@@ -15,7 +15,7 @@ code_repo: https://github.com/temporalio/money-transfer-project-template-go
 :::note Tutorial information
 
 - **Level**: ⭐ Temporal beginner
-- **Time**: ⏱️ ~20 minutes
+- **Time**: ⏱️ ~10 minutes
 - **Goals**: 🙌
   - Explore Temporal's core terminology and concepts.
   - Complete several runs of a Temporal Workflow application using a Temporal Cluster and the [Go SDK](https://github.com/temporalio/go-sdk).
