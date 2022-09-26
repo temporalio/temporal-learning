@@ -178,7 +178,7 @@ Now it's time to check out one of the unique value propositions Temporal offers:
 
 Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow execution.
 
-Visit the [Temporal Web UI](http://localhost:8080), where you can see your Workflow listed.
+Visit the [Temporal Web UI](http://localhost:8080), where you will see your Workflow listed.
 
 ![The workflow running](images/workflow_running.png)
 
@@ -215,7 +215,7 @@ In this project, the file `worker/main.go` contains the code for the Worker. Lik
 
 Note that the Worker listens to the same Task Queue that the Workflow and Activity Tasks are sent to.
 
-Task Queues are defined by a string name. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, the Task Queue name is defined in the `shared.go` file:
+Task Queues are defined by a string name. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in the `shared.go` file:
 
 <!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
 <!--SNIPEND-->
@@ -256,7 +256,7 @@ Switch back to the terminal window where your `start/main.go` program is running
 2022/09/15 21:35:43 Transfer complete (transaction IDs: W1779185060, D4129841576)
 ```
 
-Check the Temporal Web UI again. You can see one Worker registered where previously there was none, and the Workflow status shows that it is completed:
+Check the Temporal Web UI again. You will see one Worker registered where previously there was none, and the Workflow status shows that it is completed:
 
 ![There is now one worker and the Workflow is complete](images/completed_workflow.png)
 
