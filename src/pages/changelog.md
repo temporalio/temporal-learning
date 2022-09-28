@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-09-26
+
+* Updated the "First Program in Go" tutorial to use new code and add new explanations.
+
 ## 2022-08-22
 
 * Migrated the Go eCommerce series from the blog to the tutorials section.
