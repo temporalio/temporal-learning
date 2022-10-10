@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-10-09
+
+* Temporal 101 with Go course released to the public.
+
 ## 2022-09-26
 
 * Updated the "First Program in Go" tutorial to use new code and add new explanations.
