@@ -40,7 +40,7 @@ const config = {
     announcementBar: {
       id: 'in_progress',
       content:
-        'We\'re in the process of revising our tutorials.Thanks for your patience as we update things. ',
+        'We\'ve launched our first online course! Dive into <a target="_blank" rel="noopener noreferrer" href="/courses/temporal_101">Temporal 101 with Go</a> today!',
       backgroundColor: '#141414',
       textColor: '#f9fafb',
       isCloseable: true,

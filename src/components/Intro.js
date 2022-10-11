@@ -17,36 +17,28 @@ export default function Intro() {
 
     <div className="row">
       <div className="col col--6">
-        <h2><Link to="getting_started" className="hover:underline" >
-          <a className="font-normal">Get started with Temporal</a>
-        </Link></h2>
+        <h2><Link to="getting_started" className="hover:underline" >Get started with Temporal</Link></h2>
         <p>
           New to Temporal? Start your journey by setting up your development environment, running an existing Temporal app, and then and build your first app from scratch using our SDKs.
         </p>
       </div>
       <div className="col col--6">
-        <h2><Link to="courses" className="hover:underline" >
-          <a className="font-normal">Courses</a>
-        </Link></h2>
+        <h2><Link to="courses" className="hover:underline" >Courses</Link></h2>
         <p>
-          Learn and apply Temporal concepts in our self-paced hands-on courses (coming soon.)
+          Learn and apply Temporal concepts in our self-paced hands-on courses.
         </p>
       </div>
     </div>
 
     <div className="row">
       <div className="col col--6">
-        <h2><Link to="tutorials" className="hover:underline" >
-          <a className="font-normal">Project-based tutorials</a>
-        </Link></h2>
+        <h2><Link to="tutorials" className="hover:underline" > Project-based tutorials</Link></h2>
         <p>
           Take what you've learned and build some real-world applications that use Temporal's features in hands-on tutorials.
         </p>
       </div>
       <div className="col col--6">
-        <h2><Link to="examples" className="hover:underline" >
-          <a className="font-normal">Example applications</a>
-        </Link></h2>
+        <h2><Link to="examples" className="hover:underline" >Example applications</Link></h2>
         <p>
           Explore example applications that use Temporal and gain a clearer understanding of how everything fits together in a larger, more complex application.
         </p>
