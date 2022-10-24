@@ -7,7 +7,6 @@ origins:
     repo: money-transfer-project-template-go
   - owner: temporalio
     repo: hello-world-project-template-go
-    ref: a5e8660ae3b6e1ec867875a13824c1d5671ad26e
   - owner: temporalio
     repo: subscription-workflow-project-template-go
   - owner: temporalio
