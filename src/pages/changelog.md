@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-10-24
+
+* Updated the "Build a Temporal "Hello World!" app from scratch in Go" tutorial.
+
 ## 2022-10-09
 
 * Temporal 101 with Go course released to the public.
