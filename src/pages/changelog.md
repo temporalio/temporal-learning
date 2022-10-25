@@ -1,5 +1,10 @@
 # Changelog
 
+## 2022-10-24
+
+* Updated the "Build a Temporal "Hello World!" app from scratch in Go" tutorial.
+* Upgrade Docusaurus to 2.10.0
+
 ## 2022-10-09
 
 * Temporal 101 with Go course released to the public.
