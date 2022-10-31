@@ -19,6 +19,9 @@ Install Node.js via your package manager by following [the official Node.js inst
 
 ## Set up the Temporal TypeScript SDK
 
+:::caution Node.js Version
+Use Node.js version 14 or 16 because the Temporal TypeScript SDK does not yet work with Node.js 18. This is a known issue we're working to fix. 
+:::
 
 You can create a new project with the Temporal SDK:.
 
