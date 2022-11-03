@@ -317,3 +317,19 @@ html[data-theme="light"] a.button--primary:hover {
    content: "$ ";
    font-weight: bolder;
  }
+
+@media only screen and (min-width: 1400px) {
+  .navbar__items--right {
+    width: 35vw;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+
+  .DocSearch {
+    width: 30vw;
+  }
+}
+
+.DocSearch-Container {
+  min-width: 100vw;
+}
