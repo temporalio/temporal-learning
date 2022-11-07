@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-11-02
+
+* Added unified search. Now readers can search both the documentation and learning resources from both the docs and learn sites.
+
 ## 2022-10-24
 
 * Updated the "Build a Temporal "Hello World!" app from scratch in Go" tutorial.
