@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 keywords: [typescript, javascript, js, temporal, sdk, development environment]
 tags: [TypeScript, SDK, development environment]
 last_update:
-  date: 2022-10-31
+  date: 2022-11-07
 title: Set up a local development environment for Temporal and TypeScript
 ---
 
