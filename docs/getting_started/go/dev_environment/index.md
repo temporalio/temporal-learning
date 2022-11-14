@@ -7,6 +7,7 @@ tags: [Go, SDK, development environment]
 last_update:
   date: 2021-10-01
 title: Set up a local development environment for Temporal and Go
+image: /img/temporal-logo-twitter-card.png
 ---
 
 To follow the Go SDK tutorials we recommend that you have the following environments set up.

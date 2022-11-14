@@ -4,6 +4,7 @@ sidebar_position: 2
 hide_table_of_contents: true
 pagination_prev: null
 pagination_next: null
+image: /img/temporal-logo-twitter-card.png
 ---
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.

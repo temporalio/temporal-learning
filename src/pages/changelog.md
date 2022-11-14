@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-11-14
+
+* Updates to "Run Your First Temporal App with Go" tutorial to make the application more robust.
+
 ## 2022-11-08
 
 * Resolved issue with unified search not resolving offsite URLs properly.

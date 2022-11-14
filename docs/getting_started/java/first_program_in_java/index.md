@@ -7,6 +7,7 @@ tags: [Java, SDK]
 last_update:
   date: 2021-10-01
 title: Run your first Temporal application with the Java SDK
+image: /img/temporal-logo-twitter-card.png
 ---
 
 import { ResponsivePlayer } from '@site/src/components'

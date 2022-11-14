@@ -9,6 +9,7 @@ keywords: [go, golang, temporal, sdk, tutorial, workflows, api, rest, ecommerce]
 last_update:
   author: Valeri Karpov
   date: 2021-09-14T00:00:00Z
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## Introduction

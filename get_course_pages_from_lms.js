@@ -80,6 +80,7 @@ custom_edit_url: null
 hide_table_of_contents: true
 last_update:
   date: ${date}
+image: /img/temporal-logo-twitter-card.png
 ---
 
 <!-- Generated ${today} -->
