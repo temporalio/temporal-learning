@@ -7,6 +7,7 @@ last_update:
   date: 2021-10-01
 title: Subscription walkthrough with Temporal in PHP
 description: In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
+image: /img/temporal-logo-twitter-card.png
 ---
 
 :::info WORK IN PROGRESS

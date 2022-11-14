@@ -4,6 +4,7 @@ sidebar_position: 2
 keywords: [go, golang, temporal, sdk, tutorial]
 title: How to use the Background Check application
 description: Make sure you have Docker Desktop installed, clone the repo, and run `./start`.
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## What do I need to have installed to run the application?

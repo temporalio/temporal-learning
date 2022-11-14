@@ -7,6 +7,7 @@ keywords: [Java, JRE, Temporal, IntelliJ, Gradle, development environment]
 last_update:
   date: 2021-10-01
 title: Set up a local development environment for Temporal and Java
+image: /img/temporal-logo-twitter-card.png
 ---
 
 To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.

@@ -3,6 +3,7 @@ title: "Go tutorials"
 sidebar_position: 1
 keywords: [Go,tutorial,temporal,workflows]
 description: "Build Temporal applications with these Go tutorials"
+image: /img/temporal-logo-twitter-card.png
 ---
 
 Go is an open source programming language that offers built-in concurrency and a robust standard library. It's popular for building microservices and command line tools.

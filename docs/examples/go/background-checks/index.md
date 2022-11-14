@@ -4,6 +4,7 @@ sidebar_position: 1
 keywords: [go, golang, temporal, sdk, tutorial]
 title: Background Check Application in Go
 description: The goal of this project is to teach you, the developer, how to think about building Temporal Applications that have Human-Driven Long-Running Workflows using a Temporal SDK, by leading you through a comprehensive implementation within the context of a real-life use case.
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## What is the goal of this project?

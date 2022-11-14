@@ -9,6 +9,7 @@ custom_edit_url: null
 hide_table_of_contents: true
 last_update:
   date: 2022-10-09
+image: /img/temporal-logo-twitter-card.png
 ---
 
 <!-- Generated Oct 09 2022 -->

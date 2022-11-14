@@ -7,6 +7,7 @@ last_update:
   date: 2021-10-01
 title: Temporal "Hello World!" app in TypeScript
 description: Explore the components that make up the Hello World program in TypeScript..
+image: /img/temporal-logo-twitter-card.png
 ---
 
 :::info WORK IN PROGRESS

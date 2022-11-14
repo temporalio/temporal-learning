@@ -9,6 +9,7 @@ slug: build-an-ecommerce-app-with-temporal-part-1
 last_update:
   date: 2021-05-18
   author: Valeri Karpov
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## Introduction

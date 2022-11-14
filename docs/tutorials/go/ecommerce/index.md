@@ -5,6 +5,7 @@ keywords: [Go,tutorial,temporal,workflows, sending email,testing]
 description: "Four-part tutorial series on building an eCommerce application with Temporal and Go."
 last_update:
   date: 2021-09-14
+image: /img/temporal-logo-twitter-card.png
 ---
 
 In this four-part series, you'll explore how you can use Temporal to develop an eCommerce application with Temporal Workflows. You'll write the basic application, send reminder emails, write tests, and develop a REST API.
