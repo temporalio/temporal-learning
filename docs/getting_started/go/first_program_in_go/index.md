@@ -5,7 +5,7 @@ description: In this tutorial, you'll run your first Temporal app using the Go S
 keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, compensating transactions]
 tags: [Go, SDK]
 last_update:
-  date: 2022-11-14
+  date: 2022-11-15
 title: Run your first Temporal application with the Go SDK
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
 image: /img/temporal-logo-twitter-card.png
@@ -107,7 +107,7 @@ In this case, the `MoneyTransfer` function accepts an `input` variable of the ty
 
 It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
-Notice that the `PaymentDetails` includes a `ReferenceID` field. Some APIs let you send a unique key along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once.
+Notice that the `PaymentDetails` includes a `ReferenceID` field. Some APIs let you send a unique "idempotency key" along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once. 
 
 The Workflow Definition calls the Activities `Withdraw` and `Deposit` to handle the money transfers. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in Go by defining Go functions that receive a `context` and some input values.
 
@@ -127,12 +127,12 @@ The `Deposit` Activity function looks almost identical to the `Withdraw` functio
 
 There's a commented line in this Activity definition that you'll use later in the tutorial to simulate an error in the Activity.
 
-If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to be put back in the original account, so there's a third Activity called `ReverseWithdraw` that does exactly that:
+If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to be put back in the original account, so there's a third Activity called `Refund` that does exactly that:
 
-<!--SNIPSTART money-transfer-project-template-go-activity-reverse-deposit-->
+<!--SNIPSTART money-transfer-project-template-go-activity-refund-->
 <!--SNIPEND-->
 
-This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination.
+This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `Deposit` Activity to refund the money, using a separate activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `Deposit` Activity, the `Refund` won't be affected. You'll see this scenario shortly.
 
 :::tip Why you use Activities
 
@@ -144,7 +144,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 :::
 
-Temporal Workflows can automatically retry Activities that fail. At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
+Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 [workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/5055033/workflow.go)
 ```go
@@ -165,7 +165,9 @@ By default, Temporal retries failed Activities forever, but you can specify some
 In this Workflow, each Activity uses the same options, but you could specifiy different options for each Activity.
 
 :::caution This is a simplified example.
-Transferring money is a tricky subject, and this tutorial's example doesn't cover all of the possible issues that can go wrong. This simplified example doesn't cover all of the possible errors that could occur with a transfer. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. This example is designed to show some core features of Temporal and is not intended for production use. 
+Transferring money is a tricky subject, and this tutorial's example doesn't cover all of the possible issues that can go wrong. This simplified example doesn't cover all of the possible errors that could occur with a transfer. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
+
+This example is designed to show some core features of Temporal and is not intended for production use. 
 :::
 
 When you "start" a Workflow you are telling the Temporal Server, "Track the state of the Workflow with this function signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
@@ -177,7 +179,6 @@ Let's see that in action.
 You have two ways to start a Workflow with Temporal, either via the SDK or via the [tctl command-line tool](https://docs.temporal.io/tctl). In this tutorial you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the workflow:
-
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
 <!--SNIPEND-->

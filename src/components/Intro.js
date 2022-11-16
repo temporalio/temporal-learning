@@ -19,13 +19,13 @@ export default function Intro() {
       <div className="col col--6">
         <h2><Link to="getting_started" className="hover:underline" >Get started with Temporal</Link></h2>
         <p>
-          New to Temporal? Start your journey by setting up your development environment, running an existing Temporal app, and then and build your first app from scratch using our SDKs.
+          New to Temporal? Start your journey here by setting up your development environment, running an existing Temporal app, and then building your first app from scratch using our SDKs.
         </p>
       </div>
       <div className="col col--6">
         <h2><Link to="courses" className="hover:underline" >Courses</Link></h2>
         <p>
-          Learn and apply Temporal concepts in our self-paced hands-on courses.
+          Learn and apply Temporal concepts in our free self-paced hands-on courses.
         </p>
       </div>
     </div>
