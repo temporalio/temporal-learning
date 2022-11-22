@@ -18,9 +18,9 @@ In [Part 1](./part1.md) and [Part 2](./part2.md), you built out a shopping cart 
 
 Using Workflows and Activities, you can easily build features that would be tricky in a traditional RESTful API, like sending an email reminder when a user hasn't touched their cart in a while.
 
-Temporal Workflows do more than make working with time easy, they also make your code easier to test.  Temporal provides testing utilities that help you stub out external services and programmatically advance time, which lets you [unit test your Workflows](https://docs.temporal.io/blog/descript-case-study/#to-code-or-not-to-code).
+Temporal Workflows do more than make working with time easy, they also make your code easier to test.  Temporal provides testing utilities that help you stub out external services and programmatically advance time, which lets you unit test your Workflows. For an example, take a look at how [Descript uses Temporal](https://temporal.io/case-studies/descript-case-study).
 
-In this blog post, you'll how to use Temporal's testing utilities to write fast unit tests for the shopping cart from Part 1 and Part 2.
+In this blog post, you'll explore how to use Temporal's testing utilities to write fast unit tests for the shopping cart from Part 1 and Part 2.
 
 ## 30 Minute Video Version
 

@@ -20,8 +20,7 @@ A Human-Driven Long-Running Workflow is a Temporal Workflow Execution that could
 Checkr launched in 2014 and has since become the leading tech company in the Background Check industry.
 Checkr’s intention is to make Background Checks fast, easy, and efficient for countries around the world.
 
-A [Temporal case study from October 2020](https://docs.temporal.io/blog/how-temporal-simplified-checkr-workflows) touches on the demand for automated Background Checks due to a surge in gig economy employment.
-The case study explores the interesting problem space that presented itself as demand scaled.
+A [Temporal case study from October 2020](https://temporal.io/case-studies/how-temporal-simplified-checkr-workflows) touches on the demand for automated Background Checks due to a surge in gig economy employment. The case study explores the interesting problem space that presented itself as demand scaled.
 
 Depending on the type of employment, the needs of a Background Checks for any given Candidate can vary.
 Often a single Background Check results in a dozen individual Searches for information.
@@ -106,18 +105,18 @@ This project introduces the following concepts:
 
 The following development "how-tos" provide a foundation for the development patterns expressed in this project:
 
-- [How to develop a Workflow Definition in Go](https://docs.temporal.io/go/how-to-develop-a-workflow-definition-in-go)
-- [How to spawn a Workflow Execution in Go](https://docs.temporal.io/go/how-to-spawn-a-workflow-execution-in-go)
+- [How to develop a Workflow Definition in Go](https://docs.temporal.io/application-development/foundations?lang=go#develop-workflows)
+- [How to spawn a Workflow Execution in Go](https://docs.temporal.io/application-development/foundations?lang=go#start-workflow-execution)
 - [How to set StartWorkflowOptions in Go](https://docs.temporal.io/go/startworkflowoptions-reference)
-- [How to get the result of a Workflow Execution in Go](https://docs.temporal.io/go/how-to-get-the-result-of-a-workflow-execution-in-go)
+- [How to get the result of a Workflow Execution in Go](https://docs.temporal.io/application-development/foundations?lang=go#get-workflow-results)
 - [How to send a Cancellation Request to a Workflow Execution in Go](https://docs.temporal.io/go/how-to-request-cancellation-of-a-workflow-execution-in-go)
-- [How to use Signals in Go](https://docs.temporal.io/go/how-to-use-signals-in-go)
-- [How to send a Query to a Workflow Execution in Go](#)
-- [How to handle a Query in a Workflow in Go](#)
-- [How to spawn a Child Workflow Execution in Go](https://docs.temporal.io/go/how-to-spawn-a-child-workflow-execution-in-go)
-- [How to spawn an Activity Execution in Go](https://docs.temporal.io/go/how-to-spawn-an-activity-execution-in-go)
-- [How to develop an Activity Definition in Go](https://docs.temporal.io/go/how-to-develop-an-activity-definition-in-go)
+- [How to use Signals in Go](https://docs.temporal.io/application-development/features?lang=go#signals)
+- [How to send a Query to a Workflow Execution in Go](https://docs.temporal.io/application-development/features?lang=go#send-query)
+- [How to handle a Query in a Workflow in Go](https://docs.temporal.io/application-development/features?lang=go#handle-query)
+- [How to spawn a Child Workflow Execution in Go](https://docs.temporal.io/application-development/features?lang=go#child-workflows)
+- [How to spawn an Activity Execution in Go](https://docs.temporal.io/application-development/foundations?lang=go#activity-execution)
+- [How to develop an Activity Definition in Go](https://docs.temporal.io/application-development/foundations?lang=go#develop-activities)
 - [How to set ActivityOptions in Go](https://docs.temporal.io/go/activityoptions-reference)
-- [How to develop a Worker Program in Go](https://docs.temporal.io/go/how-to-develop-a-worker-program-in-go)
-- [How to provide a custom Data Converter in Go](#)
+- [How to run a Worker Process in Go](https://docs.temporal.io/application-development/foundations?lang=go#run-worker-processes)
+- [How to provide a custom Data Converter in Go](https://docs.temporal.io/go/how-to-create-a-custom-data-converter-in-go)
 - [How to execute a Side Effect in Go](https://docs.temporal.io/go/how-to-execute-a-side-effect-in-go)
