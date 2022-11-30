@@ -1,0 +1,105 @@
+// Run 'gradle checkUpdates' to find out which dependencies have newer versions
+
+plugins {
+    id 'org.cadixdev.licenser' version '0.6.1'
+    id "net.ltgt.errorprone" version "3.0.1"
+    id 'com.diffplug.spotless' version '6.12.0' apply false
+}
+
+apply plugin: 'java'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.14.1"))
+    implementation(platform("io.opentelemetry:opentelemetry-bom:1.20.1"))
+    implementation(platform("org.junit:junit-bom:5.9.1"))
+
+    implementation "io.temporal:temporal-sdk:1.17.0"
+    implementation "io.temporal:temporal-opentracing:1.17.0"
+
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
+    implementation group: 'io.cloudevents', name: 'cloudevents-core', version: '2.4.0'
+    implementation group: 'io.cloudevents', name: 'cloudevents-api', version: '2.4.0'
+    implementation group: 'io.cloudevents', name: 'cloudevents-json-jackson', version: '2.4.0'
+    implementation group: 'io.serverlessworkflow', name: 'serverlessworkflow-api', version: '4.0.3.Final'
+    implementation group: 'io.serverlessworkflow', name: 'serverlessworkflow-validation', version: '4.0.3.Final'
+    implementation group: 'io.serverlessworkflow', name: 'serverlessworkflow-spi', version: '4.0.3.Final'
+    implementation group: 'io.serverlessworkflow', name: 'serverlessworkflow-util', version: '4.0.3.Final'
+    implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.7.0'
+    implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation group: 'net.thisptr', name: 'jackson-jq', version: '1.0.0-preview.20220705'
+    implementation "com.fasterxml.jackson.core:jackson-core"
+    implementation 'io.jaegertracing:jaeger-client:1.8.1'
+
+
+    implementation "io.opentelemetry:opentelemetry-sdk"
+    implementation "io.opentelemetry:opentelemetry-exporter-jaeger"
+    implementation "io.opentelemetry:opentelemetry-extension-trace-propagators"
+    implementation 'io.opentelemetry:opentelemetry-opentracing-shim:1.14.0-alpha'
+    implementation 'io.opentelemetry:opentelemetry-semconv:1.14.0-alpha'
+
+    // we don't update it to 2.1.0 because 2.1.0 requires Java 11
+    implementation 'com.codingrodent:jackson-json-crypto:1.1.0'
+
+    testImplementation("io.temporal:temporal-testing:1.17.0")
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.9.0'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+
+    dependencies {
+        errorproneJavac('com.google.errorprone:javac:9+181-r4173-1')
+        if (JavaVersion.current().isJava11Compatible()) {
+            errorprone('com.google.errorprone:error_prone_core:2.16')
+        } else {
+            errorprone('com.google.errorprone:error_prone_core:2.10.0')
+        }
+    }
+}
+
+task execute(type: JavaExec) {
+    main = findProperty("mainClass") ?: ""
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+test {
+    useJUnitPlatform()
+}
+
+license {
+    header rootProject.file('license-header.txt')
+    exclude '**/*.json'
+    exclude '**/*.yml'
+}
+
+if (JavaVersion.current().isJava11Compatible()) {
+    // Code should be formatted using the latest googleJavaFormat, but it doesn't support Java <11 since version 1.8
+    apply plugin: 'com.diffplug.spotless'
+
+    spotless {
+        java {
+            target 'src/*/java/**/*.java'
+            targetExclude '**/.idea/**'
+            googleJavaFormat('1.15.0')
+        }
+    }
+
+    compileJava.dependsOn 'spotlessApply'
+}

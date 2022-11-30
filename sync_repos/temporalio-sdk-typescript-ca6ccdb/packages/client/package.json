@@ -1,0 +1,38 @@
+{
+  "name": "@temporalio/client",
+  "version": "1.4.3",
+  "description": "Temporal.io SDK Client sub-package",
+  "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {},
+  "keywords": [
+    "temporal",
+    "workflow",
+    "client"
+  ],
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.7",
+    "@temporalio/common": "file:../common",
+    "@temporalio/proto": "file:../proto",
+    "abort-controller": "^3.0.0",
+    "long": "^5.2.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/long": "^5.0.0",
+    "protobufjs": "^7.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/temporalio/sdk-typescript/tree/main/packages/client",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src",
+    "lib"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@temporalio/workflow",
+  "version": "1.4.3",
+  "description": "Temporal.io SDK Workflow sub-package",
+  "keywords": [
+    "temporal",
+    "workflow",
+    "isolate"
+  ],
+  "homepage": "https://github.com/temporalio/sdk-typescript/tree/main/packages/workflow",
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "license": "MIT",
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {},
+  "dependencies": {
+    "@temporalio/common": "file:../common",
+    "@temporalio/proto": "file:../proto"
+  },
+  "devDependencies": {
+    "source-map": "^0.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src",
+    "lib"
+  ]
+}

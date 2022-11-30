@@ -1,0 +1,14 @@
+.coverage
+.github
+.idea
+.vscode
+*.md
+
+develop/docker-compose
+develop/buildkite
+
+# exclude binaries from the docker build context
+tctl
+temporal-server
+temporal-cassandra-tool
+temporal-sql-tool

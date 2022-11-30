@@ -1,0 +1,45 @@
+{
+  "name": "@temporalio/core-bridge",
+  "version": "1.4.3",
+  "description": "Temporal.io SDK Core<>Node bridge",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build-rust": "node ./scripts/build.js --force",
+    "build": "npm run build-rust",
+    "build-rust-release": "npm run build-rust -- --release",
+    "install": "node ./scripts/build.js"
+  },
+  "keywords": [
+    "temporal",
+    "workflow",
+    "core",
+    "worker"
+  ],
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@opentelemetry/api": "^1.1.0",
+    "arg": "^5.0.2",
+    "cargo-cp-artifact": "^0.1.6",
+    "which": "^2.0.2"
+  },
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/temporalio/sdk-typescript/tree/main/packages/core-bridge",
+  "files": [
+    "scripts",
+    "src",
+    "releases",
+    "sdk-core",
+    "Cargo.toml",
+    "Cargo.lock",
+    "index.js",
+    "common.js",
+    "index.d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

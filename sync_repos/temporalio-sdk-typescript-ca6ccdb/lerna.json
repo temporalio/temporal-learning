@@ -1,0 +1,21 @@
+{
+  "version": "1.4.3",
+  "npmClient": "npm",
+  "command": {
+    "publish": {
+      "message": "chore(release): Publish",
+      "registry": "https://registry.npmjs.org/"
+    },
+    "version": {
+      "message": "chore(release): Publish"
+    },
+    "bootstrap": {
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
+    }
+  },
+  "packages": [
+    "packages/*"
+  ]
+}

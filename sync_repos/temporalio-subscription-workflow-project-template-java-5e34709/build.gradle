@@ -1,0 +1,56 @@
+// Run 'gradle checkUpdates' to find out which dependencies have newer versions
+
+plugins {
+    id 'org.cadixdev.licenser' version '0.6.1'
+    id 'com.github.sherter.google-java-format' version '0.9'
+    id "net.ltgt.errorprone" version "2.0.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.sherter.google-java-format'
+
+googleJavaFormat {
+    toolVersion '1.7'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.11.0'
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
+
+    testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.11.0'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
+
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+    errorprone("com.google.errorprone:error_prone_core:2.10.0")
+}
+
+compileJava {
+    dependsOn 'googleJavaFormat'
+}
+
+task execute(type: JavaExec) {
+    main = findProperty("mainClass") ?: ""
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+license {
+    header rootProject.file('license-header.txt')
+}

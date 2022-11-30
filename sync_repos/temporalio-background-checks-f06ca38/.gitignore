@@ -1,0 +1,8 @@
+*.swp
+.idea/
+*.iml
+*.cov
+.tmp/
+.DS_Store
+test
+test.log

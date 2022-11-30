@@ -11,7 +11,7 @@ This website is built using [Docusaurus 2](https://docusaurus.io/), a modern sta
 Download files with
 
 ```
-$ yarn
+yarn
 ```
 
 ### Local Development
@@ -19,7 +19,7 @@ $ yarn
 Run the local server with:
 
 ```gg
-$ yarn start
+yarn start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -31,7 +31,7 @@ This command starts a local development server and opens up a browser window. Mo
 Get code snippets from repositories with Snipsync, which will pull in code and inject it into the right locations in the Markdown files.
 
 ```
-$ yarn getsnips
+yarn getsnips
 ```
 
 Be sure to run
@@ -57,7 +57,6 @@ Check links in the markdown files with:
 ```
 yarn check_links
 ```
-
 
 To do a comprehensive scan on the generated site, run the following command which:
 * pull in snippets
@@ -130,10 +129,4 @@ To update this, swizzle the followiung components and **extract**, rather than *
 * DocItem/Content
 * DocItem/Footer
 
-Do a `diff` on  the relevant bits and test. Then remove the `DocItem/Footer` node.
-
-
-
-
-
-
+Do a `diff` on the relevant bits and test. Then remove the `DocItem/Footer` node.

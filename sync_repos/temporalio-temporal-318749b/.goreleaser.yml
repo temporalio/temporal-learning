@@ -1,0 +1,76 @@
+before:
+  hooks:
+    - go mod download
+
+archives:
+  - id: default
+    builds:
+      - temporal-server
+      - temporal-cassandra-tool
+      - temporal-sql-tool
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - ./config/*
+
+builds:
+  - id: temporal-server
+    dir: cmd/server
+    binary: temporal-server
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+  - id: temporal-cassandra-tool
+    dir: cmd/tools/cassandra
+    binary: temporal-cassandra-tool
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+  - id: temporal-sql-tool
+    dir: cmd/tools/sql
+    binary: temporal-sql-tool
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+  - id: tdbg
+    dir: cmd/tools/tdbg
+    binary: tdbg
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+changelog:
+  skip: true
+
+announce:
+  skip: "true"

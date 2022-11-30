@@ -1,0 +1,11 @@
+{
+  "eslint.rules.customizations": [
+    {
+      "rule": "*",
+      "severity": "downgrade"
+    }
+  ],
+  "cSpell.words": [
+    "heartbeating"
+  ]
+}

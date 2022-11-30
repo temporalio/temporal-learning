@@ -1,0 +1,14 @@
+name: Nightly Tests
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '00 08 * * *'
+    # (1 AM PST)
+
+jobs:
+  nightly:
+    uses: ./.github/workflows/stress.yml
+    with:
+      test-type: ci-nightly
+      test-timeout-minutes: 360 # yes, 6 hours

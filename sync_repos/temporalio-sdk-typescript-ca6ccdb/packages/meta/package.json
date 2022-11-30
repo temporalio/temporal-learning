@@ -1,0 +1,40 @@
+{
+  "name": "temporalio",
+  "version": "1.4.3",
+  "description": "Temporal.io SDK meta-package",
+  "dependencies": {
+    "@temporalio/activity": "file:../activity",
+    "@temporalio/client": "file:../client",
+    "@temporalio/common": "file:../common",
+    "@temporalio/interceptors-opentelemetry": "file:../interceptors-opentelemetry",
+    "@temporalio/proto": "file:../proto",
+    "@temporalio/testing": "file:../testing",
+    "@temporalio/worker": "file:../worker",
+    "@temporalio/workflow": "file:../workflow"
+  },
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/temporalio/sdk-typescript.git"
+  },
+  "keywords": [
+    "temporal",
+    "workflow",
+    "isolate"
+  ],
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/temporalio/sdk-typescript#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "src",
+    "lib"
+  ]
+}

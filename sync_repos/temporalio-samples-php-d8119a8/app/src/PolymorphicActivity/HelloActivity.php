@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * This file is part of Temporal package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+namespace Temporal\Samples\PolymorphicActivity;
+
+use Temporal\Activity;
+
+/**
+ * Activity definition interface. Must redefine the name of the composeGreeting activity to avoid
+ * collision.
+ */
+#[Activity\ActivityInterface(prefix: "Hello.")]
+class HelloActivity implements GreetingActivityInterface
+{
+    public function composeGreeting(string $name): string
+    {
+        return 'Hello, ' . $name . '!';
+    }
+}

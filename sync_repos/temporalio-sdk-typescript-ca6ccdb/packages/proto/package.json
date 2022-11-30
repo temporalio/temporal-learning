@@ -1,0 +1,33 @@
+{
+  "name": "@temporalio/proto",
+  "version": "1.4.3",
+  "description": "Temporal.io SDK compiled protobuf definitions",
+  "main": "protos/index.js",
+  "types": "protos/index.d.ts",
+  "files": [
+    "protos/",
+    "src/",
+    "lib/"
+  ],
+  "scripts": {
+    "build": "node ./scripts/compile-proto.js"
+  },
+  "keywords": [
+    "temporal",
+    "workflow",
+    "isolate"
+  ],
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "license": "MIT",
+  "dependencies": {
+    "long": "^5.2.0",
+    "protobufjs": "^7.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/temporalio/sdk-typescript/tree/main/packages/proto",
+  "publishConfig": {
+    "access": "public"
+  }
+}

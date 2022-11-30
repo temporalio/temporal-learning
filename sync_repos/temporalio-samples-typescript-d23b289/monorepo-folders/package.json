@@ -1,0 +1,34 @@
+{
+  "name": "monorepo-folders",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "yarn build.workflows & concurrently --kill-others-on-fail -n 'frontend,api-server,worker' \"yarn frontend\"  \"yarn backend\" \"yarn worker\"",
+    "backend": "yarn workspace backend-apis start",
+    "frontend": "yarn workspace frontend-ui start",
+    "worker": "yarn workspace temporal-worker start",
+    "build": "yarn workspaces run build",
+    "build.workflows": "yarn workspace temporal-workflows build.watch",
+    "lint": "yarn workspaces run lint"
+  },
+  "dependencies": {
+    "concurrently": "^6.3.0"
+  },
+  "resolutions": {
+    "@temporalio/worker": "1.4",
+    "@temporalio/workflow": "1.4.3",
+    "@temporalio/client": "^1.0.0",
+    "@temporalio/activity": "^1.0.0",
+    "@temporalio/common": "^1.0.0",
+    "@temporalio/internal-workflow-common": "^1.0.0",
+    "@temporalio/proto": "^1.0.0",
+    "mini-css-extract-plugin": "2.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.43",
+    "eslint": "^7.32.0",
+    "ts-loader": "^9.2.6"
+  }
+}

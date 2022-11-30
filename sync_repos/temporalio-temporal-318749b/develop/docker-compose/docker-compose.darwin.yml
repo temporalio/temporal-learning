@@ -1,0 +1,23 @@
+# Overrides for Mac/Darwin users.
+version: "3.5"
+
+services:
+  prometheus:
+    volumes:
+      - ./prometheus-darwin:/etc/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - temporal-dev-network
+  grafana:
+    ports:
+      - "3000:3000"
+    networks:
+      - temporal-dev-network
+  temporal-ui:
+    environment:
+      - TEMPORAL_ADDRESS=host.docker.internal:7233
+    ports:
+      - "8080:8080"
+    networks:
+      - temporal-dev-network

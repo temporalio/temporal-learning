@@ -1,0 +1,25 @@
+To begin development, install Docker:
+
+  Mac: {cyan brew cask install docker; open} /Applications/Docker.app
+  Other: https://www.docker.com/products/docker-desktop
+
+Start Temporal Server:
+
+  {cyan git clone} https://github.com/temporalio/docker-compose.git temporal-server
+  {cyan cd} temporal-server/
+  {cyan docker-compose up}
+
+Use Node version 14+:
+
+  Mac: {cyan brew install node@16}
+  Other: https://nodejs.org/en/download/
+
+Then, in the project directory:
+
+  {cyan npm run start.watch}
+
+And in another shell, one of these commands:
+
+  {cyan npm run workflow-slow}
+  {cyan npm run workflow-fast}
+  {cyan npm run workflow-updating}

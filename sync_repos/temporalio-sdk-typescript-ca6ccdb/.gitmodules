@@ -1,0 +1,3 @@
+[submodule "sdk-core"]
+	path = packages/core-bridge/sdk-core
+    url = https://github.com/temporalio/sdk-core.git

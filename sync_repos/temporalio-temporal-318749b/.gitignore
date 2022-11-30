@@ -1,0 +1,31 @@
+.tmp/
+
+.idea/
+.vscode/settings.json
+.vscode
+*.code-workspace
+.DS_Store
+.coverage
+
+*.out
+*.test
+*.xml
+*.swp
+/*.iml
+*.cov
+*.html
+/test.log
+
+# Executables produced by temporal repo
+/temporal-*
+/tctl*
+/tdbg
+
+# Buf proto image
+/proto/image.bin
+
+# Goreleaser
+/dist
+
+# direnv
+.envrc

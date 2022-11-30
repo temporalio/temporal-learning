@@ -1,0 +1,12 @@
+.idea/
+node_modules/
+lib/
+*.tsbuildinfo
+build/
+lerna*.log
+packages/test/protos/json-module.js
+packages/test/protos/root.d.ts
+packages/testing/test-server*
+packages/testing/generated-protos/
+packages/core-bridge/releases
+packages/*/package-lock.json

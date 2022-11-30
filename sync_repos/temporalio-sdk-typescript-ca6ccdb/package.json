@@ -1,0 +1,97 @@
+{
+  "name": "typescript-sdk",
+  "private": true,
+  "keywords": [
+    "temporal",
+    "workflow",
+    "isolate"
+  ],
+  "homepage": "https://github.com/temporalio/sdk-typescript#readme",
+  "bugs": {
+    "url": "https://github.com/temporalio/sdk-typescript/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/temporalio/sdk-typescript.git"
+  },
+  "license": "MIT",
+  "author": "Temporal Technologies Inc. <sdk@temporal.io>",
+  "directories": {
+    "doc": "docs"
+  },
+  "files": [],
+  "scripts": {
+    "rebuild": "npm run clean && npm run build",
+    "build": "lerna run --stream build",
+    "build.watch": "lerna run --stream build.watch",
+    "test": "lerna run --stream test",
+    "test.watch": "lerna run --stream test.watch",
+    "ci-stress": "node ./packages/test/lib/load/run-all-stress-ci-scenarios.js",
+    "ci-nightly": "node ./packages/test/lib/load/run-all-nightly-scenarios.js",
+    "wait-namespace": "node ./scripts/wait-on-temporal.mjs",
+    "lint": "eslint packages/*/src --ext .ts --no-error-on-unmatched-pattern && prettier --end-of-line auto --check .",
+    "lint.prune": "ts-prune --error -p tsconfig.prune.json --ignore \"used in module\" --skip \".d.ts\"",
+    "format": "prettier --write .",
+    "clean": "node ./scripts/clean.mjs",
+    "docs": "lerna run --stream maybe-install-deps-and-build-docs"
+  },
+  "dependencies": {
+    "@temporalio/client": "file:packages/client",
+    "@temporalio/common": "file:packages/common",
+    "@temporalio/create": "file:packages/create-project",
+    "@temporalio/interceptors-opentelemetry": "file:packages/interceptors-opentelemetry",
+    "@temporalio/nyc-test-coverage": "file:packages/nyc-test-coverage",
+    "@temporalio/proto": "file:packages/proto",
+    "@temporalio/test": "file:packages/test",
+    "@temporalio/testing": "file:packages/testing",
+    "@temporalio/worker": "file:packages/worker",
+    "@temporalio/workflow": "file:packages/workflow",
+    "temporalio": "file:packages/meta"
+  },
+  "devDependencies": {
+    "@opentelemetry/api": "^1.1.0",
+    "@opentelemetry/core": "^1.3.1",
+    "@opentelemetry/sdk-node": "^0.32.0",
+    "@opentelemetry/semantic-conventions": "^1.3.1",
+    "@tsconfig/node14": "^1.0.3",
+    "@types/dedent": "^0.7.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/ms": "^0.7.31",
+    "@types/node": "^18.0.0",
+    "@types/node-fetch": "^2.6.2",
+    "@types/pidusage": "^2.0.2",
+    "@types/stack-utils": "^2.0.1",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "arg": "^5.0.2",
+    "ava": "^3.15.0",
+    "chalk": "^4.1.2",
+    "dedent": "^0.7.0",
+    "eslint": "^8.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^3.3.0",
+    "eslint-plugin-deprecation": "^1.3.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-tsdoc": "^0.2.16",
+    "fs-extra": "^10.1.0",
+    "glob": "^7.1.7",
+    "jsdoc": "^3.6.10",
+    "json5": "^2.2.1",
+    "lerna": "^5.1.4",
+    "npm-run-all": "^4.1.5",
+    "pidusage": "^3.0.0",
+    "prettier": "^2.7.1",
+    "protobufjs": "^7.0.0",
+    "protobufjs-cli": "^1.0.0",
+    "ts-prune": "^0.10.3",
+    "typescript": "^4.7.4",
+    "uuid": "^8.3.2",
+    "verdaccio": "^5.14.0"
+  },
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0",
+    "rustc": ">= 1.53.0"
+  }
+}
