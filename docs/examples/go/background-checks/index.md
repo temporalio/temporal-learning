@@ -84,8 +84,8 @@ And the Temporal Platform has built-in Visibility APIs to view the status and ge
 
 This project introduces the following concepts:
 
-- [Activity Definition](https://docs.temporal.io/concepts/what-is-an-activity-definition)
-- [Activity Execution](https://docs.temporal.io/concepts/what-is-an-activity-execution)
+- [Activity Definition](https://docs.temporal.io/activities/#activity-definition)
+- [Activity Execution](https://docs.temporal.io/activities/#activity-execution)
 - [Advanced Visibility](https://docs.temporal.io/concepts/what-is-advanced-visibility)
 - [Child Workflow Execution](https://docs.temporal.io/concepts/what-is-a-child-workflow-execution)
 - [Custom Data Converter](https://docs.temporal.io/concepts/what-is-a-data-converter)
