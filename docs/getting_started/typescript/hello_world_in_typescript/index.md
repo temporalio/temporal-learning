@@ -146,7 +146,7 @@ Next, add the following TypeScript code to define the Workflow:
 
 :::info
 
-Below, there are two language tabs (TypeScript and JavaScript). TypeScript is selected by default, and you will ad that code to your file. The JavaScript code is an example of the code that the TypeScript compiler will generate, and you do not need to copy and paste it. This is true for all the following code samples.
+Below, there are two language tabs (TypeScript and JavaScript). TypeScript is selected by default, and you will add that code to your file. The JavaScript code is an example of the code that the TypeScript compiler will generate, and you do not need to copy and paste it. This is true for all the following code samples.
 
 :::
 
