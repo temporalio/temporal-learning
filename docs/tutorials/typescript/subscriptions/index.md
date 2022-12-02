@@ -11,17 +11,19 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 :::info WORK IN PROGRESS
+
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+
 :::
 
 ## Introduction
 
-In this tutorial, we will tour all of the [Workflow APIs](https://docs.temporal.io/typescript/workflows#workflow-apis) you should know, primarily Signals, Queries, `condition`, and `sleep` (and eventually Child Workflows and `continueAsNew`), by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
+In this tutorial, you will tour all of the [Workflow APIs](https://docs.temporal.io/typescript/workflows#workflow-apis) you should know, primarily Signals, Queries, `condition`, and `sleep` (and eventually Child Workflows and `continueAsNew`), by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
 
 - The goal is to give you a more accessible introduction to these APIs by explaining them in context of a realistic application.
 - We also give an example of how you break down project requirements into Activities and Workflow logic.
 
-Our task is to write a Workflow for a limited time Subscription (eg a 36 month Phone plan) that satisfies these conditions:
+YOur task is to write a Workflow for a limited time Subscription (eg a 36 month Phone plan) that satisfies these conditions:
 
 1. When the user signs up, **send a welcome email** and start a free trial for `TrialPeriod`.
 2. When the `TrialPeriod` expires, start the billing process
@@ -36,10 +38,12 @@ Our task is to write a Workflow for a limited time Subscription (eg a 36 month P
    - Amount Charged
    - Period number (for manual adjustments e.g. refunds)
 
-Of course, this all has to be fault tolerant, scalable to millions of customers, testable, maintainable, observable... yada yada, that's... why you're here!
+Of course, this all has to be fault tolerant, scalable to millions of customers, testable, maintainable, and observable.
 
 :::Tip Skip ahead
+
 **To skip straight to a fully working example, you can check our [Subscription Workflow repo](https://github.com/temporalio/subscription-workflow-project-template-typescript)** (it is slightly different from the code explained below, as this tutorial has been edited for readability and assumes you are comfortable with Node.js so the difference is immaterial).
+
 :::
 
 ## Prerequisites
@@ -51,16 +55,11 @@ We don't assume knowledge of the Workflow APIs, but we do expect that you are re
 
 ## Create the project
 
-
-
 We'll start out this project with the Hello World example, which you can always scaffold out with our Package Initializer:
 
 ```command
 npx @temporalio/create@latest subscription-tutorial --sample hello-world
 ```
-
-
-
 
 ## Write the Activities
 
