@@ -187,7 +187,7 @@ Add the following code to define a `greet` function:
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Next, you'll write code to configure and launch a Worker.
 
-## Configure and Run a Worker
+## Configure and run a Worker
 
 A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
 
@@ -211,7 +211,7 @@ npm run start.watch
 ```
 The script runs and produces output similar to the following:
 
-```
+```output
 > temporal-hello-world@0.1.0 start
 > ts-node src/worker.ts workflow.watch
 
