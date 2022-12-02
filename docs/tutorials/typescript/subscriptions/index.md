@@ -64,7 +64,7 @@ npx @temporalio/create@latest subscription-tutorial --sample hello-world
 
 ## Write the Activities
 
-**Each of the bolded items in our requirements are actions involving the outside world** (charging customers, sending emails), so they should be written as [Activities](https://docs.temporal.io/typescript/activities).
+**Each of the bolded items in our requirements are actions involving the outside world** (charging customers, sending emails), so they should be written as [Activities](https://docs.temporal.io/application-development/foundations?lang=typescript/#develop-activities).
 
 Activities are not the focus of this tutorial so they are elided, but you may wish to write them first as they are self contained pieces of regular Node.js code, and you may discover more data model requirements in this process that impact how you write Workflows.
 
