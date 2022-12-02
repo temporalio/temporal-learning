@@ -154,7 +154,7 @@ Below, there are two language tabs (TypeScript and JavaScript). TypeScript is se
 <!--SNIPSTART typescript-hello-workflow-->
 <!--SNIPEND-->
 
-In this code, the variable `greet` is assigned the value of `proxyActivites`, which is a method from the Temporal TypeScript SDK that lets you configure the Activity with different options. In this example, you have specified that Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options,  `startToCloseTimeOut` is the one you should always set. 
+In this code, the variable `greet` is assigned the value of `proxyActivites`, which is a method from the Temporal TypeScript SDK that lets you configure the Activity with different options. In this example, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options,  `startToCloseTimeOut` is the one you should always set. 
 
 The `example` function executes an Activity called `greet`, and the function returns the result of the Activity. You'll create the `greet` function in the next section. 
 
@@ -162,7 +162,7 @@ The `example` function executes an Activity called `greet`, and the function ret
 You can pass multiple inputs to a Workflow, but it's a good practice to send a single input. If you have several values you want to send, you should define an object and pass that into the Workflow instead.
 :::
 
-You can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation. Next, you'll define the Activity that your workflow will execute. 
+You can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation. Next, you'll define the Activity that your Workflow will execute. 
 
 ## Create an Activity
 
@@ -204,7 +204,7 @@ Add the following code to define the Worker:
 
 In the code, you configure your Worker process by creating create an async function called `run`. In the function body, you create and configure constant called `worker`, and it uses the TypeScript SDK to create a Worker with a `workflowsPath` that will run your activities and a specifies the name of a Task Queue. You need to define the Task Queue name, and in this example it is called `hello-world`.
 
-Your Worker is configured, and now you will use an `npm` script to start your Worker using Nodemon, which will watch for any changes. Run the command: 
+Your Worker is configured, and now you will use an `npm` script to start your Worker using Nodemon, which will reload whenever it detects changes in your file, hence the command name `start.watch`. Run the command: 
 
 ```command
 npm run start.watch
@@ -270,13 +270,13 @@ The script runs and produces output similar to the following:
 2022-11-22T04:38:13.751Z [INFO] Worker state changed { state: 'RUNNING' }
 ```
 
-In the output, you will see an object listing the Worker options and their values, as well as timestamps from nodemon describing which programs have been invoked and when the Worker in running. Because the project runs `ts-node src/worker.ts` with [nodemon](https://nodemon.io/) so that when a change is made to the code, nodemon will automatically reload the Worker. 
+In the output, you will see an object listing the Worker options and their values, as well as timestamps from Nodemon describing which programs have been invoked. 
 
 Now that you have your Worker running, it's time for you to start a Workflow Execution. 
 
 ## Configure a Workflow Execution
 
-You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK. 
+You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK.
 
 Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a `client.ts` file that triggers your Temporal Workflow. 
 
@@ -287,7 +287,7 @@ Open a new tab in your terminal, and create a `client.ts` file in the `src` dire
 touch src/client.ts
 ```
 
-Copy and paste the following code:
+Add the following code to your file to create a client that will kick off your Workflow Execution:
 
 <!--SNIPSTART typescript-hello-client-->
 <!--SNIPEND-->
@@ -305,7 +305,7 @@ Using an ID that reflects some business process or entity is a good practice. Fo
 You can [get the results](https://docs.temporal.io/application-development/foundations?lang=typescript#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attemps to get the results immediately by logging the output of the `greet` function as soon as the Workflow Execution completes. 
 ::: 
 
-Now that your Client is set up, it's time for you to use this code to start your Workflow execution. 
+Now that your client is set up, it's time for you to use this code to start your Workflow execution. 
 
 ## Start a Workflow Execution
 
