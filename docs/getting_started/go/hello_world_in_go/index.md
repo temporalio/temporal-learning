@@ -11,6 +11,7 @@ tags:
   - go
   - sdk
   - tutorial
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ![](images/banner.jpg)

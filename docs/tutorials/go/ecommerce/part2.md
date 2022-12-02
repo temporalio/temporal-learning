@@ -9,6 +9,7 @@ title: 'Building an eCommerce web app with Temporal and Go, Part 2: Reminder Ema
 last_update:
   author: Valeri Karpov
   date: 2021-06-08T00:00:00Z
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## Introduction

@@ -4,6 +4,7 @@ sidebar_position: 13
 keywords: [go, golang, temporal, sdk, tutorial]
 title: Background Checks API reference
 tags: [Go, SDK]
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## `/checks` GET

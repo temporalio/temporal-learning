@@ -7,6 +7,7 @@ last_update:
   date: 2021-10-01
 title: Create a trip booking system with the Saga pattern and Temporal in PHP
 description: In this tutorial, you'll explore the different components that make up the Temporal Booking Saga code sample.
+image: /img/temporal-logo-twitter-card.png
 ---
 
 :::info WORK IN PROGRESS

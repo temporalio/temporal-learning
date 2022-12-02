@@ -9,6 +9,7 @@ title: 'Building an eCommerce web app with Temporal and Go, Part 3: Testing'
 last_update:
   author: Valeri Karpov
   date: 2021-07-14T00:00:00Z
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ## Introduction

@@ -1,13 +1,14 @@
 ---
 id: run-your-first-app-tutorial
 sidebar_position: 2
-description: In this tutorial, you'll run your first Temporal app using the Go SDK.
-keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors]
+description: In this tutorial, you'll run your first Temporal app using the Go SDK and explore Workflows, Activities, and compensating transactions.
+keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, compensating transactions]
 tags: [Go, SDK]
 last_update:
-  date: 2022-09-26
+  date: 2022-11-15
 title: Run your first Temporal application with the Go SDK
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Your first program in Go](images/banner.jpg)
@@ -40,8 +41,6 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
-
-
 
 ## ![](/img/icons/workflow.png) Application overview
 
@@ -90,21 +89,29 @@ With the project downloaded, let's explore the code, starting with the Workflow.
 
 A Temporal application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. 
 
-You use a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) to define the Workflow Execution's constraints. A Workflow Definition in Go is a regular Go function that accepts a Workflow Context and some input values. This is what the money transfer Workflow Definition looks like:
+You use a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) to define the Workflow Execution's constraints. A Workflow Definition in Go is a regular Go function that accepts a Workflow Context and some input values. 
+
+The sample application in this tutorial models a money transfer between two accounts. Money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there's no need to attempt a deposit. But if the withdrawal works but the deposit fails, then the money needs to be put back in the original account.
+
+This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-go-workflow-->
 <!--SNIPEND-->
+
+The `MoneyTransfer` function takes in the details about the transaction, executes Activities to withdraw and deposit the money, and returns the results of the process. If there's a problem with the deposit, the function calls another Activity to put the money back in the original account, but still returns an error so you know the process failed.
 
 In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.go`: 
 
 <!--SNIPSTART money-transfer-project-template-go-transferdetails-->
 <!--SNIPEND-->
 
-It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables.
+It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
-The Workflow Definition then calls two Activities, `Withdraw` and `Deposit`. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in Go by defining Go functions that receive a `context` and some input values.
+Notice that the `PaymentDetails` includes a `ReferenceID` field. Some APIs let you send a unique "idempotency key" along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once. 
 
-The `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
+The Workflow Definition calls the Activities `Withdraw` and `Deposit` to handle the money transfers. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in Go by defining Go functions that receive a `context` and some input values.
+
+The `Withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-withdraw-->
 <!--SNIPEND-->
@@ -113,14 +120,19 @@ If the transfer succeeded, the `Withdraw` function returns the confirmation. If 
 
 In this tutorial, the banking service simulates an external API call. You can inspect the code in the `banking-client.go` file.
 
-The `Deposit` function looks almost identical:
+The `Deposit` Activity function looks almost identical to the `Withdraw` function:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-deposit-->
 <!--SNIPEND-->
 
 There's a commented line in this Activity definition that you'll use later in the tutorial to simulate an error in the Activity.
 
-The Workflow executes both of these Activities, receives their results, and then completes. 
+If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to be put back in the original account, so there's a third Activity called `Refund` that does exactly that:
+
+<!--SNIPSTART money-transfer-project-template-go-activity-refund-->
+<!--SNIPEND-->
+
+This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `Deposit` Activity to refund the money, using a separate activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `Deposit` Activity, the `Refund` won't be affected. You'll see this scenario shortly.
 
 :::tip Why you use Activities
 
@@ -132,6 +144,32 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 :::
 
+Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
+
+[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/5055033/workflow.go)
+```go
+	// RetryPolicy specifies how to automatically handle retries if an Activity fails.
+	retrypolicy := &temporal.RetryPolicy{
+		InitialInterval:        time.Second,
+		BackoffCoefficient:     2.0,
+		MaximumInterval:        100 * time.Second,
+		MaximumAttempts:        0, // unlimited retries
+		NonRetryableErrorTypes: []string{"InvalidAccountError", "InsufficientFundsError"},
+	}
+
+```
+
+By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, there are two non-retryable errors: one for an invalid account number, and one for insufficient funds. If the Workflow encounters any error other than these, it'll retry the failed Activity indefinitely, but if it encounters one of these two errors, it will continue on with the Workflow. In the case of an error with the `Deposit` activity, the Workflow will attempt to put the money back.
+.
+
+In this Workflow, each Activity uses the same options, but you could specifiy different options for each Activity.
+
+:::caution This is a simplified example.
+Transferring money is a tricky subject, and this tutorial's example doesn't cover all of the possible issues that can go wrong. This simplified example doesn't cover all of the possible errors that could occur with a transfer. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
+
+This example is designed to show some core features of Temporal and is not intended for production use. 
+:::
+
 When you "start" a Workflow you are telling the Temporal Server, "Track the state of the Workflow with this function signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
 
 Let's see that in action.
@@ -141,7 +179,6 @@ Let's see that in action.
 You have two ways to start a Workflow with Temporal, either via the SDK or via the [tctl command-line tool](https://docs.temporal.io/tctl). In this tutorial you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the workflow:
-
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
 <!--SNIPEND-->
@@ -164,10 +201,10 @@ go run start/main.go
 
 If this is your first time running this application, Go might download some dependencies initially, but after those downloads complete, you'll see output that looks like the following:
 
-```bash
-2022/09/15 21:32:38 INFO  No logger configured for temporal client. Created default one.
-2022/09/15 21:32:38 Starting transfer from account 85-150 to account 43-812 for 250
-2022/09/15 21:32:38 WorkflowID: pay-invoice-701 RunID: d69e638f-93e2-418c-9b05-16ca63526940
+```output
+2022/11/14 10:52:20 INFO  No logger configured for temporal client. Created default one.
+2022/11/14 10:52:20 Starting transfer from account 85-150 to account 43-812 for 250
+2022/11/14 10:52:20 WorkflowID: pay-invoice-701 RunID: 3312715c-9fea-4dc3-8040-cf8f270eb53c
 ```
 
 The Workflow is now running. Leave the program running.
@@ -236,14 +273,14 @@ go run worker/main.go
 
 When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
 
-```bash
-2022/09/15 21:35:43 INFO  No logger configured for temporal client. Created default one.
-2022/09/15 21:35:43 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 73813@temporal.local@
-2022/09/15 21:35:43 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 73813@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d69e638f-93e2-418c-9b05-16ca63526940 Attempt 1 ActivityID 5 ActivityType Withdraw
-2022/09/15 21:35:43 Withdrawing $250 from account 85-150.
+```output
+2022/11/14 10:55:43 INFO  No logger configured for temporal client. Created default one.
+2022/11/14 10:55:43 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 76984@temporal.local@
+2022/11/14 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 5 ActivityType Withdraw
+2022/11/14 10:55:43 Withdrawing $250 from account 85-150.
 
-2022/09/15 21:35:43 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 73813@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d69e638f-93e2-418c-9b05-16ca63526940 Attempt 1 ActivityID 11 ActivityType Deposit
-2022/09/15 21:35:43 Depositing $250 into account 43-812.
+2022/11/14 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 11 ActivityType Deposit
+2022/11/14 10:55:43 Depositing $250 into account 43-812.
 ```
 
 The Worker continues running, waiting for more Tasks to execute. 
@@ -253,7 +290,7 @@ Switch back to the terminal window where your `start/main.go` program is running
 ```
 ...
 
-2022/09/15 21:35:43 Transfer complete (transaction IDs: W1779185060, D4129841576)
+2022/11/14 10:55:43 Transfer complete (transaction IDs: W1779185060, D4129841576)
 ```
 
 Check the Temporal Web UI again. You will see one Worker registered where previously there was none, and the Workflow status shows that it is completed:
@@ -295,7 +332,7 @@ Your Workflow is still listed:
 
 If the Temporal Cluster goes offline, you can pick up where you left off when it comes back online again.
 
-### Recover from an error in an Activity
+### Recover from an unknown error in an Activity
 
 This demo application makes a call to an external service in an activity. If that call fails due to a bug in your code, the Activity produces an error. 
 
@@ -316,22 +353,23 @@ go run worker/main.go
 
 You will see the Worker complete the `Withdraw()` Activity function, but it errors when it attempts the `Deposit()` Activity function. The important thing to note here is that the Worker keeps retrying the `Deposit()` function:
 
-```bash
-2022/09/15 21:39:11 INFO  No logger configured for temporal client. Created default one.
-2022/09/15 21:39:11 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@
-2022/09/15 21:39:11 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 Attempt 1 ActivityID 5 ActivityType Withdraw
-2022/09/15 21:39:11 Withdrawing $250 from account 85-150.
+```output
+2022/11/14 10:59:09 INFO  No logger configured for temporal client. Created default one.
+2022/11/14 10:59:09 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@
+2022/11/14 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
+2022/11/14 10:59:09 Withdrawing $250 from account 85-150.
 
-2022/09/15 21:39:11 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 Attempt 1 ActivityID 11 ActivityType Deposit
-2022/09/15 21:39:12 Depositing $250 into account 43-812.
+2022/11/14 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
+2022/11/14 10:59:09 Depositing $250 into account 43-812.
 
-2022/09/15 21:39:12 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 ActivityType Deposit Attempt 1 Error This deposit has failed.
-2022/09/15 21:39:13 Depositing $250 into account 43-812.
+2022/11/14 10:59:09 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
+2022/11/14 10:59:10 Depositing $250 into account 43-812.
 
-2022/09/15 21:39:13 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 ActivityType Deposit Attempt 2 Error This deposit has failed.
-2022/09/15 21:39:15 Depositing $250 into account 43-812.
+2022/11/14 10:59:10 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
+2022/11/14 10:59:12 Depositing $250 into account 43-812.
 
-2022/09/15 21:39:15 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 ActivityType Deposit Attempt 3 Error This deposit has failed.
+2022/11/14 10:59:12 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
+2022/11/14 10:59:16 Depositing $250 into account 43-812.
 
 ...
 
@@ -361,17 +399,19 @@ How can you possibly update a Workflow that is already halfway complete? You res
 
 First, cancel the currently running worker with `CTRL+C`:
 
-```bash
+```output
 # continuing logs from previous retries...
 
-2022/09/15 21:42:15 Depositing $250 into account 43-812.
+2022/11/14 10:59:40 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
+2022/11/14 11:00:12 Depositing $250 into account 43-812.
 
-2022/09/15 21:42:15 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ WorkflowID pay-invoice-701 RunID 8ef06aed-417f-431e-bb6e-c5f62b36d4d2 ActivityType Deposit Attempt 9 Error This deposit has failed.
+2022/11/14 11:00:12 ERROR Activity error. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
 
 ^C
 
-2022/09/15 21:43:09 INFO  Worker has been stopped. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@ Signal interrupt
-2022/09/15 21:43:09 INFO  Stopped Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74264@temporal.local@
+2022/11/14 11:01:10 INFO  Worker has been stopped. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ Signal interrupt
+2022/11/14 11:01:10 INFO  Stopped Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@
+2022/11/14 11:01:10 WARN  Failed to poll for task. Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
 
 ```
 
@@ -383,19 +423,19 @@ go run worker/main.go
 
 The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `Deposit()` Activity function:
 
-```bash
-2022/09/15 21:43:13 INFO  No logger configured for temporal client. Created default one.
-2022/09/15 21:43:13 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 74606@temporal.local@
-2022/09/15 21:43:15 Depositing $250 into account 43-812.
+```output
+2022/11/14 11:01:28 INFO  No logger configured for temporal client. Created default one.
+2022/11/14 11:01:28 INFO  Started Worker Namespace default TaskQueue TRANSFER_MONEY_TASK_QUEUE WorkerID 77527@temporal.local@
+2022/11/14 11:01:28 Depositing $250 into account 43-812.
 
 ```
 
 Switch back to the terminal where your `start/main.go` program is running, and you'll see it complete:
 
-```
+```output
 ...
 
-2022/09/15 21:43:20 Transfer complete (transaction IDs: W1779185060, D1779185060)
+2022/11/14 11:01:28 Transfer complete (transaction IDs: W1779185060, D1779185060)
 
 ```
 
@@ -408,6 +448,14 @@ You have just fixed a bug in a running application without losing the state of t
 ## Conclusion
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers. You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution. You also saw how Temporal recovers from failures and how it retries Activities.
+
+### Further exploration
+
+Try the following things before moving on to get more practice working with a Temporal application:
+
+1. Verify that the Workflow fails with insufficient funds. Open `start/main.go` and change the `Amount` to  `1000000`. Run `start/main.go` and see the `Withdraw` Activity fail. Since this is a non-retryable error, the Workflow does not retry the Activity. The Workflow stops because the logic returns right away and doesn't attempt to run the `Deposit` Activity.
+2. Verify that the Workflow fails with an invalid account number. Open `start/main.go` and change the `TargetAccount` number to an empty string. Run `start/main.go` and see the Activity fail and that it puts the money back in the original account.
+3. Change the retry policy in `workflow.go` so it only retries 3 times. Then change the `Deposit` Activity in `activities.go` so it uses the `DepositThatFails` function. Does the Workflow place the money back into the original account?
 
 ### Review
 
