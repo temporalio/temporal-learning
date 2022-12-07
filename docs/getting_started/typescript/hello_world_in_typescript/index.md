@@ -13,8 +13,8 @@ title: Build a Temporal "Hello World!" app from scratch in TypeScript
 - **Time:** ⏱️ ~15 minutes
 - **Goals:** 🙌
   - Set up, build, and test a Temporal application project from scratch using the [TypeScript SDK](https://github.com/temporalio/sdk-typescript).
-  - Identify the four parts of a Temporal Workflow application
-  - Describe how the Temporal server gets information to the Worker	
+  - Identify the four parts of a Temporal Workflow application.
+  - Describe how the Temporal Server gets information to the Worker.
 :::
 
 ### Introduction
@@ -23,14 +23,14 @@ Creating reliable applications is a difficult task. [Temporal](https://temporal.
 
 In this tutorial, you will build your first Temporal Application from scratch using the [Temporal TypeScript SDK](https://github.com/temporalio/sdk-typescript). The app will consist of four pieces:
 
-1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
-2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
+1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.
+2. An [Activity](https://docs.temporal.io/activities): Activities are functions called by Workflows, and they contain any logic that might fail or behave differently at different times. The Workflow you'll create executes a single Activity that takes a string as input and returns a formatted version of this string to the Workflow.
 3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
 4. An initiator: To start a Workflow, you need to send a signal to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
 
 When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications.
 
-All of the code in this tutorial is available in hello-world directory of the [samples-typescript](https://github.com/temporalio/samples-typescript/tree/main/hello-world) repository. 
+All of the code in this tutorial is available in the  [hello-world](https://github.com/temporalio/samples-typescript/tree/main/hello-world) directory of the temporalio/samples-typescript repository. 
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using Node.js and TypeScript](/getting_started/typescript/dev_environment/index.md)
 
-The TypeScript SDK requires Node.js 14 or later
+The TypeScript SDK requires Node.js 14 or later.
 
 ## Create a new project
 
@@ -110,11 +110,11 @@ Add the following code to the file which defines the project, sets up scripts, a
 }
 ```
 
-There are a few parts of the `package.json` you should check out, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
+You should check out a few parts of the `package.json`, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
 
-Next, take a look at the packages listed as dependencies. These are the packages that make up the the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.io/package/nanoid), an `npm` package which you'll use to generate a unique ID for your Workflow. 
+Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.io/package/nanoid), an `npm` package which you'll use to generate a unique ID for your Workflow. 
 
-Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon), a Node.js server that automatically reloads when it detects a change in your code, TypeScript and ESLint. You'll be using [ts-node](https://github.com/TypeStrong/ts-node) which will directly run TypeScript on Node.js without you needing to precompile. 
+Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon), a Node.js server that automatically reloads when it detects a change in your code, TypeScript, and ESLint. You'll be using [ts-node](https://github.com/TypeStrong/ts-node) which will directly run TypeScript on Node.js without you needing to precompile.  
 
 Save the file, then download the dependencies specified in the `package.json` file with the command: 
 
@@ -191,7 +191,7 @@ You've completed the logic for the application; you have a Workflow and an Activ
 
 A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-Create a new file for the Worker:
+Create a file for the Worker:
 
 ```command
 touch src/worker.ts
@@ -202,7 +202,7 @@ Add the following code to define the Worker:
 <!--SNIPSTART typescript-hello-worker-->
 <!--SNIPEND-->
 
-In the code, you configure your Worker process by creating create an async function called `run`. In the function body, you create and configure constant called `worker`, and it uses the TypeScript SDK to create a Worker with a `workflowsPath` that will run your activities and a specifies the name of a Task Queue. You need to define the Task Queue name, and in this example it is called `hello-world`.
+In the code, you create and call an async function named `run`. It creates and runs a Worker. It configures the Worker with a `workflowsPath` (the location of your workflow file), your Activity functions, and the name of the Task Queue. In this example, you name the Task Queue `hello-world`.
 
 Your Worker is configured, and now you will use an `npm` script to start your Worker using Nodemon, which will reload whenever it detects changes in your file, hence the command name `start.watch`. Run the command: 
 
@@ -305,7 +305,7 @@ Using an ID that reflects some business process or entity is a good practice. Fo
 You can [get the results](https://docs.temporal.io/application-development/foundations?lang=typescript#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attemps to get the results immediately by logging the output of the `greet` function as soon as the Workflow Execution completes. 
 ::: 
 
-Now that your client is set up, it's time for you to use this code to start your Workflow execution. 
+Now that your client is set up, it's time for you to use this code to start your Workflow Execution. 
 
 ## Start a Workflow Execution
 
@@ -348,9 +348,9 @@ Answer the following questions to see if you remember some of the important conc
 
 </summary>
 
-1. An Activity function.
-2. A Workflow function.
-3. A Worker to host the Activity and Workflow code.
+1. A Workflow function.
+2. An Activity function.
+3. A Worker to host the Workflow and Activity code.
 4. Some way to start the Workflow.
 
 </details>
@@ -358,7 +358,7 @@ Answer the following questions to see if you remember some of the important conc
 <details>
 <summary>
 
-**How does the Temporal server get information to the Worker?**
+**How does the Temporal Server get information to the Worker?**
 
 </summary>
 
