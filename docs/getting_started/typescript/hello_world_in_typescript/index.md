@@ -128,7 +128,7 @@ Your project workspace is configured, so you're ready to create your first Tempo
 
 ## Create a Workflow
 
-Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations/#workflow-parameters) section of the Temporal documentation.
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. You can learn more in the [Develop Workflows](https://docs.temporal.io/application-development/foundations?lang=typescript#develop-workflows) section of the Temporal documentation.
 
 To begin your Workflow, create a new subdirectory called `src`:
 
