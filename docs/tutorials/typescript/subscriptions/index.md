@@ -23,7 +23,7 @@ In this tutorial, you will tour all of the [Workflow APIs](https://docs.temporal
 - The goal is to give you a more accessible introduction to these APIs by explaining them in context of a realistic application.
 - We also give an example of how you break down project requirements into Activities and Workflow logic.
 
-YOur task is to write a Workflow for a limited time Subscription (eg a 36 month Phone plan) that satisfies these conditions:
+Your task is to write a Workflow for a limited time Subscription (eg a 36 month Phone plan) that satisfies these conditions:
 
 1. When the user signs up, **send a welcome email** and start a free trial for `TrialPeriod`.
 2. When the `TrialPeriod` expires, start the billing process
