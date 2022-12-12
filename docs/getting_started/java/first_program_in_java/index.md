@@ -53,7 +53,7 @@ This tutorial uses a fully working template application which can be downloaded 
   cd money-transfer-project-template-java
   ```
 
-- [Zip download](https://github.com/temporalio/money-transfer-project-template-java/archive/main.zip)
+- [Zip download](https://github.com/temporalio/money-transfer-project-template-java/archive/refs/heads/master.zip)
 
 To build the project, either open it with [IntelliJ](https://www.jetbrains.com/idea/) (the project will build automatically) or make sure you have [Gradle](https://gradle.org/install/) installed and run the Gradle build command from the root of the project:
 

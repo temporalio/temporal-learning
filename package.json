@@ -13,7 +13,7 @@
     "getsnips": "snipsync",
     "clearsnips": "snipsync --clear",
     "check_links": "lychee docs --exclude-loopback --exclude-mail",
-    "check_links_in_build": "lychee build --exclude-loopback --exclude-mail --exclude 'temporal-learning'",
+    "check_links_in_build": "lychee build --exclude-loopback --exclude-mail --exclude 'temporal-learning|algolia\\.net'",
     "scan": "npm-run-all -c --serial build check_links_in_build clearsnips",
     "get_courses": "node get_course_pages_from_lms.js",
     "write-translations": "docusaurus write-translations",
