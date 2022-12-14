@@ -11,7 +11,9 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 :::info WORK IN PROGRESS
+
 This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+
 :::
 
 ## Introduction
@@ -21,6 +23,7 @@ In this tutorial, you'll explore how Temporal integrates into an **existing Next
 This tutorial is written for a reasonably experienced TypeScript/Next.js developer.  Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
 
 :::tip Skip ahead
+
 **To skip straight to a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick)** or use the [package initializer](https://docs.temporal.io/typescript/package-initializer) to create a new project with the following command:
 
 ```command
@@ -112,7 +115,7 @@ export async function purchase(id: string): Promise<string> {
 ```
 
 Activities are the only way to interact with the outside world in Temporal (e.g. making API requests, or accessing the filesystem).
-See the [Activities docs](https://docs.temporal.io/typescript/activities) for more info.
+See the [Activities docs](https://docs.temporal.io/application-development/foundations?lang=typescript/#develop-activities) for more info.
 
 Inside of `/temporal/src/workflows.ts` we'll write a Workflow function that calls this Activity:
 
@@ -155,12 +158,12 @@ async function run() {
 }
 ```
 
-See the full [Worker docs](https://docs.temporal.io/typescript/workers) for more info.
+See the full [Worker docs](https://docs.temporal.io/application-development/foundations?lang=typescript/#run-worker-processes) for more info.
 You should now be able to run your Worker with `npm run build:temporal && npm run start:worker`, but it's not very exciting because you have no way to start a Workflow yet.
 
 :::tip Pro tip
 
-You actually _can_ start a Workflow with [`tctl`](https://docs.temporal.io/tctl/workflow/start) with just a Worker running, and no Client code written!
+You actually _can_ start a Workflow with [`tctl`](https://docs.temporal.io/tctl-v1/workflow/#start) with just a Worker running, and no Client code written!
 It is out of scope for this tutorial but try to `brew install tctl` and then `tctl workflow run --tq tutorial --wt OneClickBuy --et 60 -i '"Temporal CLI"'` if you enjoy developing with CLIs.
 
 :::
@@ -281,7 +284,7 @@ You will also want to have a plan for **monitoring and scaling your Temporal Wor
 
 At this point, you have a working full stack example of a Temporal Workflow running inside your Next.js app.
 
-You can explore adding [Signals and Queries](https://docs.temporal.io/typescript/workflows/#signals-and-queries) to your Workflow, then adding a new API Route to call them.
+You can explore adding [Signals](https://docs.temporal.io/application-development/features?lang=typescript/#signals)  [Queries](https://docs.temporal.io/application-development/features?lang=typescript/#queries) to your Workflow, then adding a new API Route to call them.
 You can choose to set up one API Route per Signal or Query, or have one API Route handle all of them, Temporal has no opinion on how you set up routing.
 
 Again, for a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick).
