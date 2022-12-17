@@ -1,6 +1,6 @@
 ---
 id: hello-world-tutorial-python
-sidebar_position: 2
+sidebar_position: 3
 keywords: [python,temporal,sdk,tutorial]
 last_update:
   date: 2022-12-05
@@ -135,6 +135,10 @@ The Temporal Python SDK includes functions that help you test your Workflow exec
 
 ## Configure a Client
 
+A Temporal Client provides a set of APIs to communicate with a Temporal Cluster.
+
+Clients are used to interact with existing Workflows or to start new ones.
+
 Clients don’t have explicit close statements. The Client pass two arguments in this example, a target host and a namespace. Since you're running this locally, use [localhost:7233](http://localhost:7233) and specify the optional default Namespace name, `default`.
 
 In the `run_worker.py` file, add the following to connect the Client to the server.
@@ -154,8 +158,6 @@ You've created a program that connects to a Temporal Client. The next step is to
 A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
 
 To configure a Worker process using the Python SDK, give it the name of the Task Queue to poll. When you start a Workflow, tell the server which Task Queue the Workflow and Activities use.
-
-The Worker Program defines the `client`, `task_queue`, `workflows`, and `activities`.
 
 A Worker Entity listens and polls on a single Task Queue. A Worker Entity contains both a Workflow Worker and an Activity Worker so that it can make progress of either a Workflow Execution or an Activity Execution.
 
