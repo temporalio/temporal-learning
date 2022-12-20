@@ -4,7 +4,7 @@ sidebar_position: 1
 keywords: [typescript, javascript, temporal, sdk, tutorial, learn]
 tags: [TypeScript, SDK]
 last_update:
-  date: 2022-12-09
+  date: 2022-12-20
 title: Build a Temporal "Hello World!" app from scratch in TypeScript
 ---
 :::note Tutorial information
@@ -25,7 +25,7 @@ In this tutorial, you will build your first Temporal Application from scratch us
 
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.
 2. An [Activity](https://docs.temporal.io/activities): Activities are functions called by Workflows, and they contain any logic that might fail or behave differently at different times. The Workflow you'll create executes a single Activity that takes a string as input and returns a formatted version of this string to the Workflow.
-3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and executes‰ the code piece by piece.
+3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and executes the code piece by piece.
 4. An initiator: To start a Workflow, you need to create a Client instance and call the `.start()` method. You'll write a separate script to do this.
 
 When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications.
@@ -42,7 +42,15 @@ The TypeScript SDK requires Node.js 14 or later.
 
 ## Create a new project
 
-To create an app with the Temporal TypeScript SDK, you'll create a new directory and use `npm` to initialize it as a Node.js project. Then you'll add the Temporal SDK packages and other dependencies to your project. 
+:::info
+
+This is a step by step guide that shows you how to create a project from scratch, and the goal is for you to better understand the structure of a Temporal application by creating the files on your own. 
+
+This project exists in its entirety in the [Temporal TypeScript samples repo](https://github.com/temporalio/samples-typescript/tree/main/hello-world). To skip these manual steps and get the project running locally, use the [package initializer](https://docs.temporal.io/typescript/package-initializer#optional-flags) command `npx @temporalio/create@latest hello-world --sample hello-world`
+
+:::
+
+To build an app with the Temporal TypeScript SDK, you'll create a new directory and use `npm` to initialize it as a Node.js project. Then you'll add the Temporal SDK packages and other dependencies to your project. 
 
 In a terminal, create a new project directory called `hello-world`:
 
@@ -56,13 +64,7 @@ Switch to the new directory:
 cd hello-world
 ```
 
-Create a `package.json` file: 
-
-```command
-touch package.json
-```
-
-Add the following code to the file which defines the project, sets up scripts, and defines the dependencies you'll use in this project:
+Create the `package.json` file in the root of your project and add the following code to the file that defines the project, sets up scripts, and defines the dependencies this project requires:
 
 [package.json](https://github.com/temporalio/samples-typescript/blob/main/hello-world/package.json)
 
@@ -89,10 +91,10 @@ Add the following code to the file which defines the project, sets up scripts, a
     ]
   },
   "dependencies": {
-    "@temporalio/activity": "^1.0.0",
-    "@temporalio/client": "^1.0.0",
-    "@temporalio/worker": "^1.0.0",
-    "@temporalio/workflow": "^1.0.0",
+    "@temporalio/activity": "^1.5.2",
+    "@temporalio/client": "^1.5.2",
+    "@temporalio/worker": "^1.5.2",
+    "@temporalio/workflow": "^1.5.2",
     "nanoid": "3.x"
   },
   "devDependencies": {
@@ -114,7 +116,7 @@ You should check out a few parts of the `package.json`, and the first is the `sc
 
 Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.io/package/nanoid), an `npm` package which you'll use to generate a unique identifier for your Workflow. 
 
-Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon), a server that automatically reloads when it detects a change in your code, TypeScript, and ESLint. You'll be using [ts-node](https://github.com/TypeStrong/ts-node) which will directly run TypeScript on Node.js without you needing to precompile.  
+Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon) (a tool that automatically restarts your application when it detects a change in your code), TypeScript, ESLint, and ts-node.
 
 Save the file, then download the dependencies specified in the `package.json` file with the command: 
 
@@ -122,13 +124,7 @@ Save the file, then download the dependencies specified in the `package.json` fi
 npm install
 ```
 
-Downloading the dependencies can take a few minutes to complete. Once the download is done, you will have a `package-lock.json` file and a `node_modules` directory. 
-
-:::info
-
-In this tutorial, you are building a Temporal application from scratch. The goal is for you to better understand the structure of a Temporal application by creating the files on your own. As you gain experience as a Temporal developer, you will begin creating TypeScript projects using the [package initializer](https://docs.temporal.io/typescript/package-initializer#optional-flags) command `npx @temporalio/create` which will set up a new Temporal project starting from the [Temporal TypeScript samples repo](https://github.com/temporalio/samples-typescript).
-
-:::
+Downloading the dependencies can take a few minutes to complete. Once the download is done, you will have new a `package-lock.json` file and a `node_modules` directory. 
 
 Your project workspace is configured, so you're ready to create your first Temporal Activity and Workflow. You'll start with the Workflow.
 
@@ -142,11 +138,8 @@ To begin your Workflow, create a new subdirectory called `src`:
 mkdir src
 ```
 
-Create the file `workflows.ts` in the `src` directory: 
+Create the file `workflows.ts` in the `src` directory. 
 
-```command
-touch src/workflows.ts
-```
 :::info
 
 Below, there are two language tabs (TypeScript and JavaScript). TypeScript is selected by default, and you will add that code to your file. The JavaScript code is an example of the code that the TypeScript compiler will generate, and you do not need to copy and paste it. This is true for all the following code samples.
@@ -178,10 +171,11 @@ In this code, the variable `greet` is assigned the value of `proxyActivites`, wh
 The `example` function executes an Activity called `greet`, and the function returns the result of the Activity. You'll create the `greet` function in the next section. 
 
 :::tip
-You can pass multiple inputs to a Workflow, but it's a good practice to send a single input. If you have several values you want to send, you should define an object and pass that into the Workflow instead.
+No matter how many inputs you pass to a Workflow, it's a best practice to use an object. There are some JSON restrictions that you should be aware of, and you can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
+
 :::
 
-You can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation. Next, you'll define the Activity that your Workflow will execute. 
+Next, you'll define the Activity that your Workflow will execute. 
 
 ## Create an Activity
 
@@ -194,10 +188,6 @@ With the Temporal TypeScript SDK, you define Activities similarly to how you def
 Your Activity Definition can accept input parameters. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=typescript#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Create the file `activities.ts` in the `src` directory:
-
-```command
-touch src/activities.ts
-```
 
 Add the following code to define a `greet` function:
 
@@ -216,13 +206,7 @@ You've completed the logic for the application; you have a Workflow and an Activ
 
 A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-Create a file for the Worker:
-
-```command
-touch src/worker.ts
-```
-
-Add the following code to define the Worker:
+Create a file called `worker.ts` and add the following code to define the Worker: 
 
 <!--SNIPSTART typescript-hello-worker-->
 [hello-world/src/worker.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/worker.ts)
@@ -257,7 +241,7 @@ run().catch((err) => {
 
 In the code, you create and call an async function named `run`. It creates and runs a Worker. It configures the Worker with a `workflowsPath` (the location of your workflow file), your Activity functions, and the name of the Task Queue. In this example, you name the Task Queue `hello-world`.
 
-Your Worker is configured, and now you will use an `npm` script to start your Worker using Nodemon, which will reload whenever it detects changes in your file, hence the command name `start.watch`. Run the command: 
+Now you will use an `npm` script to start your Worker using Nodemon, which will reload whenever it detects changes in your file, hence the command name `start.watch`. Run the command: 
 
 ```command
 npm run start.watch
@@ -288,7 +272,7 @@ The script runs and produces output similar to the following:
     debugMode: false,
     interceptors: { activityInbound: [Array], workflowModules: [Array] },
     sinks: { defaultWorkerLogger: [Object] },
-    workflowsPath: '/Users/kim/hello-world-temporal/src/workflows.ts',
+    workflowsPath: '/Users/username/hello-world-temporal/src/workflows.ts',
     activities: { greet: [AsyncFunction: greet] },
     taskQueue: 'hello-world',
     shutdownGraceTimeMs: 10000,
@@ -323,7 +307,7 @@ The script runs and produces output similar to the following:
 2022-11-22T04:38:13.751Z [INFO] Worker state changed { state: 'RUNNING' }
 ```
 
-In the output, you will see the Worker options and their values, as well as timestamps from Nodemon describing which programs have been invoked. 
+In the output, you will see the Worker options and their values, the Webpack bundling output, and timestamps from Nodemon describing which programs have been invoked. 
 
 Now that you have your Worker running, it's time for you to start a Workflow Execution. 
 
@@ -334,18 +318,12 @@ You can start a Workflow Execution by using the Temporal CLI or by writing code 
 Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a `client.ts` file that triggers your Temporal Workflow. 
 
 
-Open a new tab in your terminal, and create a `client.ts` file in the `src` directory:
-
-```command
-touch src/client.ts
-```
-
-Add the following code to your file to create a client that will kick off your Workflow Execution:
+Open a new tab in your terminal, create a `client.ts` file in the `src` directory, and add the following code to your file to create a client that will kick off your Workflow Execution:
 
 <!--SNIPSTART typescript-hello-client-->
 [hello-world/src/client.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/client.ts)
 ```ts
-import { Connection, WorkflowClient } from '@temporalio/client';
+import { Connection, Client } from '@temporalio/client';
 import { example } from './workflows';
 import { nanoid } from 'nanoid';
 
@@ -358,12 +336,12 @@ async function run() {
   //   tls: {}
   // }
 
-  const client = new WorkflowClient({
+  const client = new Client({
     connection,
     // namespace: 'foo.bar', // connects to 'default' namespace if not specified
   });
 
-  const handle = await client.start(example, {
+  const handle = await client.workflow.start(example, {
     // type inference works! args: [name: string]
     args: ['Temporal'],
     taskQueue: 'hello-world',
@@ -383,48 +361,41 @@ run().catch((err) => {
 ```
 <!--SNIPEND-->
 
-In the `client.ts` file, the `run` function sets up a connection string, invokes your Activity (the `greet` function), passes in an argument for the `name` parameter (in this example, the name is Temporal) and assigns the Workflow a unique identifier with Nanoid. 
+In the `client.ts` file, the `run` function sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name` parameter (in this example, the name is Temporal) and assigns the Workflow a unique identifier with Nanoid. The client dispatches the Workflow on the same `hello-world` Task Queue that the Worker is polling on.
 
 :::tip Specify a Workflow Id
-Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier or email address as part of the Workflow Id if you ran one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
+A Workflow Id is unique in a namespace and is used for deduplication. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 :::
 
 :::tip Get your results now or later
 
-You can [get the results](https://docs.temporal.io/application-development/foundations?lang=typescript#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by logging the output of the `greet` function as soon as the Workflow Execution completes. 
+You can [get the results](https://docs.temporal.io/application-development/foundations?lang=typescript#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by logging the output of the `example` Workflow which in turn calls the `greet` Activity. 
 ::: 
 
-Now that your client is set up, it's time for you to use this code to start your Workflow Execution. 
+Now that your client code is written, it's time for you to use this code to start your Workflow Execution. 
 
 ## Start a Workflow Execution
 
-To start your Workflow, open a new tab in your terminal and change into the `src` directory: 
-
-```command
-cd src
-```
-
-Then, run the `npm` script: 
+To start your Workflow, open a new tab in your terminal and  run the `npm` script: 
 
 ```command
 npm run workflow
 ```
 
-The script runs and returns the result:  
+The script runs and prints the result:  
 
 ```
 Hello, Temporal! 
 ```
 
-The "Hello, Temporal!" output is generated as the result of a few steps. First, `client.ts` passes `Temporal` as an argument to the Workflow. Next, the Workflow passes the argument to the Activity, and finally the Activity passes the argument as name and returns `Hello, ${name}!`.
+The "Hello, Temporal!" output is generated as the result of a few steps. First, `client.ts` passes `Temporal` as an argument to the Workflow. Next, the Workflow passes the argument to the Activity, and finally the Activity returns `Hello, ${name}!`.
 
-The [Workflow ID](https://docs.temporal.io/application-development/foundations?lang=ts#workflow-id) is tracked by the Task Queue, and the the Worker is looking for tasks on that Task Queue.
 
 You have successfully built a Temporal application from scratch!
 
 ## Conclusion
 
-You now know how to build a Temporal Workflow application using the TypeScript SDK.
+You now know how to build a basic Temporal application using the TypeScript SDK.
 
 ### Review
 
@@ -451,6 +422,6 @@ Answer the following questions to see whether you remember some of the important
 
 </summary>
 
-It adds the information to a Task Queue.
+The Temporal Server adds Tasks to a Task Queue, and the Worker polls the Task Queue.
 
 </details>
