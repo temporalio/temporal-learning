@@ -17,7 +17,7 @@ image: /img/temporal-logo-twitter-card.png
 In [Part 1](./part1.md), [Part 2](./part2.md), and [Part 3](./part3.md), you built and tested a shopping cart with an abandoned cart email notification using long-lived Workflows.
 Workflows, Activities, and Temporal's testing utilities make it easy to build and maintain features that involve external services and time, like sending an email reminder when a user hasn't touched their cart in a while.
 
-Thus far, you've worked only with the Temporal SDK via [starters](/docs/getting_started/go/hello_world_in_go/index.md#workflow-starter) and [unit tests](https://docs.temporal.io/go/how-to-test-workflow-definitions-in-go), which invoke the Temporal SDK directly.
+Thus far, you've worked only with the Temporal SDK via [starters](/docs/getting_started/go/hello_world_in_go/index.md#workflow-starter) and [unit tests](https://docs.temporal.io/application-development/testing/#test-workflows), which invoke the Temporal SDK directly.
 
 In this tutorial, you'll see how you can build a RESTful API on top of Temporal Workflows, so you can create web apps and mobile apps that store data in Temporal.
 
@@ -54,7 +54,7 @@ func main() {
 }
 ```
 
-The API endpoints will use [Temporal Client methods](https://docs.temporal.io/go/workflows#how-to-start-a-workflow) to create Workflows, and execute Signals and Queries.
+The API endpoints will use [Temporal Client methods](https://docs.temporal.io/application-development/foundations?lang=go/#start-workflow-execution) to create Workflows, and execute Signals and Queries.
 For the purposes of this app, HTTP GET requests execute Queries, HTTP PUT or PATCH requests send Signals, and HTTP POST requests create new Workflows.
 
 ```go
@@ -73,7 +73,7 @@ r.Handle("/cart/{workflowID}/email", http.HandlerFunc(UpdateEmailHandler)).Metho
 r.Handle("/cart/{workflowID}/checkout", http.HandlerFunc(CheckoutHandler)).Methods("PUT")
 ```
 
-In this case, the API server and the [Worker](https://docs.tempora.io/concepts/what-is-a-worker) are separate processes.
+In this case, the API server and the [Worker](https://docs.temporal.io/workers) are separate processes.
 The API server is just an intermediary between the Temporal server and your API server's clients.
 The event history representing the cart is stored in the Temporal server.
 

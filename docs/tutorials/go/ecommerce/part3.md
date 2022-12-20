@@ -18,9 +18,9 @@ In [Part 1](./part1.md) and [Part 2](./part2.md), you built out a shopping cart 
 
 Using Workflows and Activities, you can easily build features that would be tricky in a traditional RESTful API, like sending an email reminder when a user hasn't touched their cart in a while.
 
-Temporal Workflows do more than make working with time easy, they also make your code easier to test.  Temporal provides testing utilities that help you stub out external services and programmatically advance time, which lets you [unit test your Workflows](https://docs.temporal.io/blog/descript-case-study/#to-code-or-not-to-code).
+Temporal Workflows do more than make working with time easy, they also make your code easier to test.  Temporal provides testing utilities that help you stub out external services and programmatically advance time, which lets you unit test your Workflows. For an example, take a look at how [Descript uses Temporal](https://temporal.io/case-studies/descript-case-study).
 
-In this blog post, you'll how to use Temporal's testing utilities to write fast unit tests for the shopping cart from Part 1 and Part 2.
+In this blog post, you'll explore how to use Temporal's testing utilities to write fast unit tests for the shopping cart from Part 1 and Part 2.
 
 ## 30 Minute Video Version
 
@@ -32,7 +32,7 @@ import { ResponsivePlayer } from '@site/src/components'
 
 ## Testing Setup
 
-The following is a basic setup for testing a Temporal Workflow using `go test` and [Testify](https://github.com/stretchr/testify) based on [Temporal's Go testing docs](https://docs.temporal.io/go/how-to-test-workflow-definitions-in-go).
+The following is a basic setup for testing a Temporal Workflow using `go test` and [Testify](https://github.com/stretchr/testify) based on [Temporal's Go testing docs](https://docs.temporal.io/application-development/testing).
 
 You can find the full source code for the test suite in the `workflow_test.go` file.
 
@@ -318,7 +318,6 @@ func (s *UnitTestSuite) Test_Checkout() {
 What about testing the abandoned cart email?
 Normally, testing the abandoned cart email is tricky because it involves waiting for 10 minutes.
 The key insight is that Temporal's test environment advances time internally, and time in the test environment is **not** [wall-clock time](https://en.wikipedia.org/wiki/Elapsed_real_time).
-For example, Temporal Workflows time out after [10 years by default](https://docs.temporal.io/concepts/what-is-a-workflow-execution-timeout), so the previous examples would run for over a decade if the test environment used wall-clock time!
 
 The `RegisterDelayedCallback()` function ties into the test environment's internal notion of time.
 Calling `RegisterDelayedCallback(fn, time.Minute*5)` does **not** tell the test environment to wait for 5 minutes of wall-clock time.

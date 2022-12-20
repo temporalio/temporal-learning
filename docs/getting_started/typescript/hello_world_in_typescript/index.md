@@ -179,7 +179,9 @@ Next, you'll define the Activity that your Workflow will execute.
 
 ## Create an Activity
 
+
 You use Activities in your Temporal Applications to execute non-deterministic code or perform operations that may fail.
+
 
 For this tutorial, your Activity won't be complex; you'll create an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
