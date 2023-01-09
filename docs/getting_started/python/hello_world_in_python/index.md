@@ -3,7 +3,7 @@ id: hello-world-tutorial-python
 sidebar_position: 3
 keywords: [python,temporal,sdk,tutorial]
 last_update:
-  date: 2022-12-05
+  date: 2023-01-09
 title: Build a Temporal "Hello World!" Application in Python
 sidebar_label: Build a Temporal Application in Python
 description: In this tutorial you will build your first Temporal Application using the Python SDK
@@ -18,8 +18,10 @@ image: /img/temporal-logo-twitter-card.png
 - **Level:** ⭐ Temporal beginner
 - **Time:** ⏱️ ~20 minutes
 - **Goals:** 🙌
-  - Build a Temporal Application project using the [Python SDK](https://github.com/temporalio/sdk-python).
-  - Become more familiar with core concepts and the application structure.
+  - Set up, build, and test a Temporal application project using the [Python SDK](https://github.com/temporalio/sdk-python).
+  - Identify the four parts of a Temporal Workflow application.
+  - Describe how the Temporal Server gets information to the Worker.
+  - Explain how to define Workflow Definitions with the Temporal Python SDK.
 
 :::
 
@@ -273,7 +275,7 @@ Answer the following questions to see if you remember some of the more important
 
 </summary>
 
-It adds the information to a Task Queue.
+The Temporal Server adds Tasks to a Task Queue, and the Worker polls the Task Queue.
 
 </details>
 
