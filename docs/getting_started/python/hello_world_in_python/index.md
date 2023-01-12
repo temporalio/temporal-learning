@@ -93,7 +93,7 @@ In the Temporal Python SDK, [Activity Definition](https://docs.temporal.io/activ
 
 In the `run_worker.py` file, add the following code to define a `say_hello` function.
 
-<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["5", "9-11"]}-->
+<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["4", "9-11"]}-->
 <!--SNIPEND-->
 
 Your Activity Definition can accept input parameters.
