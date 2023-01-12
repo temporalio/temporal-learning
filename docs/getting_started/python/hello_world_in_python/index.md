@@ -1,12 +1,12 @@
 ---
 id: hello-world-tutorial-python
 sidebar_position: 3
-keywords: [python,temporal,sdk,tutorial]
+keywords: [python, temporal, sdk, tutorial]
 last_update:
   date: 2023-01-09
 title: Build a Temporal "Hello World!" Application in Python
 sidebar_label: Build a Temporal Application in Python
-description: In this tutorial you will build your first Temporal Application using the Python SDK
+description: In this tutorial, you will build your first Temporal Application using the Python SDK
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -69,19 +69,8 @@ Workflows are where you configure and organize the execution of Activities.
 In the Temporal Python SDK, [Workflow Definitions](https://docs.temporal.io/workflows#workflow-definition) are defined as classes and are run in a sandbox environment.
 Create the file `run_worker.py` in the root of your project and add the following code to create a `SayHello` class to define the Workflow.
 
-```python
-from temporalio import workflow
-import asyncio
-from datetime import datetime, timedelta
-
-@workflow.defn
-class SayHello:
-    @workflow.run
-    async def run(self, name: str) -> str:
-        return await workflow.execute_activity(
-            say_hello, name, schedule_to_close_timeout=timedelta(seconds=5)
-        )
-```
+<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["1-3", "15-20"]}-->
+<!--SNIPEND-->
 
 In the Temporal Python SDK, `@workflow.defn` defines a Workflow class method and the [Workflow Type](https://docs.temporal.io/workflows#workflow-type) defaults to the unqualified class name. The Workflow Type can be customized with a `name` parameter inside the decorator, for example `@workflow.defn(name="customized-name")`.
 
@@ -107,15 +96,9 @@ In the Temporal Python SDK, [Activity Definition](https://docs.temporal.io/activ
 
 In the `run_worker.py` file, add the following code to define a `say_hello` function.
 
-```python
-from temporalio import activity
+<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["5", "9-11"]}-->
+<!--SNIPEND-->
 
-# ...
-
-@activity.defn
-async def say_hello(name: str) -> str:
-    return f"Hello, {name}!"
-```
 
 Your Activity Definition can accept input parameters.
 
@@ -124,16 +107,6 @@ Review the [Activity parameters](https://docs.temporal.io/application-developmen
 The logic within the `say_hello` function creates the string and returns the greeting.
 
 You've completed the logic for the application by defining a Workflow and an Activity. The next step is to configure your Client to connect to your Temporal Server.
-
-<!--
-
-Before moving on, you'll write a unit test for your Workflow.
-
-## ![](/img/icons/check.png) Add a unit test
-
-The Temporal Python SDK includes functions that help you test your Workflow executions. Let's add a basic unit test to the application to make sure the Workflow works as expected.
-
--->
 
 ## Configure a Client
 
@@ -145,13 +118,9 @@ Clients don’t have explicit close statements. The Client pass two arguments in
 
 In the `run_worker.py` file, add the following to connect the Client to the server.
 
-```python
-from temporalio.client import Client
-# ...
+<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["6", "23-24"]}-->
+<!--SNIPEND-->
 
-async def main():
-    client = await Client.connect("localhost:7233", namespace="default")
-```
 
 You've created a program that connects to a Temporal Client. The next step is to configure a Worker to process the Workflow.
 
@@ -165,20 +134,9 @@ A Worker Entity listens and polls on a single Task Queue. A Worker Entity contai
 
 In the `run_worker.py` file, add the following in the `def main()` function.
 
-```python
-from temporalio.worker import Worker
-# ...
+<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["6", "25-34"]}-->
+<!--SNIPEND-->
 
-    # Run the worker
-    worker = Worker(
-        client, task_queue="my-task-queue", workflows=[SayHello], activities=[say_hello]
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
 
 You've created a program that instantiates a Worker to process the Workflow. The next step is to write the code that runs a Workflow Execution.
 
@@ -194,33 +152,155 @@ To execute a Workflow, specify the Workflow Type, pass an argument, specify the 
 
 Create the `run_workflow.py` file and add the following to connect to the server and start the Workflow.
 
-```python
-import asyncio
-from temporalio.client import Client
-
-# Import the workflow from the previous code
-from run_worker import SayHello
+<!--SNIPSTART python-project-template-run-workflow-->
+<!--SNIPEND-->
 
 
-async def main():
-    # Create client connected to server at the given address
-    client = await Client.connect("localhost:7233")
+You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution.
 
-    # Execute a workflow
-    result = await client.execute_workflow(
-        SayHello.run, "Temporal", id="my-workflow-id", task_queue="my-task-queue"
-    )
+Before moving on, you'll write a unit test for your Workflow and Activity.
 
-    print(f"Result: {result}")
+## ![](/img/icons/check.png) Add a unit test
 
+The Temporal Python SDK includes functions that help you test your Workflow executions. Let's add tests to the application to make sure the Workflow works as expected.
 
-if __name__ == "__main__":
-    asyncio.run(main())
+### Pytest Prerequisites
+
+[Install pytest](#instal-pytest) and [Create the folder structure](#create-the-folder-structure) are prerequisite steps needed before writing the tests.
+
+#### Install pytest
+
+[pytest](https://docs.pytest.org/) requires: Python 3.7+
+
+To install pytest, you can use the following command:
+
+```bash
+pip install pytest
 ```
 
-You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. Now, it's time to run the Workflow.
+This command will install the pytest framework and its dependencies.
 
-## ![](/img/icons/run.png) Run the Application
+#### Create the folder structure
+
+1. Create a new folder in your project directory called `tests`.
+2. In the `tests` folder, create a new file called `test_run_worker.py`. This file will contain the tests for your Workflow and Activity.
+3. Create a `__init__.py` file.
+
+Your directory should look like this.
+
+```bash
+tests
+├── __init__.py
+├── conftest.py
+└── test_run_worker.py
+```
+
+### Test the Workflow
+
+The following code block shows an example of how to test the Workflow using pytest in the `test_run_workflow.py` file:
+
+<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-26"]}-->
+<!--SNIPEND-->
+
+
+This code snippet import required package, `Client`, `Worker`, `say_hello` from `run_worker`, and `uuid`.
+
+A test function `test_execute_workflow` is created, where it creates a random `task_queue_name` and initiates the Worker, and checks if the outcome is `Hello, World!` for the input parameter `World`.
+
+### Test the Activity
+
+The following code block shows an example of how to test the Activity using pytest:
+
+<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
+<!--SNIPEND-->
+
+This creates a function `say_hello_mocked` which is used for mocking the activity function, using assert statement the function checks if the outcome of the mocked function is `"Hello, World from mocked activity!"` for the passed input parameter `World`.
+
+### Configuration file
+
+Next, create a `conftest.py` file that sets up and tears down resources for the test.
+
+The `conftest.py` file defines several fixtures that are automatically passed as arguments to any test function that declares them as a parameter.
+
+#### Imports
+
+Import the necessary libraries for the tests.
+
+<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["1-9"]}-->
+<!--SNIPEND-->
+
+#### `pytest_addoption` function
+
+<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["12-17"]}-->
+<!--SNIPEND-->
+
+
+This allows you to pass the command line option while running the tests. In this case, it adds an option `--workflow-environment` that can take one of three values: `local`, `time-skipping`, or target to existing server.
+
+If this option is not passed, it defaults to `local`.
+
+#### `event_loop` fixture
+
+<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["20-31"]}-->
+<!--SNIPEND-->
+
+This fixture creates an event loop, which is a control structure that manages the scheduling of asynchronous tasks in Python.
+
+It is used by the `asyncio` library, which is built into Python. The function sets the event loop policy on older versions of Python to `ProactorEventLoop` and also make sure to close the event loop when the test completes.
+
+#### `env` fixture
+
+<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["34-44"]}-->
+<!--SNIPEND-->
+
+This fixture starts up a new instance of `WorkflowEnvironment`, which is a test environment for running Temporal Workflows and Activities.
+
+The type of environment to start is determined by the `--workflow-environment` command line option passed by the user. This fixture also shutdown the environment after the test completes
+
+- `local`: will start a new local environment for testing.
+- `time-skipping`: will start a new environment that allows for time-skipping.
+
+Target to existing server: If you pass any string other than `local` and `time-skipping` then it will connect to the target server using that string.
+
+#### `client` fixture
+
+<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["47-49"]}-->
+<!--SNIPEND-->
+
+This fixture creates a new client connected to the `WorkflowEnvironment`. The `WorkflowEnvironment` is passed as an argument, so this fixture is dependent on the env fixture. This fixture is automatically closed when the test completes, so it doesn't need an explicit teardown.
+
+### Running the tests
+
+You can run the test through the command line. This file will be loaded by pytest automatically, and it will make these fixtures available to any test that requires them as arguments.
+
+You can also pass the command line option `--workflow-environment` at runtime to change the test environment.
+
+To run the tests, use the following commands:
+
+```bash
+python run_worker.py
+pytest
+```
+
+This command will search for files in your `tests` folder that match the pattern `test_*.py` or `*_test.py`.
+
+You should see the following output or similar.
+
+```bash
+===================== test session starts =====================
+platform darwin -- Python 3.10.9, pytest-7.2.0, pluggy-1.0.0
+rootdir: /hello-world-python-getting-started
+plugins: asyncio-0.20.3, anyio-3.6.2
+asyncio: mode=strict
+collected 2 items
+
+tests/test_run_worker.py ..                             [100%]
+===================== 2 passed in 10.29s ======================
+```
+
+Now that all tests have past, it's time to run the application.
+
+## ![](/img/icons/run.png) Run the application
 
 To execute the Application, start the Worker and run the Workflow.
 
@@ -236,7 +316,7 @@ In a separate command terminal, start the Workflow by running the following comm
 python run_workflow.py
 ```
 
-The following output indicate that the Worker has started and has connected to the Task Queue and processed your Workflow.
+The following output indicates that the Worker has started and has connected to the Task Queue and processed your Workflow.
 
 ```command
 Result: Hello, Temporal!
