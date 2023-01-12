@@ -3,7 +3,7 @@ id: hello-world-tutorial-python
 sidebar_position: 3
 keywords: [python, temporal, sdk, tutorial]
 last_update:
-  date: 2023-01-09
+  date: 2023-01-12
 title: Build a Temporal "Hello World!" Application in Python
 sidebar_label: Build a Temporal Application in Python
 description: In this tutorial, you will build your first Temporal Application using the Python SDK
@@ -34,14 +34,11 @@ In this tutorial, you will build a [Temporal Application](https://docs.temporal.
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the Application and represent the orchestration aspect of the business logic.
 2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
 3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
-
-<!--You'll also write a unit test to ensure your Workflow executes successfully.-->
+4. You'll also write a test with the pytest framework to ensure your Workflow executes successfully.
 
 When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal Applications.
 
-<!--
 All the code in this tutorial is available in the [hello-world python template](https://github.com/temporalio/hello-world-project-template-python) repository.
--->
 
 ### Prerequisites
 
@@ -99,7 +96,6 @@ In the `run_worker.py` file, add the following code to define a `say_hello` func
 <!--SNIPSTART python-project-template-run-worker {"selectedLines": ["5", "9-11"]}-->
 <!--SNIPEND-->
 
-
 Your Activity Definition can accept input parameters.
 
 Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
@@ -121,7 +117,6 @@ In the `run_worker.py` file, add the following to connect the Client to the serv
 <!--SNIPSTART python-project-template-run-worker {"selectedLines": ["6", "23-24"]}-->
 <!--SNIPEND-->
 
-
 You've created a program that connects to a Temporal Client. The next step is to configure a Worker to process the Workflow.
 
 ## Configure a Worker
@@ -136,7 +131,6 @@ In the `run_worker.py` file, add the following in the `def main()` function.
 
 <!--SNIPSTART python-project-template-run-worker {"selectedLines": ["6", "25-34"]}-->
 <!--SNIPEND-->
-
 
 You've created a program that instantiates a Worker to process the Workflow. The next step is to write the code that runs a Workflow Execution.
 
@@ -154,7 +148,6 @@ Create the `run_workflow.py` file and add the following to connect to the server
 
 <!--SNIPSTART python-project-template-run-workflow-->
 <!--SNIPEND-->
-
 
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution.
 
@@ -202,7 +195,6 @@ The following code block shows an example of how to test the Workflow using pyte
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-26"]}-->
 <!--SNIPEND-->
 
-
 This code snippet import required package, `Client`, `Worker`, `say_hello` from `run_worker`, and `uuid`.
 
 A test function `test_execute_workflow` is created, where it creates a random `task_queue_name` and initiates the Worker, and checks if the outcome is `Hello, World!` for the input parameter `World`.
@@ -233,7 +225,6 @@ Import the necessary libraries for the tests.
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["12-17"]}-->
 <!--SNIPEND-->
-
 
 This allows you to pass the command line option while running the tests. In this case, it adds an option `--workflow-environment` that can take one of three values: `local`, `time-skipping`, or target to existing server.
 
