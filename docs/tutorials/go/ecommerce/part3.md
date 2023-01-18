@@ -11,6 +11,11 @@ last_update:
   date: 2021-07-14T00:00:00Z
 image: /img/temporal-logo-twitter-card.png
 ---
+:::info WORK IN PROGRESS
+
+This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+
+:::
 
 ## Introduction
 
