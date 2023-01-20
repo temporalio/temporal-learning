@@ -10,11 +10,9 @@ description: Explore how Temporal integrates into an existing Next.js applicatio
 image: /img/temporal-logo-twitter-card.png
 ---
 
-:::info WORK IN PROGRESS
+import { OutdatedNotice } from '@site/src/components'
 
-This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
-
-:::
+<OutdatedNotice />
 
 ## Introduction
 

@@ -12,6 +12,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 ## Introduction
 
 In [Part 1](./part1.md) and [Part 2](./part2.md), you built out a shopping cart with an abandoned cart email notification using long-lived Workflows.

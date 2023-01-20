@@ -12,6 +12,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 ## Introduction
 
 Temporal promises to help you build invincible apps.
