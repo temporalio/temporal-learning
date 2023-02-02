@@ -8576,7 +8576,7 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-snipsync@^1.5.0:
+snipsync@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/snipsync/-/snipsync-1.8.0.tgz#c83b6dc492e7ae62a3aa2ea38c121737271df007"
   integrity sha512-AkZSe8UGmf6ZZ84+1aWrE8RFyKR8pL/0Dp5ZT0vEOAdyncGzp4tw4YwsFFi73YUG8FCAkreynSHhOfewX+EjBQ==
