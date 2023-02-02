@@ -1,6 +1,6 @@
 # learn.temporal.io
 
-This is the code and content for https://learn.temporal.io
+This is the code and content for [learn.temporal.io](https://learn.temporal.io).
 
 
 
