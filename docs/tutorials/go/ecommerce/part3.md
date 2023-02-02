@@ -17,6 +17,10 @@ This tutorial is a work in progress. Some sections may be incomplete, out of dat
 
 :::
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 ## Introduction
 
 In [Part 1](./part1.md) and [Part 2](./part2.md), you built out a shopping cart with an abandoned cart email notification using long-lived Workflows.

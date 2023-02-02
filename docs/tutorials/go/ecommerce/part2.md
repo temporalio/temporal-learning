@@ -12,11 +12,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-:::info WORK IN PROGRESS
+import { OutdatedNotice } from '@site/src/components'
 
-This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
+<OutdatedNotice />
 
-:::
 ## Introduction
 
 In [Part 1](./part1.md), you built out a simple shopping cart app using a long-living Workflow to track the state of the cart.

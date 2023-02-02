@@ -17,6 +17,10 @@ This tutorial is a work in progress. Some sections may be incomplete, out of dat
 
 :::
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 ## Introduction
 
 Temporal promises to help you build invincible apps.

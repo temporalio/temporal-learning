@@ -10,11 +10,9 @@ description: In this tutorial, we will tour all of the Workflow APIs you should 
 image: /img/temporal-logo-twitter-card.png
 ---
 
-:::info WORK IN PROGRESS
+import { OutdatedNotice } from '@site/src/components'
 
-This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
-
-:::
+<OutdatedNotice />
 
 ## Introduction
 
