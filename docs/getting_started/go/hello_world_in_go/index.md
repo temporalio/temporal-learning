@@ -1,13 +1,12 @@
 ---
-id: hello-world-tutorial
-sidebar_position: 2
-description: In this tutorial you will build your first Temporal app using the Go SDK
-keywords: [golang,go,temporal,sdk,tutorial]
-last_update:
-  date: 2022-10-24
+id: hello-world-tutorial-go
 title: Build a Temporal "Hello World!" app from scratch in Go
+sidebar_position: 3
+description: In this tutorial you will build your first Temporal app using the Go SDK
+keywords: [golang,go,temporal,sdk,tutorial, hello world]
+last_update:
+  date: 2023-02-02
 tags:
-  - helloworld
   - go
   - sdk
   - tutorial
@@ -22,7 +21,9 @@ image: /img/temporal-logo-twitter-card.png
 - **Time:** ⏱️ ~10 minutes
 - **Goals:** 🙌
   - Set up, build, and test a Temporal application project from scratch using the [Go SDK](https://github.com/temporalio/sdk-go).
-  - Become more familiar with core concepts and the application structure.
+  - Identify the four parts of a Temporal Workflow application.
+  - Describe how the Temporal Server gets information to the Worker.
+  - Explain how to define Workflow Definitions with the Temporal Go SDK.
 
 :::
 
@@ -30,7 +31,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant resiliant applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
 
-In this tutorial, you will build your first Temporal Application from scratch using the [Temporal Go SDK](https://github.com/temporalio/go-sdk). The app will consist of four pieces:
+In this tutorial, you will build your first [Temporal Application](https://docs.temporal.io/temporal#temporal-application) from scratch using the [Temporal Go SDK](https://github.com/temporalio/go-sdk). The Temporal Application will consist of the following pieces:
 
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
 2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
@@ -52,7 +53,7 @@ Before starting this tutorial:
 
 ## ![](/img/icons/harbor-crane.png) Create a new Go project
 
-To create an app with the Temporal Go SDK, you'll create a new Go project and initialize it as a module, just like any other Go program you're creating. Then you'll add the Temporal SDK package to your project.
+To get started with the Temporal Go SDK, you'll create a new Go project and initialize it as a module, just like any other Go program you're creating. Then you'll add the Temporal SDK package to your project.
 
 In a terminal, create a new project directory called `hello-world-temporal`:
 
@@ -89,9 +90,7 @@ With your project workspace configured, you're ready to create your first Tempor
 
 ## Create a Workflow
 
-Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a Workflow Definition using one of the Temporal SDKs.
-
-You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*. 
+Workflows are where you configure and organize the execution of Activities.  You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*. 
 
 In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations/#workflow-parameters) section of the Temporal documentation.
 
@@ -102,9 +101,8 @@ Create the file `workflow.go` in the root of your project and add the following 
 
 The `GreetingWorkflow` function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs.  You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
 
-
-
 :::tip
+
 You can pass multiple inputs to a Workflow, but it's a good practice to send a single input. If you have several values you want to send, you should define a Struct and pass that into the Workflow instead.
 
 :::
@@ -113,7 +111,7 @@ The function defines the options to execute an Activity, and then executes an Ac
 
 ## Create an Activity
 
-You use Activities in your Temporal Applications to execute non-deterministic code or perform operations that may fail.
+Use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail.
 
 For this tutorial, your Activity won't be complex; you'll create an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
@@ -126,14 +124,11 @@ Create the file `activity.go` in the project root and add the following code to 
 
 The `ComposeGreeting` Activity Definition also accepts a `Context` . This parameter is optional for Activity Definitions, but it's recommended because you may need it for other Go SDK features as your application evolves.
 
-Your Activity Definition can accept input parameters. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=go#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=go#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 The logic within the `ComposeGreeting` function creates the string and returns the greeting, along with `nil` for the error. In a more complex case, you can return an error from your Activity and then configure your Workflow to handle the error.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
-
-
-
 
 ## ![](/img/icons/check.png) Add a unit test
 
@@ -168,7 +163,7 @@ Run the following command from the project root to execute the unit tests:
 go test
 ```
 
-You'll see the following output from your test run indicating that the test was successful:
+You'll see output similar to the following from your test run indicating that the test was successful:
 
 ```
 2022/09/28 16:16:32 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType ComposeGreeting
@@ -182,7 +177,11 @@ You have a working application and a test to ensure the Workflow executes as exp
 
 A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-To configure a Worker process using the Go SDK, you create an instance of `Worker` and give it the name of the Task Queue to poll. When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use.
+When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use. A Worker listens and polls on the Task Queue, looking for work to do.
+
+To configure a Worker process using the Go SDK, you create an instance of `Worker` and give it the name of the Task Queue to poll. 
+
+You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
 Since you'll use the Task Queue name in multiple places in your project, create the file `shared.go` and define the Task Queue name there:
 
@@ -202,7 +201,9 @@ Then create the file `worker/main.go` and add the following code to connect to t
 <!--SNIPSTART hello-world-project-template-go-worker-->
 <!--SNIPEND-->
 
-This program uses  `client.Dial` to connect to the Temporal server, and then uses `worker.New` to instantiate the Worker. You register the Workflow and Activity with the Worker and then use `Run` to start the Worker.
+This program uses `client.Dial` to connect to the Temporal server, and then uses `worker.New` to instantiate the Worker. You register the Workflow and Activity with the Worker and then use `Run` to start the Worker.
+
+By default, the client connects to the Temporal Cluster running at `localhost` on port `7233`, and connects to the `default` namespace. You can change this by setting values in `client.Options`.
 
 You've created a program that instantiates a Worker to process the Workflow. Now you need to start the Workflow.
 
@@ -226,20 +227,20 @@ Then create the file `start/main.go` and add the following code to the file to c
 Like the Worker you created, this program uses `client.Dial` to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/application-development/foundations/?lang=go#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
 
 :::tip Specify a Workflow ID
+
 You don't need to specify a Workflow ID, as Temporal will generate one for you, but defining the ID yourself makes it easier for you to find it later in logs or interact with a running Workflow in the future. 
 
 Using an ID that reflects some business process or entity is a good practice. For example, you might use a customer ID or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
+
 :::
 
 You can [get the results](https://docs.temporal.io/application-development/foundations/?lang=go#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling  `we.Get`, which blocks the program's execution until the Workflow Execution completes.
 
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
 
-## 
+## ![](/img/icons/run.png) Run the application
 
-## ![](/img/icons/run.png) Run the app
-
-To run the app, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
+To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
 First, ensure that your local Temporal Cluster is running. 
 
@@ -264,7 +265,7 @@ To start the Workflow, open a new terminal window and switch to your project roo
 cd hello-world-temporal
 ```
 
-Then your `start/main.go`  from the project root to start the Workflow Execution:
+Then run `start/main.go` from the project root to start the Workflow Execution:
 
 ```command
 go run start/main.go
