@@ -8,7 +8,6 @@ last_update:
 description: In this tutorial, you will build your first Temporal Application using the Python SDK
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
-draft: true
 ---
 
 ![](images/banner.svg)

@@ -9,7 +9,6 @@ last_update:
   date: 2021-02-02
 sidebar_label: Set up a local development environment
 image: /img/temporal-logo-twitter-card.png
-draft: true
 ---
 
 To follow the Python SDK tutorial we recommend that you have the following environments set up.

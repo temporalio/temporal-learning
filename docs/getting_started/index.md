@@ -16,6 +16,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 * [Go](go/dev_environment/index.md)
 * [Java](java/dev_environment/index.md)
 * [TypeScript](typescript/dev_environment/index.md)
+* [Python](python/dev_environment/index.md)
 
 ## Run your first program
 
@@ -24,6 +25,7 @@ Download and run a small application and explore how Temporal executes Workflows
 * [Go](go/first_program_in_go/index.md)
 * [Java](java/first_program_in_java/index.md)
 * TypeScript (coming soon!)
+* Python (coming soon!)
 
 ## Build a Temporal "Hello World!" app from scratch
 
@@ -33,4 +35,5 @@ Write a program from the ground up in one of the supported languages:
 * [Java](java/hello_world_in_java/index.md)
 * [TypeScript](typescript/hello_world_in_typescript/index.md)
 * [PHP](php/hello_world_in_php/index.md)
+* [Python](python/hello_world_in_python/index.md)
 
