@@ -35,6 +35,8 @@ origins:
     repo: temporal-ecommerce
   - owner: temporalio
     repo: background-checks
+  - owner: rachfop
+    repo: test-flask
 
 targets:
   - docs/tutorials
