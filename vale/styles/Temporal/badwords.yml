@@ -6,6 +6,7 @@ ignorecase: true
 action:
   name: replace
 swap:
+  female: woman
   females: women
   utilization: use
   utilize: use
