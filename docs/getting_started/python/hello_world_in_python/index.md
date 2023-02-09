@@ -44,7 +44,7 @@ All the code in this tutorial is available in the [hello-world python template](
 
 Before starting this tutorial:
 
-- [Set up a local development environment for Temporal and Python](../dev_environmnet/index.md).
+- [Set up a local development environment for Temporal and Python](../dev_environment/index.md).
 
 ## ![](/img/icons/harbor-crane.png) Create a new Python project
 
