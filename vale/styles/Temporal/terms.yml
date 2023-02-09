@@ -1,0 +1,15 @@
+extends: existence
+message: Double check '%s' - may need to be capitalized.
+level: warning
+code: false
+ignorecase: false
+tokens:
+    - workflow
+    - activity
+    - signal
+    - query
+    - worker
+    - workflow definition
+    - workflow execution
+    - task queue
+    - Temporal application
