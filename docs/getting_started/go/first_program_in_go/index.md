@@ -96,6 +96,66 @@ The sample application in this tutorial models a money transfer between two acco
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-go-workflow-->
+[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/workflow.go)
+```go
+func MoneyTransfer(ctx workflow.Context, input PaymentDetails) (string, error) {
+
+	// RetryPolicy specifies how to automatically handle retries if an Activity fails.
+	retrypolicy := &temporal.RetryPolicy{
+		InitialInterval:        time.Second,
+		BackoffCoefficient:     2.0,
+		MaximumInterval:        100 * time.Second,
+		MaximumAttempts:        0, // unlimited retries
+		NonRetryableErrorTypes: []string{"InvalidAccountError", "InsufficientFundsError"},
+	}
+
+	options := workflow.ActivityOptions{
+		// Timeout options specify when to automatically timeout Activity functions.
+		StartToCloseTimeout: time.Minute,
+		// Optionally provide a customized RetryPolicy.
+		// Temporal retries failed Activities by default.
+		RetryPolicy: retrypolicy,
+	}
+
+	// Apply the options.
+	ctx = workflow.WithActivityOptions(ctx, options)
+
+	// Withdraw money.
+	var withdrawOutput string
+
+	withdrawErr := workflow.ExecuteActivity(ctx, Withdraw, input).Get(ctx, &withdrawOutput)
+
+	if withdrawErr != nil {
+		return "", withdrawErr
+	}
+
+	// Deposit money.
+	var depositOutput string
+
+	depositErr := workflow.ExecuteActivity(ctx, Deposit, input).Get(ctx, &depositOutput)
+
+	if depositErr != nil {
+		// The deposit failed; put money back in original account.
+
+		var result string
+
+		refundErr := workflow.ExecuteActivity(ctx, Refund, input).Get(ctx, &result)
+
+		if refundErr != nil {
+			return "",
+				fmt.Errorf("Deposit: failed to deposit money into %v: %v. Money could not be returned to %v: %w",
+					input.TargetAccount, depositErr, input.SourceAccount, refundErr)
+		}
+
+		return "", fmt.Errorf("Deposit: failed to deposit money into %v: Money returned to %v: %w",
+			input.TargetAccount, input.SourceAccount, depositErr)
+	}
+
+	result := fmt.Sprintf("Transfer complete (transaction IDs: %s, %s)", withdrawOutput, depositOutput)
+	return result, nil
+}
+
+```
 <!--SNIPEND-->
 
 The `MoneyTransfer` function takes in the details about the transaction, executes Activities to withdraw and deposit the money, and returns the results of the process. If there's a problem with the deposit, the function calls another Activity to put the money back in the original account, but still returns an error so you know the process failed.
@@ -103,6 +163,16 @@ The `MoneyTransfer` function takes in the details about the transaction, execute
 In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.go`: 
 
 <!--SNIPSTART money-transfer-project-template-go-transferdetails-->
+[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/shared.go)
+```go
+type PaymentDetails struct {
+	SourceAccount string
+	TargetAccount string
+	Amount        int
+	ReferenceID   string
+}
+
+```
 <!--SNIPEND-->
 
 It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
@@ -114,6 +184,21 @@ The Workflow Definition calls the Activities `Withdraw` and `Deposit` to handle 
 The `Withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-withdraw-->
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
+```go
+func Withdraw(ctx context.Context, data PaymentDetails) (string, error) {
+	log.Printf("Withdrawing $%d from account %s.\n\n",
+		data.Amount,
+		data.SourceAccount,
+	)
+
+	referenceID := fmt.Sprintf("%s-withdrawal", data.ReferenceID)
+	bank := BankingService{"bank-api.example.com"}
+	confirmation, err := bank.Withdraw(data.SourceAccount, data.Amount, referenceID)
+	return confirmation, err
+}
+
+```
 <!--SNIPEND-->
 
 If the transfer succeeded, the `Withdraw` function returns the confirmation. If it's unsuccessful, it returns an empty string and the error from the banking service.
@@ -123,6 +208,23 @@ In this tutorial, the banking service simulates an external API call. You can in
 The `Deposit` Activity function looks almost identical to the `Withdraw` function:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-deposit-->
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
+```go
+func Deposit(ctx context.Context, data PaymentDetails) (string, error) {
+	log.Printf("Depositing $%d into account %s.\n\n",
+		data.Amount,
+		data.TargetAccount,
+	)
+
+	referenceID := fmt.Sprintf("%s-deposit", data.ReferenceID)
+	bank := BankingService{"bank-api.example.com"}
+	// Uncomment the next line and comment the one after that to simulate an unknown failure
+	// confirmation, err := bank.DepositThatFails(data.TargetAccount, data.Amount, referenceID)
+	confirmation, err := bank.Deposit(data.TargetAccount, data.Amount, referenceID)
+	return confirmation, err
+}
+
+```
 <!--SNIPEND-->
 
 There's a commented line in this Activity definition that you'll use later in the tutorial to simulate an error in the Activity.
@@ -130,6 +232,21 @@ There's a commented line in this Activity definition that you'll use later in th
 If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to be put back in the original account, so there's a third Activity called `Refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-refund-->
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
+```go
+func Refund(ctx context.Context, data PaymentDetails) (string, error) {
+	log.Printf("Refunding $%v back into account %v.\n\n",
+		data.Amount,
+		data.SourceAccount,
+	)
+
+	referenceID := fmt.Sprintf("%s-refund", data.ReferenceID)
+	bank := BankingService{"bank-api.example.com"}
+	confirmation, err := bank.Deposit(data.SourceAccount, data.Amount, referenceID)
+	return confirmation, err
+}
+
+```
 <!--SNIPEND-->
 
 This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `Deposit` Activity to refund the money, using a separate activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `Deposit` Activity, the `Refund` won't be affected. You'll see this scenario shortly.
@@ -181,6 +298,51 @@ You have two ways to start a Workflow with Temporal, either via the SDK or via t
 In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the workflow:
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
+[start/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/start/main.go)
+```go
+func main() {
+	// Create the client object just once per process
+	c, err := client.Dial(client.Options{})
+
+	if err != nil {
+		log.Fatalln("Unable to create Temporal client:", err)
+	}
+
+	defer c.Close()
+
+	input := app.PaymentDetails{
+		SourceAccount: "85-150",
+		TargetAccount: "43-812",
+		Amount:        250,
+		ReferenceID:   "12345",
+	}
+
+	options := client.StartWorkflowOptions{
+		ID:        "pay-invoice-701",
+		TaskQueue: app.MoneyTransferTaskQueueName,
+	}
+
+	log.Printf("Starting transfer from account %s to account %s for %d", input.SourceAccount, input.TargetAccount, input.Amount)
+
+	we, err := c.ExecuteWorkflow(context.Background(), options, app.MoneyTransfer, input)
+	if err != nil {
+		log.Fatalln("Unable to start the Workflow:", err)
+	}
+
+	log.Printf("WorkflowID: %s RunID: %s\n", we.GetID(), we.GetRunID())
+
+	var result string
+
+	err = we.Get(context.Background(), &result)
+
+	if err != nil {
+		log.Fatalln("Unable to get Workflow result:", err)
+	}
+
+	log.Println(result)
+}
+
+```
 <!--SNIPEND-->
 
 :::note
@@ -248,6 +410,32 @@ After the Worker executes code, it returns the results back to the Temporal Serv
 In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster. It also registers the Workflow and the two Activities:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-->
+[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/worker/main.go)
+```go
+func main() {
+
+	c, err := client.Dial(client.Options{})
+	if err != nil {
+		log.Fatalln("Unable to create Temporal client.", err)
+	}
+	defer c.Close()
+
+	w := worker.New(c, app.MoneyTransferTaskQueueName, worker.Options{})
+
+	// This worker hosts both Workflow and Activity functions.
+	w.RegisterWorkflow(app.MoneyTransfer)
+	w.RegisterActivity(app.Withdraw)
+	w.RegisterActivity(app.Deposit)
+	w.RegisterActivity(app.Refund)
+
+	// Start listening to the Task Queue.
+	err = w.Run(worker.InterruptCh())
+	if err != nil {
+		log.Fatalln("unable to start Worker", err)
+	}
+}
+
+```
 <!--SNIPEND-->
 
 Note that the Worker listens to the same Task Queue that the Workflow and Activity Tasks are sent to.
@@ -255,6 +443,11 @@ Note that the Worker listens to the same Task Queue that the Workflow and Activi
 Task Queues are defined by a string name. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in the `shared.go` file:
 
 <!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
+[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/shared.go)
+```go
+const MoneyTransferTaskQueueName = "TRANSFER_MONEY_TASK_QUEUE"
+
+```
 <!--SNIPEND-->
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
@@ -341,6 +534,23 @@ To test this out and see how Temporal responds, you'll simulate a bug in the `De
 Open the `activity.go` file and switch out the comments on the `return` statements so that the `Deposit()` function returns an error:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-deposit-->
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
+```go
+func Deposit(ctx context.Context, data PaymentDetails) (string, error) {
+	log.Printf("Depositing $%d into account %s.\n\n",
+		data.Amount,
+		data.TargetAccount,
+	)
+
+	referenceID := fmt.Sprintf("%s-deposit", data.ReferenceID)
+	bank := BankingService{"bank-api.example.com"}
+	// Uncomment the next line and comment the one after that to simulate an unknown failure
+	// confirmation, err := bank.DepositThatFails(data.TargetAccount, data.Amount, referenceID)
+	confirmation, err := bank.Deposit(data.TargetAccount, data.Amount, referenceID)
+	return confirmation, err
+}
+
+```
 <!--SNIPEND-->
 
 Ensure you're calling `bank.DepositThatFails`.
