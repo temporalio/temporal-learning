@@ -13,9 +13,12 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
+
+This tutorial focuses on implementing an email subscription application with Temporal's Workflows, Activiites, and Queries.
+
 ### Goals
 
-Throughout the Python Subscription tutorial, you will accomplish the following:
+Throughout the Python Subscription tutorial, you will accomplish the following goals:
 
 - Use Activities to mock sending emails.
 - Use Queries to retrieve the status of the email subscription.
@@ -30,11 +33,14 @@ To accomplish these goals, you will need to build the following:
 
 ### Working sample
 
-To see a working sample, see the [email-subscription-project-python](https://github.com/temporalio/email-subscription-project-python) tutorial on GitHub.
+All the code for this tutorial is stored on GitHub in the following repository:
+
+- [email-subscription-project-python](https://github.com/temporalio/email-subscription-project-python)
+
 
 ## Setting up the environment
 
-Before you can get started, view the following requirements:
+A prerequesitie to get started is to install the following:
 
 - Temporal Server
 - Temporal Library
@@ -42,10 +48,46 @@ Before you can get started, view the following requirements:
 
 ### Project requirements
 
+- Python 3.7 or greater (tested with version 3.11)
 - Temporal Python SDK (tested with version [1.0.0](https://github.com/temporalio/sdk-python/releases/tag/1.0.0)).
 - Flask (tested with version [2.2.2](https://github.com/pallets/flask/releases/tag/2.2.2)).
 
-```python
+#### Activate Virtual Environment
+
+Run the following command to create a new virtual environment:
+
+```bash
+python3 -m venv venv
+```
+
+This command creates a new directory called "venv", which contains the following items:
+
+- Python interpreter (Python 3.11.0 in this case)
+- Scripts for activating and deactivating the virtual environment
+
+Activate the virtual environment to start using it:
+
+```bash
+source venv/bin/activate
+(venv) $
+```
+
+After activating, the virtual environment `(venv)` will be displayed on your command prompt.
+
+Since the virtual environment is active, running the python command will run the Python 3 version of the interpreter (which is stored within your virtual environment itself):
+
+```bash
+(venv) $ python --version
+Python 3.11.0
+```
+
+Throughout the rest of the tutorial, the `(venv) $` prompt will be ignored.
+
+#### Install packages with pip
+
+With the virtual environment created and activated, it's time to start installing the Python packages that you need using pip.
+
+```bash
 pip install temporalio
 pip install "Flask[asyinco]"
 ```
@@ -58,8 +100,12 @@ Before writing the Workflow Definition, define the data objects used by the Work
 
 ### Define Dataclass
 
+Now it's time to actually write some code for our Python application.
+
 
 The Temporal Python SDK strongly encourages the use of a single dataclass for parameters and return types, so fields with defaults can be added without breaking compatibility.
+
+Create a new file called `run_worker.py` and set a dataclass decrator followed by the dataclass objects.
 
 In the following example, set the `ComposeEmail` dataclass and define the necessary parameters.
 
@@ -76,6 +122,7 @@ class ComposeEmail:
     count: int = 0
 ```
 <!--SNIPEND-->
+
 
 This dataclass includes 3 typed objects, `email`, `message`, and `count`.
 
@@ -192,6 +239,10 @@ Creates a program that connects to a Temporal Client.
 
 Workers can specify multiple Workflows and Activities in a list.
 
+The `main` sets up the Temporal Client and creates a Worker object to run the `SendEmailWorkflow` Workflow and the `send_email()` Activity.
+
+The `if __name__ == "__main__":` block runs the main function using `asyncio.run`.
+
 ## Build the gateway
 
 ### Global Client
@@ -281,12 +332,10 @@ Each Query methods returns the current values of the Workflow attributes.
 
 Now tell the Flask endpoint to query the Workflow's `count` and `email` string name and return it in a JSON response.
 
-<!--SNIPSTART run_flask {"selectedLines": ["24-32"]}-->
+<!--SNIPSTART run_flask {"selectedLines": ["26-32"]}-->
 [run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
 ```py
 // ...
-        task_queue="hello-activity-task-queue",
-    )
     handle = g.client.get_workflow_handle(
         "send-email-activity",
     )
