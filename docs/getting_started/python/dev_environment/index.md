@@ -11,6 +11,9 @@ sidebar_label: Set up a local development environment
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 To follow the Python SDK tutorial we recommend that you have the following environments set up.
 
 ## Install Python
@@ -19,17 +22,28 @@ Make sure you have [Python](https://www.python.org/downloads/) installed. These 
 
 Check your version of Python with the following command:
 
+<Tabs groupId="os" querystring>
+  <TabItem value="win" label="Windows">
+
+```command
+python -V
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
+
 ```command
 python3 -V
 ```
+
+  </TabItem>
+</Tabs>
 
 You'll see the version printed to the screen:
 
 ```
 Python 3.10.9
 ```
-
-
 
 
 ## Install the Temporal Python SDK
@@ -50,15 +64,42 @@ mkdir temporal-project
 
 Create a Python virtual environment with `venv`:
 
+<Tabs querystring groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+python -m venv env
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
+
 ```command
 python3 -m venv env
 ```
 
+  </TabItem>
+</Tabs>
+
+
 Activate the environment:
+
+<Tabs querystring groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+env\Scripts\activate
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
 
 ```command
 source env/bin/activate
 ```
+
+  </TabItem>
+</Tabs>
 
 Then install the Temporal SDK:
 
