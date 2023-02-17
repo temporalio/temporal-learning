@@ -21,6 +21,8 @@ When you've completed the course, you'll be able to:
 - Interpret Temporal's workflow execution model
 - Use Temporal’s tooling to manage the lifecycle of your application
 
-* [Temporal 101 in Go](go.md)
-* [Temporal 101 in TypeScript](typescript.md)
+import DocCardList from '@theme/DocCardList';
+import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
+
+<DocCardList items={useCurrentSidebarCategory().items}/>
 
