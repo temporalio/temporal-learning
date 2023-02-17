@@ -245,7 +245,7 @@ A Worker
 
 After the Worker executes code, it returns the results back to the Temporal Server.
 
-In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster. It also registers the Workflow and the two Activities:
+In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster. It also registers the Workflow and the three Activities:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
@@ -387,7 +387,7 @@ Click the **Stack Trace** link to see a stack trace showing you the errors, as w
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors.  With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). 
 
-In `workflow.go`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the activities up to 500 times. You can read more about [Retries](https://docs.temporal.io/concepts/what-is-a-retry-policy) in the documentation.
+In `workflow.go`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the activities up to 500 times. You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
 
 Your Workflow is running, but only the `Withdraw()` Activity function has succeeded. In any other application, the whole process would likely have to be abandoned and rolled back. 
 
