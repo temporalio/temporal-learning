@@ -22,7 +22,7 @@ Make sure you have [Python](https://www.python.org/downloads/) installed. These 
 
 Check your version of Python with the following command:
 
-<Tabs groupId="os" querystring>
+<Tabs groupId="os" queryString>
   <TabItem value="win" label="Windows">
 
 ```command
@@ -64,7 +64,7 @@ mkdir temporal-project
 
 Create a Python virtual environment with `venv`:
 
-<Tabs querystring groupId="os">
+<Tabs queryString groupId="os">
   <TabItem value="win" label="Windows">
 
 ```command
@@ -84,7 +84,7 @@ python3 -m venv env
 
 Activate the environment:
 
-<Tabs querystring groupId="os">
+<Tabs queryString groupId="os">
   <TabItem value="win" label="Windows">
 
 ```command

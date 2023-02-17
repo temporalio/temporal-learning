@@ -15,7 +15,7 @@ image: /img/temporal-logo-twitter-card.png
 :::note Tutorial information
 
 - **Level:** ⭐ Temporal beginner
-- **Time:** ⏱️ ~20 minutes
+- **Time:** ⏱️ ~15 minutes
 - **Goals:** 🙌
   - Set up, build, and test a Temporal application project using the [Python SDK](https://github.com/temporalio/sdk-python).
   - Identify the four parts of a Temporal Workflow application.
@@ -42,16 +42,13 @@ All the code in this tutorial is available in the [hello-world python template](
 
 ### Prerequisites
 
-Before starting this tutorial:
-
-- [Set up a local development environment for Temporal and Python](../dev_environment/index.md).
+Before starting this tutorial, follow the tutorial [Set up a local development environment for Temporal and Python](../dev_environment/index.md) and ensure you do the following:
 
 ## ![](/img/icons/harbor-crane.png) Create a new Python project
 
 To get started with the Temporal Python SDK, create a new Python project, just like any other Python program.
 
 In a terminal, create a directory called `hello-world-temporal`:
-
 
 ```command
 mkdir hello-world-temporal
