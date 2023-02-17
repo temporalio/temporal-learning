@@ -12,6 +12,12 @@
 const https = require('https');
 const LMS_API_TOKEN = process.env.LMS_API_TOKEN;
 
+const courseCodes = [
+  '101_go',
+  '102_go',
+  '101_typescript'
+]
+
 const options = {
   hostname: 'temporal.talentlms.com',
   auth: `${LMS_API_TOKEN}:`,
@@ -31,14 +37,18 @@ const req = https.request(options, res => {
     const fs = require('fs');
 
     let courses = JSON.parse(data);
-
     console.log(courses)
 
+    // only get the courses we care about.
+    courses = courses.filter(course => courseCodes.includes(course.code) );
+
+    console.log(courses)
     let index = 1;
     for (let course of courses) {
       let md = generateMarkdown(course, url, index)
 
-      let filename = course.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".md";
+      let f = course.code.match(/(.*)_(.*)/)
+      let filename = `temporal_${f[1]}/${f[2]}.md`;
       console.log(filename)
       fs.writeFileSync(`docs/courses/${filename}`, md);
       index++;
