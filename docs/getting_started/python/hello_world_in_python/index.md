@@ -163,7 +163,7 @@ touch tests/__init__.py`
 
 Then create the file `tests/test_run_workflow.py` file and add the following content to test the Workflow:
 
-<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-26"]}-->
+<!--SNIPSTART hello-world-project-template-python-tests -->
 <!--SNIPEND-->
 
 This code snippet imports the required package, `Client`, `Worker`, `say_hello` from `run_worker`, and `uuid`.
