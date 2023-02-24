@@ -100,9 +100,9 @@ In the Temporal Python SDK, you define [Workflow Definitions](https://docs.tempo
 
 You then use the `@workflow.run` decorator to specify the method that should be invoked for the Workflow. Exactly one method must have this decorator and it must be added to an `async def` method.  
 
-Create the file `run_worker.py` in the root of your project and add the following code to create a `SayHello` class to define the Workflow:
+Create the file `workflows.py` in the root of your project and add the following code to create a `SayHello` class to define the Workflow:
 
-<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["1-3", "14-20"]}-->
+<!--SNIPSTART python-project-template-workflows -->
 <!--SNIPEND-->
 
 In this example, the `run` method is decorated with `@workflow.run`, so it's the method that will be invoked. 
@@ -130,9 +130,9 @@ For this tutorial, your Activity won't be complex; you'll define an Activity tha
 
 In the Temporal Python SDK, you define an Activity by decorating a function with `@activity.defn`.
 
-In the `run_worker.py` file, add the following code to define a `say_hello` function:
+Create a new file called `activities.py` and add the following code to define a `say_hello` function to define the Activity:
 
-<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["4", "9-11"]}-->
+<!--SNIPSTART python-project-template-activity -->
 <!--SNIPEND-->
 
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
@@ -170,59 +170,23 @@ This code snippet imports the required package, `Client`, `Worker`, `say_hello` 
 
 The test function `test_execute_workflow` creates a random task queue name and initiates the Worker with `client.execute_workflow`. It then checks if the result of the Workflow Execution is `Hello, World!` when the input parameter is `World`.
 
-This code tests the Workflow and invokes the actual `say_hello` Activity. However, you may want to test your Workflows and mock out the activity so you can see how your Workflow responds to different inputs and results. Add the following code to create a test that uses a mocked `say_hello` Activity:
+:::note
+
+The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.
+
+:::
+
+This code tests the Workflow and invokes the actual `say_hello` Activity. However, you may want to test your Workflows and mock out the activity so you can see how your Workflow responds to different inputs and results. 
+
+Add the following code to create a test that uses a mocked `say_hello` Activity:
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
 <!--SNIPEND-->
 
 This creates a function called `say_hello_mocked` which is used as the mock activity function. The test then checks thatthe outcome of the mocked function is `"Hello, World from mocked activity!"` for the passed input parameter `World`.
 
-To run your tests you'll need a file called `test/conftest.py` that sets up and tears down resources for the test. This file defines several fixtures that are automatically passed as arguments to any test function that declares them as a parameter. 
 
-Create the file  `test/conftest.py` and add the following code to import the necessary libraries for the tests:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["1-9"]}-->
-<!--SNIPEND-->
-
-Pytest lets you configure command-line options you can use when you run the tests. Add the following code to the file to add an option called  `--workflow-environment` that can take one of three values: `local`, `time-skipping`, or an existing server.
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["12-17"]}-->
-<!--SNIPEND-->
-
-If you use `local`, tests run in a new local environment for testing.
-
-The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.
-
-If you pass any string other than `local` and `time-skipping` then the tests will connect to the target server using that string.
-
-If this option is not passed, it defaults to `local`.
-
-Next, you'll need to define the `event_loop()` function to ensure that the async functions work properly across versions of Python. Add the following code:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["20-31"]}-->
-<!--SNIPEND-->
-
-The function sets the event loop policy on older versions of Python to `ProactorEventLoop` and closes the event loop when the test completes.
-
-Now add the following code to create the test environment for Workflows:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["34-44"]}-->
-<!--SNIPEND-->
-
-This fixture starts up a new instance of `WorkflowEnvironment`, which is a test environment for running Temporal Workflows and Activities.
-
-The type of environment to start is determined by the `--workflow-environment` command line option passed by the user. This fixture also shuts down the environment after the test completes.
-
-Finally, add this code to define a Temporal Client that the tests will use:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["47-49"]}-->
-<!--SNIPEND-->
-
-This fixture creates a new client connected to the `WorkflowEnvironment`. The `WorkflowEnvironment` is passed as an argument, so this fixture is dependent on the env fixture. This fixture is automatically closed when the test completes, so it doesn't need an explicit teardown.
-
-Save the file. Your test environment is configured and you're ready to run your tests.
-
-Run the following command from the project root:
+Run the following command from the project root to start the tests:
 
 ```command
 pytest
@@ -261,15 +225,14 @@ To configure a Worker process using the Python SDK, you'll connect to the Tempor
 
 You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
-In the `run_worker.py` file, add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
+Creaet the file `run_worker.py` in the root of your project and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
 
-<!--SNIPSTART python-project-template-run-worker {"selectedLines": ["6", "23-34"]}-->
+<!--SNIPSTART python-project-template-run-worker-->
 <!--SNIPEND-->
 
 The Client accepts two arguments in this example, a target host and a namespace. Since you're running this locally, use [localhost:7233](http://localhost:7233) and specify the optional default Namespace name, `default`.
 
 You then create a new Worker instance by specifying the client, the Task Queue to poll, and the Workflows and Activities to monitor.
-
 
 You've created a program that instantiates a Worker to process the Workflow. Now you need to start the Workflow.
 
@@ -288,7 +251,7 @@ To execute a Workflow, specify the Workflow Type, pass an argument, specify the 
 
 :::tip Specify a Workflow ID
 
-You don't need to specify a Workflow ID, as Temporal will generate one for you, but defining the ID yourself makes it easier for you to find it later in logs or interact with a running Workflow in the future. 
+You  need to specify a Workflow ID when executing a Workflw. You'll use this ID to locate the Workflow Execution later in logs or to interact with a running Workflow in the future.
 
 Using an ID that reflects some business process or entity is a good practice. For example, you might use a customer ID or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 
