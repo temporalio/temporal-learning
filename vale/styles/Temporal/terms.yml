@@ -4,12 +4,22 @@ level: warning
 code: false
 ignorecase: false
 tokens:
-    - workflow
-    - activity
-    - signal
-    - query
-    - worker
-    - workflow definition
-    - workflow execution
-    - task queue
-    - Temporal application
+ - workflow
+ - workflows
+ - activity
+ - activities
+ - signal
+ - signals
+ - query
+ - queries
+ - workers
+ - workflow definition
+ - workflow definitions
+ - activity definition
+ - activity definitions
+ - workflow execution
+ - workflow executions
+ - task queue
+ - task queues
+ - Temporal application
+ - Temporal applications

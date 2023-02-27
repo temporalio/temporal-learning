@@ -1,0 +1,34 @@
+extends: script
+message: "The section '%v' is not preceded by a paragraph. Ensure sections end with a paragraph for a smooth transition."
+level: error
+link: https://tengolang.com/
+# We need this to access heading markup.
+scope: raw
+script: |
+  text := import("text")
+  matches := []
+
+  paragraph_re := "^(?:[a-z|A-Z].*)$"
+
+  lines := text.split(scope, "\n")
+  section_lines := []
+
+  for line in lines {
+    if text.has_prefix(line, "##") {
+
+      if len(section_lines) > 1 {
+
+        last_line := section_lines[len(section_lines) - 1]
+        second_to_last_line := section_lines[len(section_lines) - 2]
+
+        if !text.re_match(paragraph_re, second_to_last_line) && last_line == "" {
+          start := text.index(scope, line)
+          matches = append(matches, {begin: start, end: start + len(line)})
+          section_lines = []
+        }
+
+      }
+    } else {
+      section_lines = append(section_lines, line)
+    }
+  }
