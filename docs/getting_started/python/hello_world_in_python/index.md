@@ -20,8 +20,8 @@ import TabItem from '@theme/TabItem';
 - **Level:** ⭐ Temporal beginner
 - **Time:** ⏱️ ~15 minutes
 - **Goals:** 🙌
-  - Set up, build, and test a Temporal application project using the [Python SDK](https://github.com/temporalio/sdk-python).
-  - Identify the four parts of a Temporal Workflow application.
+  - Set up, build, and test a Temporal Application project using the [Python SDK](https://github.com/temporalio/sdk-python).
+  - Identify the four parts of a Temporal Application.
   - Describe how the Temporal Server gets information to the Worker.
   - Explain how to define Workflow Definitions with the Temporal Python SDK.
 
@@ -201,24 +201,24 @@ Then create the file `tests/test_run_workflow.py` file and add the following con
 
 This code snippet imports the required package, `Client`, `Worker`, `say_hello` from `run_worker`, and `uuid`.
 
-The test function `test_execute_workflow` creates a random task queue name and initiates the Worker with `client.execute_workflow`. It then checks if the result of the Workflow Execution is `Hello, World!` when the input parameter is `World`.
+The test function `test_execute_workflow` creates a random Task Queue name and initiates the Worker with `client.execute_workflow`. It then checks if the result of the Workflow Execution is `Hello, World!` when the input parameter is `World`.
 
 :::note
 
-The `time-skipping` option starts a new environment that lets you test long-running workflows without waiting for them to complete in real-time.  You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance rus as a separate process during your test runs. 
+The `time-skipping` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs. 
 
-The `time-skipping` option is not a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
+The `time-skipping` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
 
 :::
 
-This code tests the Workflow and invokes the actual `say_hello` Activity. However, you may want to test your Workflows and mock out the activity so you can see how your Workflow responds to different inputs and results. 
+This code tests the Workflow and invokes the actual `say_hello` Activity. However, you may want to test your Workflows and mock out the Activity so you can see how your Workflow responds to different inputs and results. 
 
 Add the following code to create a test that uses a mocked `say_hello` Activity:
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
 <!--SNIPEND-->
 
-This creates a function called `say_hello_mocked` which is used as the mock activity function. The test then checks thatthe outcome of the mocked function is `"Hello, World from mocked activity!"` for the passed input parameter `World`.
+This creates a function called `say_hello_mocked` which the Workflow test will use as the mock Activity function. The test then checks that the outcome of the mocked function is `"Hello, World from mocked activity!"` for the passed input parameter `World`.
 
 
 Run the following command from the project root to start the tests:
@@ -249,7 +249,7 @@ Most test suites reuse the local environment across tests. You can explore [fixt
 
 You've built a test suite and you've successfully tested your Workflow. You can reuse the `conftest.py` file you've built in future Temporal Python projects.
 
-You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
+You have a working Temporal Application and tests that make sure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
 
 ## Configure a Worker
 
@@ -261,7 +261,7 @@ To configure a Worker process using the Python SDK, you'll connect to the Tempor
 
 You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
-Creaet the file `run_worker.py` in the root of your project and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
+Create the file `run_worker.py` in the root of your project and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
 
 <!--SNIPSTART python-project-template-run-worker-->
 <!--SNIPEND-->
@@ -287,7 +287,7 @@ To execute a Workflow, specify the Workflow Type, pass an argument, specify the 
 
 :::tip Specify a Workflow ID
 
-You  need to specify a Workflow ID when executing a Workflw. You'll use this ID to locate the Workflow Execution later in logs or to interact with a running Workflow in the future.
+You need to specify a Workflow ID when executing a Workflow. You'll use this ID to locate the Workflow Execution later in logs or to interact with a running Workflow in the future.
 
 Using an ID that reflects some business process or entity is a good practice. For example, you might use a customer ID or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 
@@ -295,7 +295,7 @@ Using an ID that reflects some business process or entity is a good practice. Fo
 
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
 
-## ![](/img/icons/run.png) Run the application
+## ![](/img/icons/run.png) Run the Temporal Application
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
@@ -361,7 +361,7 @@ Answer the following questions to see if you remember some of the more important
 <details>
 <summary>
 
-**What are the minimum four pieces of a Temporal Workflow application?**
+**What are the minimum four pieces of a Temporal Application?**
 
 </summary>
 
