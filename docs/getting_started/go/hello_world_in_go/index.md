@@ -1,6 +1,6 @@
 ---
 id: hello-world-tutorial-go
-title: Build a Temporal "Hello World!" app from scratch in Go
+title: Build a Temporal Application from scratch in Go
 sidebar_position: 3
 description: In this tutorial you will build a Temporal Application using the Go SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 keywords: [golang,go,temporal,sdk,tutorial, hello world, temporal application, workflow, activity]
@@ -127,11 +127,12 @@ Create the file `activity.go` in the project root and add the following code to 
 
 The `ComposeGreeting` Activity Definition also accepts a `Context` . This parameter is optional for Activity Definitions, but it's recommended because you may need it for other Go SDK features as your application evolves.
 
+The logic within the `ComposeGreeting` function creates the string and returns the greeting, along with `nil` for the error. In a more complex case, you can return an error from your Activity and then configure your Workflow to handle the error.
+
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=go#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a struct rather than sending multiple input parameters. This will make future updates easier.
 
-The logic within the `ComposeGreeting` function creates the string and returns the greeting, along with `nil` for the error. In a more complex case, you can return an error from your Activity and then configure your Workflow to handle the error.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
 

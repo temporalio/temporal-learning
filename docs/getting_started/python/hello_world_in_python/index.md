@@ -1,14 +1,17 @@
 ---
 id: hello-world-tutorial-python
-title: Build a Temporal "Hello World!" Application in Python
+title: Build a Temporal Application from scratch in Python
 sidebar_position: 3
 keywords: [python, temporal, sdk, tutorial, Workflow, Activity, pytest]
 last_update:
-  date: 2023-02-02
+  date: 2023-03-02
 description: In this tutorial, you will build your first Temporal Application using the Python SDK
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 ![](images/banner.svg)
 
@@ -42,11 +45,13 @@ All the code in this tutorial is available in the [hello-world python template](
 
 ### Prerequisites
 
-Before starting this tutorial, follow the tutorial [Set up a local development environment for Temporal and Python](../dev_environment/index.md) and ensure you do the following:
+Before starting this tutorial:
+
+- [Set up a local development environment for Temporal and Python](../dev_environment/index.md).
 
 ## ![](/img/icons/harbor-crane.png) Create a new Python project
 
-To get started with the Temporal Python SDK, create a new Python project, just like any other Python program.
+To get started with the Temporal Python SDK, create a new Python project and initialize a new virtual environment, just like any other Python program.
 
 In a terminal, create a directory called `hello-world-temporal`:
 
@@ -62,15 +67,42 @@ cd hello-world-temporal
 
 Create a Python virtual environment with `venv`:
 
+<Tabs queryString groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+python -m venv env
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
+
 ```command
 python3 -m venv env
 ```
 
+  </TabItem>
+</Tabs>
+
+
 Activate the environment:
+
+<Tabs queryString groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+env\Scripts\activate
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
 
 ```command
 source env/bin/activate
 ```
+
+  </TabItem>
+</Tabs>
 
 Then install the Temporal SDK:
 
@@ -132,14 +164,15 @@ In the Temporal Python SDK, you define an Activity by decorating a function with
 
 Create a new file called `activities.py` and add the following code to define a `say_hello` function to define the Activity:
 
-<!--SNIPSTART python-project-template-activity -->
+<!--SNIPSTART python-project-template-activities -->
 <!--SNIPEND-->
+
+The logic within the `say_hello` function creates the string and returns the greeting.
 
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a data class rather than sending multiple input parameters. This will make future updates easier.
 
-The logic within the `say_hello` function creates the string and returns the greeting.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
 
@@ -172,7 +205,9 @@ The test function `test_execute_workflow` creates a random task queue name and i
 
 :::note
 
-The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.  You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance rus as a separate process during your test runs.
+The `time-skipping` option starts a new environment that lets you test long-running workflows without waiting for them to complete in real-time.  You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance rus as a separate process during your test runs. 
+
+The `time-skipping` option is not a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
 
 :::
 
@@ -210,10 +245,11 @@ tests/test_run_worker.py ..                             [100%]
 
 You can also pass the command line option `--workflow-environment` at runtime to change the test environment.
 
+Most test suites reuse the local environment across tests. You can explore [fixtures in Pytest](https://docs.pytest.org/en/6.2.x/fixture.html) to set this up.
+
 You've built a test suite and you've successfully tested your Workflow. You can reuse the `conftest.py` file you've built in future Temporal Python projects.
 
 You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
-
 
 ## Configure a Worker
 
@@ -278,6 +314,25 @@ To start the Workflow, open a new terminal window and switch to your project roo
 ```command
 cd hello-world-temporal
 ```
+
+Activate the virtual environment in this terminal:
+
+<Tabs queryString groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+env\Scripts\activate
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
+
+```command
+source env/bin/activate
+```
+
+  </TabItem>
+</Tabs>
 
 Then run `run_workflow.py` from the project root to start the Workflow Execution:
 

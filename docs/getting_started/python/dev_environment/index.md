@@ -6,7 +6,7 @@ description: Set up a local development environment for developing Temporal Appl
 keywords: [python, temporal, sdk, development environment]
 tags: [Python, SDK, development environment]
 last_update:
-  date: 2021-02-02
+  date: 2023-03-02
 sidebar_label: Set up a local development environment
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -59,7 +59,7 @@ mkdir temporal-project
 Switch to the new directory:
 
 ```command
-mkdir temporal-project
+cd temporal-project
 ```
 
 Create a Python virtual environment with `venv`:

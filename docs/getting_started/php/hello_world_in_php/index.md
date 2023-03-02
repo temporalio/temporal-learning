@@ -1,5 +1,5 @@
 ---
-id: hello-world
+id: hello-world-php
 sidebar_position: 1
 keywords: [PHP, temporal, sdk, tutorial]
 tags: [PHP, SDK]
