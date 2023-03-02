@@ -2,7 +2,7 @@
 id: hello-world-tutorial-python
 title: Build a Temporal "Hello World!" Application in Python
 sidebar_position: 3
-keywords: [python, temporal, sdk, tutorial, hello world, pytest]
+keywords: [python, temporal, sdk, tutorial, Workflow, Activity, pytest]
 last_update:
   date: 2023-02-02
 description: In this tutorial, you will build your first Temporal Application using the Python SDK
@@ -116,7 +116,7 @@ You can pass multiple inputs to a Workflow, but it's a good practice to send a s
 
 :::
 
-The method calls the `workflow.execute_activty` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout). 
+The method calls the `workflow.execute_activty` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Start-To-Close Timeout](https://docs.temporal.io/activities#start-to-close-timeout) or [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout). 
 
 Finally, the `run` method returns the result of the Activity Execution.
 
@@ -124,7 +124,7 @@ With your Workflow Definition created, you're ready to create the `say_hello` Ac
 
 ## Create an Activity
 
-Use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail.
+Use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, like API calls, database access, or HTTP requests.
 
 For this tutorial, your Activity won't be complex; you'll define an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
@@ -137,11 +137,11 @@ Create a new file called `activities.py` and add the following code to define a 
 
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
+Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a data class rather than sending multiple input parameters. This will make future updates easier.
+
 The logic within the `say_hello` function creates the string and returns the greeting.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
-
-Before moving on, you'll write a unit test for your Workflow and Activity.
 
 ## ![](/img/icons/check.png) Add a unit test
 
@@ -172,7 +172,7 @@ The test function `test_execute_workflow` creates a random task queue name and i
 
 :::note
 
-The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.
+The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.  You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance rus as a separate process during your test runs.
 
 :::
 
@@ -217,7 +217,7 @@ You have a working application and a test to ensure the Workflow executes as exp
 
 ## Configure a Worker
 
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Cluster tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Cluster.
+A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them. The Temporal Cluster tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Cluster.
 
 When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use. A Worker listens and polls on the Task Queue, looking for work to do.
 
