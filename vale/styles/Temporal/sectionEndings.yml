@@ -1,5 +1,5 @@
 extends: script
-message: "The section '%v' is not preceded by a paragraph. Ensure sections end with a paragraph for a smooth transition."
+message: "The main section '%v' is not preceded by a paragraph. Ensure sections end with a paragraph for a smooth transition."
 level: error
 link: https://tengolang.com/
 # We need this to access heading markup.
@@ -12,9 +12,18 @@ script: |
 
   lines := text.split(scope, "\n")
   section_lines := []
+  in_main_body := false
 
   for line in lines {
-    if text.has_prefix(line, "##") {
+    if text.re_match("^#{2,}", line) {
+
+      // skip the intro and prereq headings
+      if text.re_match("^#{2,} (Introduction|Prerequisites)", line) {
+        continue
+      }
+
+      // hit a heading that's actually a main body heading
+      in_main_body = true
 
       if len(section_lines) > 1 {
 
@@ -22,13 +31,42 @@ script: |
         second_to_last_line := section_lines[len(section_lines) - 2]
 
         if !text.re_match(paragraph_re, second_to_last_line) && last_line == "" {
-          start := text.index(scope, line)
+
+          startIndex := text.index(scope, line)
+
+          /* emojis throw off the start position. Need to get all the characters
+              prior to the start of our match position, count up the characters,
+              but check each char to see if it's an emoji so we add an additional
+              character to the count.
+          */
+
+          // Extract substring from start of text string up to starting position of search term
+          text_before_match := text.substr(scope, 0, startIndex)
+
+          // split the text before the match into runes. Check for emojis
+          start := 0
+          for c in text.split(text_before_match, "") {
+              rune := char(c[0])
+              isEmoji := rune >= '\U0001F600' && rune <= '\U0001F64F'
+              if isEmoji {
+                  start++
+              }
+              start++
+              if start > startIndex {
+                  break
+              }
+          }
+          end := startIndex + len(line)
+
           matches = append(matches, {begin: start, end: start + len(line)})
           section_lines = []
         }
 
       }
     } else {
-      section_lines = append(section_lines, line)
+      // if we're in the main body we'll start collecting the lines in the section.
+      if in_main_body {
+        section_lines = append(section_lines, line)
+      }
     }
   }
