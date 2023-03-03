@@ -27,6 +27,7 @@ image: /img/temporal-logo-twitter-card.png
 
 :::
 
+
 ### Introduction
 
 Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant resiliant applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
@@ -109,9 +110,11 @@ You can pass multiple inputs to a Workflow, but it's a good practice to send a s
 
 The function defines the options to execute an Activity, and then executes an Activity called `ComposeGreeting`, which you'll define next. The function returns the result of the Activity.
 
+With your Workflow Definition created, you're ready to create the `ComposeGreeting` Activity.
+
 ## Create an Activity
 
-Use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail.
+In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
 
 For this tutorial, your Activity won't be complex; you'll create an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
