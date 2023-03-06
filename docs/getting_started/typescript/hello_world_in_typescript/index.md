@@ -7,6 +7,9 @@ last_update:
   date: 2022-12-20
 title: Build a Temporal "Hello World!" app from scratch in TypeScript
 ---
+
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 :::note Tutorial information
 
 - **Level:** ⭐ Temporal beginner

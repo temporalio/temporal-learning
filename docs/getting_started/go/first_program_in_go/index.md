@@ -11,7 +11,7 @@ code_repo: https://github.com/temporalio/money-transfer-project-template-go
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Your first program in Go](images/banner.jpg)
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
 
 :::note Tutorial information
 
