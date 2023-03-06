@@ -10,6 +10,8 @@ title: Set up a local development environment for Temporal and TypeScript
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 To follow the TypeScript SDK tutorials and build your own Temporal applications, you'll need the TypeScript SDK and a Temporal server.
 
 ## Install Node.js

@@ -13,7 +13,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![](images/banner.jpg)
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
 
 :::note Tutorial information
 
