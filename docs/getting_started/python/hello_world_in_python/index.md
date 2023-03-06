@@ -43,7 +43,7 @@ When you're done, you'll have a basic application and a clear understanding of h
 
 All the code in this tutorial is available in the [hello-world python template](https://github.com/temporalio/hello-world-project-template-python) repository.
 
-### Prerequisites
+## Prerequisites
 
 Before starting this tutorial:
 
