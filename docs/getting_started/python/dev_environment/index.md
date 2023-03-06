@@ -7,18 +7,20 @@ keywords: [python, temporal, sdk, development environment]
 tags: [Python, SDK, development environment]
 last_update:
   date: 2023-03-02
-sidebar_label: Set up a local development environment
 image: /img/temporal-logo-twitter-card.png
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-To follow the Python SDK tutorial we recommend that you have the following environments set up.
+![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+### Introduction
+
+Follow these instructions to configure a development environment for building Temporal Applications with Python.
 
 ## Install Python
 
-Make sure you have [Python](https://www.python.org/downloads/) installed. These tutorials were produced using Python 3.10.
+Make sure you have [Python](https://www.python.org/downloads/) installed. These tutorials use Python 3.10.
 
 Check your version of Python with the following command:
 
@@ -121,5 +123,5 @@ import Cluster from '@site/docs/getting_started/_temporal_cluster.md'
 
 <Cluster />
 
-Once you have everything installed, you're ready to build apps with Temporal on your local machine.
+Once you have everything installed, you're ready to build Temporal Applications with Python on your local machine.
 
