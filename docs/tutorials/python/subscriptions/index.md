@@ -140,7 +140,7 @@ Workflows are fundamental units of a Temporal Application and orchestrate the ex
 
 In the Temporal Python SDK, Workflow Definitions contain the `@workflow.defn` decorator and the method invoked for the Workflow is decorated with `@workflow.run`.
 
-Create a new file called `workflows.py` to create the `SendEmailWorkflow` class and define its attributes.
+Create a new file called `workflows.py` to set the `SendEmailWorkflow` class and define its attributes.
 
 ```bash
 nano workflows.py
@@ -188,23 +188,21 @@ class SendEmailWorkflow:
 ```
 <!--SNIPEND-->
 
-In the Workflow method, create a loop that checks if `_subscribed` is `True`. If it is set to `True`, start the Activity.
+The Workflow method, uses a loop that checks if `_subscribed` is `True`. If it is set to `True`, then the Workflow [starts the Activity](https://python.temporal.io/temporalio.workflow.html#start_activity).
 
-
-The `while` loop starts the Activity with the `start_activity()` function. Exactly one method name must have this decorator and must be defined on an `async def` method. The method’s arguments are the Workflow’s arguments, which in this example takes the Activity Type, an object or data class, and a `Schedule-To-Close Timeout`.
+Exactly one method name must have this decorator and must be defined on an `async def` method. The method’s arguments are the Workflow’s arguments, which in this example takes the Activity Type, an object or data class, and a `Schedule-To-Close Timeout`.
 
 The loop increments the`_count` attribute and calls the `send_email` Activity with the current `ComposeEmail` object.
 The loop will continue as long as the `_subscribed` attribute is `True`.
 The loop also includes a sleep statement that causes the workflow to pause for three seconds between email sends.
 
-Now that you've developed a Workflow Definition, let's develop an Activity to execute a function.
+Now that you've developed a Workflow Definition, let's develop an Activity to execute your email function.
 
 ## Develop Activity
 
 An Activity is a normal function or method execution that's intended to execute a single, well-defined action (either short or long-running).
 
 Create a new file called `activities.py` and develop an Activity Definition by using the `@activity.defn` decorator and write a function that mocks sending an email.
-
 
 ```bash
 nano activities.py
@@ -229,17 +227,15 @@ async def send_email(details: ComposeEmail) -> str:
 The `send_email` function takes in the data class `ComposeEmail`, and passes the `email`, `message`, and `count` objects.
 
 The logic within the `send_email` function mocks sending an email, by creating a string returning the `success` status.
+This is the Activity Definition that the Workflow Definition calls to send an email.
 
-This is an Activity Definition that will be called by the Workflow to send an email.
-It takes a `ComposeEmail` object as its argument and returns a string.
-The function simply prints the email details to the console and returns `"success"`.
+For the purposes of this tutorial, the `send_email` function prints the details to the console and returns `success`.
+
+Now that the Activity Definition and Workflow Definition are written, it is time to write the Worker process.
 
 ## Bundle and run it with the Worker
 
-Now that the Activity Definition and Workflow Definition are written, run the Worker process.
 The Worker Process is where the Workflow and Activity Definitions are executed.
-
-Start by connecting to the Temporal Client, defining the Worker and its arguments, then run the Worker.
 
 Create a new file called `run_worker.py` and develop the Worker process to execute your Workflow and Activity Definitions.
 
@@ -275,13 +271,22 @@ if __name__ == "__main__":
 ```
 <!--SNIPEND-->
 
-The `main` function connects to a Temporal Client and creates a Worker object to run the `SendEmailWorkflow` Workflow and the `send_email()` Activity.
+The `main` function connects to a Temporal [Client](https://python.temporal.io/temporalio.client.Client.html) and creates a Worker object to run the `SendEmailWorkflow` Workflow and the `send_email()` Activity.
+
+In this tutorial, the Client is connecting to `localhost:7223` and the Namespace name is set to the default name.
+
+The [Worker](https://python.temporal.io/temporalio.worker.Worker.html) process the Workflow and Activities. Once created, Workers can be run and shutdown explicitly with `run` or `shutdown`.
+
+A Task Queue is required for a Worker.
 
 The `if __name__ == "__main__":` block runs the main function using `asyncio.run`.
 
 Now that we've written the logic to execute the Workflow and Activity Definitions, let's build the gateway.
 
 ## Build the gateway
+
+The gateway is used to communicate and send data back and forth.
+This tutorial uses Flask, to `subscribe`, `get-details`, and `unsubscribe`.
 
 ### Global Client
 
@@ -290,7 +295,7 @@ Register the Temporal Client function to run before the first request to this in
 Create a new file called `run_flask.py` to develop your Flask endpoints.
 
 ```bash
-nano run_worker.py
+nano run_flask.py
 ```
 
 This code defines an asynchronous function `get_client()` that creates a Client connection to Temporal server and returns it. 
@@ -317,7 +322,6 @@ Communication with a Temporal Cluster includes, but isn't limited to, the follow
 - Getting the results of a Workflow Execution.
 
 ### Build the first endpoint
-
 
 In the `run_flask.py` file, write a `/subscribe/` endpoint as an asynchronous function.
 
@@ -347,17 +351,16 @@ async def start_subscription():
     return jsonify({"status": "ok", "email": email, "emails_sent": emails_sent})
 ```
 <!--SNIPEND-->
-This demonstrates the basic steps to start a Workflow.
+This demonstrates the basic steps to [start a Workflow](https://python.temporal.io/temporalio.client.Client.html#start_workflow).
 
 Next, learn to query your Workflow.
 
 ## Add a Query
 
-Add the Query methods to your Workflow:
+In the `workflows.py` file, add a Query method to your Workflow.
 
-- `email`
-- `message`
-- `count`
+[@workflow.query](https://python.temporal.io/temporalio.workflow.html#query) is a decorator for a Workflow Query method.
+Each Query method returns the current values of the Workflow attributes.
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["38-48"]}-->
 [subscription/workflows.py](https://github.com/temporalio/email-subscription-project-python/blob/master/subscription/workflows.py)
@@ -377,10 +380,7 @@ Add the Query methods to your Workflow:
 ```
 <!--SNIPEND-->
 
-[@workflow.query](https://python.temporal.io/temporalio.workflow.html#query) is a decorator for a Workflow Query method.
 Queries should never mutate anything in the Workflow.
-
-Each Query method returns the current values of the Workflow attributes.
 
 ----
 
@@ -460,7 +460,7 @@ This test has two parts:
 
 - `test_execute_workflow_with_mock_activity`: verifies that the workflow can be executed with a mocked activity function that returns a predefined response.
 - `test_execute_workflow_with_real_activity`: verifies that the workflow can be executed with the actual send_email activity function, which sends an email with the given inputs.
-  
+
 You can run these tests by running `pytest` in the directory containing the test file and the `conftest.py` file.
 
 ## Conclusion
