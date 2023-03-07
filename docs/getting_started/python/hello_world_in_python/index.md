@@ -110,16 +110,16 @@ Create the file `run_worker.py` in the root of your project and add the followin
 [run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_worker.py)
 ```py
 import asyncio
-from datetime import datetime, timedelta
 
+from temporalio import activity, workflow
 // ...
-@workflow.defn
-class SayHello:
-    @workflow.run
-    async def run(self, name: str) -> str:
-        return await workflow.execute_activity(
-            say_hello, name, start_to_close_timeout=timedelta(seconds=5)
-        )
+        client, task_queue="hello-task-queue", workflows=[SayHello], activities=[say_hello]
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 <!--SNIPEND-->
 
@@ -154,11 +154,11 @@ In the `run_worker.py` file, add the following code to define a `say_hello` func
 [run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_worker.py)
 ```py
 // ...
-from temporalio import activity, workflow
+from temporalio.client import Client
 // ...
-@activity.defn
-async def say_hello(name: str) -> str:
-    return f"Hello, {name}!"
+
+async def main():
+    client = await Client.connect("localhost:7233", namespace="default")
 ```
 <!--SNIPEND-->
 
@@ -193,32 +193,32 @@ Then create the file `tests/test_run_workflow.py` file and add the following con
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-26"]}-->
 [tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/test_run_worker.py)
 ```py
-import asyncio
 import uuid
 
 import pytest
-from run_worker import SayHello, say_hello
-from temporalio import activity
-from temporalio.client import Client
-from temporalio.worker import Worker
 
+from temporalio import activity
+from temporalio.worker import Worker
+from temporalio.testing import WorkflowEnvironment
+
+from activities import say_hello
+from workflows import SayHello
 
 @pytest.mark.asyncio
-async def test_execute_workflow(client: Client):
+async def test_execute_workflow():
     task_queue_name = str(uuid.uuid4())
+    async with await WorkflowEnvironment.start_time_skipping() as env:
 
-    async with Worker(
-        client,
-        task_queue=task_queue_name,
-        workflows=[SayHello],
-        activities=[say_hello],
-    ):
-        assert "Hello, World!" == await client.execute_workflow(
-            SayHello.run,
-            "World",
-            id=str(uuid.uuid4()),
+        async with Worker(
+            env.client,
             task_queue=task_queue_name,
-        )
+            workflows=[SayHello],
+            activities=[say_hello],
+        ):
+            assert "Hello, World!" == await env.client.execute_workflow(
+                SayHello.run,
+                "World",
+                id=str(uuid.uuid4()),
 ```
 <!--SNIPEND-->
 
@@ -232,26 +232,26 @@ This code tests the Workflow and invokes the actual `say_hello` Activity. Howeve
 [tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/test_run_worker.py)
 ```py
 // ...
+
+
 @activity.defn(name="say_hello")
 async def say_hello_mocked(name: str) -> str:
     return f"Hello, {name} from mocked activity!"
 
 
 @pytest.mark.asyncio
-async def test_mock_activity(client: Client):
+async def test_mock_activity():
     task_queue_name = str(uuid.uuid4())
-    async with Worker(
-        client,
-        task_queue=task_queue_name,
-        workflows=[SayHello],
-        activities=[say_hello_mocked],
-    ):
-        assert "Hello, World from mocked activity!" == await client.execute_workflow(
-            SayHello.run,
-            "World",
-            id=str(uuid.uuid4()),
+    async with await WorkflowEnvironment.start_time_skipping() as env:
+        async with Worker(
+            env.client,
             task_queue=task_queue_name,
-        )
+            workflows=[SayHello],
+            activities=[say_hello_mocked],
+        ):
+            assert "Hello, World from mocked activity!" == await env.client.execute_workflow(
+                SayHello.run,
+                "World",
 ```
 <!--SNIPEND-->
 
@@ -407,19 +407,8 @@ In the `run_worker.py` file, add the following code to connect to the Temporal S
 [run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_worker.py)
 ```py
 // ...
-from temporalio.worker import Worker
+
 // ...
-async def main():
-    client = await Client.connect("localhost:7233", namespace="default")
-    # Run the worker
-    worker = Worker(
-        client, task_queue="hello-task-queue", workflows=[SayHello], activities=[say_hello]
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
 ```
 <!--SNIPEND-->
 
