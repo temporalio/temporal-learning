@@ -17,7 +17,7 @@ cd docker-compose
 Then run `docker compose` to download the various container images and start the development cluster:
 
 ```command
-docker-compose up
+docker compose up
 ```
 
 When the Temporal Cluster is running, the Temporal Web UI becomes available in your browser. Visit [localhost:8080](http://localhost:8080/)
