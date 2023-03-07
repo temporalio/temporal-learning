@@ -353,9 +353,11 @@ Next, learn to query your Workflow.
 
 ## Add a Query
 
-Add Query methods to your Workflow.
+Add the Query methods to your Workflow:
 
-In this example, write 3 queries to return the `email`, a `message`, and how many emails were sent.
+- `email`
+- `message`
+- `count`
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["38-48"]}-->
 [subscription/workflows.py](https://github.com/temporalio/email-subscription-project-python/blob/master/subscription/workflows.py)
@@ -378,7 +380,7 @@ In this example, write 3 queries to return the `email`, a `message`, and how man
 [@workflow.query](https://python.temporal.io/temporalio.workflow.html#query) is a decorator for a Workflow Query method.
 Queries should never mutate anything in the Workflow.
 
-Each Query methods returns the current values of the Workflow attributes.
+Each Query method returns the current values of the Workflow attributes.
 
 ----
 
