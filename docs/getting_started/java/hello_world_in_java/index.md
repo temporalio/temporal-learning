@@ -1,22 +1,20 @@
 ---
 id: hello-world-tutorial
+title: Build a Temporal "Hello World!" app from scratch in Java
 sidebar_position: 3
 description: In this tutorial you will build your first Temporal app using the Java SDK
-keywords: [Java,java,temporal,sdk,tutorial,learn]
+keywords: [Java,java,temporal,sdk,tutorial,hello world]
 last_update:
-  date: 2021-10-01
-title: Build a Temporal "Hello World!" app from scratch in Java
+  date: 2023-03-03
 tags:
   - helloworld
   - java
   - sdk
-  - intellij
-  - gradle
   - tutorial
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+![Image of an astronaut in space holding the Java logo](images/banner.jpg)
 
 :::note Tutorial information
 
@@ -24,19 +22,28 @@ image: /img/temporal-logo-twitter-card.png
 - **Time:** ⏱️ ~20 minutes
 - **Goals:** 🙌
   - Set up, build, and test a Temporal application project from scratch using the [Java SDK](https://github.com/temporalio/java-sdk).
-  - Become more familiar with core concepts and the application structure.
+  - Identify the four parts of a Temporal Workflow application.
+  - Describe how the Temporal Server gets information to the Worker.
+  - Explain how to define Workflow Definitions with the Temporal Java SDK.
 
 :::
 
+### Introduction
 
-Our app will consist of four pieces:
+Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant resiliant applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
 
-1. An Activity: An Activity is just a function that contains your business logic. Ours will simply format some text and return it.
-2. A Workflow: Workflows are functions that organize Activity method calls. Our Workflow will orchestrate the call of a single Activity function.
-3. A Worker: Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An initiator: To start a Workflow, we must send a signal to the Temporal server to tell it to track the state of the Workflow. We'll write a separate function to do this.
+In this tutorial, you will build your first [Temporal Application](https://docs.temporal.io/temporal#temporal-application) from scratch using the [Temporal Java SDK](https://github.com/temporalio/java-sdk). The Temporal Application will consist of the following pieces:
 
-All of the code in this tutorial is available in the [Java "Hello World!" application template](https://github.com/temporalio/hello-world-project-template-java) repository.
+1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
+2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
+3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
+4. An initiator: To start a Workflow, you need to send a signal to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
+
+You'll also write a unit test to ensure your Workflow executes successfully.
+
+When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications.
+
+All of the code in this tutorial is available in the [hello-world Java template](https://github.com/temporalio/hello-world-project-template-java) repository.
 
 
 ## Prerequisites
@@ -44,76 +51,201 @@ All of the code in this tutorial is available in the [Java "Hello World!" applic
 Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
+- Follow the tutorial [Run your first Temporal application with the Java SDK](/getting_started/java/first_program_in_java/index.md) to gain a better understanding of what Temporal is and how its components fit together.
+- Ensure [Gradle](https://gradle.org/install/) is installed and ready to use to create a Java project.
 
-This tutorial focuses on the practicalities of building an application from scratch. To better understand _why_ you should use Temporal, we recommend that you follow the tutorial where you [run a Temporal money transfer application](/getting_started/java/first_program_in_java/index.md) to get a taste of its value propositions.
+## ![Clip art image of a crane](/img/icons/harbor-crane.png) Create a new project Java project
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/harbor-crane.png) Scaffold a new project with Gradle
+To get started with the Temporal Java SDK, you'll create a new Java application, just like any other Java program you're creating. Then you'll add the Temporal SDK package to your project.
 
-In a terminal, create a new project directory named "hello-world-project", or something similar and `cd` into it.
+In a terminal, create a new project directory called `hello-world-temporal`:
 
-We use [Gradle](https://gradle.org/) to build and manage Java projects in these tutorials. You can scaffold a new Gradle project from the terminal or from within IntelliJ.
+```command
+mkdir hello-world-temporal
+```
 
-**Terminal:**
+Switch to the new directory:
 
-Change your working directory to the one created for the project and follow Gradle's [Building Java Applications](https://guides.gradle.org/building-java-applications/) guide. When you get to the step where you define your source package, use "helloworldapp".
+```command
+cd hello-world-temporal
+```
 
-**IntelliJ**
+In this tutorial you'll use [Gradle](https://gradle.org/install/) and the command line to build, manage, and run your Java project. 
 
-Open IntelliJ and create a new Gradle project by following Step 1 of the [Getting started with Gradle guide](https://www.jetbrains.com/help/idea/getting-started-with-gradle.html#create_project). When you get to the step where you name the project, use
-"helloworldapp" and make sure you choose the "hello-world-tutorial" directory as the project location. It will take a few moments to complete.
+Create a new Java project with Gradle by running the following command:
 
-Once Gradle has finished scaffolding you will need to customize the project dependencies. To do this, open the build.gradle file that is in the root of your project and add the following lines to the dependencies section. If you want to try using different versions of dependencies, you can find them on [search.maven.org](https://search.maven.org/) ([Temporal SDK versions](https://search.maven.org/artifact/io.temporal/temporal-sdk)):
+```command
+gradle init
+```
+
+This command will begin the process of creating a Java project by asking you a series of questions. When asked what type of project to generate, select `2: application`:
+
+```command
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+Select type of project to generate:
+  1: basic
+  2: application
+  3: library
+  4: Gradle plugin
+Enter selection (default: basic) [1..4] 2
+```
+
+Next, select the default option `3: Java` to specify Java as the language of your application:
+
+```command
+Select implementation language:
+  1: C++
+  2: Groovy
+  3: Java
+  4: Kotlin
+  5: Scala
+  6: Swift
+Enter selection (default: Java) [1..6] 3
+```
+
+Your Hello World application will be contained within a single application library, so select `1: no - only one application project` to keep your application in a single project:
+
+```command
+Split functionality across multiple subprojects?:
+  1: no - only one application project
+  2: yes - application and library projects
+Enter selection (default: no - only one application project) [1..2] 1
+```
+
+You'll use [Groovy](https://groovy-lang.org/) as the build script DSL, so select `1: Groovy`:
+
+```command
+Select build script DSL:
+  1: Groovy
+  2: Kotlin
+Enter selection (default: Groovy) [1..2] 1
+```
+
+Select `no` when asked to generate build using new APIs and behavior:
+
+```command
+Generate build using new APIs and behavior (some features may change in the next minor release)? (default: no) [yes, no] no
+```
+
+Select `1: JUnit 4` as the test framework for this application:
+
+```command
+Select test framework:
+  1: JUnit 4
+  2: TestNG
+  3: Spock
+  4: JUnit Jupiter
+Enter selection (default: JUnit Jupiter) [1..4] 1
+```
+
+Name your project the same as the directory you are currently in, `hello-world-temporal`:
+
+```command
+Project name (default: hello-world-temporal): hello-world-temporal
+```
+
+Finally, name your source package `helloworldapp`:
+
+```command
+Source package (default: hello.world.temporal): helloworldapp
+```
+
+Once you've done this you should see the following output informing you of the success of your project's creation:
+
+```command
+> Task :init
+Get more help with your project: https://docs.gradle.org/8.0/samples/sample_building_java_applications.html
+
+BUILD SUCCESSFUL in 19s
+2 actionable tasks: 2 executed
+```
+
+Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and add the following dependencies: 
 
 <!--SNIPSTART hello-world-project-template-java-gradle-dependencies-->
 <!--SNIPEND-->
 
-- `com.google.guava:guava` offers a suit of core and expanded libraries that Gradle uses.
-- `io.temporal:temporal-sdk` enables communication with the Temporal server.
-- `ch.qos.logback:logback-classic` will ensure that there is a logger to bind to within the SDK and prevent a default logger warning message.
+Below is a more detailed explanation about the dependencies you will be installing:
 
-To limit the logging output from the SDK, within src/main/resources/ create a logback.xml file and paste in the following XML:
+- `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` Installs the Temporal SDK for use in your application.
+- `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` Installs a NOOP logging package to supress logging warnings. **This is not intended for production use and a proper logger should be implemented.**
+- `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` Install the necessary packages for testing a Temporal application.
+- `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` Installs the core Java Unit Testing framework.
+- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'` Installs a mocking framework in Java to be used during testing.
 
-<!--SNIPSTART hello-world-project-template-java-logback-dependency-configuration-->
-<!--SNIPEND-->
+Once you have added the build dependencies, perform a test build on your application. From the root directory of your project execute the following command:
 
-If you are editing the files in IntelliJ, a "refresh" icon will appear on the screen. Click it to load the changes. Gradle will rebuild with the dependencies. Otherwise you can run `./gradlew build` from the root of the project again.
+```command
+./gradlew build
+```
 
-All of the files for our application will be created in `src/main/java/helloworldapp/`. However, if you have selected Gradle through IntelliJ instead of scaffolding it from the terminal, you may have to create the directory `helloworldapp` by yourself. If you have scaffolded Gradle through the terminal, Gradle will have generated a default `App.java` class in that location. Remove it before proceeding.
+If your build was succesful you should see the following output
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/apps.png) "Hello World!" app
+```command
+BUILD SUCCESSFUL in 2s
+7 actionable tasks: 6 executed, 1 up-to-date
+```
 
-Now we are ready to build our Temporal Workflow application. 
+Finally, Gradle creates a default `App.java` file that you won't need for this tutorial, so delete it.
 
+```command
+rm app/src/main/java/helloworldapp/App.java
+```
 
-### Define an Activity
+With your project workspace configured, you're ready to create your first Temporal Activity and Workflow. You'll start with the Workflow.
 
-First, let's define our Activity. Activities are meant to handle non-deterministic code that could result in unexpected results or errors. But for this tutorial all we are doing is taking a string, appending it to "Hello", and returning it back to the Workflow.
+## Create a Workflow
 
-An Activity object is defined like any other object in Java. You need an interface and an implementation. The only difference is that the interface includes Temporal decorators. Let's create a `Format` object with a `composeGreeting()` method.
+Workflows are where you configure and organize the execution of Activities.  You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*. 
 
-Create `Format.java` and add the following interface definition:
+In the Temporal Java SDK, a Workflow Definition is made of two parts:
 
-<!--SNIPSTART hello-world-project-template-java-activity-interface-->
-<!--SNIPEND-->
+* An [interface](https://docs.oracle.com/javase/tutorial/java/concepts/interface.html) that contains annotated methods with empty bodies 
+* A class that implements the interface and defines all methods declared by the interface.
 
-Create `FormatImpl.java` and define the implementation of the Format interface:
-
-<!--SNIPSTART hello-world-project-template-java-activity-->
-<!--SNIPEND-->
-
-### Define the Workflow
-
-Next is our Workflow. Workflow functions are where you configure and organize the execution of Activity functions. Again, the Workflow object is defined like any other, except the interface includes Temporal decorators. Our Workflow has just a single entry method which calls the `composeGreeting()` Activity method and returns the result.
-
-Create `HelloWorldWorkflow.java` and define the Workflow interface:
+Create `HelloWorldWorkflow.java` in the source code location of your project at `app/src/main/java/helloworldapp/` and add the following code to create a `HelloWorldWorkflow` interface that defines the expected functionality of your workflow:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-interface-->
 <!--SNIPEND-->
 
-Create `HelloWorldWorkflowImpl.java` and define the Workflow:
+The `HelloWorldWorkflow` interface is annotated with `@WorkflowInterface`, signifying that the interface is a Temporal Workflow. Within this interface is a single method `getGreeting(String name)` that takes a single String parameter, `name`, and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Workflow execution and execution completes when this method returns.
+
+Next, create `HelloWorldWorkflowImpl.java` and add the following code to implement the Workflow and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-->
 <!--SNIPEND-->
+
+The implmementation defines the options to execute an Activity, in this case setting `StartToCloseTimeout` to 2 seconds. The implementation then creates a `HelloWorldActivity` stub that will act as a proxy for activity invocations. 
+
+:::note
+Notice that an interface of `HelloWorldActivity` is used to create the stub, not the implementation of the interface. The workflow is only aware of the Activity through its public interface, not the Activity implementation.
+
+:::
+
+Finally the implementation overrides the `getGreeting` implementation from the `HelloWorldWorkflow` interface and executes an Activity called `composeGreeting`, which you'll define next. The function returns the result of the Activity.
+
+With your Workflow Definition created, you're ready to create the `ComposeGreeting` Activity.
+
+## Create an Activity
+
+In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
+
+With the Temporal Java SDK, you define Activities similarly to how you define Workflows: using an interface and an implementation.
+
+Create the file `HelloWorldActivity.java` in `app/src/main/java/helloworldapp/` and add the following code to define the `HelloWorldActivity` interface:
+
+<!--SNIPSTART hello-world-project-template-java-activity-interface-->
+<!--SNIPEND-->
+
+The `HelloWorldActivity` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method `composeGreeting(String name)` that takes a single String parameter, `name`, and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Activity execution which will be called during the Workflow execution.
+
+Next, create `HelloWorldActivityImpl.java` and add the following code to implement the Activity and define its methods:
+
+<!--SNIPSTART hello-world-project-template-java-activity-->
+<!--SNIPEND-->
+
+
 
 ### Task Queues
 
