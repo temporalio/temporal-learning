@@ -12,7 +12,6 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-
 This tutorial focuses on implementing an email subscription application with Temporal's Workflows, Activities, and Queries.
 
 ### Goals
@@ -102,15 +101,15 @@ Before writing the Workflow Definition, define the data objects used by the Work
 Now it's time to actually write some code for our Python application.
 
 
-The Temporal Python SDK strongly encourages the use of a single dataclass for parameters and return types, so fields with defaults can be added without breaking compatibility.
+The Temporal Python SDK strongly encourages the use of a single [data class](https://docs.python.org/3/library/dataclasses.html) for parameters and return types, so fields with defaults can be added without breaking compatibility.
 
-Create a new file called `shared_objects.py` to set a Dataclass and describe its objects as parameters.
+Create a new file called `shared_objects.py` to set a data class and describe its objects as parameters.
 
 ```bash
 nano shared_objects.py
 ```
 
-The Dataclass will store the objects to send to your Activity and Workflow.
+The data class will store the objects to send to your Activity and Workflow.
 
 - add `email` as a string to pass a user's email.
 - add `message` as a string to pass a message to the user.
@@ -455,14 +454,101 @@ async def end_subscription():
 
 ## Writing tests
 
-In this example, we're testing a `SendEmailWorkflow` that sends an email to a given email address with a specified message, and we're replacing the `send_email` Activity with a mocked implementation `send_email_mocked`.
-This test has two parts:
+The Temporal Python SDK includes functions that help you test your Workflow executions. Let's add tests to the application to make sure the Workflow works as expected.
 
-- `test_execute_workflow_with_mock_activity`: verifies that the workflow can be executed with a mocked activity function that returns a predefined response.
-- `test_execute_workflow_with_real_activity`: verifies that the workflow can be executed with the actual send_email activity function, which sends an email with the given inputs.
+Create a new folder in your project directory called `tests`.
 
-You can run these tests by running `pytest` in the directory containing the test file and the `conftest.py` file.
+```bash
+mkdir tests
+```
+
+Create an empty `__init__.py` file within that directory:
+
+```bash
+touch tests/__init__.py`
+```
+
+Then create the file `tests/test_run_worker.py file and add the following content to test the Workflow:
+
+```bash
+touch tests/test_run_workflow.py
+```
+
+<!--SNIPSTART email-subscription-project-python-test_run_worker-->
+[tests/test_run_worker.py](https://github.com/temporalio/email-subscription-project-python/blob/master/tests/test_run_worker.py)
+```py
+
+import uuid
+
+import pytest
+from temporalio import activity
+from temporalio.testing import WorkflowEnvironment
+from temporalio.worker import Worker
+
+from subscription.activities import send_email
+from subscription.run_worker import SendEmailWorkflow
+from subscription.shared_objects import ComposeEmail
+
+
+@pytest.mark.asyncio
+async def test_execute_workflow():
+    task_queue_name = str(uuid.uuid4())
+    async with await WorkflowEnvironment.start_time_skipping() as env:
+        async with Worker(
+            env.client,
+            task_queue=task_queue_name,
+            workflows=[SendEmailWorkflow],
+            activities=[send_email_mocked],
+        ):
+            assert (
+                "Sending email to test@example.com with message: Here's your message!, count: 1"
+                == await env.client.execute_workflow(
+                    SendEmailWorkflow.run,
+                    args=("test@example.com", "Here's your message!"),
+                    id=str(uuid.uuid4()),
+                    task_queue=task_queue_name,
+                )
+            )
+
+
+@activity.defn(name="send_email")
+async def send_email_mocked(input: ComposeEmail) -> str:
+    return f"Sending email to {input.email} with message: {input.message}, count: {input.count} from mocked activity!"
+
+
+@pytest.mark.asyncio
+async def test_mock_activity():
+    task_queue_name = str(uuid.uuid4())
+    async with await WorkflowEnvironment.start_time_skipping() as env:
+        async with Worker(
+            env.client,
+            task_queue=task_queue_name,
+            workflows=[SendEmailWorkflow],
+            activities=[send_email],
+        ):
+            assert (
+                "Sending email to test@example.com with message: Here's your message!, count: 1"
+                == await env.client.execute_workflow(
+                    SendEmailWorkflow.run,
+                    args=("test@example.com", "Here's your message!"),
+                    id=str(uuid.uuid4()),
+                    task_queue=task_queue_name,
+                )
+            )
+
+
+```
+<!--SNIPEND-->
+
+The `test_execute_workflow` function uses the `pytest.mark.asyncio` decorator to indicate that the test uses asynchronous code. 
+It then creates a Task Queue name using and starts a `WorkflowEnvironment` with time skipping enabled, and creates a Worker instance that listens to the Task Queue and executes the `SendEmailWorkflow` Workflow.
+
+The test uses the `assert` helper function to execute the `SendEmailWorkflow` Workflow with the specified arguments and return the expected output.
+
+The `send_email` Activity is replaced with a mocked Activity `send_email_mocked`, that returns a string.
 
 ## Conclusion
 
+Building a Python Subscription application with the Temporal SDK provides a powerful solution for sending email subscriptions. With the help of Workflows, Activities, and Queries, you can easily mock sending emails, retrieve subscription status, and cancel a subscription.
 
+With this knowledge, you will be able to take on more complex Workflows and Activities to create even stronger applications.
