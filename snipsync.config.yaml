@@ -3,7 +3,7 @@ origins:
     repo: money-transfer-project-template-java
   - owner: temporalio
     repo: hello-world-project-template-java
-    ref: 9a21d4497baa5c20edf4f28ae183215d4630596b
+    ref: 9f0d9b55ca64b2e3c60ac9c6fcc3b67030d41a72
   - owner: temporalio
     repo: money-transfer-project-template-go
   - owner: temporalio
