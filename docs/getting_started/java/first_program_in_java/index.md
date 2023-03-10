@@ -12,7 +12,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import { ResponsivePlayer } from '@site/src/components'
 
-<img alt="" class="docs-image-centered" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/rocket-launch-java.jpg" />
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 :::note Tutorial information
 

@@ -39,8 +39,7 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content:
-        'We\'ve launched our first online course! Dive into <a target="_blank" rel="noopener noreferrer" href="/courses/temporal_101">Temporal 101 with Go</a> today!',
+      content: 'Check out our new <a href="/getting_started/python">Python tutorials</a>',
       backgroundColor: '#141414',
       textColor: '#f9fafb',
       isCloseable: true,

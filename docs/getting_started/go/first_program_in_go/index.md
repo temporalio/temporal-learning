@@ -1,17 +1,17 @@
 ---
-id: run-your-first-app-tutorial
+title: Run your first Temporal application with the Go SDK
+id: run-your-first-app-tutorial-go
 sidebar_position: 2
-description: In this tutorial, you'll run your first Temporal app using the Go SDK and explore Workflows, Activities, and compensating transactions.
-keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, compensating transactions]
+description: In this tutorial, you'll run your first Temporal app using the Go SDK and explore Workflows, Activities, Task Queues, and compensating transactions. Then you'll see how Temporal recovers from failures.
+keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Go, SDK]
 last_update:
-  date: 2022-11-15
-title: Run your first Temporal application with the Go SDK
+  date: 2023-03-03
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Your first program in Go](images/banner.jpg)
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
 
 :::note Tutorial information
 
@@ -25,9 +25,9 @@ image: /img/temporal-logo-twitter-card.png
 
 :::
 
-## Introduction
+### Introduction
 
-Whether you're writing a complex transaction-based workflow or working with remote APIs, you know that creating reliable applications is a complex process.
+Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process.
 
 The Temporal Cluster and a language-specific SDK, in this case the [Go SDK](https://github.com/temporalio/go-sdk), provide a comprehensive solution to the complexities that arise from modern application development. You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications.
 
@@ -39,7 +39,7 @@ In this tutorial, you'll run your first Temporal Application and explore how Tem
 
 Before starting this tutorial:
 
-- [Set up a local development environment for developing Temporal applications using the Go programming language](/getting_started/go/dev_environment/index.md)
+- [Set up a local development environment for developing Temporal Applications using the Go programming language](/getting_started/go/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
 ## ![](/img/icons/workflow.png) Application overview
@@ -48,14 +48,14 @@ The project in this tutorial mimics a "money transfer" application that has a si
 
 To run the application, you do the following:
 
-1. Send a signal to the Temporal Cluster to start the money transfer. The Temporal Server tracks the progress of your Workflow function execution.
+1. Send a message to the Temporal Cluster to start the money transfer. The Temporal Server tracks the progress of your Workflow function execution.
 2. Run a Worker. A Worker is a wrapper around your compiled Workflow and Activity code. A Worker's only job is to execute the Activity and Workflow functions and communicate the results back to the Temporal Server.
 
 The following diagram illustrates what happens when you start the Workflow:
 
 ![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
 
-The Temporal Server does not run your code. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
+The Temporal Server doesn't run your code. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
 Now that you know how the application will work, it's time to download the application to your local machine so you can try it out yourself.
 
@@ -69,7 +69,7 @@ Open a new terminal window and use `git` to clone the repository:
 git clone https://github.com/temporalio/money-transfer-project-template-go
 ```
 
-After the files are cloned, change to the project directory:
+Once you have the repository cloned, change to the project directory:
 
 ```command
 cd money-transfer-project-template-go
@@ -91,7 +91,7 @@ A Temporal application is a set of Temporal [Workflow Executions](https://docs.t
 
 You use a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) to define the Workflow Execution's constraints. A Workflow Definition in Go is a regular Go function that accepts a Workflow Context and some input values. 
 
-The sample application in this tutorial models a money transfer between two accounts. Money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there's no need to attempt a deposit. But if the withdrawal works but the deposit fails, then the money needs to be put back in the original account.
+The sample application in this tutorial models a money transfer between two accounts. Money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there's no need to attempt a deposit. But if the withdrawal works but the deposit fails, then the money needs to go back to the original account.
 
 This is what the Workflow Definition looks like for this kind of process:
 
@@ -127,7 +127,7 @@ The `Deposit` Activity function looks almost identical to the `Withdraw` functio
 
 There's a commented line in this Activity definition that you'll use later in the tutorial to simulate an error in the Activity.
 
-If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to be put back in the original account, so there's a third Activity called `Refund` that does exactly that:
+If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to go back to the original account, so there's a third Activity called `Refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-refund-->
 <!--SNIPEND-->
@@ -167,7 +167,7 @@ In this Workflow, each Activity uses the same options, but you could specifiy di
 :::caution This is a simplified example.
 Transferring money is a tricky subject, and this tutorial's example doesn't cover all of the possible issues that can go wrong. This simplified example doesn't cover all of the possible errors that could occur with a transfer. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
 
-This example is designed to show some core features of Temporal and is not intended for production use. 
+This example only shows some core features of Temporal and is not intended for production use. 
 :::
 
 When you "start" a Workflow you are telling the Temporal Server, "Track the state of the Workflow with this function signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
@@ -178,14 +178,21 @@ Let's see that in action.
 
 You have two ways to start a Workflow with Temporal, either via the SDK or via the [tctl command-line tool](https://docs.temporal.io/tctl). In this tutorial you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
-In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the workflow:
+To start a Workflow Execution, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue) the Workflow should use, and start the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
+
+The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in a shared location. In this application you'll find the Task Queue defined in the `shared.go` file:
+
+<!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
+<!--SNIPEND-->
+
+In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the Workflow:
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
 <!--SNIPEND-->
 
 :::note
 
-This tutorial uses a separate program to start the workflow, but you don't have to follow this pattern. In fact, most real applications start a Workflow as part of another program. For example, you might start the Workflow in response to a button press or an API call.
+This tutorial uses a separate program to start the Workflow, but you don't have to follow this pattern. In fact, most real applications start a Workflow as part of another program. For example, you might start the Workflow in response to a button press or an API call.
 
 :::
 
@@ -209,7 +216,7 @@ If this is your first time running this application, Go might download some depe
 
 The Workflow is now running. Leave the program running.
 
-Now it's time to check out one of the unique value propositions Temporal offers: application state visibility. 
+Next you'll explore one of the unique value propositions Temporal offers: application state visibility. 
 
 ## View the state of the Workflow with the Temporal Web UI
 
@@ -217,7 +224,7 @@ Temporal's Web UI lets you see details about the Workflow you're running. You ca
 
 Visit the [Temporal Web UI](http://localhost:8080), where you will see your Workflow listed.
 
-![The workflow running](images/workflow_running.png)
+![The Workflow running](images/workflow_running.png)
 
 Click the **Workflow ID** for your Workflow. Now you can see everything you want to know about the execution of the Workflow, including the input values it received, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
 
@@ -229,7 +236,7 @@ You can see the inputs and results of the Workflow Execution by clicking the **I
 
 You see your inputs, but the results are in progress.
 
-You started the Workflow, and the interface shows that the Workflow is running, but the Workflow hasn't executed yet. As you see from the Web UI, no Workers are connected to the Task Queue.
+You started the Workflow, and the interface shows that the Workflow is running, but the Workflow hasn't executed yet. As you see from the Web UI, there are no Workers connected to the Task Queue.
 
 You need at least one Worker running to execute your Workflows. You'll start the Worker next.
 
@@ -239,23 +246,18 @@ A Worker is responsible for executing pieces of Workflow and Activity code.
 
 A Worker
 
-- can execute only code that has been registered to it.
-- knows which piece of code to execute from Tasks that it gets from the Task Queue.
 - listens only to the Task Queue that it is registered to.
+- can only execute Workflows and Activities registered to it.
+- knows which piece of code to execute from Tasks that it gets from the Task Queue.
 
 After the Worker executes code, it returns the results back to the Temporal Server.
 
-In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster. It also registers the Workflow and the three Activities:
+In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
 
-Note that the Worker listens to the same Task Queue that the Workflow and Activity Tasks are sent to.
-
-Task Queues are defined by a string name. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in the `shared.go` file:
-
-<!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
-<!--SNIPEND-->
+Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution. 
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
@@ -293,9 +295,9 @@ Switch back to the terminal window where your `start/main.go` program is running
 2022/11/14 10:55:43 Transfer complete (transaction IDs: W1779185060, D4129841576)
 ```
 
-Check the Temporal Web UI again. You will see one Worker registered where previously there was none, and the Workflow status shows that it is completed:
+Check the Temporal Web UI again. You will see one Worker registered where previously there was none, and the Workflow status shows that it completed:
 
-![There is now one worker and the Workflow is complete](images/completed_workflow.png)
+![There is now one Worker and the Workflow is complete](images/completed_workflow.png)
 
 Here's what happens when the Worker runs and connects to the Temporal Cluster:
 
@@ -306,7 +308,7 @@ Here's what happens when the Worker runs and connects to the Temporal Cluster:
 
 Each of these steps is recorded in the Event History, which you can audit in Temporal Web under the **History** tab next to **Summary**. 
 
-After a Workflow is completed and closed, the full history persists for a set retention period (typically 7 to 30 days) before being deleted. You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
+After a Workflow completes, the full history persists for a set retention period (typically 7 to 30 days) before the history is deleted. You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
 
 You just ran a Temporal Workflow application and saw how Workflows, Activities, and Workers interact. Now you'll explore how Temporal gives you tools to handle failures.
 
@@ -316,11 +318,11 @@ Despite your best efforts, there's going to be a time when something goes wrong 
 
 ### Recover from a server crash
 
-Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this stopping the local Temporal Cluster while a workflow is running.
+Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this stopping the local Temporal Cluster while a Workflow is running.
 
 Try it out by following these steps:
 
-1.  Make sure your Worker is stopped before proceeding (so your Workflow doesn't finish). Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. 
+1. Make sure your Worker is stopped before proceeding so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. 
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run starter/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
@@ -328,13 +330,13 @@ Try it out by following these steps:
 
 Your Workflow is still listed:
 
-![The second workflow is listed](images/second_workflow.png)
+![The second Workflow appears in the list of Workflows](images/second_workflow.png)
 
 If the Temporal Cluster goes offline, you can pick up where you left off when it comes back online again.
 
 ### Recover from an unknown error in an Activity
 
-This demo application makes a call to an external service in an activity. If that call fails due to a bug in your code, the Activity produces an error. 
+This demo application makes a call to an external service in an Activity. If that call fails due to a bug in your code, the Activity produces an error. 
 
 To test this out and see how Temporal responds, you'll simulate a bug in the `Deposit()` Activity function. Let your Workflow continue to run but don't start the Worker yet.
 
@@ -375,11 +377,11 @@ You will see the Worker complete the `Withdraw()` Activity function, but it erro
 
 ```
 
-The Workflow keeps retrying using the `RetryPolicy` specified when the Activity is executed. 
+The Workflow keeps retrying using the `RetryPolicy` specified when the Workflow first executes the Activity.
 
-You can view more information about what is happening in the [UI](localhost:8080). Click the Workflow. You'll see more details including the state, the number of times it has been attempted, and the next scheduled run time:
+You can view more information about the process in the [Temporal Web UI](localhost:8080). Click the Workflow. You'll see more details including the state, the number of times it has been attempted, and the next scheduled run time:
 
-![The next activity](images/activity_failure.png)
+![The next Activity](images/activity_failure.png)
 
 Click the **Stack Trace** link to see a stack trace showing you the errors, as well as details about the pending Activity:
 
@@ -387,7 +389,12 @@ Click the **Stack Trace** link to see a stack trace showing you the errors, as w
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors.  With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). 
 
-In `workflow.go`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the activities up to 500 times. You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
+In `workflow.go`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
+
+<!--SNIPSTART money-transfer-project-template-go-workflow {"selectedLines": ["3-20"]}-->
+<!--SNIPEND-->
+
+You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation:
 
 Your Workflow is running, but only the `Withdraw()` Activity function has succeeded. In any other application, the whole process would likely have to be abandoned and rolled back. 
 
@@ -395,7 +402,7 @@ With Temporal, you can debug and fix the issue while the Workflow is running.
 
 Pretend that you found a fix for the issue. Switch the comments back on the `return` statements of the `Deposit()` function in the `activity.go` file and save your changes.
 
-How can you possibly update a Workflow that is already halfway complete? You restart the Worker.
+How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
 
 First, cancel the currently running worker with `CTRL+C`:
 
@@ -439,15 +446,15 @@ Switch back to the terminal where your `start/main.go` program is running, and y
 
 ```
 
-Visit the [Web UI](http://localhost:8080) again, and you'll see the workflow has completed:
+Visit the [Web UI](http://localhost:8080) again, and you'll see the Workflow has completed:
 
-![Both workflows completed successfully](images/completed_workflows.png)
+![Both Workflows completed successfully](images/completed_workflows.png)
 
 You have just fixed a bug in a running application without losing the state of the Workflow or restarting the transaction.
 
 ## Conclusion
 
-You now know how to run a Temporal Workflow and understand some of the key values Temporal offers. You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution. You also saw how Temporal recovers from failures and how it retries Activities.
+You now know how to run a Temporal Workflow and understand some of the value Temporal offers. You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution. You also saw how Temporal recovers from failures and how it retries Activities.
 
 ### Further exploration
 
@@ -470,7 +477,7 @@ Answer the following questions to see if you remember some of the more important
 
 1. Temporal gives you full visibility in the state of your Workflow and code execution.
 2. Temporal maintains the state of your Workflow, even through server outages and errors.
-3. Temporal makes it easy to time out and retry Activity code using options that exist outside your business logic.
+3. Temporal lets you time out and retry Activity code using options that exist outside your business logic.
 4. Temporal enables you to perform "live debugging" of your business logic while the Workflow is running.
 
 </details>

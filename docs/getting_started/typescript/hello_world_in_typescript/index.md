@@ -1,12 +1,15 @@
 ---
-id: hello-world
-sidebar_position: 1
+id: hello-world-ts
+title: Build a Temporal Application from scratch in TypeScript
+sidebar_position: 3
 keywords: [typescript, javascript, temporal, sdk, tutorial, learn]
 tags: [TypeScript, SDK]
 last_update:
   date: 2022-12-20
-title: Build a Temporal "Hello World!" app from scratch in TypeScript
 ---
+
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 :::note Tutorial information
 
 - **Level:** ⭐ Temporal beginner

@@ -6,31 +6,46 @@ description: Set up a local development environment for developing Temporal Appl
 keywords: [python, temporal, sdk, development environment]
 tags: [Python, SDK, development environment]
 last_update:
-  date: 2021-02-02
-sidebar_label: Set up a local development environment
+  date: 2023-03-02
 image: /img/temporal-logo-twitter-card.png
-draft: true
 ---
 
-To follow the Python SDK tutorial we recommend that you have the following environments set up.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+### Introduction
+
+Follow these instructions to configure a development environment for building Temporal Applications with Python.
 
 ## Install Python
 
-Make sure you have [Python](https://www.python.org/downloads/) installed. These tutorials were produced using Python 3.10.
+Make sure you have [Python](https://www.python.org/downloads/) installed. These tutorials use Python 3.10.
 
 Check your version of Python with the following command:
+
+<Tabs groupId="os" queryString>
+  <TabItem value="win" label="Windows">
+
+```command
+python -V
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
 
 ```command
 python3 -V
 ```
+
+  </TabItem>
+</Tabs>
 
 You'll see the version printed to the screen:
 
 ```
 Python 3.10.9
 ```
-
-
 
 
 ## Install the Temporal Python SDK
@@ -46,20 +61,47 @@ mkdir temporal-project
 Switch to the new directory:
 
 ```command
-mkdir temporal-project
+cd temporal-project
 ```
 
 Create a Python virtual environment with `venv`:
+
+<Tabs queryString groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+python -m venv env
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
 
 ```command
 python3 -m venv env
 ```
 
+  </TabItem>
+</Tabs>
+
+
 Activate the environment:
+
+<Tabs queryString groupId="os">
+  <TabItem value="win" label="Windows">
+
+```command
+env\Scripts\activate
+```
+
+  </TabItem>
+  <TabItem value="mac" label="macOS">
 
 ```command
 source env/bin/activate
 ```
+
+  </TabItem>
+</Tabs>
 
 Then install the Temporal SDK:
 
@@ -81,5 +123,5 @@ import Cluster from '@site/docs/getting_started/_temporal_cluster.md'
 
 <Cluster />
 
-Once you have everything installed, you're ready to build apps with Temporal on your local machine.
+Once you have everything installed, you're ready to build Temporal Applications with Python on your local machine.
 

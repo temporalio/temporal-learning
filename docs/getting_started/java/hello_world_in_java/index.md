@@ -16,7 +16,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-<img class="docs-image-centered" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/astronaut-hello-java.jpg" />
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 :::note Tutorial information
 

@@ -10,6 +10,8 @@ title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+
 To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.
 
 
