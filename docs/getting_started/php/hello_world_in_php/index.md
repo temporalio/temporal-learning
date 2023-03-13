@@ -5,7 +5,7 @@ keywords: [PHP, temporal, sdk, tutorial]
 tags: [PHP, SDK]
 last_update:
   date: 2021-10-01
-title: Temporal "Hello World!" app in PHP
+title: Run a Temporal Application in PHP
 description: Explore the components that make up a Temporal project in PHP. 
 image: /img/temporal-logo-twitter-card.png
 ---

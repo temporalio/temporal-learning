@@ -3,7 +3,7 @@ title: Temporal 102 with Go
 sidebar_position: 3
 sidebar_label: Temporal 102 with Go
 public: false
-draft: true
+draft: false
 tags: [courses, Go]
 custom_edit_url: null
 hide_table_of_contents: true
