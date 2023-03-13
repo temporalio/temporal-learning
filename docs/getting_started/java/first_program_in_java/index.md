@@ -1,12 +1,12 @@
 ---
-id: run-your-first-app-tutorial
+id: run-your-first-app-tutorial-java
+title: Run your first Temporal application with the Java SDK
 sidebar_position: 2
 description: In this tutorial you will run your first Temporal app using the Java SDK
 keywords: [ava, temporal, sdk, tutorial]
 tags: [Java, SDK]
 last_update:
   date: 2021-10-01
-title: Run your first Temporal application with the Java SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 

@@ -27,13 +27,13 @@ Download and run a small application and explore how Temporal executes Workflows
 * TypeScript (coming soon!)
 * Python (coming soon!)
 
-## Build a Temporal "Hello World!" app from scratch
+## Build a Temporal Application from scratch
 
 Write a program from the ground up in one of the supported languages:
 
 * [Go](go/hello_world_in_go/index.md)
 * [Java](java/hello_world_in_java/index.md)
 * [TypeScript](typescript/hello_world_in_typescript/index.md)
-* [PHP](php/hello_world_in_php/index.md)
 * [Python](python/hello_world_in_python/index.md)
+* [PHP](php/hello_world_in_php/index.md)
 

@@ -12,7 +12,6 @@ image: /img/temporal-logo-twitter-card.png
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
-
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
 
