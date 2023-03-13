@@ -4,7 +4,7 @@ sidebar_position: 3
 sidebar_label: TypeScript
 hide_table_of_contents: false
 pagination_prev: null
-image: /img/temporal-loJava-twitter-card.png
+image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)

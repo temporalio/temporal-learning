@@ -4,10 +4,10 @@ sidebar_position: 1
 sidebar_label: Java
 hide_table_of_contents: false
 pagination_prev: null
-image: /img/temporal-loJava-twitter-card.png
+image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_Java.png)
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 Take your first steps into building apps with Temporal and Java by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
