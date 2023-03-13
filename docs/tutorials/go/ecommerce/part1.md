@@ -11,11 +11,6 @@ last_update:
   author: Valeri Karpov
 image: /img/temporal-logo-twitter-card.png
 ---
-:::info WORK IN PROGRESS
-
-This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
-
-:::
 
 import { OutdatedNotice } from '@site/src/components'
 

@@ -8,6 +8,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 In this four-part series, you'll explore how you can use Temporal to develop an eCommerce application with Temporal Workflows. You'll write the basic application, send reminder emails, write tests, and develop a REST API.
 
 * [Build an eCommerce App With Temporal and Go, Part 1: Getting Started](./part1.md)
