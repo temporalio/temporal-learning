@@ -39,8 +39,8 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content: 'Check out our new <a href="/getting_started/python">Python tutorials</a>',
-      backgroundColor: '#141414',
+      content: 'Our new course <a href="/courses/temporal_101/typescript">Temporal 101 in TypeScript</a> is now available!',
+      backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,
     },
