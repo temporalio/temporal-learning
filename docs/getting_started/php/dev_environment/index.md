@@ -12,6 +12,10 @@ image: /img/temporal-logo-twitter-card.png
 
 ![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 To follow the PHP SDK tutorials and build your own Temporal applications with PHP, you'll need the PHP SDK, the [RoadRunner application server](https://github.com/roadrunner-server/roadrunner), and a Temporal development server.
 
 ## Install the PHP SDK
