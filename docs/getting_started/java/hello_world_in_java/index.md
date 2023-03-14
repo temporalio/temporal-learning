@@ -14,7 +14,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Image of an astronaut in space holding the Java logo](images/banner.jpg)
+![Image of an astronaut in space holding the Java logo](/img/sdk_banners/banner_java.png)
 
 :::note Tutorial information
 
@@ -30,7 +30,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ### Introduction
 
-Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant resiliant applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
+Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant, resilient applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
 
 In this tutorial, you will build your first [Temporal Application](https://docs.temporal.io/temporal#temporal-application) from scratch using the [Temporal Java SDK](https://github.com/temporalio/java-sdk). The Temporal Application will consist of the following pieces:
 
@@ -53,7 +53,7 @@ Before starting this tutorial:
 - Follow the tutorial [Run your first Temporal application with the Java SDK](/getting_started/java/first_program_in_java/index.md) to gain a better understanding of what Temporal is and how its components fit together.
 - Ensure [Gradle](https://gradle.org/install/) is installed and ready to use to create a Java project.
 
-## ![Clip art image of a crane](/img/icons/harbor-crane.png) Create a new project Java project
+## ![Clip art image of a crane](/img/icons/harbor-crane.png) Create a new Java project
 
 To get started with the Temporal Java SDK, you'll create a new Java application, just like any other Java program you're creating. Then you'll add the Temporal SDK package to your project.
 
@@ -167,11 +167,11 @@ Once you have finished scaffolding your Java project you will need to add the Te
 
 Below is a more detailed explanation about the dependencies you will be installing:
 
-- `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` Installs the Temporal SDK for use in your application.
-- `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` Installs a NOOP logging package to supress logging warnings. **This is not intended for production use and a proper logger should be implemented.**
-- `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` Install the necessary packages for testing a Temporal application.
-- `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` Installs the core Java Unit Testing framework.
-- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'` Installs a mocking framework in Java to be used during testing.
+- The Temporal SDK for use in your application. - `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` 
+- A NOOP logging package to suppress logging warnings. **This is not intended for production use and a proper logger should be implemented.** - `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` 
+- The necessary packages for testing a Temporal application. - `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` 
+- The core Java Unit Testing framework. - `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` 
+- A mocking framework in Java to be used during testing. - `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
 
 Once you have added the build dependencies, perform a test build on your application. From the root directory of your project execute the following command:
 
@@ -179,7 +179,7 @@ Once you have added the build dependencies, perform a test build on your applica
 ./gradlew build
 ```
 
-If your build was succesful you should see the following output
+You will see output similar to this if your build was successful:
 
 ```command
 BUILD SUCCESSFUL in 2s
@@ -215,7 +215,7 @@ Next, create `HelloWorldWorkflowImpl.java` and add the following code to impleme
 <!--SNIPSTART hello-world-project-template-java-workflow-->
 <!--SNIPEND-->
 
-The implmementation defines the options to execute an Activity, in this case setting `StartToCloseTimeout` to 2 seconds. The implementation then creates a `HelloWorldActivity` stub that will act as a proxy for activity invocations. 
+In this implementation, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, startToCloseTimeOut is the one you should always set. In this implementation you create a `HelloWorldActivity` stub that will act as a proxy for activity invocations. 
 
 :::note
 Notice that an interface of `HelloWorldActivity` is used to create the stub, not the implementation of the interface. The workflow is only aware of the Activity through its public interface, not the Activity implementation.
@@ -250,7 +250,7 @@ The implementation overrides the single method from the interface named `compose
 
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=java#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
-You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
+You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on to configuring your Worker, you'll write a unit test for your Workflow.
 
 ## ![](/img/icons/check.png) Test the app
 
@@ -291,14 +291,14 @@ To configure a Worker process using the Java SDK, you create an instance of `Wor
 
 You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
-Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/test/java/helloworldapp`and define the Task Queue name there:
+Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp`and define the Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-java-shared-constants-->
 <!--SNIPEND-->
 
 Now you'll create the Worker process. In this tutorial you'll create a small standalone Worker program so you can see how all of the components work together. 
 
-Create the file `HelloWorldWorker.java` in `app/src/test/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register 1the:
+Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register 1the:
 
 <!--SNIPSTART hello-world-project-template-java-worker-->
 <!--SNIPEND-->
@@ -337,7 +337,7 @@ Like the Worker you created, this program uses stubs and a client to connect to 
 
 You don't need to specify a Workflow ID, as Temporal will generate one for you, but defining the Workflow ID yourself makes it easier for you to find it later in logs or interact with a running Workflow in the future. 
 
-Using a Workflow ID that reflects some business process or entity is a good practice. For example, you might use a customer identifier or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all the Workflow Executions related to that customer later.
+A Workflow Id is unique in a namespace and is used for deduplication. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 
 :::
 
