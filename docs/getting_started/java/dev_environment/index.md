@@ -17,7 +17,7 @@ To follow the Java SDK tutorials and build your own Temporal applications with J
 
 ## Get the Java JDK
 
-Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 14.0.1. You can check which version you have installed using this command:
+Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 19.0.2. You can check which version you have installed using this command:
 
 ```command
 java -version
@@ -25,7 +25,7 @@ java -version
 
 ## Get the Temporal SDK for Java
 
-You can use Gradle or Maven for your projects, although we recommend Gradle.
+While you can use any tool you like, such as Gradle or Apache Maven, to build and package your Temporal applications, our tutorials are based on Gradle.
 
 
 ### Configure Gradle
@@ -39,9 +39,9 @@ Install Gradle by following the [installation instructions](https://gradle.org/i
 Add the following lines to your Gradle configuration to configure the Temporal SDK.
 
 ```groovy
-implementation 'io.temporal:temporal-sdk:1.11.0' 
-implementation 'io.temporal:temporal-sdk:1.12.0'test 
-implementation 'io.temporal:temporal-testing:1.12.0'
+implementation 'io.temporal:temporal-sdk:1.18.2' 
+implementation 'io.temporal:temporal-sdk:1.18.2'test 
+implementation 'io.temporal:temporal-testing:1.18.2'
 ```
 
 

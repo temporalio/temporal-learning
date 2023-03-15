@@ -37,7 +37,7 @@ In this tutorial, you will build your first [Temporal Application](https://docs.
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
 2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
 3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An initiator: To start a Workflow, you need to send a signal to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
+4. An client application: To start a Workflow, you need to send a signal to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
 
 You'll also write a unit test to ensure your Workflow executes successfully.
 
@@ -160,18 +160,23 @@ BUILD SUCCESSFUL in 19s
 2 actionable tasks: 2 executed
 ```
 
-Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and add the following dependencies: 
+Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and replace the current contents of the `dependencies` block with the following: 
 
 <!--SNIPSTART hello-world-project-template-java-gradle-dependencies-->
 <!--SNIPEND-->
 
 Below is a more detailed explanation about the dependencies you will be installing:
 
-- The Temporal SDK for use in your application. - `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` 
-- A NOOP logging package to suppress logging warnings. **This is not intended for production use and a proper logger should be implemented.** - `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` 
-- The necessary packages for testing a Temporal application. - `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` 
-- The core Java Unit Testing framework. - `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` 
-- A mocking framework in Java to be used during testing. - `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
+- `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` 
+  - The Temporal SDK for use in your application.
+- `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` 
+  - A NOOP logging package to suppress logging warnings. **This is not intended for production use and a proper logger should be implemented.**
+- `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` 
+  - The necessary packages for testing a Temporal application.
+- `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` 
+  - The core Java Unit Testing framework. 
+- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
+  - A mocking framework in Java to be used during testing.
 
 Once you have added the build dependencies, perform a test build on your application. From the root directory of your project execute the following command:
 
@@ -182,14 +187,14 @@ Once you have added the build dependencies, perform a test build on your applica
 You will see output similar to this if your build was successful:
 
 ```command
-BUILD SUCCESSFUL in 2s
+BUILD SUCCESSFUL in 28s
 7 actionable tasks: 6 executed, 1 up-to-date
 ```
 
 Finally, Gradle creates a default `App.java` file that you won't need for this tutorial, so delete it.
 
 ```command
-rm app/src/main/java/helloworldapp/App.java
+rm -f app/src/main/java/helloworldapp/App.java
 ```
 
 With your project workspace configured, you're ready to create your first Temporal Activity and Workflow. You'll start with the Workflow.
@@ -258,7 +263,11 @@ The Temporal Java SDK includes classes and methods that help you test your Workf
 
 You'll use the standard [JUnit](https://junit.org/junit4/) package to build your test cases and mock the Activity so you can test the Workflow in isolation.
 
-Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `app/src/test/java/helloworldapp`. Gradle might have generated a default `AppTest.java` in that location, if so, delete it. 
+Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `app/src/test/java/helloworldapp`. Gradle generates a default `AppTest.java` in that location. Delete it:
+
+```command
+rm -f app/src/test/java/helloworldapp/AppTest.java
+```
 
 Create a new file called `HelloWorldWorkflowTest.java` that contains the following code:
 
@@ -275,7 +284,7 @@ Run the following command from the project root to execute the unit tests:
 You'll see output similar to the following from your test run indicating that the test was successful
 ```
 BUILD SUCCESSFUL in 317ms
-3 actionable tasks: 3 up-to-date
+3 actionable tasks: 2 executed, 1 up-to-date
 ```
 
 You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
@@ -344,7 +353,7 @@ A Workflow Id is unique in a namespace and is used for deduplication. Using an i
 The program then creates a stubbed instance of your Workflow, `workflow`, taking the interface class of your workflow along with the options you have set as parameters.
 
 :::note
-Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the implementation class. The initiator is only aware of the Workflow through its public interface, not the Workflow's implementation.
+Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the implementation class. The client application is only aware of the Workflow through its public interface, not the Workflow's implementation.
 
 :::
 
@@ -356,7 +365,7 @@ You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execut
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
-First, open the file `app/build.gradle` and add the following commands to define tasks for Gradle to execute your Worker and Initiator:
+First, open the file `app/build.gradle` and add the following commands to the end of the file in order to define tasks for Gradle to execute your Worker and Client application:
 
 <!--SNIPSTART hello-world-project-template-java-gradle-tasks-->
 <!--SNIPEND-->
@@ -433,11 +442,11 @@ Let's do a quick review to make sure you remember some of the more important pie
 <details>
 <summary>
 
-**How does the Temporal server get information to the Worker?**
+**How does the Worker know which Activity to execute and when to do so?**
 
 </summary>
 
-It adds the information to a Task Queue.
+Each Worker is configured to poll a specified Task Queue, whose name is specified when the Worker is created. The Temporal Server adds tasks to this queue, specifying the details about the Workflows and Activities that the Worker should execute.
 
 </details>
 
