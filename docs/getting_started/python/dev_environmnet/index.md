@@ -30,9 +30,6 @@ You'll see the version printed to the screen:
 Python 3.10.9
 ```
 
-
-
-
 ## Install the Temporal Python SDK
 
 You should install the Temporal Python SDK in your project using a virtual environment. 

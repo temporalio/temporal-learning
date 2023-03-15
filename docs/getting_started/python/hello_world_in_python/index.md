@@ -262,33 +262,11 @@ To run your tests you'll need a file called `test/conftest.py` that sets up and 
 Create the file  `test/conftest.py` and add the following code to import the necessary libraries for the tests:
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["1-9"]}-->
-[tests/conftest.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/conftest.py)
-```py
-import asyncio
-import multiprocessing
-import sys
-from typing import AsyncGenerator
-
-import pytest
-import pytest_asyncio
-from temporalio.client import Client
-from temporalio.testing import WorkflowEnvironment
-```
 <!--SNIPEND-->
 
 Pytest lets you configure command-line options you can use when you run the tests. Add the following code to the file to add an option called  `--workflow-environment` that can take one of three values: `local`, `time-skipping`, or an existing server.
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["12-17"]}-->
-[tests/conftest.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/conftest.py)
-```py
-// ...
-def pytest_addoption(parser):
-    parser.addoption(
-        "--workflow-environment",
-        default="local",
-        help="Which workflow environment to use ('local', 'time-skipping', or target to existing server)",
-    )
-```
 <!--SNIPEND-->
 
 If you use `local`, tests run in a new local environment for testing.
@@ -302,22 +280,6 @@ If this option is not passed, it defaults to `local`.
 Next, you'll need to define the `event_loop()` function to ensure that the async functions work properly across versions of Python. Add the following code:
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["20-31"]}-->
-[tests/conftest.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/conftest.py)
-```py
-// ...
-@pytest.fixture(scope="session")
-def event_loop():
-    # See https://github.com/pytest-dev/pytest-asyncio/issues/68
-    # See https://github.com/pytest-dev/pytest-asyncio/issues/257
-    # Also need ProactorEventLoop on older versions of Python with Windows so
-    # that asyncio subprocess works properly
-    if sys.version_info < (3, 8) and sys.platform == "win32":
-        loop = asyncio.ProactorEventLoop()
-    else:
-        loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-```
 <!--SNIPEND-->
 
 The function sets the event loop policy on older versions of Python to `ProactorEventLoop` and closes the event loop when the test completes.
@@ -325,21 +287,6 @@ The function sets the event loop policy on older versions of Python to `Proactor
 Now add the following code to create the test environment for Workflows:
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["34-44"]}-->
-[tests/conftest.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/conftest.py)
-```py
-// ...
-@pytest_asyncio.fixture(scope="session")
-async def env(request) -> AsyncGenerator[WorkflowEnvironment, None]:
-    env_type = request.config.getoption("--workflow-environment")
-    if env_type == "local":
-        env = await WorkflowEnvironment.start_local()
-    elif env_type == "time-skipping":
-        env = await WorkflowEnvironment.start_time_skipping()
-    else:
-        env = WorkflowEnvironment.from_client(await Client.connect(env_type))
-    yield env
-    await env.shutdown()
-```
 <!--SNIPEND-->
 
 This fixture starts up a new instance of `WorkflowEnvironment`, which is a test environment for running Temporal Workflows and Activities.
@@ -349,13 +296,6 @@ The type of environment to start is determined by the `--workflow-environment` c
 Finally, add this code to define a Temporal Client that the tests will use:
 
 <!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["47-49"]}-->
-[tests/conftest.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/conftest.py)
-```py
-// ...
-@pytest_asyncio.fixture
-async def client(env: WorkflowEnvironment) -> Client:
-    return env.client
-```
 <!--SNIPEND-->
 
 This fixture creates a new client connected to the `WorkflowEnvironment`. The `WorkflowEnvironment` is passed as an argument, so this fixture is dependent on the env fixture. This fixture is automatically closed when the test completes, so it doesn't need an explicit teardown.
