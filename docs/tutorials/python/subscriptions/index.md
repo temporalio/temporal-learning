@@ -208,7 +208,7 @@ With this Workflow Definition in place, you can now develop an Activity to execu
 
 An Activity is a function or method execution that's designed to perform a specific, well-defined action, either short or long-running.
 
-To create an Activity Definiton, start by creating a new file called `activities.py`. 
+To create an Activity Definiton, start by creating a new file called `activities.py`.
 Then use the `@activity.defn` decorator to write a function that simulates sending an email.
 
 ```bash
@@ -431,7 +431,7 @@ async def get_query():
 
 `handle.query()` creates a Handle on the Workflow and calls the Query method on the handle to get the value of the variables.
 
-With this function, you can return all the information about the user's email subscription. 
+With this function, you can return all the information about the user's email subscription.
 
 Now that users can subscribe and return details about their subscription, let's give them a way to unsubscribe.
 
@@ -458,26 +458,31 @@ async def end_subscription():
 
 This should allow users to cancel the Workflow and prevent the Workflow from continuing to execute the Activity.
 
-## Write an integration test
+## Create an integration test
 
-Workflow testing can be done in an integration test fashion against a real server,
+Integration testing is an essential part of software development that helps ensure that different components of an application work together correctly.
 
-The Temporal Python SDK includes functions that help you test your Workflow Executions. Let's add tests to the application to ensure the Cancellation works as expected.
+The Temporal Python SDK includes functions that help you test your Workflow Executions. 
 
-Create a new folder in your project directory called `tests` an empty `__init__.py` file within that directory.
+Workflow testing can be done in an integration test fashion against a [test server](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html#start_local) or from a [given Client](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html#from_client).
 
-```bash
-mkdir tests
-touch tests/__init__.py`
-```
 
-Then create the file `tests/test_run_worker.py` file and add the following content to test the Workflow:
+In this section, you'll learn how to write an integration test using the Temporal Python SDK to test the cancellation of a Workflow. Let's add tests to the application to ensure the Cancellation works as expected.
+
+### Setup tests environment
+
+To set up the test environment, create a new Python file called `test_run_worker.py` in the tests directory, include the `__init__.py` file.
 
 ```bash
 touch tests/test_run_workflow.py
+touch tests/__init__.py
 ```
 
-First, import the Temporal [Client](https://python.temporal.io/temporalio.client.Client.html), for Accessing the Temporal Client, [WorkflowExecutionStatus](https://python.temporal.io/temporalio.client.WorkflowExecutionStatus.html) to get the status of the Workflow Execution, and the [WorkflowFailureError](https://python.temporal.io/temporalio.client.WorkflowFailureError.html) class to return if the Workflow is unsuccessful.
+### Import modules
+
+The Temporal Python SDK includes functions that help you test your Workflow Executions. In this section, you will import the necessary modules and classes to test the cancellation of a Workflow.
+
+Import the Temporal [Client](https://python.temporal.io/temporalio.client.Client.html), for Accessing the Temporal Client, [WorkflowExecutionStatus](https://python.temporal.io/temporalio.client.WorkflowExecutionStatus.html) to get the status of the Workflow Execution, and the [WorkflowFailureError](https://python.temporal.io/temporalio.client.WorkflowFailureError.html) class to return if the Workflow is unsuccessful.
 
 Then, import the Activities and Worker modules from your application.
 
@@ -495,11 +500,17 @@ from run_worker import SendEmailWorkflow
 ```
 <!--SNIPEND-->
 
-Now, let's write the integration test of the Workflow.
+Now that you've imported the necessary modules, you can write the test function.
 
-Pass the `client` to connect the Client to the local Temporal Server.
-The Task Queue parameter is set to `subscription` to match the Worker process.
-Set the `start_workflow()` function against a `handle` variable so that we can test the Cancellation action.
+### Create the test function
+
+In the `test_run_worker.py` file, create an asynchronous test function called `test_execute_workflow` that takes the `client` object as a parameter. The `client` object is used to connect to the local Temporal server.
+
+Set the `task_queue` parameter to match the worker process. In this example, it is set to `subscription`.
+
+Use the `start_workflow()` function to start the workflow, passing in the `SendEmailWorkflow.run` function, along with the necessary arguments:
+
+Assign the handle variable to the result of the `start_workflow()` function call so that you can test the cancellation action.
 
 Assert and test of the status of the Workflow Execution.
 
@@ -532,7 +543,10 @@ async def test_execute_workflow(client: Client):
 ```
 <!--SNIPEND-->
 
-Use `pytest` to test automatically discover and our execute test.
+Now that you've created a test function for the Workflow Cancellation, test to see if that works.
+
+### Test the function
+To test the function, run `pytest` from the command line to automatically discover and execute tests.
 
 ```bash
 tests/test_run_worker.py::test_execute_workflow
