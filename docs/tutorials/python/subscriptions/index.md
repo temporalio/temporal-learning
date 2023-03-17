@@ -13,7 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 ## Introduction
 
 This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start your business logic through a web action.
-Because the business logic is built with Temporal's Workflows and Activities, you get many features built into the application. This tutorial covers how to use loops within WOrkflows, setting a Workflow Id to business logic, querying the Workflow, and handling Cancellations.
+Because the business logic is built with Temporal's Workflows and Activities, you get many features built into the application. This tutorial covers how to use loops within Workflows, setting a Workflow Id to business logic, querying the Workflow, and handling Cancellations.
 
 The user provides a unique identifier, in this case an email address, and the entire Workflow kicks off. For the purposes of this tutorial, you'll simulate sending an email message through an interval period. The user can end the subscription at anytime and because this sends a cancellation to the Workflow, the user won't receive any further emails.
 
@@ -50,7 +50,7 @@ Before starting this tutorial:
 - [Set up a local development environment for Temporal and Python](/getting_started/python/dev_environment/index.md).
 - [Flask Sever](https://flask.palletsprojects.com/en/2.2.x/quickstart/)
 
-You will build on the concepts you learned in the [Hello World](/getting_started/python/hello_world-in_python/index.md) tutorial.
+You will build on the concepts you learned in the [Hello World](/getting_started/python/hello_world_in_python/index.md) tutorial.
 
 ### Project requirements
 
@@ -125,7 +125,7 @@ The data class will store the objects to be sent to your Activity and Workflow. 
 <!--SNIPSTART email-subscription-project-python-shared_objects {"selectedLines": ["1", "4-8"]}-->
 <!--SNIPEND-->
 
-`ComposeEmail` allows you to pass an email and message string, as well as a count integer into the Workflow.
+`ComposeEmail` allows you to pass an email and message string, as well as a count integer, into the Workflow.
 
 Now that the data objects are declared, let's move on to writing the Workflow Definition.
 
@@ -197,7 +197,7 @@ The `main` function connects to a Temporal [Client](https://python.temporal.io/t
 
 In this tutorial, the Client is connecting to `localhost:7223` and the Namespace name is set to the default name.
 
-The [Worker](https://python.temporal.io/temporalio.worker.Worker.html) process the Workflow and Activities. Once created, Workers can be run and shutdown explicitly with `run` or `shutdown`.
+The [Worker](https://python.temporal.io/temporalio.worker.Worker.html) processes the Workflow and Activities. Once created, Workers can be run and shutdown explicitly with `run` or `shutdown`.
 
 A Task Queue is required for a Worker.
 
@@ -305,7 +305,7 @@ In this section, you'll learn how to write an integration test using the Tempora
 
 ### Setup tests environment
 
-To set up the test environment, create a new Python file called `test_run_worker.py` in the tests directory, include the `__init__.py` file.
+To set up the test environment, create a new Python file called `test_run_worker.py` in the `tests` directory, include the `__init__.py` file.
 
 ```bash
 touch tests/test_run_workflow.py
