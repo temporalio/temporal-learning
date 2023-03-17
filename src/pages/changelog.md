@@ -1,5 +1,26 @@
 # Changelog
 
+## 2023-03-13
+
+* Adds TypeScript 101 course
+* Adds landing pages to all Getting Started sections.
+* Consistency fixes for tutorial names.
+* Update footer for consistency with Docs.
+
+## 2023-03-06
+
+* Adds python hello world tutorial
+* Adds development setup for Python
+* Adds landing page and notice for python
+* Fixes style and technical inaccuracies in the "Getting Started with Go" series.
+
+## 2022-12-20
+
+* New version of "Build your first Temporal Application with TypeScript"
+
+## 2022-12-12
+* Fix updated links
+
 ## 2022-11-14
 
 * Updates to "Run Your First Temporal App with Go" tutorial to make the application more robust.

@@ -1,12 +1,15 @@
 ---
-id: hello-world
-sidebar_position: 1
+id: hello-world-ts
+title: Build a Temporal Application from scratch in TypeScript
+sidebar_position: 3
 keywords: [typescript, javascript, temporal, sdk, tutorial, learn]
 tags: [TypeScript, SDK]
 last_update:
   date: 2022-12-20
-title: Build a Temporal "Hello World!" app from scratch in TypeScript
 ---
+
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 :::note Tutorial information
 
 - **Level:** ⭐ Temporal beginner
@@ -114,7 +117,7 @@ Create the `package.json` file in the root of your project and add the following
 
 You should check out a few parts of the `package.json`, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
 
-Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.io/package/nanoid), an `npm` package which you'll use to generate a unique identifier for your Workflow. 
+Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.js/package/nanoid), an `npm` package which you'll use to generate a unique identifier for your Workflow. 
 
 Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon) (a tool that automatically restarts your application when it detects a change in your code), TypeScript, ESLint, and ts-node.
 

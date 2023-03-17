@@ -1,18 +1,20 @@
 ---
-id: hello-world
+id: hello-world-php
 sidebar_position: 1
 keywords: [PHP, temporal, sdk, tutorial]
 tags: [PHP, SDK]
 last_update:
   date: 2021-10-01
-title: Temporal "Hello World!" app in PHP
+title: Run a Temporal Application in PHP
 description: Explore the components that make up a Temporal project in PHP. 
 image: /img/temporal-logo-twitter-card.png
 ---
 
-:::info WORK IN PROGRESS
-This tutorial is a work in progress. Some sections may be incomplete, out of date, or missing. We're working to update it.
-:::
+![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
 
 In this tutorial, you'll explore the different components that make up a Temporal project using the PHP SDK, including:
 

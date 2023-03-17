@@ -1,11 +1,11 @@
 ---
-id: hello-world-tutorial
+id: hello-world-tutorial-java
+title: Build a Temporal Application from scratch in Java
 sidebar_position: 3
 description: In this tutorial you will build your first Temporal app using the Java SDK
-keywords: [Java,java,temporal,sdk,tutorial,learn]
+keywords: [Java,temporal,sdk,tutorial,learn]
 last_update:
   date: 2021-10-01
-title: Build a Temporal "Hello World!" app from scratch in Java
 tags:
   - helloworld
   - java
@@ -16,7 +16,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-<img class="docs-image-centered" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/astronaut-hello-java.jpg" />
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 :::note Tutorial information
 

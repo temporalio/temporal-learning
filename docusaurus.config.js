@@ -39,9 +39,8 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content:
-        'We\'ve launched our first online course! Dive into <a target="_blank" rel="noopener noreferrer" href="/courses/temporal_101">Temporal 101 with Go</a> today!',
-      backgroundColor: '#141414',
+      content: 'Our new course <a href="/courses/temporal_101/typescript">Temporal 101 in TypeScript</a> is now available!',
+      backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,
     },
@@ -117,13 +116,17 @@ const config = {
               label: "YouTube",
               href: "https://www.youtube.com/channel/UCGovZyy8OfFPNlNV0i1fI1g",
             },
+            {
+              label: "Join our Slack group",
+              href: "https://temporal.io/slack",
+            },
           ],
         },
         {
           items: [
             {
-              label: "Join our Slack group",
-              href: "https://temporal.io/slack",
+              label: "Temporal Cloud",
+              href: "https://temporal.io/cloud",
             },
             {
               label: "Meetups",
@@ -134,7 +137,7 @@ const config = {
               href: "https://temporal.io/community#workshops",
             },
             {
-              label: "Community Forum",
+              label: "Support Forum",
               href: "https://community.temporal.io/",
             },
           ],
@@ -142,12 +145,20 @@ const config = {
         {
           items: [
             {
+              label: "Documentation",
+              href: "https://docs.temporal.io",
+            },
+            {
               label: "Use Cases",
               href: "https://temporal.io/use-cases",
             },
             {
               label: "Blog",
               href: "https://docs.temporal.io/blog",
+            },
+            {
+              label: "Newsletter Signup",
+              href: "https://temporal.us17.list-manage.com/subscribe/post?u=2334a0f23e55fd1840613755d&id=3475f910fc",
             },
           ],
         },
@@ -165,22 +176,14 @@ const config = {
               label: "Terms of Service",
               href: "https://docs.temporal.io/pdf/temporal-tos-2021-07-24.pdf",
             },
-          ],
-        },
-        {
-          items: [
-            {
-              label: "Join the Cloud Waitlist",
-              href: "https://pages.temporal.io/cloud-early-access",
-            },
-            {
-              label: "Subscribe to the Newsletter",
-              href: "https://temporal.us17.list-manage.com/subscribe/post?u=2334a0f23e55fd1840613755d&id=3475f910fc",
-            },
             {
               label: "We're Hiring",
               href: "https://temporal.io/careers",
             }
+          ],
+        },
+        {
+          items: [
           ],
         },
       ],
@@ -203,7 +206,7 @@ const config = {
         docs: {
           routeBasePath: '/', // Serve the docs at the site's root
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: "https://github.com/temporalio/temporal-learning/blob/main",
+          /*editUrl: "https://github.com/temporalio/temporal-learning/blob/main", */
           showLastUpdateAuthor: false,
           /**
            * Whether to display the last date the doc was updated.

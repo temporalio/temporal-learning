@@ -1,14 +1,16 @@
 ---
 id: ts-dev-env
+title: Set up a local development environment for Temporal and TypeScript
 sidebar_position: 1
 description: Set up a local development environment for developing Temporal applications using the TypeScript programming language.
 keywords: [typescript, javascript, js, temporal, sdk, development environment]
 tags: [TypeScript, SDK, development environment]
 last_update:
   date: 2022-11-08
-title: Set up a local development environment for Temporal and TypeScript
 image: /img/temporal-logo-twitter-card.png
 ---
+
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
 
 To follow the TypeScript SDK tutorials and build your own Temporal applications, you'll need the TypeScript SDK and a Temporal server.
 
