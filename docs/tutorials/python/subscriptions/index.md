@@ -12,46 +12,51 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-This tutorial focuses on implementing an email subscription application with Temporal's Workflows, Activities, and Queries.
+This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start your business logic through a web action.
+Because the business logic is built with Temporal's Workflows and Activities, you get many features built into the application. This tutorial covers how to use loops within WOrkflows, setting a Workflow Id to business logic, querying the Workflow, and handling Cancellations.
+
+The user provides a unique identifier, in this case an email address, and the entire Workflow kicks off. For the purposes of this tutorial, you'll simulate sending an email message through an interval period. The user can end the subscription at anytime and because this sends a cancellation to the Workflow, the user won't receive any further emails.
+
+You can view the user's entire integration through the Web UI.
+
+By the end of this tutorial, you'll have a clear understand how to use Temporal to create long-running Workflows.
 
 ### Goals
 
 Throughout the Python Subscription tutorial, you'll accomplish the following goals:
 
-- Use Activities to mock sending emails.
-- Use Queries to retrieve the status of the email subscription.
-- Use a Cancellation to end the subscription.
-- Test the Cancellation Workflow.
+- Build a subscription Workflow
+- Use Activities to mock sending emails
+- Use Queries to retrieve the status and details of the email subscription
+- Use a Cancellation to end the subscription
+- Test the Cancellation Workflow
 
 ### Tasks
 
 To accomplish these goals, you will need to build the following:
 
-- Temporal Environment for the Flask Web application
-- Implement functionalities of subscribing and canceling the emails, as well as fetching information.
-- Use Pytest to test the Cancellation Workflow.
+- A Flask Web application
+- Implement functionalities of subscribing and canceling the emails, as well as fetching information
+- Use Pytest to test the Cancellation Workflow
 
 ### Working sample
 
-All the code for this tutorial is stored on GitHub in the following repository:
+All the code for this tutorial is stored on GitHub in the [email-subscription-project-python](https://github.com/temporalio/email-subscription-project-python) repository.
 
-- [email-subscription-project-python](https://github.com/temporalio/email-subscription-project-python)
+## Prerequisites
 
-You can refer to this tutorial for a completed version of this tutorial.
+Before starting this tutorial:
 
-## Setting up the environment
-
-A prerequisite to get started is to install the following:
-
-- Temporal Library
-- Temporal Server
+- [Set up a local development environment for Temporal and Python](/getting_started/python/dev_environment/index.md).
 - [Flask Sever](https://flask.palletsprojects.com/en/2.2.x/quickstart/)
+
+You will build on the concepts you learned in the [Hello World](/getting_started/python/hello_world-in_python/index.md) tutorial.
 
 ### Project requirements
 
-- Flask (tested with version [2.2.2](https://github.com/pallets/flask/releases/tag/2.2.2)).
 - Python 3.7 or greater (tested with version 3.11)
 - Temporal Python SDK (tested with version [1.0.0](https://github.com/temporalio/sdk-python/releases/tag/1.0.0)).
+- Flask (tested with version [2.2.2](https://github.com/pallets/flask/releases/tag/2.2.2)).
 
 #### Activate Virtual Environment
 
@@ -118,16 +123,6 @@ The data class will store the objects to be sent to your Activity and Workflow. 
 - `count`: as an integer to track the number of emails sent
 
 <!--SNIPSTART email-subscription-project-python-shared_objects {"selectedLines": ["1", "4-8"]}-->
-[shared_objects.py](https://github.com/temporalio/email-subscription-project-python/blob/master/shared_objects.py)
-```py
-from dataclasses import dataclass
-// ...
-@dataclass
-class ComposeEmail:
-    email: str
-    message: str
-    count: int = 0
-```
 <!--SNIPEND-->
 
 `ComposeEmail` allows you to pass an email and message string, as well as a count integer into the Workflow.
@@ -149,45 +144,6 @@ You can use the `workflows.py` file write deterministic logic inside your Workfl
 The `SendEmailWorkflow` class, for example, contains a loop that checks if the `_subscribed` attribute is True, and if so, starts the `send_email` Activity.
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["1-36"]}-->
-[workflows.py](https://github.com/temporalio/email-subscription-project-python/blob/master/workflows.py)
-```py
-
-import asyncio
-from datetime import timedelta
-
-from temporalio import workflow
-
-from shared_objects import ComposeEmail
-
-with workflow.unsafe.imports_passed_through():
-    from activities import send_email
-
-
-@workflow.defn
-class SendEmailWorkflow:
-    def __init__(self) -> None:
-        self._email: str = "<no email>"
-        self._message: str = "<no message>"
-        self._subscribed: bool = False
-        self._count: int = 0
-
-    @workflow.run
-    async def run(self, email: str):
-        self._email = f"{email}"
-        self._message = "Welcome to our Subscription Workflow!"
-        self._subscribed = True
-        self._count = 0
-
-        while self._subscribed is True:
-            self._count += 1
-            if self._count > 1:
-                self._message = "Thank you for staying subscribed!"
-
-            await workflow.start_activity(
-                send_email,
-                ComposeEmail(self._email, self._message, self._count),
-                start_to_close_timeout=timedelta(seconds=10),
-```
 <!--SNIPEND-->
 
 The `run()` method, which is decorated with `@workflow.run`, takes in the email address as an argument. This method initializes the `_email`, `_message`, `_subscribed`, and `_count` attributes of the `SendEmailWorkflow` instance.
@@ -198,7 +154,7 @@ The `start_activity()` method is used to execute the `send_email` Activity with 
 
 - The `send_email()` Activity Definition.
 - The `ComposeEmail` data class.
-- A `start_to_close_timeout()` parameter, which tells the Temporal Server to time out the Activity 10 seconds from when the activity starts.
+- A `start_to_close_timeout()` parameter, which tells the Temporal Server to time out the Activity 10 seconds from when the Activity starts.
 
 The loop also includes a sleep statement that causes the Workflow to pause for a set amount of time between email. This could be set to seconds, days, months, or even years, depending on your business logic.
 
@@ -208,7 +164,7 @@ With this Workflow Definition in place, you can now develop an Activity to execu
 
 An Activity is a function or method execution that's designed to perform a specific, well-defined action, either short or long-running.
 
-To create an Activity Definiton, start by creating a new file called `activities.py`.
+To create an Activity Definition, start by creating a new file called `activities.py`.
 Then use the `@activity.defn` decorator to write a function that simulates sending an email.
 
 ```bash
@@ -216,19 +172,6 @@ nano activities.py
 ```
 
 <!--SNIPSTART email-subscription-project-python-activity_function {"selectedLines": ["1-10"]}-->
-[activities.py](https://github.com/temporalio/email-subscription-project-python/blob/master/activities.py)
-```py
-from temporalio import activity
-
-from shared_objects import ComposeEmail
-
-
-@activity.defn
-async def send_email(details: ComposeEmail) -> str:
-    print(
-        f"Sending email to {details.email} with message: {details.message}, count: {details.count}"
-    )
-```
 <!--SNIPEND-->
 
 The `send_email` function takes in the `ComposeEmail` data class as input, containing the `email`, `message`, and `count` objects.
@@ -248,32 +191,6 @@ nano run_worker.py
 ```
 
 <!--SNIPSTART email-subscription-project-python-run_worker-->
-[run_worker.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_worker.py)
-```py
-import asyncio
-
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import send_email
-from workflows import SendEmailWorkflow
-
-
-async def main():
-    client = await Client.connect("localhost:7233")
-
-    worker = Worker(
-        client,
-        task_queue="subscription",
-        workflows=[SendEmailWorkflow],
-        activities=[send_email],
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
 <!--SNIPEND-->
 
 The `main` function connects to a Temporal [Client](https://python.temporal.io/temporalio.client.Client.html) and creates a Worker object to run the `SendEmailWorkflow` Workflow and the `send_email()` Activity.
@@ -308,13 +225,6 @@ This code defines an asynchronous function `get_client()` that creates a Client 
 The Client connection is saved in a global variable g for future use.
 
 <!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["10-12"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-async def get_client():
-    if Client not in g:
-        g.client = await Client.connect("localhost:7233")
-```
 <!--SNIPEND-->
 
 The `Client.connect()` method is called to create a connection to the Temporal service at `localhost:7233`.
@@ -333,26 +243,6 @@ In the `run_flask.py` file, write a `/subscribe` endpoint as an asynchronous fun
 In the `start_workflow` function, pass the name of the Workflow run method, arguments to be passed to the Workflow Execution, the Workflow Id, and the Task Queue name.
 
 <!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["16-31"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-@app.route("/subscribe", methods=["POST", "GET"])
-async def start_subscription():
-    await get_client()
-    email_id = str(request.json.get("email"))
-    if request.method == "POST":
-        await g.client.start_workflow(
-            SendEmailWorkflow.run,
-            args=(email_id,),
-            id=email_id,
-            task_queue="subscription",
-        )
-        return jsonify({"status": "ok"})
-    else:
-        return jsonify({"message": "This endpoint requires a POST request."})
-
-
-```
 <!--SNIPEND-->
 
 This demonstrates the basic steps to [start a Workflow](https://python.temporal.io/temporalio.client.Client.html#start_workflow).
@@ -374,66 +264,24 @@ Each Query method returns the current values of the Workflow attributes:
 
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["42-52"]}-->
-[workflows.py](https://github.com/temporalio/email-subscription-project-python/blob/master/workflows.py)
-```py
-// ...
-    @workflow.query
-    def greeting(self) -> str:
-        return self._email
-
-    @workflow.query
-    def message(self) -> str:
-        return self._message
-
-    @workflow.query
-    def count(self) -> int:
-        return self._count
-```
 <!--SNIPEND-->
 
 Queries should never mutate anything in the Workflow.
-Now, lets have the Flask application query the Workflow.
 
 ----
 Let's write an endpoint to get details about the Email subscription.
 
-Create an asyncronus function to Query and return details about the email subscription.
+Create an asynchronous function to Query and return details about the email subscription.
 
 Use [get_workflow_handle()](https://python.temporal.io/temporalio.client.Client.html#get_workflow_handle) returns a Workflow handle to an existing Workflow by its Id.
 
 <!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["32-52"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-@app.route("/get_details", methods=["GET"])
-async def get_query():
-    await get_client()
-    email_id = str(request.json.get("email"))
-    handle = g.client.get_workflow_handle(
-        email_id,
-    )
-    count: int = await handle.query(SendEmailWorkflow.count)
-    greeting: str = await handle.query(SendEmailWorkflow.greeting)
-    message: str = await handle.query(SendEmailWorkflow.message)
-
-    return jsonify(
-        {
-            "status": "ok",
-            "numberOfEmailsSent": count,
-            "email": greeting,
-            "message": message,
-        }
-    )
-
-
-```
 <!--SNIPEND-->
 
-`handle.query()` creates a Handle on the Workflow and calls the Query method on the handle to get the value of the variables.
+Using `handle.query()` creates a Handle on the Workflow and calls the Query method on the handle to get the value of the variables.
+This function enables you to return all the information about the user's email subscription.
 
-With this function, you can return all the information about the user's email subscription.
-
-Now that users can subscribe and return details about their subscription, let's give them a way to unsubscribe.
+Now that users can subscribe and view the details of their subscription, let's give them a way to unsubscribe.
 
 ## Add the Cancellation
 
@@ -441,19 +289,6 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 
 
 <!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["53-61"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-@app.route("/unsubscribe", methods=["DELETE"])
-async def end_subscription():
-    await get_client()
-    email_id = str(request.json.get("email"))
-    handle = g.client.get_workflow_handle(
-        email_id,
-    )
-    await handle.cancel()
-    return jsonify({"status": "ok"})
-```
 <!--SNIPEND-->
 
 This should allow users to cancel the Workflow and prevent the Workflow from continuing to execute the Activity.
@@ -465,7 +300,6 @@ Integration testing is an essential part of software development that helps ensu
 The Temporal Python SDK includes functions that help you test your Workflow Executions. 
 
 Workflow testing can be done in an integration test fashion against a [test server](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html#start_local) or from a [given Client](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html#from_client).
-
 
 In this section, you'll learn how to write an integration test using the Temporal Python SDK to test the cancellation of a Workflow. Let's add tests to the application to ensure the Cancellation works as expected.
 
@@ -487,17 +321,6 @@ Import the Temporal [Client](https://python.temporal.io/temporalio.client.Client
 Then, import the Activities and Worker modules from your application.
 
 <!--SNIPSTART email-subscription-project-python-test_run_worker {"selectedLines": ["3-9"]}-->
-[tests/test_run_worker.py](https://github.com/temporalio/email-subscription-project-python/blob/master/tests/test_run_worker.py)
-```py
-// ...
-import pytest
-from temporalio.client import Client, WorkflowExecutionStatus, WorkflowFailureError
-from temporalio.exceptions import CancelledError
-from temporalio.worker import Worker
-
-from activities import send_email
-from run_worker import SendEmailWorkflow
-```
 <!--SNIPEND-->
 
 Now that you've imported the necessary modules, you can write the test function.
@@ -515,37 +338,12 @@ Assign the handle variable to the result of the `start_workflow()` function call
 Assert and test of the status of the Workflow Execution.
 
 <!--SNIPSTART email-subscription-project-python-test_run_worker {"selectedLines": ["12-33"]}-->
-[tests/test_run_worker.py](https://github.com/temporalio/email-subscription-project-python/blob/master/tests/test_run_worker.py)
-```py
-// ...
-@pytest.mark.asyncio
-async def test_execute_workflow(client: Client):
-    task_queue_name = "subscription"
-    async with Worker(
-        client,
-        task_queue=task_queue_name,
-        workflows=[SendEmailWorkflow],
-        activities=[send_email],
-    ):
-        handle = await client.start_workflow(
-            SendEmailWorkflow.run,
-            args=("test@example.com", "Here's your message!"),
-            id="subscription",
-            task_queue=task_queue_name,
-        )
-        await handle.cancel()
-
-        with pytest.raises(WorkflowFailureError) as err:
-            await handle.result()
-        assert isinstance(err.value.cause, CancelledError)
-
-    assert WorkflowExecutionStatus.CANCELED == (await handle.describe()).status
-```
 <!--SNIPEND-->
 
 Now that you've created a test function for the Workflow Cancellation, test to see if that works.
 
 ### Test the function
+
 To test the function, run `pytest` from the command line to automatically discover and execute tests.
 
 ```bash
@@ -560,6 +358,6 @@ You've successfully written, executed, and passed a Cancellation Workflow test.
 
 ## Conclusion
 
-Building a Python Subscription application with the Temporal SDK provides a powerful solution for sending email subscriptions. With the help of Workflows, Activities, and Queries, you can easily mock sending emails, retrieve subscription status, and cancel a subscription.
+Building a Python Subscription application with the Temporal SDK provides a powerful solution for sending email subscriptions. With the help of Workflows, Activities, and Queries, you can easily mock sending emails, retrieve subscription status, and cancel subscriptions.  By using web actions, you can easily subscribe and start your business logic, and thanks to the robust features built into Temporal's Workflows and Activities, your application will be reliable.
 
 With this knowledge, you will be able to take on more complex Workflows and Activities to create even stronger applications.

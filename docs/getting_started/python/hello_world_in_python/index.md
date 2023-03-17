@@ -326,29 +326,6 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Create the file `run_workflow.py` and add the following to connect to the server and start the Workflow:
 
 <!--SNIPSTART python-project-template-run-workflow-->
-[run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_workflow.py)
-```py
-import asyncio
-
-from run_worker import SayHello
-from temporalio.client import Client
-
-
-async def main():
-    # Create client connected to server at the given address
-    client = await Client.connect("localhost:7233")
-
-    # Execute a workflow
-    result = await client.execute_workflow(
-        SayHello.run, "Temporal", id="hello-workflow", task_queue="hello-task-queue"
-    )
-
-    print(f"Result: {result}")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
 <!--SNIPEND-->
 
 Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/application-development/foundations/?lang=python#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
