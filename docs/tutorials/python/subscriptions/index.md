@@ -6,7 +6,7 @@ tags: [Python, SDK]
 last_update:
   date: 2023-03-01
 title: Build a subscription workflow with Temporal and Python
-description: In this tutorial, we will tour all the Workflow APIs you should know, primarily Signals, Queries, by building a realistic monthly subscription payments Workflow that can be canceled.
+description: This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start your business logic through a web action.
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -56,49 +56,9 @@ You will build on the concepts you learned in the [Hello World](/getting_started
 
 - Python 3.7 or greater (tested with version 3.11)
 - Temporal Python SDK (tested with version [1.0.0](https://github.com/temporalio/sdk-python/releases/tag/1.0.0)).
+  - `pip install temporalio`
 - Flask (tested with version [2.2.2](https://github.com/pallets/flask/releases/tag/2.2.2)).
-
-#### Activate Virtual Environment
-
-Run the following command to create a new virtual environment:
-
-```bash
-python3 -m venv venv
-```
-
-This command creates a new directory called `venv`, which contains the following items:
-
-- Python interpreter (Python 3.11.0 in this case)
-- Scripts for activating and deactivating the virtual environment
-
-Activate the virtual environment:
-
-```bash
-source venv/bin/activate
-(venv) $
-```
-
-After activating, the virtual environment `(venv)` will be displayed on your command prompt.
-
-Since the virtual environment is active, running the Python command will run the Python 3 version of the interpreter (which is stored within your virtual environment itself):
-
-Test that Python is running in your virtual environment.
-
-```bash
-(venv) $ python --version
-Python 3.11.0
-```
-
-Throughout the rest of the tutorial, the `(venv) $` prompt will be ignored.
-
-#### Install packages with pip
-
-With the virtual environment created and activated, it's time to start installing the Python packages that you need using pip.
-
-```bash
-pip install temporalio
-pip install "Flask[asyinco]"
-```
+  - `pip install "Flask[asyinco]"`
 
 ## Develop Workflow
 
@@ -108,7 +68,7 @@ Before writing the Workflow Definition, it is important to define the data objec
 
 ### Define Data Class
 
-Now, it's time to write some code for the Python application. The Temporal Python SDK recommends the use of a single [data class](https://docs.python.org/3/library/dataclasses.html) for parameters and return types. This allows for the addition of fields with defaults without breaking compatibility.
+The Temporal Python SDK recommends the use of a single [data class](https://docs.python.org/3/library/dataclasses.html) for parameters and return types. This allows for the addition of fields with defaults without breaking compatibility.
 
 To set up the data class and describe its objects as parameters, create a new file called `shared_objects.py`.
 
@@ -118,8 +78,8 @@ nano shared_objects.py
 
 The data class will store the objects to be sent to your Activity and Workflow. Add the following objects to the `ComposeEmail` data class:
 
-- `email`: as a string to pass a user's email.
-- `message`: as a string to pass a message to the user.
+- `email`: as a string to pass a user's email
+- `message`: as a string to pass a message to the user
 - `count`: as an integer to track the number of emails sent
 
 <!--SNIPSTART email-subscription-project-python-shared_objects {"selectedLines": ["1", "4-8"]}-->
@@ -130,8 +90,6 @@ The data class will store the objects to be sent to your Activity and Workflow. 
 Now that the data objects are declared, let's move on to writing the Workflow Definition.
 
 ### Define Workflow Definition
-
-In the Temporal, Workflows are fundamental units of a Temporal Application and orchestrate the execution of Activities. In the Temporal Python SDK, Workflow Definitions contain the `@workflow.defn` decorator and the method invoked for the Workflow is decorated with `@workflow.run`.
 
 To create a new Workflow Definition, you can start by creating a new file called `workflows.py`. This file will contain the `SendEmailWorkflow` class and its attributes.
 
@@ -148,7 +106,7 @@ The `SendEmailWorkflow` class, for example, contains a loop that checks if the `
 
 The `run()` method, which is decorated with `@workflow.run`, takes in the email address as an argument. This method initializes the `_email`, `_message`, `_subscribed`, and `_count` attributes of the `SendEmailWorkflow` instance.
 
-The while loop increments the `_count` attribute and calls the `send_email` Activity with the current `ComposeEmail` object. The loop will continue as long as the `_subscribed` attribute is true.
+The while loop increments the `_count` attribute and calls the `send_email` Activity with the current `ComposeEmail` object. The loop will continue as long as the `_subscribed` attribute is true. 
 
 The `start_activity()` method is used to execute the `send_email` Activity with the following parameters:
 
@@ -245,6 +203,8 @@ In the `start_workflow` function, pass the name of the Workflow run method, argu
 <!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["16-31"]}-->
 <!--SNIPEND-->
 
+The Workflow Id is set when the user provides their email. This ensures that the email is unique across all Workflows so that the user can't sign up multiple times, only receive the emails they've subscribed to, and when they cancel; they cancel the Workflow.
+
 This demonstrates the basic steps to [start a Workflow](https://python.temporal.io/temporalio.client.Client.html#start_workflow).
 
 Next, learn to query your Workflow.
@@ -265,6 +225,9 @@ Each Query method returns the current values of the Workflow attributes:
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["42-52"]}-->
 <!--SNIPEND-->
+
+When a user wants to get information about their subscription details, you can return any of the information from the Query. 
+The Query can be used even if the Workflow is completed. 
 
 Queries should never mutate anything in the Workflow.
 
@@ -292,6 +255,7 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 <!--SNIPEND-->
 
 This should allow users to cancel the Workflow and prevent the Workflow from continuing to execute the Activity.
+As mentioned previously, the Workflow Id is tied to the email address given by the `subscribe` endpoint. When a user pass their email address to `unsubscribe`, they're canceling that Workflow.
 
 ## Create an integration test
 
@@ -354,7 +318,7 @@ PASSED                                                                   [100%]
 ============================== 1 passed in 00.20s ==============================
 ```
 
-You've successfully written, executed, and passed a Cancellation Workflow test.
+**Results**: You've successfully written, executed, and passed a Cancellation Workflow test.
 
 ## Conclusion
 
