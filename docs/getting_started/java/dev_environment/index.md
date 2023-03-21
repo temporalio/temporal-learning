@@ -39,9 +39,8 @@ Install Gradle by following the [installation instructions](https://gradle.org/i
 Add the following lines to your Gradle configuration to configure the Temporal SDK.
 
 ```groovy
-implementation 'io.temporal:temporal-sdk:1.11.0' 
-implementation 'io.temporal:temporal-sdk:1.12.0'test 
-implementation 'io.temporal:temporal-testing:1.12.0'
+implementation 'io.temporal:temporal-sdk:1.19.0' 
+testImplementation 'io.temporal:temporal-testing:1.19.0'
 ```
 
 
@@ -54,11 +53,20 @@ Install Maven following the [official installation instructions](https://maven.a
 Add the following lines to your Maven configuration:
 
 ```xml
-<dependency>
-  <groupId>io.temporal</groupId>
-  <artifactId>temporal-sdk</artifactId>
-  <version>1.11.0</version>
-</dependency>
+<dependencies>
+  <dependency>
+    <groupId>io.temporal</groupId>
+    <artifactId>temporal-sdk</artifactId>
+    <version>1.19.0</version>
+  </dependency>
+
+  <dependency>
+    <groupId>io.temporal</groupId>
+    <artifactId>temporal-testing</artifactId>
+    <version>1.19.0</version>
+    <scope>test</scope>
+  </dependency>  
+</dependencies>
 ```
 
 Next, you'll configure a local Temporal cluster for development.
