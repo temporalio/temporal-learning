@@ -101,6 +101,9 @@ You can use the `workflows.py` file write deterministic logic inside your Workfl
 
 The `SendEmailWorkflow` class, for example, contains a loop that checks if the `_subscribed` attribute is True, and if so, starts the `send_email` Activity.
 
+Since the user's email address serves as the Workflow Id, attempting to subscribe with the same email address twice will result in a `Workflow Execution already started` error and prevent the Workflow Execution from spawning again.
+Therefore, only one Workflow Execution per email address can exist within the associated Namespace for the given retention period, which ensures that the user won't receive multiple email subscriptions.
+
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["1-36"]}-->
 <!--SNIPEND-->
 
