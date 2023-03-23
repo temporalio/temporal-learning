@@ -272,7 +272,7 @@ Create a new file called `HelloWorldWorkflowTest.java` that contains the followi
 <!--SNIPSTART hello-world-project-template-java-workflow-test-->
 <!--SNIPEND-->
 
-The first test, `testIntegrationGetGreeting`, creates a test execution environment to test the integration between the Activity and the Workflow. The second test, `testMockGetGreeting`, mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the tests ensures the Workflow's return value returns the expected value.
+The first test, `testIntegrationGetGreeting`, creates a test execution environment to test the integration between the Activity and the Workflow. The second test, `testMockedGetGreeting`, mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the tests ensures the Workflow's return value returns the expected value.
 
 Run the following command from the project root to execute the unit tests:
 
