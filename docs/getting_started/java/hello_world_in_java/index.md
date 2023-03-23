@@ -34,16 +34,14 @@ Creating reliable applications is a difficult task.  [Temporal](https://temporal
 
 In this tutorial, you will build your first [Temporal Application](https://docs.temporal.io/temporal#temporal-application) from scratch using the [Temporal Java SDK](https://github.com/temporalio/java-sdk). The Temporal Application will consist of the following pieces:
 
-1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
-2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
-3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An client application: To start a Workflow, you need to send a signal to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
+1. A [Workflow](https://docs.temporal.io/workflows): A workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a Workflow Definition, and are carried out by running that code, which results in a Workflow Execution.
+2. An [Activity](https://docs.temporal.io/activities): Activities are methods called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
+3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and are responsible for processing Workflow and Activity Tasks.
+4. A client: Client code that triggers the execution of the workflow on the Temporal Server. The Client used to start the Workflow submits a request to the Temporal Cluster, which then queues a Task that the Worker will pick up, and the Worker will begin executing the code in the Workflow Definition.
 
 You'll also write a unit test to ensure your Workflow executes successfully.
 
 When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications.
-
-All of the code in this tutorial is available in the [hello-world Java template](https://github.com/temporalio/hello-world-project-template-java) repository.
 
 ## Prerequisites
 
@@ -205,8 +203,8 @@ Workflows are where you configure and organize the execution of Activities.  You
 
 In the Temporal Java SDK, a Workflow Definition is made of two parts:
 
-* An [interface](https://docs.oracle.com/javase/tutorial/java/concepts/interface.html) that contains annotated methods with empty bodies 
-* A class that implements the interface and defines all methods declared by the interface.
+* A [Workflow Interface](https://docs.temporal.io/application-development/foundations?lang=java#develop-workflows), which is an interface annotated with `@WorkflowInterface`. This interface contains a single method signature annotated with `@WorkflowMethod`. 
+* A class that implements the interface, providing the code that runs when the Workflow is executed
 
 Create `HelloWorldWorkflow.java` in the source code location of your project at `app/src/main/java/helloworldapp/` and add the following code to create a `HelloWorldWorkflow` interface that defines the expected functionality of your workflow:
 
@@ -223,17 +221,17 @@ Next, create `HelloWorldWorkflowImpl.java` and add the following code to impleme
 In this implementation, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, startToCloseTimeOut is the one you should always set. In this implementation you create a `HelloWorldActivity` stub that will act as a proxy for activity invocations. 
 
 :::note
-Notice that an interface of `HelloWorldActivity` is used to create the stub, not the implementation of the interface. The workflow is only aware of the Activity through its public interface, not the Activity implementation.
+Notice that `Workflow.newActivityStub()` uses an interface of `HelloWorldActivity` to create the activity stub, not the Activity implementation. The workflow communicates with an Activity through its public interface and is not aware of its implementation.
 
 :::
 
-Finally the implementation overrides the `getGreeting` implementation from the `HelloWorldWorkflow` interface and executes an Activity called `composeGreeting`, which you'll define next. The function returns the result of the Activity.
+Finally `HelloWorldWorkflowImpl` implements the `getGreeting` Workflow Method from the Workflow Interface. The method returns the result of the Activity.
 
 With your Workflow Definition created, you're ready to create the `ComposeGreeting` Activity.
 
 ## Create an Activity
 
-In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
+In a Temporal Application, Activities are where you execute any operation that is prone to failure or access external services or systems, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
 
 For this tutorial, your Activity won't be complex; you'll create an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
@@ -244,14 +242,14 @@ Create the file `HelloWorldActivity.java` in `app/src/main/java/helloworldapp/` 
 <!--SNIPSTART hello-world-project-template-java-activity-interface-->
 <!--SNIPEND-->
 
-The `HelloWorldActivity` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method `composeGreeting(String name)` that takes a single String parameter, `name`, and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Activity execution which will be called during the Workflow execution.
+The `HelloWorldActivity` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method `composeGreeting(String name)` and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Activity execution which will be called during the Workflow execution.
 
 Next, create `HelloWorldActivityImpl.java` in `app/src/main/java/helloworldapp/` and add the following code to implement the Activity and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-activity-->
 <!--SNIPEND-->
 
-The implementation overrides the single method from the interface named `composeGreeting` to compose a String that returns a standard "Hello World!" message using the passed in parameter. 
+This class implements the single method from the interface named `composeGreeting` to compose a String that returns a standard "Hello World!" message using the passed in parameter. 
 
 Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=java#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
@@ -261,7 +259,7 @@ You've completed the logic for the application; you have a Workflow and an Activ
 
 The Temporal Java SDK includes classes and methods that help you test your Workflow executions. Let's add a basic unit test to the application to make sure the Workflow works as expected.
 
-You'll use the standard [JUnit](https://junit.org/junit4/) package to build your test cases and mock the Activity so you can test the Workflow in isolation.
+You'll use [JUnit 4](https://junit.org/junit4/) build your test cases to test your Workflow and Activity. You'll test the integration of the Activity and the Workflow by using Temporal's built in Test Environment. You'll then mock the Activity so you can test the Workflow in isolation.
 
 Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `app/src/test/java/helloworldapp`. Gradle generates a default `AppTest.java` in that location. Delete it:
 
@@ -274,7 +272,7 @@ Create a new file called `HelloWorldWorkflowTest.java` that contains the followi
 <!--SNIPSTART hello-world-project-template-java-workflow-test-->
 <!--SNIPEND-->
 
-This test creates a test execution environment and then mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+The first test, `testIntegrationGetGreeting`, creates a test execution environment to test the integration between the Activity and the Workflow. The second test, `testMockGetGreeting`, mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the tests ensures the Workflow's return value returns the expected value.
 
 Run the following command from the project root to execute the unit tests:
 
@@ -292,9 +290,9 @@ You have a working application and a test to ensure the Workflow executes as exp
 
 ## Configure a Worker
 
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
+A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity methods and executes the code in the Workflow Definition. The Temporal Cluster orchestrates the execution of code in a Workflow Definition or Activity Definition by adding Tasks to a [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), which Workers poll. When a Worker accepts a Task, it will execute the necessary code, and report the result (or error) back to the Temporal Cluster. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use. A Worker listens and polls on the Task Queue, looking for work to do.
+When you start a Workflow, you specify which Task Queue the Workflow uses. A Worker listens and polls on the Task Queue, looking for work to do.
 
 To configure a Worker process using the Java SDK, you create an instance of `Worker` and give it the name of the Task Queue to poll. 
 
@@ -312,17 +310,22 @@ Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and
 <!--SNIPSTART hello-world-project-template-java-worker-->
 <!--SNIPEND-->
 
-This program first implements a service stub to be used when instantiating the client. Temporal Workers in Java are implemented using the Factory design pattern. The code first instantiates the factory and then creates a new worker that listens on a Task Queue. This worker will only process workflows and activities from this Task Queue. You register the Workflow and Activity with the Worker and then start the worker using `factory.start()`.
+This program first implements a service stub to be used when instantiating the client. The code first instantiates a factory and then creates a new worker that listens on a Task Queue. This worker will only process workflows and activities from this Task Queue. You register the Workflow and Activity with the Worker and then start the worker using `factory.start()`.
 
 
 :::tip
 
-By default, the client connects to the `default` namespace of the Temporal Cluster running at `localhost` on port `7233` by using the `newLocalServiceStubs()` method. If you want to connect to an off-box Temporal Cluster you would use the following code:
+By default, the client connects to the `default` namespace of the Temporal Cluster running at `localhost` on port `7233` by using the `newLocalServiceStubs()` method. If you want to connect to an external Temporal Cluster you would use the following code:
 
 ```java
 WorkflowServiceStubs service =
         WorkflowServiceStubs.newServiceStubs(
             WorkflowServiceStubsOptions.newBuilder().setTarget("host:port").build());
+
+WorkflowClient client = 
+        WorkflowClient.newInstance(service, WorkflowClientOptions.newBuilder()
+                                            .setNamespace("YOUR_NAMESPACE")
+                                            .build());
 ```
 
 :::
@@ -333,7 +336,7 @@ You've created a program that instantiates a Worker to process the Workflow. Now
 
 You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK. In this tutorial, you'll use the Temporal SDK to start the Workflow, which is how most real-world applications work. 
 
-Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a separate Java class that starts the Workflow Execution.
+Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, specifying the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a separate Java class that starts the Workflow Execution.
 
 Create `InitiateHelloWorld.java` in `app/src/main/java/helloworldapp/` and add the following code to the file to connect to the server and start the Workflow:
 
@@ -344,16 +347,14 @@ Like the Worker you created, this program uses stubs and a client to connect to 
 
 :::tip Specify a Workflow ID
 
-You don't need to specify a Workflow ID, as Temporal will generate one for you, but defining the Workflow ID yourself makes it easier for you to find it later in logs or interact with a running Workflow in the future. 
-
 A Workflow Id is unique in a namespace and is used for deduplication. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 
 :::
 
-The program then creates a stubbed instance of your Workflow, `workflow`, taking the interface class of your workflow along with the options you have set as parameters.
+The program then creates a stubbed instance of your Workflow, `workflow`, taking the interface class of your workflow along with the options you have set as parameters. This stub looks like an implementation of the interface, but is used to communicate with the Temporal Server under the hood.
 
 :::note
-Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the implementation class. The client application is only aware of the Workflow through its public interface, not the Workflow's implementation.
+Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the Workflow implementation.The workflow communicates with an Workflow through its public interface and is not aware of its implementation.
 
 :::
 
@@ -419,7 +420,7 @@ You have successfully built a Temporal application from scratch.
 
 ## Conclusion
 
-You now know how to build a Temporal Workflow application using the Java SDK and Gradle. 
+You now know how to build a Temporal Workflow application using the Java SDK and Gradle. All of the code in this tutorial is available in the [hello-world Java template](https://github.com/temporalio/hello-world-project-template-java) repository.
 
 ### Review
 
@@ -453,7 +454,7 @@ Each Worker is configured to poll a specified Task Queue, whose name is specifie
 <details>
 <summary>
 
-**True or false, with the Temporal Java SDK, you define Activities and Workflows by writing an interface to define the functionality and an implementation that implements the interface?**
+**True or false, with the Temporal Java SDK, you define Activities and Workflows by writing an Interface to create a definition and and implementation of this interface that gets executed by the Workers?**
 
 </summary>
 
