@@ -323,9 +323,8 @@ WorkflowServiceStubs service =
             WorkflowServiceStubsOptions.newBuilder().setTarget("host:port").build());
 
 WorkflowClient client = 
-        WorkflowClient.newInstance(service, WorkflowClientOptions.newBuilder()
-                                            .setNamespace("YOUR_NAMESPACE")
-                                            .build());
+        WorkflowClient.newInstance(
+          service, WorkflowClientOptions.newBuilder().setNamespace("YOUR_NAMESPACE").build());
 ```
 
 :::
