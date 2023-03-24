@@ -14,7 +14,7 @@ image: /img/temporal-logo-twitter-card.png
 
 In this tutorial, you’ll build an email subscription web application using Temporal and Python. You’ll create a web server to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you’re building the business logic with Temporal’s Workflows and Activities, you’ll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and maintain.
 
-You’ll create a sign-up page where users provide their email, and you’ll create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription which you’ll handle using a Query, and they can end the subscription at any time by unsubscribing, which you’ll handle by cancelling the Workflow Execution.  You can view the user’s entire process through Temporal’s Web UI. For this tutorial, you’ll simulate sending emails, but you can adapt this example to call a live email service in the future.
+You’ll create a sign-up page where users provide their email, and you’ll create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you’ll handle using a Query, and they can end the subscription at any time by unsubscribing, which you’ll handle by cancelling the Workflow Execution.  You can view the user’s entire process through Temporal’s Web UI. For this tutorial, you’ll simulate sending emails, but you can adapt this example to call a live email service in the future.
 
 By the end of this tutorial, you’ll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 
@@ -122,7 +122,7 @@ Now that we've written the logic to execute the Workflow and Activity Definition
 
 ## Build the web server
 
-The web server is used handle requests.
+The web server is used to handle requests.
 This tutorial uses the Flask as the entry point for initiating Workflow Execution and communicating with the `subscribe`, `get-details`, and `unsubscribe` routes.
 
 ### Global Client
@@ -168,7 +168,7 @@ Next, learn to query your Workflow.
 
 Now create a method in which a user can see the results of their subscription.
 
-Use a Query method so a user can get information about their subscription details.
+Use a Query method, so a user can get information about their subscription details.
 
 <!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["42-52"]}-->
 <!--SNIPEND-->
@@ -204,7 +204,7 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 <!--SNIPEND-->
 
 This should allow users to cancel the Workflow and prevent the Workflow from continuing to execute the Activity.
-As mentioned previously, the Workflow Id is tied to the email address given by the `subscribe` endpoint. When a user pass their email address to `unsubscribe`, they're canceling that Workflow.
+As mentioned previously, the Workflow Id is tied to the email address given by the `subscribe` endpoint. When a user passes their email address to `unsubscribe`, they're cancelling that Workflow.
 
 ## Create an integration test
 
