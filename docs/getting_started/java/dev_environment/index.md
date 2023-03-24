@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 tags: [Java, SDK, development environment]
 keywords: [Java, JRE, Temporal, IntelliJ, Gradle, development environment]
 last_update:
-  date: 2021-10-01
+  date: 2023-03-24
 title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
