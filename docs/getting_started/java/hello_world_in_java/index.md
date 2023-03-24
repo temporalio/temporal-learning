@@ -1,6 +1,6 @@
 ---
 id: hello-world-tutorial
-title: Build a Temporal "Hello World!" app from scratch in Java
+title: Build a Temporal Application from scratch in Java
 sidebar_position: 3
 description: In this tutorial you will build your first Temporal app using the Java SDK
 keywords: [Java,java,temporal,sdk,tutorial,hello world]
