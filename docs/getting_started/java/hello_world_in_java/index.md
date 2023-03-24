@@ -218,16 +218,16 @@ Next, create `HelloWorldWorkflowImpl.java` and add the following code to impleme
 <!--SNIPSTART hello-world-project-template-java-workflow-->
 <!--SNIPEND-->
 
-In this implementation, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, startToCloseTimeOut is the one you should always set. In this implementation you create a `HelloWorldActivity` stub that will act as a proxy for activity invocations. 
+In this implementation, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, startToCloseTimeOut is the one you should always set. In this implementation you create a `HelloWorldActivities` stub that will act as a proxy for activity invocations. 
 
 :::note
-Notice that `Workflow.newActivityStub()` uses an interface of `HelloWorldActivity` to create the activity stub, not the Activity implementation. The workflow communicates with an Activity through its public interface and is not aware of its implementation.
+Notice that `Workflow.newActivityStub()` uses an interface of `HelloWorldActivities` to create the activity stub, not the Activity implementation. The workflow communicates with an Activity through its public interface and is not aware of its implementation.
 
 :::
 
 Finally `HelloWorldWorkflowImpl` implements the `getGreeting` Workflow Method from the Workflow Interface. The method returns the result of the Activity.
 
-With your Workflow Definition created, you're ready to create the `ComposeGreeting` Activity.
+With your Workflow Definition created, you're ready to create the `composeGreeting` Activity.
 
 ## Create an Activity
 
@@ -237,14 +237,14 @@ For this tutorial, your Activity won't be complex; you'll create an Activity tha
 
 With the Temporal Java SDK, you define Activities similarly to how you define Workflows: using an interface and an implementation.
 
-Create the file `HelloWorldActivity.java` in `app/src/main/java/helloworldapp/` and add the following code to define the `HelloWorldActivity` interface:
+Create the file `HelloWorldActivities.java` in `app/src/main/java/helloworldapp/` and add the following code to define the `HelloWorldActivities` interface:
 
 <!--SNIPSTART hello-world-project-template-java-activity-interface-->
 <!--SNIPEND-->
 
-The `HelloWorldActivity` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method `composeGreeting(String name)` and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Activity execution which will be called during the Workflow execution.
+The `HelloWorldActivities` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method signature, `composeGreeting(String name)`. Activity Interfaces can have multiple methods, but for this example you'll have just the one.
 
-Next, create `HelloWorldActivityImpl.java` in `app/src/main/java/helloworldapp/` and add the following code to implement the Activity and define its methods:
+Next, create `HelloWorldActivitiesImpl.java` in `app/src/main/java/helloworldapp/` and add the following code to implement the Activity and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-activity-->
 <!--SNIPEND-->
