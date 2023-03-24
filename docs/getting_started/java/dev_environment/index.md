@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 tags: [Java, SDK, development environment]
 keywords: [Java, JRE, Temporal, IntelliJ, Gradle, development environment]
 last_update:
-  date: 2021-10-01
+  date: 2023-03-24
 title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -17,7 +17,7 @@ To follow the Java SDK tutorials and build your own Temporal applications with J
 
 ## Get the Java JDK
 
-Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 14.0.1. You can check which version you have installed using this command:
+Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 19.0.2. You can check which version you have installed using this command:
 
 ```command
 java -version
@@ -25,7 +25,7 @@ java -version
 
 ## Get the Temporal SDK for Java
 
-You can use Gradle or Maven for your projects, although we recommend Gradle.
+While you can use any tool you like, such as Gradle or Apache Maven, to build and package your Temporal applications, our tutorials are based on Gradle.
 
 
 ### Configure Gradle
