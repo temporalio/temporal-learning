@@ -30,7 +30,7 @@ java -version
 
 While you can use any tool you like, such as Gradle or Apache Maven, to build and package your Temporal applications, our tutorials are based on Gradle.
 
-<Tabs groupId="os" queryString>
+<Tabs groupId="build-tool" queryString>
   <TabItem value="maven" label="Maven">
 
 ### Configure Maven
