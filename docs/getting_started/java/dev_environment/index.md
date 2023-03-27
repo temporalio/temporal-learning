@@ -10,6 +10,9 @@ title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.
@@ -27,28 +30,14 @@ java -version
 
 While you can use any tool you like, such as Gradle or Apache Maven, to build and package your Temporal applications, our tutorials are based on Gradle.
 
-
-### Configure Gradle
-
-[Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
-
-You can install Gradle separately, or use [IntelliJ IDEA](https://www.jetbrains.com/idea/), which comes packaged with Gradle.
-
-Install Gradle by following the [installation instructions](https://gradle.org/install/).
-
-Add the following lines to your Gradle configuration to configure the Temporal SDK.
-
-```groovy
-implementation 'io.temporal:temporal-sdk:1.19.0' 
-testImplementation 'io.temporal:temporal-testing:1.19.0'
-```
-
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="maven" label="Maven">
 
 ### Configure Maven
 
-Apache Maven is another popular Java build tool. 
+[Apache Maven](https://maven.apache.org/) is a tool for build and dependency management popular with Java developers.
 
-Install Maven following the [official installation instructions](https://maven.apache.org/install.html).
+Install Maven using the following [instructions](https://maven.apache.org/install.html).
 
 Add the following lines to your Maven configuration:
 
@@ -68,6 +57,30 @@ Add the following lines to your Maven configuration:
   </dependency>  
 </dependencies>
 ```
+
+  </TabItem>
+  <TabItem value="gradle" label="Gradle">
+
+### Configure Gradle
+
+[Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
+
+You can install Gradle separately, or use [IntelliJ IDEA](https://www.jetbrains.com/idea/), which comes packaged with Gradle.
+
+Install Gradle using the following [instructions](https://gradle.org/install/).
+
+Add the following lines to your Gradle configuration file, `build.gradle`, to configure the Temporal SDK.
+
+```groovy
+implementation 'io.temporal:temporal-sdk:1.19.0' 
+testImplementation 'io.temporal:temporal-testing:1.19.0'
+```
+
+  </TabItem>
+</Tabs>
+
+
+
 
 Next, you'll configure a local Temporal cluster for development.
 
