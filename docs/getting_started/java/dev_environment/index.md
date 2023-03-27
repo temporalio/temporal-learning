@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 tags: [Java, SDK, development environment]
 keywords: [Java, JRE, Temporal, IntelliJ, Gradle, development environment]
 last_update:
-  date: 2023-03-24
+  date: 2023-03-27
 title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -84,8 +84,7 @@ testImplementation 'io.temporal:temporal-testing:1.19.0'
 
 Next, you'll configure a local Temporal cluster for development.
 
-
-## Set up a Temporal development cluster
+## Set up a local Temporal development cluster
 
 import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
 
