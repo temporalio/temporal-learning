@@ -6,7 +6,7 @@ description: Set up a local development environment for developing Temporal Appl
 keywords: [python, temporal, sdk, development environment]
 tags: [Python, SDK, development environment]
 last_update:
-  date: 2023-03-02
+  date: 2023-03-27
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -117,7 +117,7 @@ Successfully installed temporalio-x.y
 
 Next, you'll configure a local Temporal cluster for development.
 
-## Set up a Temporal development cluster
+## Set up a local Temporal development cluster
 
 import Cluster from '@site/docs/getting_started/_temporal_cluster.md'
 

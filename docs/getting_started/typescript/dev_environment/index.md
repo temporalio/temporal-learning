@@ -6,7 +6,7 @@ description: Set up a local development environment for developing Temporal appl
 keywords: [typescript, javascript, js, temporal, sdk, development environment]
 tags: [TypeScript, SDK, development environment]
 last_update:
-  date: 2022-11-08
+  date: 2023-03-27
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -36,7 +36,7 @@ npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporal
 
 Next, you'll configure a local Temporal cluster for development.
 
-## Set up a Temporal development cluster
+## Set up a local Temporal development cluster
 
 import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
 
