@@ -1,6 +1,6 @@
 The fastest way to get a development cluster running on your local machine is to use [Temporal CLI](https://docs.temporal.io/cli).
 
-Temporal CLI is a tool for interacting with a Temporal Cluster from the command line, but it includes a distribution of the Temporal Server and [Web UI](https://docs.temporal.io/web-ui) as well. This local development Cluster runs as a single process with zero runtime dependencies and it supports persistence to disk and in-memory mode through SQLite.
+Temporal CLI is a tool for interacting with a Temporal Cluster from the command-line interface, but it includes a self-contained distribution of the Temporal Server and [Web UI](https://docs.temporal.io/web-ui) as well. 
 
 Install Temporal CLI on your local machine using the following instructions for your platform.
 
