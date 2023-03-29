@@ -14,7 +14,10 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Image of an astronaut in space holding the Java logo](/img/sdk_banners/banner_java.png)
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem'; 
+
+![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
 :::note Tutorial information
 
@@ -49,7 +52,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
 - Follow the tutorial [Run your first Temporal application with the Java SDK](/getting_started/java/first_program_in_java/index.md) to gain a better understanding of what Temporal is and how its components fit together.
-- Ensure [Gradle](https://gradle.org/install/) is installed and ready to use to create a Java project.
+- Ensure a build tool like [Gradle](https://gradle.org/install/) or [Maven](https://maven.apache.org/install.html) is installed and ready to use to create a Java project.
 
 ## ![Clip art image of a crane](/img/icons/harbor-crane.png) Create a new Java project
 
@@ -66,6 +69,9 @@ Switch to the new directory:
 ```command
 cd hello-world-temporal
 ```
+
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
 
 In this tutorial you'll use [Gradle](https://gradle.org/install/) and the command line to build, manage, and run your Java project. 
 
@@ -189,7 +195,133 @@ BUILD SUCCESSFUL in 28s
 7 actionable tasks: 6 executed, 1 up-to-date
 ```
 
-Finally, Gradle creates a default `App.java` file that you won't need for this tutorial, so delete it.
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
+Create a new Java project with Maven by running the following command:
+
+```command
+mvn -B archetype:generate \
+-DgroupId=helloworldapp \
+-DartifactId=app \
+-DarchetypeArtifactId=maven-archetype-quickstart \
+-DarchetypeVersion=1.4
+```
+
+This command creates a directory name `app` that contains your Java application named `helloworldapp`.
+
+Your output will be similar to this:
+
+```
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------< org.apache.maven:standalone-pom >-------------------
+[INFO] Building Maven Stub Project (No POM) 1
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO]
+[INFO] >>> archetype:3.2.1:generate (default-cli) > generate-sources @ standalone-pom >>>
+[INFO]
+[INFO] <<< archetype:3.2.1:generate (default-cli) < generate-sources @ standalone-pom <<<
+[INFO]
+[INFO]
+[INFO] --- archetype:3.2.1:generate (default-cli) @ standalone-pom ---
+[WARNING] Parameter 'localRepository' is deprecated core expression; Avoid use of ArtifactRepository type. If you need access to local repository, switch to '${repositorySystemSession}' expression and get LRM from it instead.
+[INFO] Generating project in Batch mode
+[INFO] ----------------------------------------------------------------------------
+[INFO] Using following parameters for creating project from Archetype: maven-archetype-quickstart:1.4
+[INFO] ----------------------------------------------------------------------------
+[INFO] Parameter: groupId, Value: helloworldapp
+[INFO] Parameter: artifactId, Value: app
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Parameter: package, Value: helloworldapp
+[INFO] Parameter: packageInPathFormat, Value: helloworldapp
+[INFO] Parameter: package, Value: helloworldapp
+[INFO] Parameter: groupId, Value: helloworldapp
+[INFO] Parameter: artifactId, Value: app
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Project created from Archetype in dir: /Users/max/Code/Temporal/hello-world-project-template-java/tmp/app
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.037 s
+[INFO] Finished at: 2023-03-29T10:05:47-05:00
+[INFO] ------------------------------------------------------------------------
+```
+
+Next you will need to ensure that the Java version Maven is using matches the version of Java you have installed.
+
+Run the following command to see the version of Java currently installed in your environment:
+
+```command
+java -version
+```
+
+You should see an output similar to this:
+
+```
+openjdk version "19.0.2" 2023-01-17
+OpenJDK Runtime Environment (build 19.0.2+7-44)
+OpenJDK 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
+```
+
+The first line of this output informs you that the Java version currently installed is `19.0.2`. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with the major version of Java. For example, in the output above the Java version is `19.0.2` so I would change the version in `pom.xml` to `19`.
+
+<!--SNIPSTART hello-world-project-template-java-maven-version-->
+<!--SNIPEND-->
+
+Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` locate the `<dependencies>` tag, delete any dependency that was included in the project generation, and add the following dependencies necessary for this application.
+
+<!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
+<!--SNIPEND-->
+
+Below is a more detailed explanation about the dependencies you will be installing:
+
+- `temporal-sdk`
+  - The Temporal SDK for use in your application.
+- `slf4j-nop`
+  - A NOOP logging package to suppress logging warnings. **This is not intended for production use and a proper logger should be implemented.**
+- `temporal-testing`
+  - The necessary packages for testing a Temporal application.
+- `junit`
+  - The core Java Unit Testing framework. 
+- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
+  - A mocking framework in Java to be used during testing.
+
+Once you have added the build dependencies, perform a test build on your application. From the `app` directory of your project that contains the `pom.xml` execute the following command:
+
+```command
+mvn compile
+```
+
+You will see output similar to this if your build was successful. If it is your first time running mvn compile y ou may see more output of the dependencies being downloaded:
+
+```
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -------------------------< helloworldapp:app >--------------------------
+[INFO] Building app 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/3.0.2/maven-resources-plugin-3.0.2.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/3.0.2/maven-resources-plugin-3.0.2.pom (7.1 kB at 42 kB/s)
+...
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-compiler-javac/2.8.4/plexus-compiler-javac-2.8.4.jar (21 kB at 453 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/com/thoughtworks/qdox/qdox/2.0-M9/qdox-2.0-M9.jar (317 kB at 6.3 MB/s)
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/masonegger/Code/Temporal/tmp/app/target/classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.973 s
+[INFO] Finished at: 2023-03-29T15:47:31-05:00
+[INFO] ------------------------------------------------------------------------
+```
+
+  </TabItem>
+</Tabs>
+
+
+Finally, your build tool may have created a default `App.java` file. You won't need this file for this tutorial, so delete it.
 
 ```command
 rm -f app/src/main/java/helloworldapp/App.java
@@ -261,7 +393,7 @@ The Temporal Java SDK includes classes and methods that help you test your Workf
 
 You'll use [JUnit 4](https://junit.org/junit4/) build your test cases to test your Workflow and Activity. You'll test the integration of the Activity and the Workflow by using Temporal's built in Test Environment. You'll then mock the Activity so you can test the Workflow in isolation.
 
-Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `app/src/test/java/helloworldapp`. Gradle generates a default `AppTest.java` in that location. Delete it:
+Let's add a simple unit test to our application to make sure things are working as expected. Test code lives in `app/src/test/java/helloworldapp`. Your build tool generates a default `AppTest.java` in that location. Delete it:
 
 ```command
 rm -f app/src/test/java/helloworldapp/AppTest.java
@@ -276,6 +408,9 @@ The first test, `testIntegrationGetGreeting`, creates a test execution environme
 
 Run the following command from the project root to execute the unit tests:
 
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
 ```command
 ./gradlew test
 ```
@@ -284,6 +419,61 @@ You'll see output similar to the following from your test run indicating that th
 BUILD SUCCESSFUL in 317ms
 3 actionable tasks: 2 executed, 1 up-to-date
 ```
+
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
+```command
+mvn test
+```
+
+You'll see output similar to the following from your test run indicating that the test was successful. If this is your first time running the test, it may take longer and you may see the output of mvn downloading the testing dependencies:
+
+```
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -------------------------< helloworldapp:app >--------------------------
+[INFO] Building app 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- resources:3.0.2:resources (default-resources) @ app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/masonegger/Code/Temporal/tmp/app/src/main/resources
+[INFO]
+[INFO] --- compiler:3.8.0:compile (default-compile) @ app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- resources:3.0.2:testResources (default-testResources) @ app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/masonegger/Code/Temporal/tmp/app/src/test/resources
+[INFO]
+[INFO] --- compiler:3.8.0:testCompile (default-testCompile) @ app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- surefire:2.22.1:test (default-test) @ app ---
+[WARNING] Parameter 'localRepository' is deprecated core expression; Avoid use of ArtifactRepository type. If you need access to local repository, switch to '${repositorySystemSession}' expression and get LRM from it instead.
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running helloworldapp.HelloWorldWorkflowTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.975 s - in helloworldapp.HelloWorldWorkflowTest
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.959 s
+[INFO] Finished at: 2023-03-29T15:54:46-05:00
+[INFO] ------------------------------------------------------------------------
+```
+
+  </TabItem>
+</Tabs>
 
 You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
 
@@ -365,6 +555,9 @@ You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execut
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
 First, open the file `app/build.gradle` and add the following commands to the end of the file in order to define tasks for Gradle to execute your Worker and Client application:
 
 <!--SNIPSTART hello-world-project-template-java-gradle-tasks-->
@@ -374,11 +567,13 @@ Next, ensure that your local Temporal Cluster is running.
 
 To start the Worker, run this command from the project root:
 
+
+
 ```command
 ./gradlew startWorker
 ```
 
-You should see similar following output from Gradle:
+You should see similar output from Gradle:
 
 ```
 <=========----> 75% EXECUTING [0h 0m 42s]
@@ -391,13 +586,48 @@ Observe that Gradle is reporting that the application is executing but appears t
 
 :::
 
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
+First, ensure that your local Temporal Cluster is running. 
+
+To start the Worker, run this command from the project root:
+
+```command
+mvn exec:java -Dexec.mainClass="helloworldapp.HelloWorldWorker"
+```
+
+You should see similar output from Maven:
+```
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -------------------------< helloworldapp:app >--------------------------
+[INFO] Building app 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- exec:3.1.0:java (default-cli) @ app ---
+```
+
+:::note
+
+Based on the output above, it may appear that your application is stuck or non-responsive. This is not the case. Your Worker is running and ready to accept Workflows to be executed. Leave this program running and proceed to the next step.
+
+:::
+
+  </TabItem>
+</Tabs>
+
 To start the Workflow, open a new terminal window and switch to your project root:
 
 ```command
 cd hello-world-temporal
 ```
 
-Then run the following command to start the Workflow Execution:
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
+Run the following command to start the Workflow Execution:
 
 ```command
 ./gradlew sayHello
@@ -415,11 +645,39 @@ BUILD SUCCESSFUL in 1s
 
 You can switch back to the terminal running the Worker and stop it with `CTRL-C`.
 
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
+Run the following command to start the Workflow Execution:
+
+```command
+mvn exec:java -Dexec.mainClass="helloworldapp.InitiateHelloWorld"
+```
+
+The program runs and returns the result:
+
+```
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -------------------------< helloworldapp:app >--------------------------
+[INFO] Building app 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- exec:3.1.0:java (default-cli) @ app ---
+HelloWorldWorkflowID Hello World!
+```
+
+You can switch back to the terminal running the Worker and stop it with `CTRL-C`.
+  </TabItem>
+</Tabs>
+
+
 You have successfully built a Temporal application from scratch.
 
 ## Conclusion
 
-You now know how to build a Temporal Workflow application using the Java SDK and Gradle. All of the code in this tutorial is available in the [hello-world Java template](https://github.com/temporalio/hello-world-project-template-java) repository.
+You now know how to build a Temporal Workflow application using the Java SDK. All of the code in this tutorial is available in the [hello-world Java template](https://github.com/temporalio/hello-world-project-template-java) repository.
 
 ### Review
 
