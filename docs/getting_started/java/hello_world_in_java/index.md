@@ -73,8 +73,6 @@ cd hello-world-temporal
 <Tabs groupId="build-tool" queryString>
   <TabItem value="gradle" label="Gradle">
 
-In this tutorial you'll use [Gradle](https://gradle.org/install/) and the command line to build, manage, and run your Java project. 
-
 Create a new Java project with Gradle by running the following command:
 
 ```command
