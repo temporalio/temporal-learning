@@ -248,28 +248,12 @@ Your output will be similar to this:
 [INFO] ------------------------------------------------------------------------
 ```
 
-Next you will need to ensure that the Java version Maven is using matches the version of Java you have installed.
-
-Run the following command to see the version of Java currently installed in your environment:
-
-```command
-java -version
-```
-
-You should see an output similar to this:
-
-```
-openjdk version "19.0.2" 2023-01-17
-OpenJDK Runtime Environment (build 19.0.2+7-44)
-OpenJDK 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
-```
-
-The first line of this output informs you that the Java version currently installed is `19.0.2`. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with the major version of Java. For example, in the output above the Java version is `19.0.2` so I would change the version in `pom.xml` to `19`.
+Next you will need to ensure that the Java version Maven is compiling against supports building Temporal Applications. Temporal requires a minimum version of Java 1.8. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with `1.8`.
 
 <!--SNIPSTART hello-world-project-template-java-maven-version-->
 <!--SNIPEND-->
 
-Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` locate the `<dependencies>` tag, delete any dependency that was included in the project generation, and add the following dependencies necessary for this application.
+Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` replace the `<dependencies>` section in the generated file with the following:
 
 <!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
 <!--SNIPEND-->
@@ -284,10 +268,18 @@ Below is a more detailed explanation about the dependencies you will be installi
   - The necessary packages for testing a Temporal application.
 - `junit`
   - The core Java Unit Testing framework. 
-- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
+- `mockito-core`
   - A mocking framework in Java to be used during testing.
 
-Once you have added the build dependencies, perform a test build on your application. From the `app` directory of your project that contains the `pom.xml` execute the following command:
+Once you have added the build dependencies, perform a test build on your application.
+
+Change directory into the app directory:
+
+```command
+app
+```
+
+From the `app` directory of your project that contains the `pom.xml` execute the following command:
 
 ```command
 mvn compile
@@ -308,7 +300,7 @@ Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/p
 Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-compiler-javac/2.8.4/plexus-compiler-javac-2.8.4.jar (21 kB at 453 kB/s)
 Downloaded from central: https://repo.maven.apache.org/maven2/com/thoughtworks/qdox/qdox/2.0-M9/qdox-2.0-M9.jar (317 kB at 6.3 MB/s)
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 1 source file to /Users/masonegger/Code/Temporal/tmp/app/target/classes
+[INFO] Compiling 1 source file to /Users/max/Code/Temporal/tmp/app/target/classes
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -424,7 +416,7 @@ BUILD SUCCESSFUL in 317ms
   <TabItem value="maven" label="Maven">
 
 ```command
-mvn test
+mvn compile test
 ```
 
 You'll see output similar to the following from your test run indicating that the test was successful. If this is your first time running the test, it may take longer and you may see the output of mvn downloading the testing dependencies:
@@ -594,7 +586,7 @@ First, ensure that your local Temporal Cluster is running.
 To start the Worker, run this command from the project root:
 
 ```command
-mvn exec:java -Dexec.mainClass="helloworldapp.HelloWorldWorker"
+mvn compile exec:java -Dexec.mainClass="helloworldapp.HelloWorldWorker"
 ```
 
 You should see similar output from Maven:
