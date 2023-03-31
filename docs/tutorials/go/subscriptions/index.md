@@ -291,3 +291,11 @@ Finally, get the Worker to listen to the Task Queue.
 ```
 
 ## Build the gateway
+
+### Subscribe handler
+
+### Unsubscribe handler
+
+### Build the `getdetails` endpoint
+
+## Conclusion
