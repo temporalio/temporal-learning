@@ -292,10 +292,258 @@ Finally, get the Worker to listen to the Task Queue.
 
 ## Build the gateway
 
+The gateway is our application's way of communicating with an external HTTP server. 
+It also serves as the entry point for starting the Workflow Execution.
+
+There are several handlers that make the Subscription possinle. These handlers allow us to subscribe, unsubscribe, and get details about the Workflow.
+An index handler exists as well.
+
+To begin, create a `gateway` folder with the file `main.go`.
+Create a Client in `main.go`.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+	"subscribe_emails"
+
+	"go.temporal.io/sdk/client"
+)
+
+var temporalClient client.Client
+var taskQueueName string
+
+func main() {
+	port := "4000"
+	taskQueueName = "subscription_emails"
+
+	var err error
+	temporalClient, err = client.Dial(client.Options {
+		HostPort: client.DefaultHostPort,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Starting the web server on port %s\n", port)
+
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/subscribe", subscribeHandler)
+	http.HandleFunc("/unsubscribe", unsubscribeHandler)
+	http.HandleFunc("/getdetails", getDetailsHandler)
+	_ = http.ListenAndServe(":"+port, nil)
+}
+```
+
+Create an `index` handler.
+When viewed in the browser, it'll create an input field to collect the email needed to kick off the Workflow.
+
+```go
+func indexHandler(w http.ResponseWriter, _ *http.Request) {
+	_, _ = fmt.Fprint(w, "<h1>Sign up here!")
+	_, _ = fmt.Fprint(w, "<form method='post' action='subscribe'><input required name='email' type='email'><input type='submit' value='Subscribe'>")
+}
+```
+
 ### Subscribe handler
+
+The `/subscribe` handler starts the Workflow Execution for the given email address.
+The email is used to generate a unique Workflow ID, meaning only one Workflow can be executed per email address.
+
+Create a parser for the handler.
+
+```go
+func subscribeHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		// in case of any error
+		_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
+		return
+	}
+// ...
+
+}
+```
+
+Get the address from the form, and use it to configure your Workflow Options.
+
+```go
+email := r.PostForm.Get("email")
+
+	if email == "" {
+		// in case of any error
+		_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
+		return
+	}
+
+	// use the email as the id in the workflow.
+	workflowOptions := client.StartWorkflowOptions{
+		ID:        "subscribe_email_" + email,
+		TaskQueue: taskQueueName,
+	}
+```
+
+Define and execute the Workflow within the handler.
+
+```go
+// Define the subscription
+	subscription := subscribe_emails.Subscription{
+		EmailInfo: subscribe_emails.EmailInfo{
+			EmailAddress: email,
+			Mail: "",
+		},
+		Periods: subscribe_emails.Periods{
+			MaxBillingPeriods: 30,
+			BillingPeriodCharge: 10,
+		},
+	}
+
+	// execute the Temporal Workflow to start the subscription.
+	_, err = temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, subscribe_emails.SubscriptionWorkflow, subscription)
+
+	if err != nil {
+		_, _ = fmt.Fprint(w, "<h1>Couldn't sign up</h1>")
+		log.Print(err)
+	} else {
+		_, _ = fmt.Fprint(w, "<h1>Signed up!</h1>")
+	}
+```
 
 ### Unsubscribe handler
 
+The `\unsubscribe` handler cancels the Workflow with a given email in its Workflow ID.
+
+For this app, we'll be making use of a switch case to handle what happens when the endpoint gets a response, and when it posts new information to the Workflow Execution.
+
+Start by creating a new function. Define the two cases.
+
+```go
+func unsubscribeHandler(w http.ResponseWriter, r *http.Request) {
+	
+	switch r.Method {
+
+	case "GET":
+		// will add more later
+
+	case "POST":
+		// will add more later
+
+	}
+}
+```
+
+Add parsing for the input field, along with an error check.
+
+```go
+case "GET":
+
+		// http.ServeFile(w, r, "form.html")
+		_, _ = fmt.Fprint(w, "<h1>Unsubscribe</h1><form method='post' action='/unsubscribe'><input required name='email' type='email'><input type='submit' value='Unsubscribe'>")
+```
+Canceling the Workflow will happen in "POST".
+After the Workflow is found for the given email address, let the user know that their subscription has ended.
+
+```go
+case "POST":
+
+		err := r.ParseForm()
+
+		if err != nil {
+			// in case of any error
+			_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
+			return
+		}
+
+		email := r.PostForm.Get("email")
+
+		if email == "" {
+			// in case of any error
+			_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
+			return
+		}
+
+		workflowID := "subscribe_email_" + email
+
+		err = temporalClient.CancelWorkflow(context.Background(), workflowID, "")
+
+		if err != nil {
+			_, _ = fmt.Fprint(w, "<h1>Couldn't unsubscribe you</h1>")
+			log.Fatalln("Unable to cancel Workflow Execution", err)
+		} else {
+			_, _ = fmt.Fprint(w, "<h1>Unsubscribed you from our emails. Sorry to see you go.</h1>")
+			log.Println("Workflow Execution cancelled", "WorkflowID", workflowID)
+		}
+```
+
 ### Build the `getdetails` endpoint
 
+Like `\unsubscribe`, the `\getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
+
+First, define the function and the first half of the switch case.
+
+```go
+func getDetailsHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		// http.ServeFile(w, r, "form.html")
+		_, _ = fmt.Fprint(w, "<h1>Get subscription details</h1><form method='post' action='/getdetails'><input required name='email' type='email'><input type='submit' value='GetDetails'>")
+
+// ...
+	}
+}
+```
+
+Define the parser in "POST".
+Retrieve the email address.
+
+```go
+case "POST":
+
+		err := r.ParseForm()
+
+		if err != nil {
+			// in case of any error
+			_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
+			return
+		}
+
+		email := r.PostForm.Get("email")
+
+		if email == "" {
+			// in case of any error
+			_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
+			return
+		}
+```
+
+Now we handle the Query. 
+Define the variables needed to Query the Workflow, and then handle the result.
+
+```go
+var workflowID, queryType string
+		flag.StringVar(&workflowID, "w", "subscribe_email_" + email, "WorkflowID.")
+		flag.StringVar(&queryType, "t", "state", "Query type [state|__stack_trace].")
+		flag.Parse()
+
+		// print email, billing period, charge, etc.
+		resp, err := temporalClient.QueryWorkflow(context.Background(), workflowID, "", queryType)
+		if err != nil {
+			log.Fatalln("Unable to query workflow", err)
+		}
+		var result interface{}
+		if err := resp.Get(&result); err != nil {
+			log.Fatalln("Unable to decode query result", err)
+		}
+		log.Println("Received query result", "Result", result)
+		fmt.Fprint(w, "Your details have been retrieved.")
+```
+
 ## Conclusion
+
+The Temporal Go SDk provides the means to build powerful, long-lasting applications. 
+With a scenario as scalable as a subscription service, Temporal shows what it can do with the help of Workflows, Activities, and Queries.
