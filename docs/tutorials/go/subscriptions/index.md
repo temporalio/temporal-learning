@@ -2,7 +2,7 @@
 
 Creating reliable applications can be a complex process, often plagued by volatility that seems beyond your control.
 
-In this tutorial, you'll be writing a Workflow for a limited-time Subscription application.
+In this tutorial, you'll be writing a [Workflow](https://docs.temporal.io/workflows) for a limited-time Subscription application.
 The application will be able to:
 
 1. Send a "welcome" email to the user upon signup.
@@ -14,27 +14,27 @@ The application will be able to:
     - The maximum amount of billing periods has been reached.
     - The user has chosen to unsubscribe.
 
-This tutorial focuses on implementing an email subscription application with Temporal’s Workflows, Activities, and Queries.
+This tutorial focuses on implementing an email subscription application with Temporal’s Workflows, [Activities](https://docs.temporal.io/activities), and [Queries](https://docs.temporal.io/workflows#query).
 This is achieved by using:
 
 - Activities to send emails
 - Queries to retrieve the status of an ongoing subscription
 - Cancellation to end the subscription
 
-Not only do you get a more accessible introduction to Temporal Workflow APIs, but we'll also provide an example of how to break down project requirements into Temporal logic.
+Not only do you get a more accessible introduction to [Temporal Workflow APIs](https://docs.temporal.io/application-development), but we'll also provide an example of how to break down project requirements into Temporal logic.
 
 :::tip Skip ahead
 
-**To skip straight to a fully working example, check out the Subscription Workflow in Go repository.
+To skip straight to a fully working example, check out the Subscription Workflow in Go repository.
 
 :::
 
 ## Prerequisites 
 
 Before starting this tutorial, make sure that you've set up:
-- Temporal Server
-- Temporal Go SDK
-- Go 1.17+
+- [Temporal Server](https://docs.temporal.io/clusters#temporal-server)
+- [Temporal Go SDK](https://pkg.go.dev/go.temporal.io/sdk)
+- [Go 1.17+](https://go.dev/dl/)
 
 If you plan to implement APIs for sending emails and billing, make sure those are set up as well. 
 This tutorial will be mocking actual emails and billing.
@@ -45,7 +45,7 @@ In your code editor, create a new project.
 
 ## Develop the Workflow
 
-A Workflow starts with a Workflow Definition—a sequence of steps defined in code that are carried out in a Workflow Execution.
+A Workflow starts with a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition)—a sequence of steps defined in code that are carried out in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 Before the Workflow Definition can be written, we need to identify and define the data objects to be used in our application.
 
 ### Data objects
@@ -129,7 +129,7 @@ func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error
 }
 ```
 
-Next, create a function to handle cancellation.
+Next, create a function to handle [cancellation](https://docs.temporal.io/activities#cancellation).
 
 ```go
 // Handle any cleanup, including cancellations.
@@ -204,7 +204,7 @@ We can now write the Activities to mock sending the emails.
 ## Develop the Activities
 
 An Activity is a function designed to perform a specific, well-defined action over a period of time.
-While Activities are optimal for interacting with outside APIs, the Activity Definition in this tutorial will mock this behavior.
+While Activities are optimal for interacting with outside APIs, the [Activity Definition](https://docs.temporal.io/activities#activity-definition) in this tutorial will mock this behavior.
 
 The Activity Definition has already been written for the Subscription app, so feel free to look it over before proceeding to the next step.
 
@@ -236,9 +236,9 @@ func (a *Activities) SendSubscriptionEmail(ctx context.Context, emailInfo EmailI
 
 ## Build the Worker
 
-In order to execute the code we've defined so far, we'll need to create a Worker Process.
+In order to execute the code we've defined so far, we'll need to create a [Worker Process](https://docs.temporal.io/workers#worker-process).
 
-Create a `worker` folder, and create the `main.go` file that will be executed.
+Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
 ```go
 package main
@@ -252,7 +252,7 @@ import (
 )
 ```
 
-Create the Client and the Worker.
+Create the [Client](https://docs.temporal.io/temporal#temporal-client) and the [Worker Entity](https://docs.temporal.io/workers#worker-entity).
 
 ```go
 func main() {
@@ -279,7 +279,7 @@ Register the Workflow and Activities to the Worker.
 	w.RegisterActivity(&subscribe_emails.Activities{})
 ```
 
-Finally, get the Worker to listen to the Task Queue.
+Finally, get the Worker to listen to the [Task Queue](https://docs.temporal.io/tasks#task-queue).
 
 ```go
 	// Listen to Task Queue
@@ -295,7 +295,7 @@ Finally, get the Worker to listen to the Task Queue.
 The gateway is our application's way of communicating with an external HTTP server. 
 It also serves as the entry point for starting the Workflow Execution.
 
-There are several handlers that make the Subscription possinle. These handlers allow us to subscribe, unsubscribe, and get details about the Workflow.
+There are several handlers that make the Subscription possible. These handlers allow us to subscribe, unsubscribe, and get details about the Workflow.
 An index handler exists as well.
 
 To begin, create a `gateway` folder with the file `main.go`.
@@ -353,7 +353,9 @@ func indexHandler(w http.ResponseWriter, _ *http.Request) {
 ### Subscribe handler
 
 The `/subscribe` handler starts the Workflow Execution for the given email address.
-The email is used to generate a unique Workflow ID, meaning only one Workflow can be executed per email address.
+The email is used to generate a unique [Workflow ID](https://docs.temporal.io/workflows#workflow-id), meaning only one Workflow can be executed per email address.
+
+<!-- TODO: mention that ID can be reused after a Workflow ends or is terminated. -->
 
 Create a parser for the handler.
 
@@ -416,7 +418,7 @@ Define and execute the Workflow within the handler.
 
 ### Unsubscribe handler
 
-The `\unsubscribe` handler cancels the Workflow with a given email in its Workflow ID.
+The `/unsubscribe` handler cancels the Workflow with a given email in its Workflow ID.
 
 For this app, we'll be making use of a switch case to handle what happens when the endpoint gets a response, and when it posts new information to the Workflow Execution.
 
