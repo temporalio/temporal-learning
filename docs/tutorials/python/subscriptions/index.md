@@ -14,7 +14,7 @@ image: /img/temporal-logo-twitter-card.png
 
 In this tutorial, you’ll build an email subscription web application using Temporal and Python. You’ll create a web server to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you’re building the business logic with Temporal’s Workflows and Activities, you’ll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and maintain.
 
-You’ll create a sign-up page where users gives their email, and you’ll create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you’ll handle using a Query, and they can end the subscription at any time by unsubscribing, which you’ll handle by cancelling the Workflow Execution. You can view the user’s entire process through Temporal’s Web UI. For this tutorial, you’ll simulate sending emails, but you can adapt this example to call a live email service in the future.
+You’ll create a sign-up page where users give their email, and you’ll create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you’ll handle using a Query, and they can end the subscription at any time by unsubscribing, which you’ll handle by cancelling the Workflow Execution. You can view the user’s entire process through Temporal’s Web UI. For this tutorial, you’ll simulate sending emails, but you can adapt this example to call a live email service in the future.
 
 By the end of this tutorial, you’ll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 
@@ -75,7 +75,7 @@ Since the user's email address serves as the Workflow Id, attempting to subscrib
 
 Therefore, only one Workflow Execution per email address can exist within the associated Namespace for the given retention period, which ensures that the user won't receive multiple email subscriptions. This helps reduce the complexity of the code you have to write and maintain.
 
-<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["1-36"]}-->
+<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["1-38"]}-->
 <!--SNIPEND-->
 
 The `run()` method, which is decorated with `@workflow.run`, takes in the email address as an argument. This method initializes the `_email`, `_message`, `_subscribed`, and `_count` attributes of the `SendEmailWorkflow` instance.
@@ -138,7 +138,7 @@ nano run_flask.py
 This code defines an asynchronous function `get_client()` that creates a Client connection to Temporal server and returns it.
 The Client connection is saved in a global variable g for future use.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["10-12"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["2-3", "10-13"]}-->
 <!--SNIPEND-->
 
 The `Client.connect()` method is called to create a connection to the Temporal service at `localhost:7233`.
@@ -154,9 +154,9 @@ Communication with a Temporal Cluster includes, but isn't limited to, the follow
 
 In the `run_flask.py` file, write a `/subscribe` endpoint as an asynchronous function, so that users can subscribe to the email subscription.
 
-In the `start_workflow` function, pass the name of the Workflow run method, arguments to be passed to the Workflow Execution, the Workflow Id, and the Task Queue name. Ensure that the Task Queue name matches the same Task Queue that was declared in the Worker process.
+In the `start_workflow()` function, pass the name of the Workflow run method, arguments to be passed to the Workflow Execution, the Workflow Id, and the Task Queue name. Ensure that the Task Queue name matches the same Task Queue that was declared in the Worker process.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["16-31"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["5", "16-29"]}-->
 <!--SNIPEND-->
 
 The Workflow Id is set when the user gives their email.
@@ -187,7 +187,7 @@ Now, write an endpoint so that users can get details about the email subscriptio
 
 Use [get_workflow_handle()](https://python.temporal.io/temporalio.client.Client.html#get_workflow_handle) to return a Workflow handle by a Workflow Id.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["32-52"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["32-49"]}-->
 <!--SNIPEND-->
 
 Using `handle.query()` creates a Handle on the Workflow and calls the Query method on the handle to get the value of the variables.
@@ -199,8 +199,7 @@ Now that users can subscribe and view the details of their subscription, give th
 
 To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to return a [cancel()](https://python.temporal.io/temporalio.client.WorkflowHandle.html#cancel) method on the Workflow's handle.
 
-
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["53-61"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["53-61", "64-65"]}-->
 <!--SNIPEND-->
 
 This should allow users to cancel the Workflow and prevent the Workflow from continuing to execute the Activity.
