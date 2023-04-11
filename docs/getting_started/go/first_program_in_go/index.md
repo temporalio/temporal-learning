@@ -257,16 +257,7 @@ In this project, the file `worker/main.go` contains the code for the Worker. Lik
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
 
-<<<<<<< HEAD
-Note that the Worker listens to the same Task Queue that the Workflow and Activity Tasks are sent to.
-
-Task Queues are defined by a string name. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in the `shared.go` file:
-
-<!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
-<!--SNIPEND-->
-=======
-Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution. 
->>>>>>> main
+Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
