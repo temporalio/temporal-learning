@@ -129,7 +129,7 @@ func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error
 }
 ```
 
-Next, create a function to handle [cancellation](https://docs.temporal.io/activities#cancellation).
+Next, create a function to handle a [cancellation](https://docs.temporal.io/activities#cancellation).
 
 ```go
 // Handle any cleanup, including cancellations.
