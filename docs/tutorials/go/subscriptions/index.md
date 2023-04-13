@@ -29,10 +29,10 @@ The user will be able to:
 This tutorial focuses on implementing an email subscription application with Temporal’s [Workflows](https://docs.temporal.io/workflows), [Activities](https://docs.temporal.io/activities), and [Queries](https://docs.temporal.io/workflows#query).
 This is achieved by breaking down project requirements into Temporal logic:
 
-- A [Workflow Definition]() that contains the logic needed to start and end the subscription. [Workflow Executions]() are created per email address.
-- [Activities]() that are used to send emails to the subscriber defined in the Workflow.
-- A [Query]() to retrieve the status of an ongoing subscription. This information will include the email address of the user.
-- A [Cancellation Handler]() for users to opt out of the subscription early.
+- A [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) that contains the logic needed to start and end the subscription. [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution) are created per email address.
+- [Activities](https://docs.temporal.io/activities) that are used to send emails to the subscriber defined in the Workflow.
+- A [Query](https://docs.temporal.io/workflows#query) to retrieve the status of an ongoing subscription. This information will include the email address of the user.
+- A [Cancellation Handler](https://docs.temporal.io/activities#cancellation) for users to opt out of the subscription early.
 
 
 :::tip Skip ahead
