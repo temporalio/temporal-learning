@@ -25,7 +25,7 @@ Not only do you get a more accessible introduction to [Temporal Workflow APIs](h
 
 :::tip Skip ahead
 
-To skip straight to a fully working example, check out the Subscription Workflow in Go repository.
+To skip straight to a fully working example, check out the Subscription Workflow in the Go repository.
 
 :::
 
