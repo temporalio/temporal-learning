@@ -69,7 +69,9 @@ Start by creating a file called `subscribe.go`.
 ```go
 package subscribe_emails
 
-import "time
+import (
+    "time"
+)
 ```
 Any structs created in this file can be used throughout the app by defining it in the package `subscribe_emails`.
 
