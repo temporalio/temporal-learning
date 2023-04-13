@@ -118,7 +118,7 @@ Next, create a function to handle a [cancellation](https://docs.temporal.io/acti
 
 Finish off the Workflow Definition with a for-loop to send Subscription emails until the `MaxBillingPeriods` amount is reached.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["74-88", 90-118]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["74-88", "90-118"]}-->
 <!--SNIPEND-->
 
 ## Develop the Activities
