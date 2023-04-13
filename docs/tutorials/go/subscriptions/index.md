@@ -1,7 +1,7 @@
 ---
 title: "Build an Email Subscription App with Temporal and Go"
 sidebar_position: 1
-keywords: [Go,tutorial,temporal,workflows, sending email,subscription]
+keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
 description: "Tutorial for building a Subscription application with Temporal and Go."
 last_update:
   date: 2023-04-13
@@ -74,50 +74,29 @@ You can use structs to organize our information and optimize updates to the Work
 
 Start by creating a file called `subscribe.go`.
 
-```go
-package subscribe_emails
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["1-3"]}-->
+<!--SNIPEND-->
 
-import (
-    "time"
-)
-```
 Any structs created in this file can be used throughout the app by defining it in the package `subscribe_emails`.
 
 Next, create a struct for `Subscription`. 
 This data type will contain the user's email information, as well as the progress of their subscription.
 
-```go
-// Subscription is the user email and campaign they'll receive.
-type Subscription struct {
-    EmailInfo EmailInfo
-    Periods   Periods
-}
-```
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["19-23"]}-->
+<!--SNIPEND-->
 
 As you can see, `Subscription` contains instances of two other data types, which will be defined as well.
 Let's start with `EmailInfo`.
 This struct contains the user's email address, along with the message they'll be sent.
 
-```go
-// EmailInfo is the data that the Activity uses to send the message.
-type EmailInfo struct {
-    EmailAddress string
-    Mail         string
-}
-```
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["5-9"]}-->
+<!--SNIPEND-->
 
 The other data type you'll create create is `Periods`. 
 This struct contains information about how long the Subscription lasts, along with how much is charged per billing period.
 
-```go
-// Periods contain duration info for trial and full subscription periods
-type Periods struct {
-    TrialPeriod          time.Duration
-    BillingPeriod        time.Duration
-    MaxBillingPeriods    int
-    BillingPeriodCharge  int
-}
-```
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["11-17"]}-->
+<!--SNIPEND-->
 
 Now that our data types have been defined, you can now define the Workflow.
 
@@ -129,104 +108,18 @@ This will soon contain the logic needed to facilitate the Subscription.
 Define your variables and initiate a logger.
 Make sure to establish your Workflow with Activity Options.
 
-```go
-import (
-	"context"
-
-	"go.temporal.io/sdk/workflow"
-)
-
-// Workflow definition
-func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error {
-
-	var activities *Activities
-	billingPeriodNum := 0
-	duration := time.Minute
-
-	logger := workflow.GetLogger(ctx)
-	logger.Info("Subscription created for " + subscription.EmailInfo.EmailAddress)
-
-	ao := workflow.ActivityOptions{
-		StartToCloseTimeout: 10 * time.Minute,
-		WaitForCancellation: true,
-	}
-
-	ctx = workflow.WithActivityOptions(ctx, ao)
-// ...
-}
-```
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["1-10", "11-39"]}-->
+<!--SNIPEND-->
 
 Next, create a function to handle a [cancellation](https://docs.temporal.io/activities#cancellation).
 
-```go
-// Handle any cleanup, including cancellations.
-	defer func() {
-if !errors.Is(ctx.Err(), workflow.ErrCanceled) {
-			data := EmailInfo {
-				EmailAddress: subscription.EmailInfo.EmailAddress,
-				Mail:         "Welcome! Looks like you've been signed up!",
-			}
-			e := workflow.ExecuteActivity(ctx, activities.SendCancellationEmailDuringActiveSubscription, data)
-
-			if err != nil {
-				logger.Error("Failed to send cancel email", "Error", e)
-			} else {
-				// Cancellation received, which will trigger an unsubscribe email.
-				logger.Info("Sending cancellation email")
-			}
-			return
-		}
-
-		newCtx, _ := workflow.NewDisconnectedContext(ctx)
-
-		data := EmailInfo {
-				EmailAddress: subscription.EmailInfo.EmailAddress,
-				Mail: "You have been unsubscribed from the Subscription Workflow. Good bye.",
-		}
-
-		logger.Info("Sending unsubscribe email to " + subscription.EmailInfo.EmailAddress)
-		err := workflow.ExecuteActivity(newCtx, activities.SendSubscriptionOverEmail, data).Get(newCtx, nil)
-
-		if err != nil {
-			logger.Error("Unable to send unsubscribe message", "Error", err)
-		}
-	}()
-```
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["41-72"]}-->
+<!--SNIPEND-->
 
 Finish off the Workflow Definition with a for-loop to send Subscription emails until the `MaxBillingPeriods` amount is reached.
 
-```go
-// start subscription period
-	for (billingPeriodNum < subscription.Periods.MaxBillingPeriods) {
-
-		data := EmailInfo{
-				EmailAddress: subscription.EmailInfo.EmailAddress,
-				Mail:         "This is yet another email in the Subscription Workflow.",
-		}
-
-		err = workflow.ExecuteActivity(ctx, activities.SendSubscriptionEmail, data).Get(ctx, nil)
-
-		if err != nil {
-			logger.Error("Failed to send email ", "Error", err)
-		}
-
-		logger.Info("sent content email to " + subscription.EmailInfo.EmailAddress)
-
-		err = workflow.ExecuteActivity(ctx, activities.ChargeCustomerForBillingPeriod, data).Get(ctx, nil)
-
-		if err != nil {
-			logger.Error("Failed to charge customer ", "Error", err)
-		}
-
-		billingPeriodNum++
-
-		workflow.Sleep(ctx, duration)
-	}
-
-	return nil
-```
-
-Now, you can write the Activities to mock sending the emails.
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["74-88", 90-118]}-->
+<!--SNIPEND-->
 
 ## Develop the Activities
 
@@ -237,31 +130,8 @@ The [Activity Definition](https://docs.temporal.io/activities#activity-definitio
 Create two Activity functions in a new file: `activities.go`.
 Each Activity will simply log what they are "doing" to the console.
 
-```go
-package subscribe_emails
-
-import (
-	"context"
-
-	"go.temporal.io/sdk/activity"
-)
-
-type Activities struct {
-
-}
-
-// email activities
-func (a *Activities) SendWelcomeEmail(ctx context.Context, emailInfo EmailInfo) (string, error) {
-	activity.GetLogger(ctx).Info("sending welcome email to customer", emailInfo.EmailAddress)
-	return "Sending welcome email completed for " + emailInfo.EmailAddress, nil
-}
-
-func (a *Activities) SendSubscriptionEmail(ctx context.Context, emailInfo EmailInfo) (string, error) {
-	activity.GetLogger(ctx).Info("sending subscription email to: ", emailInfo.EmailAddress)
-	return "Sending subscription email completed for: " + emailInfo.EmailAddress, nil
-// add conditions for cancellation and expiration
-}
-```
+<!--SNIPSTART subscription-workflow-go-activities {"selectedLines": ["1-11", "12-21"]}-->
+<!--SNIPEND-->
 
 These Activities can be easily customized to call an Email API to send actual emails.
 
@@ -271,55 +141,23 @@ In order to execute the code defined so far, you'll need to create a [Worker Pro
 
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
-```go
-package main
-
-import (
-	"log"
-	"subscribe_emails"
-
-	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/worker"
-)
-```
+<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["1-9"]}-->
+<!--SNIPEND-->
 
 Create the [Client](https://docs.temporal.io/temporal#temporal-client) and the [Worker Entity](https://docs.temporal.io/workers#worker-entity).
 
-```go
-func main() {
-	// create client and worker
-	c, err := client.Dial(client.Options {
-		HostPort: client.DefaultHostPort,
-		Namespace: client.DefaultNamespace,
-	})
-	if err != nil {
-		log.Fatalln("Unable to create Temporal Client.", err)
-	}
-	defer c.Close()
-
-	w := worker.New(c, "subscription_emails", worker.Options{})
-// ...
-}
-```
+<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["11-22"]}-->
+<!--SNIPEND-->
 
 Register the Workflow and Activities to the Worker.
 
-```go
-	// register Activity and Workflow
-	w.RegisterWorkflow(subscribe_emails.SubscriptionWorkflow)
-	w.RegisterActivity(&subscribe_emails.Activities{})
-```
+<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["23-25"]}-->
+<!--SNIPEND-->
 
 Finally, get the Worker to listen to the [Task Queue](https://docs.temporal.io/tasks#task-queue).
 
-```go
-	// Listen to Task Queue
-	err = w.Run(worker.InterruptCh())
-	if err != nil {
-		log.Fatalln("Unable to start Worker.", err)
-	}
-	log.Println("Worker successfully started.")
-```
+<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["27-33"]}-->
+<!--SNIPEND-->
 
 ## Build the gateway
 
@@ -332,54 +170,14 @@ An index handler exists as well.
 To begin, create a `gateway` folder with the file `main.go`.
 Create a Client in `main.go`.
 
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-	"net/http"
-	"subscribe_emails"
-
-	"go.temporal.io/sdk/client"
-)
-
-var temporalClient client.Client
-var taskQueueName string
-
-func main() {
-	port := "4000"
-	taskQueueName = "subscription_emails"
-
-	var err error
-	temporalClient, err = client.Dial(client.Options {
-		HostPort: client.DefaultHostPort,
-	})
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Starting the web server on port %s\n", port)
-
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/subscribe", subscribeHandler)
-	http.HandleFunc("/unsubscribe", unsubscribeHandler)
-	http.HandleFunc("/getdetails", getDetailsHandler)
-	_ = http.ListenAndServe(":"+port, nil)
-}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["1-12", "14-15", "142-163"]}-->
+<!--SNIPEND-->
 
 Create an `index` handler.
 When viewed in the browser, it'll create an input field to collect the email needed to kick off the Workflow.
 
-```go
-func indexHandler(w http.ResponseWriter, _ *http.Request) {
-	_, _ = fmt.Fprint(w, "<h1>Sign up here!")
-	_, _ = fmt.Fprint(w, "<form method='post' action='subscribe'><input required name='email' type='email'><input type='submit' value='Subscribe'>")
-}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["17-20"]}-->
+<!--SNIPEND-->
 
 ### Subscribe handler
 
@@ -390,62 +188,17 @@ The email is used to generate a unique [Workflow ID](https://docs.temporal.io/wo
 
 Create a parser for the handler.
 
-```go
-func subscribeHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		// in case of any error
-		_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
-		return
-	}
-// ...
-
-}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["22-28"]}-->
+<!--SNIPEND-->
 
 Get the address from the form, and use it to configure your Workflow Options.
 
-```go
-email := r.PostForm.Get("email")
-
-	if email == "" {
-		// in case of any error
-		_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
-		return
-	}
-
-	// use the email as the id in the workflow.
-	workflowOptions := client.StartWorkflowOptions{
-		ID:        "subscribe_email_" + email,
-		TaskQueue: taskQueueName,
-	}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["30-42"]}-->
+<!--SNIPEND-->
 
 Define and execute the Workflow within the handler.
-
-```go
-// Define the subscription
-	subscription := subscribe_emails.Subscription{
-		EmailInfo: subscribe_emails.EmailInfo{
-			EmailAddress: email,
-			Mail: "",
-		},
-		Periods: subscribe_emails.Periods{
-			MaxBillingPeriods: 30,
-			BillingPeriodCharge: 10,
-		},
-	}
-
-	// execute the Temporal Workflow to start the subscription.
-	_, err = temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, subscribe_emails.SubscriptionWorkflow, subscription)
-
-	if err != nil {
-		_, _ = fmt.Fprint(w, "<h1>Couldn't sign up</h1>")
-		log.Print(err)
-	} else {
-		_, _ = fmt.Fprint(w, "<h1>Signed up!</h1>")
-	}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["44-64"]}-->
+<!--SNIPEND-->
 
 ### Unsubscribe handler
 
@@ -454,127 +207,30 @@ The `/unsubscribe` handler cancels the Workflow with a given email in its Workfl
 For this app, you'll be making use of a switch case to handle what happens when the endpoint gets a response, and when it posts new information to the Workflow Execution.
 
 Start by creating a new function. Define the two cases.
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["68-75"]}-->
+<!--SNIPEND-->
 
-```go
-func unsubscribeHandler(w http.ResponseWriter, r *http.Request) {
-	
-	switch r.Method {
-
-	case "GET":
-		// will add more later
-
-	case "POST":
-		// will add more later
-
-	}
-}
-```
-
-Add parsing for the input field, along with an error check.
-
-```go
-case "GET":
-
-		// http.ServeFile(w, r, "form.html")
-		_, _ = fmt.Fprint(w, "<h1>Unsubscribe</h1><form method='post' action='/unsubscribe'><input required name='email' type='email'><input type='submit' value='Unsubscribe'>")
-```
 Canceling the Workflow will happen in "POST".
 After the Workflow is found for the given email address, let the user know that their subscription has ended.
 
-```go
-case "POST":
-
-		err := r.ParseForm()
-
-		if err != nil {
-			// in case of any error
-			_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
-			return
-		}
-
-		email := r.PostForm.Get("email")
-
-		if email == "" {
-			// in case of any error
-			_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
-			return
-		}
-
-		workflowID := "subscribe_email_" + email
-
-		err = temporalClient.CancelWorkflow(context.Background(), workflowID, "")
-
-		if err != nil {
-			_, _ = fmt.Fprint(w, "<h1>Couldn't unsubscribe you</h1>")
-			log.Fatalln("Unable to cancel Workflow Execution", err)
-		} else {
-			_, _ = fmt.Fprint(w, "<h1>Unsubscribed you from our emails. Sorry to see you go.</h1>")
-			log.Println("Workflow Execution cancelled", "WorkflowID", workflowID)
-		}
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["77-106"]}-->
+<!--SNIPEND-->
 
 ### Build the `getdetails` endpoint
 
 Like `\unsubscribe`, the `\getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
 
-First, define the function and the first half of the switch case.
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["110-113"]}-->
+<!--SNIPEND-->
 
-```go
-func getDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		// http.ServeFile(w, r, "form.html")
-		_, _ = fmt.Fprint(w, "<h1>Get subscription details</h1><form method='post' action='/getdetails'><input required name='email' type='email'><input type='submit' value='GetDetails'>")
+### Build the `showdetails` endpoint
 
-// ...
-	}
-}
-```
+The `\showdetails` handler uses the information gathered from `\getdetails` to retrieve and print subscription information.
 
-Define the parser in "POST".
-Retrieve the email address.
+Define the variables needed to Query the Workflow, and then handle the result. 
 
-```go
-case "POST":
-
-		err := r.ParseForm()
-
-		if err != nil {
-			// in case of any error
-			_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
-			return
-		}
-
-		email := r.PostForm.Get("email")
-
-		if email == "" {
-			// in case of any error
-			_, _ = fmt.Fprint(w, "<h1>Email is blank</h1>")
-			return
-		}
-```
-
-Now you'll handle the Query. 
-Define the variables needed to Query the Workflow, and then handle the result.
-
-```go
-var workflowID, queryType string
-		flag.StringVar(&workflowID, "w", "subscribe_email_" + email, "WorkflowID.")
-		flag.StringVar(&queryType, "t", "state", "Query type [state|__stack_trace].")
-		flag.Parse()
-
-		// print email, billing period, charge, etc.
-		resp, err := temporalClient.QueryWorkflow(context.Background(), workflowID, "", queryType)
-		if err != nil {
-			log.Fatalln("Unable to query workflow", err)
-		}
-		var result interface{}
-		if err := resp.Get(&result); err != nil {
-			log.Fatalln("Unable to decode query result", err)
-		}
-		log.Println("Received query result", "Result", result)
-		fmt.Fprint(w, "Your details have been retrieved.")
-```
+<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["115-140"]}-->
+<!--SNIPEND-->
 
 ## Conclusion
 
