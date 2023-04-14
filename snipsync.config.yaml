@@ -35,6 +35,8 @@ origins:
     repo: temporal-ecommerce
   - owner: temporalio
     repo: background-checks
+  - owner: temporalio
+    repo: email-subscription-project-python
 
 targets:
   - docs/tutorials
