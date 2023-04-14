@@ -141,22 +141,22 @@ In order to execute the code defined so far, you'll need to create a [Worker Pro
 
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
-<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["1-9"]}-->
+<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["1-9"]}-->
 <!--SNIPEND-->
 
 Create the [Client](https://docs.temporal.io/temporal#temporal-client) and the [Worker Entity](https://docs.temporal.io/workers#worker-entity).
 
-<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["11-22"]}-->
+<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["11-22"]}-->
 <!--SNIPEND-->
 
 Register the Workflow and Activities to the Worker.
 
-<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["23-25"]}-->
+<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["23-25"]}-->
 <!--SNIPEND-->
 
 Finally, get the Worker to listen to the [Task Queue](https://docs.temporal.io/tasks#task-queue).
 
-<!--SNIPSTART subscription-workflow-go-worker-main {"selectedLines": ["27-33"]}-->
+<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["27-33"]}-->
 <!--SNIPEND-->
 
 ## Build the gateway
@@ -170,13 +170,13 @@ An index handler exists as well.
 To begin, create a `gateway` folder with the file `main.go`.
 Create a Client in `main.go`.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["1-12", "14-15", "142-163"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["1-12", "14-15", "142-163"]}-->
 <!--SNIPEND-->
 
 Create an `index` handler.
 When viewed in the browser, it'll create an input field to collect the email needed to kick off the Workflow.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["17-20"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-20"]}-->
 <!--SNIPEND-->
 
 ### Subscribe handler
@@ -188,16 +188,16 @@ The email is used to generate a unique [Workflow ID](https://docs.temporal.io/wo
 
 Create a parser for the handler.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["22-28"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["22-28"]}-->
 <!--SNIPEND-->
 
 Get the address from the form, and use it to configure your Workflow Options.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["30-42"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["30-42"]}-->
 <!--SNIPEND-->
 
 Define and execute the Workflow within the handler.
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["44-64"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["44-64"]}-->
 <!--SNIPEND-->
 
 ### Unsubscribe handler
@@ -207,20 +207,20 @@ The `/unsubscribe` handler cancels the Workflow with a given email in its Workfl
 For this app, you'll be making use of a switch case to handle what happens when the endpoint gets a response, and when it posts new information to the Workflow Execution.
 
 Start by creating a new function. Define the two cases.
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["68-75"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["68-75"]}-->
 <!--SNIPEND-->
 
 Canceling the Workflow will happen in "POST".
 After the Workflow is found for the given email address, let the user know that their subscription has ended.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["77-106"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["77-106"]}-->
 <!--SNIPEND-->
 
 ### Build the `getdetails` endpoint
 
 Like `\unsubscribe`, the `\getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["110-113"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["110-113"]}-->
 <!--SNIPEND-->
 
 ### Build the `showdetails` endpoint
@@ -229,7 +229,7 @@ The `\showdetails` handler uses the information gathered from `\getdetails` to r
 
 Define the variables needed to Query the Workflow, and then handle the result. 
 
-<!--SNIPSTART subscription-workflow-go-worker-gateway-main {"selectedLines": ["115-140"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["115-140"]}-->
 <!--SNIPEND-->
 
 ## Conclusion
