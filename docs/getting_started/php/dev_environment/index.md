@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 keywords: [php, composer, roadrunner, temporal, sdk, development environment]
 tags: [PHP, SDK, development environment]
 last_update:
-  date: 2022-07-22
+  date: 2023-03-27
 title: Set up a local development environment for Temporal and PHP
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -33,7 +33,7 @@ See the [RoadRunner README file](https://github.com/roadrunner-server/roadrunner
 
 Next, you'll configure a local Temporal cluster for development.
 
-## Set up a Temporal development cluster
+## Set up a local Temporal development cluster
 
 import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
 
