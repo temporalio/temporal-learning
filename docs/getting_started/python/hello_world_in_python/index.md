@@ -217,54 +217,9 @@ Add the following code to create a test that uses a mocked `say_hello` Activity:
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
 <!--SNIPEND-->
 
-This creates a function called `say_hello_mocked` which is used as the mock activity function. The test then checks thatthe outcome of the mocked function is `"Hello, World from mocked activity!"` for the passed input parameter `World`.
+This creates a function called `say_hello_mocked` which the Workflow test will use as the mock Activity function. The `test_mock_activity` test then checks that the outcome of the Workflow is `"Hello, World from mocked activity!"` for the passed input parameter `World`, using the same type of test setup as the previous test function.
 
-To run your tests you'll need a file called `test/conftest.py` that sets up and tears down resources for the test. This file defines several fixtures that are automatically passed as arguments to any test function that declares them as a parameter. 
-
-Create the file  `test/conftest.py` and add the following code to import the necessary libraries for the tests:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["1-9"]}-->
-<!--SNIPEND-->
-
-Pytest lets you configure command-line options you can use when you run the tests. Add the following code to the file to add an option called  `--workflow-environment` that can take one of three values: `local`, `time-skipping`, or an existing server.
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["12-17"]}-->
-<!--SNIPEND-->
-
-If you use `local`, tests run in a new local environment for testing.
-
-The `time-skipping` option starts a new environment that allows for time-skipping, so you don't have to wait for long-running Workflows when you're testing your code.
-
-If you pass any string other than `local` and `time-skipping` then the tests will connect to the target server using that string.
-
-If this option is not passed, it defaults to `local`.
-
-Next, you'll need to define the `event_loop()` function to ensure that the async functions work properly across versions of Python. Add the following code:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["20-31"]}-->
-<!--SNIPEND-->
-
-The function sets the event loop policy on older versions of Python to `ProactorEventLoop` and closes the event loop when the test completes.
-
-Now add the following code to create the test environment for Workflows:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["34-44"]}-->
-<!--SNIPEND-->
-
-This fixture starts up a new instance of `WorkflowEnvironment`, which is a test environment for running Temporal Workflows and Activities.
-
-The type of environment to start is determined by the `--workflow-environment` command line option passed by the user. This fixture also shuts down the environment after the test completes.
-
-Finally, add this code to define a Temporal Client that the tests will use:
-
-<!--SNIPSTART hello-world-project-template-python-conftest {"selectedLines": ["47-49"]}-->
-<!--SNIPEND-->
-
-This fixture creates a new client connected to the `WorkflowEnvironment`. The `WorkflowEnvironment` is passed as an argument, so this fixture is dependent on the env fixture. This fixture is automatically closed when the test completes, so it doesn't need an explicit teardown.
-
-Save the file. Your test environment is configured and you're ready to run your tests.
-
-Run the following command from the project root:
+Run the following command from the project root to start the tests:
 
 ```command
 pytest
