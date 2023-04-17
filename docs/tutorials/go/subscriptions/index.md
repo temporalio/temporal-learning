@@ -121,6 +121,9 @@ Finish off the Workflow Definition with a for-loop to send Subscription emails u
 <!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["74-88", "90-118"]}-->
 <!--SNIPEND-->
 
+Your app still has a way to go before it's ready to run.
+In the next step, you'll learn to define the Activities that send the subscription emails.
+
 ## Develop the Activities
 
 An Activity is a function designed to perform a specific, well-defined action over a period of time.
@@ -134,6 +137,8 @@ Each Activity will simply log what they are "doing" to the console.
 <!--SNIPEND-->
 
 These Activities can be easily customized to call an Email API to send actual emails.
+Of course, the Activities won't be able to run if they're not registered to a Worker.
+You'll now get to build the Worker Process.
 
 ## Build the Worker
 
@@ -159,6 +164,9 @@ Finally, get the Worker to listen to the [Task Queue](https://docs.temporal.io/t
 <!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["27-33"]}-->
 <!--SNIPEND-->
 
+All of the application components are there, but aren't running. 
+Time to build a gateway to interact with the app!
+
 ## Build the gateway
 
 The gateway allows the user to communicate with the Temporal Application.
@@ -178,6 +186,8 @@ When viewed in the browser, it'll create an input field to collect the email nee
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-20"]}-->
 <!--SNIPEND-->
+
+
 
 ### Subscribe handler
 
@@ -216,16 +226,20 @@ After the Workflow is found for the given email address, let the user know that 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["77-106"]}-->
 <!--SNIPEND-->
 
-### Build the `getdetails` endpoint
+Emails are great for showing the progress of the subscription, but what if you need to see subscription details?
+For this, you'll need to build a Query to get details about the Workflow Execution.
+This Query is composed of two endpoints: `/getdetails` and `/showdetails`.
 
-Like `\unsubscribe`, the `\getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
+### Build the `/getdetails` endpoint
+
+Like `/unsubscribe`, the `/getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["110-113"]}-->
 <!--SNIPEND-->
 
 ### Build the `showdetails` endpoint
 
-The `\showdetails` handler uses the information gathered from `\getdetails` to retrieve and print subscription information.
+The `/showdetails` handler uses the information gathered from `/getdetails` to retrieve and print subscription information.
 
 Define the variables needed to Query the Workflow, and then handle the result. 
 
