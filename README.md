@@ -75,13 +75,13 @@ This should catch most of the issues.
 
 Course content comes from an external LMS.  Do not edit the course pages directly.
 
-Run 
+Run
 
 ```
 node get_course_pages_from_lms.js
 ```
 
-to regenerate the course pages from the LMS. 
+to regenerate the course pages from the LMS.
 
 
 ### Committing changes
@@ -125,7 +125,7 @@ Then make your commits to a new branch.
 The default docusaurus theme doesn't let us put author and date info at the top of the article. We swizzled the `DocItem/Content` component and placed
 the items into the header.
 
-To update this, swizzle the followiung components and **extract**, rather than **wrap** them:
+To update this, swizzle the following components and **extract**, rather than **wrap** them:
 
 * DocItem/Content
 * DocItem/Footer
