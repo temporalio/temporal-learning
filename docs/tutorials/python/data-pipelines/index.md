@@ -34,7 +34,7 @@ With this repository cloned, run the following at the root of the directory:
 poetry install
 ```
 
-## Step 1: Workflow Definition
+## Step 1: Write your Workflow Definition
 
 Write a Workflow Definition file that contains the steps that you want to execute.
 
@@ -293,9 +293,9 @@ async def main():
                 task_queue=TASK_QUEUE_NAME,
             ),
             spec=ScheduleSpec(
-                intervals=[ScheduleIntervalSpec(every=timedelta(hour=1))]
+                intervals=[ScheduleIntervalSpec(every=timedelta(hours=10))]
             ),
-            state=ScheduleState(note="Getting top stories every hour."),
+            state=ScheduleState(note="Getting top stories every 10 hours."),
         ),
     )
 
@@ -313,7 +313,7 @@ Then in the [ScheduleSpec](https://python.temporal.io/temporalio.client.Schedule
 
 :::note
 
-Modify the interval timer from `hours=1` to `minutes=1` to see the Schedule Workflow execute faster.
+Modify the interval timer from `hours=10` to `minutes=1` to see the Schedule Workflow execute faster.
 
 :::
 
