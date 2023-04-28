@@ -10,7 +10,7 @@ Python is a programming language that lets you work quickly and integrate system
 
 Temporal's [Python SDK](https://docs.temporal.io/application-development/foundations/?lang=python/#add-your-sdk) lets you use Python to build applications that take advantage of Temporal's features.
 
-These tutorials will walk you through building Temporal applications using Python.
+These tutorials will walk you through building Temporal Applications using Python.
 
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
