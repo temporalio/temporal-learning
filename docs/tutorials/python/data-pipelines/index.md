@@ -17,14 +17,14 @@ image: /img/temporal-logo-twitter-card.png
 When it comes to building data pipelines, choosing the right workflow model is crucial for achieving reliability, scalability, and maintainability.
 Temporal makes writing data pipelines easy with Workflows and Activities.
 
-You can create a source, process the step or steps, and output the flow of information to a destination with just code. Meaning all of your developer best practices can be implemented, tested, and ran as needed.
+With Temporal, you can retrieve data from a source, process the information with steps, and output the flow of information to a destination with just code. Meaning all of your developer best practices can be implemented, tested, and ran as needed.
 Furthermore, Temporal offers built-in resilience and fault tolerance features that can handle unexpected failures and issues seamlessly.
 
 In this tutorial, you'll learn the process of building a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
 
-Then, to improve your understanding, you'll learn to schedule your Workflows on an interval timer to automate the execution of these processes.
+Then, to improve your understanding, you'll learn to schedule your Workflows on an interval timer to automate the execution of these steps.
 
-By the end of this tutorial, you'll have a comprehensive understanding of how to implement Workflow as code-based data pipelines using Temporal's features; such as retries, timeouts, and error handling to ensure the pipeline's resilience and fault tolerance.
+By the end of this tutorial, you'll have a comprehensive understanding of how to implement Workflow as code-based data pipelines using Temporal's features; such as retries, timeouts, and schedules to ensure your pipeline's resilience and fault tolerance.
 
 ## Working sample
 
@@ -35,8 +35,8 @@ All the code for this tutorial is stored on GitHub in the [data-pipeline-project
 Before starting this tutorial:
 
 - Complete the [Hello World](/getting_started/python/hello_world_in_python/index.md) tutorial
-- Install Pandas (tested with version 2.0.1)
-- Install aiohttp (tested with version 3.8.4)
+- Install [Pandas](https://pandas.pydata.org) (tested with version 2.0.1)
+- Install [aiohttp](https://docs.aiohttp.org/en/stable/) (tested with version 3.8.4)
 
 ```bash
 pip install pandas aiohttp
@@ -55,7 +55,7 @@ The `TemporalCommunityWorkflow` class is decorated with the `@workflow.defn` whi
 
 The `async def run()` function is decorated with the `@workflow.run` which is set on the one asynchronous method on the same class as the `@workflow.defn`.
 
-There are two Activities being executed, `story_ids` and `top_stories`.
+There are two Activities being executed, `post_ids` and `top_posts`.
 These Activities are defined in the `activities.py` file, which will be explained later.
 
 Inside the `workflow.execute_activity()` function, pass the reference of Activity Definition, or step in your data pipeline.
@@ -75,10 +75,16 @@ In the `activities.py` file, write out each step in the data processing pipeline
 In this example, establish a connection to the `aiohttp`'s [Client Session](https://docs.aiohttp.org/en/stable/client_reference.html).
 The [aiohttp](https://docs.aiohttp.org/en/stable/index.html) library is recommended instead of [requests](https://requests.readthedocs.io), because it avoids making blocking calls.
 
-The `story_ids()` function gets the top 10 Temporal Community posts while, `top_stories()` gets items based on the post's identifier.
+The `post_ids()` function gets the top 10 Temporal Community posts while, `top_posts()` gets items based on the post's identifier. 
 
 <!--SNIPSTART data-pipeline-activity-python-->
 <!--SNIPEND-->
+
+:::note
+
+The Temporal Community posts are built off of the [Discourse](https://docs.discourse.org/#tag/Posts) API.
+
+:::
 
 Each function contains an `activity.defn` decorator that ensures that function is durably backed by Temporal.
 The Retry Policy defined in the `TemporalCommunityWorkflow` class contains information needed to retry in case the API endpoint is down.
@@ -93,6 +99,7 @@ Maximum Attempts     = ∞
 Non-Retryable Errors = []
 ```
 
+The first step of the data pipeline checks if the status of the endpoint returns a 200 response, if it doesn't, it will raise an `Exception` error, otherwise, it will continue processing the post identifiers.
 The last step of the data pipeline returns the results, which will be processed in your `run_workflow.py` file.
 
 Now that you've defined the steps in your data pipeline, learn to create a Worker that will host the Workflow and Activities.
@@ -104,7 +111,7 @@ In the `run_worker.py` file, set the Worker to host the Workflows and/or Activit
 <!--SNIPSTART data-pipeline-run-worker-python-->
 <!--SNIPEND-->
 
-This Worker run creates and uses the same Client used for starting the Workflow, `localhost:7233`.
+This Worker creates and uses the same Client used for starting the Workflow, `localhost:7233`.
 The Worker must be set to the same Task Queue name, then specify your Workflows and Activities names in a list.
 
 Then run the Worker with the [asyncio.run()](https://docs.python.org/3/library/asyncio-runner.html#asyncio.run) function.
@@ -116,20 +123,17 @@ Now that you've developed a Worker, run the Workflow.
 ## Run your Workflow
 
 The file `run_workflow.py` processes the Execution of the Workflow.
-To start, you connect to an instance of the Temporal Client. Since it's running locally, it's connected to `localhost:7233`.
+To start, connect to an instance of the Temporal Client. Since it's running locally, it's connected to `localhost:7233`.
 
-Then it executes the Workflow, by passing the name of the Workflow, a Workflow Id, and a Task Queue name.
-
+The `execute_workflow()` function is set on the `client` to execute the Workflow, by passing the name of the Workflow run method, a Workflow Id, and a Task Queue name.
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
 <!--SNIPEND-->
 
+This will execute the steps defined in your Workflow, which will then return the results of `stories`.
+For this example, `stories` is processed by a [Pandas Data Frame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html).
 
-When the Workflow process it steps, it will finally return the `data` variable.
-
-For this example, `data` is processed by a [Pandas Data Frame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html).
-
-The code is run in the `asyncio` event loop.
+The code is run in an `asyncio` event loop.
 
 ### Results
 
@@ -174,12 +178,11 @@ You've successfully run your Workflow and explored the Event History, now learn 
 We just demonstrated how to start a Worker and run a Workflow, which returns information from your data pipeline. What if we want to run this on a schedule?
 Historically, you could write a cron job and have that fire once a day, but cron jobs are fragile. They break easily and knowing when they go down or why they didn't fire can be frustrating.
 
-Temporal provides a [Schedule Workflow](https://python.temporal.io/temporalio.client.Client.html#create_schedule) function, in which you can start, backfill, delete, describe, list, pause, trigger, and update as you would any other Workflow.
+Temporal provides a [Schedule Workflow](https://python.temporal.io/temporalio.client.Client.html#create_schedule) function, in which you can start, backfill, delete, describe, list, pause, trigger, and update a Schedule.
 
 Build a scheduler to fire once every 10 hours and return the results of `TemporalCommunityWorkflow`.
 
 Create a file called `schedule_workflow.py`.
-
 
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
 <!--SNIPEND-->
@@ -230,12 +233,15 @@ python delete_schedule.py
 
 This sets the Schedule Id and then deletes the Schedule with the [delete()](https://python.temporal.io/temporalio.client.ScheduleHandle.html#delete) method on the Workflow handle.
 
+<details>
+<summary>
 Alternatively, you can delete a Schedule from the CLI.
-
+</summary>
 ```bash
 # terminal two
-temporal schedule delete --schedule-id=workflow-schedule-id
+temporal schedule delete --schedule-id workflow-schedule-id
 ```
+</details>
 
 **Results**: You've successfully deleted a running Schedule.
 
@@ -263,7 +269,7 @@ Add the reference to the Activity name to the list of Activities processed by th
         task_queue=TASK_QUEUE_NAME,
         workflows=[TemporalCommunityWorkflow],
         # tell the Worker of you new Activity
-        activities=[top_stories, story_ids, freq_occurring_words], # adding `freq_occurring_words`
+        activities=[top_posts, post_ids, freq_occurring_words], # adding `freq_occurring_words`
     )
     await worker.run()
 ```
@@ -282,18 +288,18 @@ class TemporalCommunityWorkflow:
     @workflow.run
     async def run(self) -> list:
         news_id = await workflow.execute_activity(
-            story_ids,
+            post_ids,
             start_to_close_timeout=timedelta(seconds=15),
         )
-        top_stories = await workflow.execute_activity(
-            top_stories,
+        top_posts = await workflow.execute_activity(
+            top_posts,
             news_id,
             start_to_close_timeout=timedelta(seconds=15),
         )
         # Add a step to your data pipeline
         return await workflow.execute_activity(
             freq_occurring_words,
-            top_stories,
+            top_posts,
             start_to_close_timeout=timedelta(seconds=15),
         )
 ```
