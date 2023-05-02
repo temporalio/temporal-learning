@@ -237,10 +237,12 @@ This sets the Schedule Id and then deletes the Schedule with the [delete()](http
 <summary>
 Alternatively, you can delete a Schedule from the CLI.
 </summary>
+
 ```bash
 # terminal two
 temporal schedule delete --schedule-id workflow-schedule-id
 ```
+
 </details>
 
 **Results**: You've successfully deleted a running Schedule.
