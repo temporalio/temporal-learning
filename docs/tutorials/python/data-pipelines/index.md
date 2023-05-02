@@ -49,6 +49,37 @@ Now that you've installed the required libraries, develop your Workflow Definiti
 Write a Workflow Definition file that contains the steps that you want to execute.
 
 <!--SNIPSTART data-pipeline-your-workflow-python-->
+[your_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/your_workflow.py)
+```py
+from datetime import timedelta
+from typing import Any, List
+
+from temporalio import workflow
+from temporalio.common import RetryPolicy
+
+with workflow.unsafe.imports_passed_through():
+    from activities import TemporalCommunityPosts, post_ids, top_posts
+
+
+@workflow.defn
+class TemporalCommunityWorkflow:
+    @workflow.run
+    async def run(self) -> List[TemporalCommunityPosts]:
+        news_ids: List[str] = await workflow.execute_activity(
+            post_ids,
+            start_to_close_timeout=timedelta(seconds=15),
+            retry_policy=RetryPolicy(
+                non_retryable_error_types=["Exception"],
+            ),
+        )
+        return await workflow.execute_activity(
+            top_posts,
+            news_ids,
+            start_to_close_timeout=timedelta(seconds=15),
+        )
+
+
+```
 <!--SNIPEND-->
 
 The `TemporalCommunityWorkflow` class is decorated with the `@workflow.defn` which must be set on any registered Workflow class.
@@ -78,6 +109,66 @@ The [aiohttp](https://docs.aiohttp.org/en/stable/index.html) library is recommen
 The `post_ids()` function gets the top 10 Temporal Community posts while, `top_posts()` gets items based on the post's identifier. 
 
 <!--SNIPSTART data-pipeline-activity-python-->
+[activities.py](https://github.com/rachfop/data-pipeline/blob/master/activities.py)
+```py
+from dataclasses import dataclass
+from typing import Any, List
+
+import aiohttp
+from temporalio import activity
+
+TASK_QUEUE_NAME = "temporal-community-task-queue"
+
+
+@dataclass
+class TemporalCommunityPosts:
+    title: str
+    url: str
+    views: int
+
+
+async def fetch(session: aiohttp.ClientSession, url: str) -> dict:
+    async with session.get(url) as response:
+        return await response.json()
+
+
+@activity.defn
+async def post_ids() -> List[str]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://community.temporal.io/latest.json") as response:
+            if response.status != 200:
+                raise Exception(f"Failed to fetch top stories: {response.status}")
+            post_ids = await response.json()
+
+    return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
+
+
+@activity.defn
+async def top_posts(post_ids: List[Any]) -> List[TemporalCommunityPosts]:
+    results = []
+    async with aiohttp.ClientSession() as session:
+        for item_id in post_ids:
+            try:
+                async with session.get(
+                    f"https://community.temporal.io/t/{item_id}.json"
+                ) as response:
+                    item = await response.json()
+                    slug = item["slug"]
+                    url = f"https://community.temporal.io/t/{slug}/{item_id}"
+                    community_post = TemporalCommunityPosts(
+                        title=item["title"], url=url, views=item["views"]
+                    )
+                    results.append(community_post)
+                if response.status != 200:
+                    activity.logger.error(f"Status: {response.status}")
+            except KeyError:
+                activity.logger.error(f"Error processing item {item_id}: {item}")
+    results.sort(key=lambda x: x.views, reverse=True)
+    top_ten = results[:10]
+    return top_ten
+
+
+```
 <!--SNIPEND-->
 
 :::note
@@ -109,6 +200,31 @@ Now that you've defined the steps in your data pipeline, learn to create a Worke
 In the `run_worker.py` file, set the Worker to host the Workflows and/or Activities.
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
+[run_worker.py](https://github.com/rachfop/data-pipeline/blob/master/run_worker.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+from temporalio.worker import Worker
+
+from activities import TASK_QUEUE_NAME, post_ids, top_posts
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    worker = Worker(
+        client,
+        task_queue=TASK_QUEUE_NAME,
+        workflows=[TemporalCommunityWorkflow],
+        activities=[top_posts, post_ids],
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 This Worker creates and uses the same Client used for starting the Workflow, `localhost:7233`.
@@ -128,6 +244,35 @@ To start, connect to an instance of the Temporal Client. Since it's running loca
 The `execute_workflow()` function is set on the `client` to execute the Workflow, by passing the name of the Workflow run method, a Workflow Id, and a Task Queue name.
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
+[run_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/run_workflow.py)
+```py
+import asyncio
+
+import pandas as pd
+from temporalio.client import Client
+
+from activities import TASK_QUEUE_NAME
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    stories = await client.execute_workflow(
+        TemporalCommunityWorkflow.run,
+        id="temporal-community-workflow",
+        task_queue=TASK_QUEUE_NAME,
+    )
+    df = pd.DataFrame(stories)
+    df.columns = ["Title", "URL", "Views"]
+    print("Top 10 stories on Temporal Community:")
+    print(df)
+    return df
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 This will execute the steps defined in your Workflow, which will then return the results of `stories`.
@@ -185,6 +330,45 @@ Build a scheduler to fire once every 10 hours and return the results of `Tempora
 Create a file called `schedule_workflow.py`.
 
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
+[schedule_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/schedule_workflow.py)
+```py
+import asyncio
+from datetime import timedelta
+
+from temporalio.client import (
+    Client,
+    Schedule,
+    ScheduleActionStartWorkflow,
+    ScheduleIntervalSpec,
+    ScheduleSpec,
+    ScheduleState,
+)
+
+from activities import TASK_QUEUE_NAME
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    await client.create_schedule(
+        "workflow-schedule-id",
+        Schedule(
+            action=ScheduleActionStartWorkflow(
+                TemporalCommunityWorkflow.run,
+                id="temporal-community-workflow",
+                task_queue=TASK_QUEUE_NAME,
+            ),
+            spec=ScheduleSpec(
+                intervals=[ScheduleIntervalSpec(every=timedelta(hours=10))]
+            ),
+            state=ScheduleState(note="Getting top stories every 10 hours."),
+        ),
+    )
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 Set the `create_schedule()` function on the Client and pass a unique identifier for the Schedule.
@@ -222,6 +406,26 @@ When you delete a Schedule, you're sending a termination Signal to the Schedule.
 You can write code to give delete the Schedule or use the CLI.
 
 <!--SNIPSTART data-pipeline-delete-schedule-python-->
+[delete_schedule.py](https://github.com/rachfop/data-pipeline/blob/master/delete_schedule.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    handle = client.get_schedule_handle(
+        "workflow-schedule-id",
+    )
+
+    await handle.delete()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
 <!--SNIPEND-->
 
 Then run the following.
