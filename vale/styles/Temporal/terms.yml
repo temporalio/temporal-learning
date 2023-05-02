@@ -1,17 +1,27 @@
 extends: existence
 message: Double check '%s' - may need to be capitalized.
 level: warning
-code: false
 ignorecase: false
 tokens:
  - workflow
  - workflows
  - activity
  - activities
- - signal
- - signals
  - query
  - queries
+ - schedule
+ - schedules
+ - signal
+ - signals
+ - task queue
+ - task queues
+ - temporal
+ - temporal cloud
+ - Temporal cloud
+ - Temporal application
+ - Temporal applications
+ - timer
+ - timers
  - workers
  - workflow definition
  - workflow definitions
@@ -19,7 +29,3 @@ tokens:
  - activity definitions
  - workflow execution
  - workflow executions
- - task queue
- - task queues
- - Temporal application
- - Temporal applications
