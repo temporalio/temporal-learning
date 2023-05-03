@@ -4,7 +4,7 @@ sidebar_position: 1
 keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
 description: "Tutorial for building a Subscription application with Temporal and Go."
 last_update:
-  date: 2023-04-13
+  date: 2023-05-03
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -27,15 +27,21 @@ This is achieved by breaking down project requirements into Temporal logic:
 
 - A [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) that contains the logic needed to start and end the subscription. [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution) are created per email address.
 - [Activities](https://docs.temporal.io/activities) that are used to send emails to the subscriber defined in the Workflow.
-- A [Query](https://docs.temporal.io/workflows#query) to retrieve the status of an ongoing subscription. This information will include the email address of the user.
+- A [Query](https://docs.temporal.io/workflows#query) to retrieve the user's email address and the status of their subscription.
 - A [Cancellation Handler](https://docs.temporal.io/activities#cancellation) for users to opt out of the subscription early.
 
+Since the business logic is handled in Temporal's Workflow and Activities, you can use Temporal to manage each subscription rather than relying on a separate database or Task Queue.
+This reduces the complexity of the code you have to write and maintain.
 
-:::tip Skip ahead
+Ultimately, you'll create a web server to handle requests from the end user and interact with the Temporal Workflow to manage the email susbcription process.
+All Workflow Executions begin with entry of a valid email address on the sign-up page, and continue to simulate sending emails until the subscription ends.
+You can view the user's entire process through the Temporal Web UI.
 
-To skip straight to a fully working example, check out the [Subscription Workflow in the Go repository](https://github.com/temporalio/subscription-workflow-go).
+By the end of this tutorial, you'll have a clear understanding of how to use Temporal for creating and managing long-running Workflows.
 
-:::
+### Working sample
+
+Check out the [Subscription Workflow in the Go repository](https://github.com/temporalio/subscription-workflow-go) for a full view of all the tutorial's code.
 
 ## Prerequisites 
 
@@ -91,7 +97,7 @@ This struct contains the user's email address, along with the message they'll be
 <!--SNIPEND-->
 
 The other data type you'll create create is `Periods`. 
-This struct contains information about how long the Subscription lasts, along with how much is charged per billing period.
+This struct contains information about how long the Subscription lasts.
 
 <!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["11-17"]}-->
 <!--SNIPEND-->
@@ -124,7 +130,6 @@ In the next step, you'll learn to define the Activities that send the subscripti
 
 ## Develop the Activities
 
-An Activity is a function designed to perform a specific, well-defined action over a period of time.
 Activities are optimal for interacting with APIs. 
 The [Activity Definition](https://docs.temporal.io/activities#activity-definition) in this tutorial will mock this behavior.
 
@@ -165,9 +170,9 @@ Finally, get the Worker to listen to the [Task Queue](https://docs.temporal.io/t
 All of the application components are there, but aren't running. 
 Time to build a gateway to interact with the app!
 
-## Build the gateway
+## Build the web server
 
-The gateway allows the user to communicate with the Temporal Application.
+The web server allows the user to communicate with the Temporal Application.
 It also serves as the entry point for starting the Workflow Execution.
 
 There are several handlers that make the Subscription possible. These handlers allow us to subscribe, unsubscribe, and get details about the Workflow.
