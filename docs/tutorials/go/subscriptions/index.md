@@ -133,10 +133,16 @@ In the next step, you'll learn to define the Activities that send the subscripti
 Activities are optimal for interacting with APIs. 
 The [Activity Definition](https://docs.temporal.io/activities#activity-definition) in this tutorial will mock this behavior.
 
-Create two Activity functions in a new file: `activities.go`.
+Create four Activity functions in a new file: `activities.go`.
+The Activities should be labeled as follows:
+- `SendWelcomeEmail`
+- `SendCancellationEmail`
+- `SendSubscriptionEndedEmail`
+- `SendSubscriptionEmail`
+
 Each Activity will simply log what they are "doing" to the console.
 
-<!--SNIPSTART subscription-workflow-go-activities {"selectedLines": ["1-11", "12-21"]}-->
+<!--SNIPSTART subscription-workflow-go-activities-->
 <!--SNIPEND-->
 
 These Activities can be easily customized to call an Email API to send actual emails.
