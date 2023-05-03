@@ -257,5 +257,7 @@ Define the variables needed to Query the Workflow, and then handle the result.
 
 ## Conclusion
 
-The Temporal Go SDK provides the means to build powerful, long-lasting applications. 
-With a scenario as scalable as a subscription service, Temporal shows what it can do with the help of Workflows, Activities, and Queries.
+This tutorial demonstrates how to build a web application using Temporal and Go. 
+Through the use of Temporal's Workflows, Activities, and Queries, the tutorial shows how to create a web server that interacts with Temporal to manage the email subscription process.
+
+With this knowledge, you'll be able to use more complex Workflows and Activities to create even stronger applications.
