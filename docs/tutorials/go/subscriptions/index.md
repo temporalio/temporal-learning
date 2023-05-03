@@ -255,6 +255,43 @@ Define the variables needed to Query the Workflow, and then handle the result.
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["115-140"]}-->
 <!--SNIPEND-->
 
+## Create an integration test
+
+Integration testing is an essential part of software development.
+With it, you can be assured that all the components of an application are working as expected.
+
+The Temporal Go SDK includes functions to help test your Workflow Executions.
+Using this, along with the [Testify module](github.com/stretchr/testify), will allow you to test for successful Workflow Executions.
+
+To get started, create a new file called `subscription_test.go`.
+Import the Temporal Go SDK Test Suite, Go's testing and time libraries, and the `require` module from Testify.
+
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["2-11"]}-->
+<!--SNIPEND-->
+
+### Create test function
+
+Create a function called `Test_SuccessfulSubscriptionWorkflow`.
+Create an instance of TestSuite and initiate the environment.
+
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["12-14"]}-->
+<!--SNIPEND-->
+
+Initiate the Activities and create a Subscription struct called `testDetails`.
+
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["15-26"]}-->
+<!--SNIPEND-->
+
+Register the Workflow and Activities.
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["28-33"]}-->
+<!--SNIPEND-->
+
+Finally, execute the Workflow.
+Make sure to require the test to not return an error.
+
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["35-37"]}-->
+<!--SNIPEND-->
+
 ## Conclusion
 
 This tutorial demonstrates how to build a web application using Temporal and Go. 
