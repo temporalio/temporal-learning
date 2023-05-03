@@ -59,7 +59,9 @@ Run `go mod init` to create a Go module file.
 Run `go mod tidy` to update the Go module file.
 
 :::note
+
 `go mod tidy` will need to be run periodically as new imports are added to the application.
+
 :::
 
 ## Develop the Workflow
