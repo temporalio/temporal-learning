@@ -10,8 +10,6 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-Creating reliable applications can be a complex process, often plagued by volatility that seems beyond your control.
-
 In this tutorial, you'll be writing a [Workflow](https://docs.temporal.io/workflows) for a Subscription application.
 The application will send emails at specified time intervals until the subscription's limit has been reached.
 
@@ -19,11 +17,9 @@ The user will be able to:
 
 1. Send a "welcome" email to the user upon signup.
 2. Start the billing process and send subsequent subscription emails.
-3. Look up the customer's information regarding:
-    - Amount Charged
-    - Period number
+3. Look up the user's email address and current place in the subscription.
 4. End the subscription when:
-    - The maximum amount of billing periods has been reached.
+    - The end of the subscription period has been reached.
     - The user has chosen to unsubscribe.
 
 This tutorial focuses on implementing an email subscription application with Temporal’s [Workflows](https://docs.temporal.io/workflows), [Activities](https://docs.temporal.io/activities), and [Queries](https://docs.temporal.io/workflows#query).
@@ -189,9 +185,7 @@ When viewed in the browser, it'll create an input field to collect the email nee
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-20"]}-->
 <!--SNIPEND-->
 
-
-
-### Subscribe handler
+## Subscribe handler
 
 The `/subscribe` handler starts the Workflow Execution for the given email address.
 The email is used to generate a unique [Workflow ID](https://docs.temporal.io/workflows#workflow-id), meaning only one Workflow can be executed per email address.
@@ -212,7 +206,7 @@ Define and execute the Workflow within the handler.
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["44-64"]}-->
 <!--SNIPEND-->
 
-### Unsubscribe handler
+## Unsubscribe handler
 
 The `/unsubscribe` handler cancels the Workflow with a given email in its Workflow ID.
 
@@ -227,6 +221,8 @@ After the Workflow is found for the given email address, let the user know that 
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["77-106"]}-->
 <!--SNIPEND-->
+
+## Query handler
 
 Emails are great for showing the progress of the subscription, but what if you need to see subscription details?
 For this, you'll need to build a Query to get details about the Workflow Execution.
