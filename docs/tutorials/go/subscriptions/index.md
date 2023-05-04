@@ -261,7 +261,7 @@ Integration testing is an essential part of software development.
 With it, you can be assured that all the components of an application are working as expected.
 
 The Temporal Go SDK includes functions to help test your Workflow Executions.
-Using this, along with the [Testify module](github.com/stretchr/testify), will allow you to test for successful Workflow Executions.
+Using this, along with the [Testify module](https://github.com/stretchr/testify), will allow you to test for successful Workflow Executions.
 
 To get started, create a new file called `subscription_test.go`.
 Import the Temporal Go SDK Test Suite, Go's testing and time libraries, and the `require` module from Testify.
