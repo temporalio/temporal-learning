@@ -6,7 +6,7 @@ tags: [Python, SDK]
 last_update:
   date: 2023-05-01
 title: Build a data pipeline Workflow with Temporal and Python
-description: This tutorial teaches you how to implement a data pipeline application with Temporal's Workflows, Activities, and Schedules; however, the key learning allows users to orchestrate steps in their data pipeline and allow Temporal to run it.
+description: You'll implement a data pipeline application in Python, using Temporal's Workflows, Activities, and Schedules to orchestrate and run the steps in your pipeline.
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -20,13 +20,11 @@ Temporal makes writing data pipelines easy with Workflows and Activities.
 With Temporal, you can retrieve data from a source, process the information with steps, and output the flow of information to a destination with just code. Meaning all of your developer best practices can be implemented, tested, and ran as needed.
 Furthermore, Temporal offers built-in resilience and fault tolerance features that can handle unexpected failures and issues seamlessly.
 
-In this tutorial, you'll learn the process of building a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
+In this tutorial, you'll build a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
 
-Then, to improve your understanding, you'll learn to schedule your Workflows on an interval timer to automate the execution of these steps.
+Then, to improve your understanding, you'll schedule your Workflows on an interval timer to automate the execution of these steps.
 
 By the end of this tutorial, you'll have a comprehensive understanding of how to implement Workflow as code-based data pipelines using Temporal's features; such as retries, timeouts, and schedules to ensure your pipeline's resilience and fault tolerance.
-
-## Working sample
 
 All the code for this tutorial is stored on GitHub in the [data-pipeline-project-python](https://github.com/rachfop/data-pipeline) repository.
 
@@ -38,15 +36,18 @@ Before starting this tutorial:
 - Install [Pandas](https://pandas.pydata.org) (tested with version 2.0.1)
 - Install [aiohttp](https://docs.aiohttp.org/en/stable/) (tested with version 3.8.4)
 
-```bash
+```command
 pip install pandas aiohttp
 ```
 
-Now that you've installed the required libraries, develop your Workflow Definition.
+Now that you've installed the required libraries, develop your Workflow Definition and get started with building a fault-tolerant data pipeline.
 
-## Develop Workflow
+## Develop a Workflow to orchestrate your data pipeline
 
-Write a Workflow Definition file that contains the steps that you want to execute.
+Use Workflows to orchestrate the execution of your data pipeline's steps.
+The Workflow will be responsible for executing the Activities, or steps, in your data pipeline, and handle any failures that may occur using retries and timeouts.
+
+Create a new file called `your_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-your-workflow-python-->
 [your_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/your_workflow.py)
@@ -96,7 +97,7 @@ You must set either a Start-To-Close or Schedule-To-Close Activity Timeout.
 
 Now, that the Workflow is explained, develop your Activities to handle the logic of your data pipeline.
 
-## Develop your Activities
+## Develop Activities to your process data pipeline
 
 Think of the Activities as steps in your data pipeline. Each Activity should handle something that you want executed.
 The Workflow will handle the execution of each step.
@@ -106,7 +107,9 @@ In the `activities.py` file, write out each step in the data processing pipeline
 In this example, establish a connection to the `aiohttp`'s [Client Session](https://docs.aiohttp.org/en/stable/client_reference.html).
 The [aiohttp](https://docs.aiohttp.org/en/stable/index.html) library is recommended instead of [requests](https://requests.readthedocs.io), because it avoids making blocking calls.
 
-The `post_ids()` function gets the top 10 Temporal Community posts while, `top_posts()` gets items based on the post's identifier. 
+The `post_ids()` function gets the top 10 Temporal Community posts while, `top_posts()` gets items based on the post's identifier.
+
+Create a new file called `activities.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-activity-python-->
 [activities.py](https://github.com/rachfop/data-pipeline/blob/master/activities.py)
@@ -193,11 +196,11 @@ Non-Retryable Errors = []
 The first step of the data pipeline checks if the status of the endpoint returns a 200 response, if it doesn't, it will raise an `Exception` error, otherwise, it will continue processing the post identifiers.
 The last step of the data pipeline returns the results, which will be processed in your `run_workflow.py` file.
 
-Now that you've defined the steps in your data pipeline, learn to create a Worker that will host the Workflow and Activities.
+Now that you've defined the steps in your data pipeline, create a Worker that will hosts the Workflow and Activities.
 
-## Run the Worker
+## Create the Worker to host your Workflow and Activities
 
-In the `run_worker.py` file, set the Worker to host the Workflows and/or Activities.
+Create a new file called `run_worker.py` and add the following code to host the Workflows and/or Activities:
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
 [run_worker.py](https://github.com/rachfop/data-pipeline/blob/master/run_worker.py)
@@ -227,8 +230,11 @@ if __name__ == "__main__":
 ```
 <!--SNIPEND-->
 
-This Worker creates and uses the same Client used for starting the Workflow, `localhost:7233`.
-The Worker must be set to the same Task Queue name, then specify your Workflows and Activities names in a list.
+To run a Worker, you create an instance of the same Client that's used to start the Workflow.
+You must set the Worker to the same Task Queue name and specify your Workflow and Activity names in a list.
+
+The Worker need to know which Workflows and Activities it should execute in response to incoming tasks on the Task Queue.
+So by specifying the names of the Workflows and Activities, the Worker knows which code to run when it receives a task from the Task Queue.
 
 Then run the Worker with the [asyncio.run()](https://docs.python.org/3/library/asyncio-runner.html#asyncio.run) function.
 
@@ -236,12 +242,14 @@ The Worker listens and polls on a single Task Queue. A Worker Entity contains bo
 
 Now that you've developed a Worker, run the Workflow.
 
-## Run your Workflow
+## Create your Workflow to execute the data pipeline
 
 The file `run_workflow.py` processes the Execution of the Workflow.
 To start, connect to an instance of the Temporal Client. Since it's running locally, it's connected to `localhost:7233`.
 
 The `execute_workflow()` function is set on the `client` to execute the Workflow, by passing the name of the Workflow run method, a Workflow Id, and a Task Queue name.
+
+Create a new file called `run_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
 [run_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/run_workflow.py)
@@ -278,20 +286,20 @@ if __name__ == "__main__":
 This will execute the steps defined in your Workflow, which will then return the results of `stories`.
 For this example, `stories` is processed by a [Pandas Data Frame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html).
 
-The code is run in an `asyncio` event loop.
+The code runs in an `asyncio` event loop.
 
 ### Results
 
 To run your code, open two terminal windows and run the following:
 
-```bash
+```command
 # terminal one
 python run_worker.py
 # terminal two
 python run_workflow.py
 ```
 
-You should see something similar to the following in your terminal.
+You'll see an output similar to the following in your terminal:
 
 ```output
 Top 10 stories on Temporal Community:
@@ -316,18 +324,23 @@ Now go to your running instance of the [Temporal Web UI](http://localhost:8233/n
 3. Under **Recent Events,** you can observe every step and task created by the data pipeline.
     This information is persisted in History, meaning that if any point a failure is created in your data pipeline, you can resume from that point in the history, rather than starting over from the beginning.
 
-You've successfully run your Workflow and explored the Event History, now learn to Schedule your Workflow.
+You've successfully run your Workflow and explored the Event History, now schedule your Workflow.
 
-## Schedule a Workflow
+## Schedule a Workflow to run on a specific interval
 
-We just demonstrated how to start a Worker and run a Workflow, which returns information from your data pipeline. What if we want to run this on a schedule?
-Historically, you could write a cron job and have that fire once a day, but cron jobs are fragile. They break easily and knowing when they go down or why they didn't fire can be frustrating.
+You just built and ran a Workflow, that returns information from your data pipeline. Now, you'll run this Workflow on a schedule.
+
+Cron jobs have a reputation for fragility because they run commands in a different environment than the user's shell, which can lead to configuration management issues and random machine failures.
+Additionally, cron errors are not always directed to live email, making it hard to know when things go wrong. 
+While newer systems like systemd timers and Kubernetes cron jobs fix some of these issues, there is still a reliance on the archaic five-field string syntax for specifying times.
+Fortunately, Temporal provides an alternative solution for scheduling workflows that doesn't require configuring additional dependencies or worrying about system alerts.
 
 Temporal provides a [Schedule Workflow](https://python.temporal.io/temporalio.client.Client.html#create_schedule) function, in which you can start, backfill, delete, describe, list, pause, trigger, and update a Schedule.
+Instead of relying on machine-level cron jobs, you can define your tasks as Workflows in Temporal and schedule them to run on a specified schedule, interval, calendar, or event trigger.
 
-Build a scheduler to fire once every 10 hours and return the results of `TemporalCommunityWorkflow`.
+For this example, you'll schedule the Workflow to run every 10 hours.
 
-Create a file called `schedule_workflow.py`.
+Create a new file called `schedule_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
 [schedule_workflow.py](https://github.com/rachfop/data-pipeline/blob/master/schedule_workflow.py)
@@ -386,9 +399,9 @@ Modify the interval timer from `hours=10` to `minutes=1` to see the Schedule Wor
 
 ### Run the Schedule
 
-Then run the following:
+Run the following command to start the Schedule.
 
-```bash
+```command
 # terminal two
 python schedule_workflow.py
 ```
@@ -400,10 +413,11 @@ Now go to your running instance of the [Temporal Web UI](http://localhost:8233/)
 
 After a few runs, you can see the **Recent Runs** fill up with previously run Workflows, or go back to the **Recent Workflows** page and see the Workflows populate there.
 
+Now that you've scheduled your Workflow, let's add the ability to delete the Schedule.
+
 ### Delete the Schedule
 
-When you delete a Schedule, you're sending a termination Signal to the Schedule.
-You can write code to give delete the Schedule or use the CLI.
+Create a new file called `delete_schedule.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-delete-schedule-python-->
 [delete_schedule.py](https://github.com/rachfop/data-pipeline/blob/master/delete_schedule.py)
@@ -428,34 +442,29 @@ if __name__ == "__main__":
 ```
 <!--SNIPEND-->
 
-Then run the following.
+Run the following command to delete the Schedule.
 
-```bash
+```command
 # terminal two
 python delete_schedule.py
 ```
 
 This sets the Schedule Id and then deletes the Schedule with the [delete()](https://python.temporal.io/temporalio.client.ScheduleHandle.html#delete) method on the Workflow handle.
 
-<details>
-<summary>
 Alternatively, you can delete a Schedule from the CLI.
-</summary>
 
-```bash
+Run the following command to delete the Schedule.
+
+```command
 # terminal two
 temporal schedule delete --schedule-id workflow-schedule-id
 ```
 
-</details>
-
-**Results**: You've successfully deleted a running Schedule.
-
-Read through the conclusion section to recap what was accomplished and to learn how to extend your understanding.
+You've successfully deleted a running Schedule.
 
 ## Conclusion
 
-You have learned how to create and process data with a data pipeline that's durably backed by Temporal and schedule a Workflow.
+You have built and processed data with a data pipeline that's durably backed by Temporal and schedule a Workflow.
 
 With Temporal, you have insight into your data pipelines. You can see every point in History and have the ability to resume from a failure or retry, and ensure that your Workflows execute on a scheduled interval.
 
