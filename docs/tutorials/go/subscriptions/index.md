@@ -196,7 +196,7 @@ When viewed in the browser, it'll create an input field to collect the email nee
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-20"]}-->
 <!--SNIPEND-->
 
-## Subscribe handler
+## Build the `/subscribe` handler
 
 The `/subscribe` handler starts the Workflow Execution for the given email address.
 The email is used to generate a unique [Workflow ID](https://docs.temporal.io/workflows#workflow-id), meaning only one Workflow can be executed per email address.
@@ -217,7 +217,7 @@ Define and execute the Workflow within the handler.
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["44-64"]}-->
 <!--SNIPEND-->
 
-## Unsubscribe handler
+## Build the `/unsubscribe` handler
 
 The `/unsubscribe` handler cancels the Workflow with a given email in its Workflow ID.
 
@@ -233,7 +233,7 @@ After the Workflow is found for the given email address, let the user know that 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["77-106"]}-->
 <!--SNIPEND-->
 
-## Query handler
+## Build the Query handler
 
 Emails are great for showing the progress of the subscription, but what if you need to see subscription details?
 For this, you'll need to build a Query to get details about the Workflow Execution.
@@ -246,7 +246,7 @@ Like `/unsubscribe`, the `/getdetails` handler incorporates a switch case for ge
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["110-113"]}-->
 <!--SNIPEND-->
 
-### Build the `showdetails` endpoint
+### Build the `/showdetails` endpoint
 
 The `/showdetails` handler uses the information gathered from `/getdetails` to retrieve and print subscription information.
 
