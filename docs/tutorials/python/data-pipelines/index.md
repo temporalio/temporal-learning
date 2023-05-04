@@ -26,7 +26,7 @@ Then, to improve your understanding, you'll schedule your Workflows on an interv
 
 By the end of this tutorial, you'll have a comprehensive understanding of how to implement Workflow as code-based data pipelines using Temporal's features; such as retries, timeouts, and schedules to ensure your pipeline's resilience and fault tolerance.
 
-All the code for this tutorial is stored on GitHub in the [data-pipeline-project-python](https://github.com/rachfop/data-pipeline) repository.
+All the code for this tutorial is stored on GitHub in the [data-pipeline-project-python](https://github.com/temporalio/data-pipeline-project-python) repository.
 
 ## Prerequisites
 
