@@ -58,8 +58,8 @@ Create the `package.json` file in the root of your project and add the following
 
 ```json
 {
-  "name": "email-subscription-app`",
-  "version": "0.1.0",
+  "name": "email-subscription-app",
+  "version": "1.0.0",
 
   "scripts": {
     "build": "tsc --build",
@@ -107,7 +107,6 @@ Create the `package.json` file in the root of your project and add the following
   }
 }
 ```
-
 You should check out a few parts of the `package.json`, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
 
 Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. 
@@ -162,13 +161,9 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop an Activity
 
-Create a new file called `activities.ts` and develop the asynchronous Activity Definition.
+Create a new file called `activities.ts` in the `src` directory so you can develop the asynchronous Activity Definition.
 
-```command
-nano activities.ts
-```
-
-<!--SNIPSTART-->
+ <!--SNIPSTART-->
 TODO: add the code from the file below using snipsync.
 
 https://github.com/temporalio/email-subscription-project-ts/blob/ks/code-for-tutorial/src/activities.ts
@@ -178,84 +173,38 @@ Each iteration of the Workflow loop will execute this Activity, which simulates 
 
 Now that the Activity Definition and Workflow Definition have been created, it's time to write the Worker process.
 
-## Bundle and run it with the Worker
+## Create the Worker
 
-Create a new file called `run_worker.py` and develop the Worker process to execute your Workflow and Activity Definitions.
+Create a new file called `worker.ts` and develop the Worker process to execute your Workflow and Activity Definitions.
 
-```command
-nano run_worker.py
-```
+<!--SNIPSTART-->
+TODO: add the code from the file below using snipsync.
 
-<!--SNIPSTART email-subscription-project-python-run_worker-->
-[run_worker.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_worker.py)
-```py
-import asyncio
+https://github.com/temporalio/email-subscription-project-ts/blob/main/src/worker.ts
 
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import send_email
-from workflows import SendEmailWorkflow
-from shared_objects import TaskQueueName
-
-
-async def main():
-    client = await Client.connect("localhost:7233")
-
-    worker = Worker(
-        client,
-        task_queue=TaskQueueName,
-        workflows=[SendEmailWorkflow],
-        activities=[send_email],
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
 <!--SNIPEND-->
 
-Now that you've written the logic to execute the Workflow and Activity Definitions, try to build the gateway.
+Now that you've written the logic to execute the Workflow and Activity Definitions, it is time to build the gateway.
 
 ## Build the web server
 
 The web server is used to handle requests.
-This tutorial uses the Flask as the entry point for initiating Workflow Execution and communicating with the `subscribe`, `get-details`, and `unsubscribe` routes.
+This tutorial uses Node.js and Express to create `subscribe`, `details`, and `unsubscribe` routes which trigger the Workflow and Activities. 
 
 ### Global Client
 
 Register the Temporal Client function to run before the first request to this instance of the application.
 
-Create a new file called `run_flask.py` to develop your Flask endpoints.
+Create a new file called `client.ts` to develop your endpoints.
 
-```command
-nano run_flask.py
-```
 
 Import your libraries and use the `connect_temporal()` function on the Flask app to connect to the Temporal Server.
 The `get_client()` function is used to retrieve the Client connection from the Flask app once it's been initialized.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["2-16"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-import asyncio
-from flask import Flask, jsonify, current_app, request, make_response
-from temporalio.client import Client
+<!--SNIPSTART-->
+TODO: add lines 1-15 using snipsync. 
 
-from run_worker import SendEmailWorkflow
-from shared_objects import TaskQueueName, EmailDetails, WorkflowOptions
-
-app = Flask(__name__)
-
-async def connect_temporal(app):
-    client: Client = await Client.connect('localhost:7233')
-    app.temporal_client = client
-
-def get_client() -> Client:
-    return current_app.temporal_client
-```
+https://github.com/temporalio/email-subscription-project-ts/blob/ks/code-for-tutorial/src/client.ts
 <!--SNIPEND-->
 
 A Temporal Client enables you to communicate with the Temporal Cluster.
@@ -269,39 +218,19 @@ Now that your connection to the Temporal Server is open, define your first Flask
 
 First, build the `/subscribe` endpoint.
 
-In the `run_flask.py` file, define a `/subscribe` endpoint as an asynchronous function, so that users can subscribe to the emails.
+In the `client` file, define a `/subscribe` endpoint as an asynchronous function, so that users can subscribe to the emails.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["18-35"]}-->
-[run_flask.py](https://github.com/temporalio/email-subscription-project-python/blob/master/run_flask.py)
-```py
-// ...
-@app.route("/subscribe", methods=["POST"])
-async def start_subscription():
-    client: Client = get_client()
-    if request.method == "POST":
-        email_id: str = str(request.json.get("email"))
-        data: WorkflowOptions = WorkflowOptions(email = email_id)
-        await client.start_workflow(
-            SendEmailWorkflow.run,
-            data,
-            id=data.email,
-            task_queue=TaskQueueName,
-        )
-
-        message = jsonify({"message": "Resource created successfully"})
-        response = make_response(message, 201)
-        return response
-
-    return jsonify({"message": "This endpoint requires a POST request."})
-```
+<!--SNIPSTART-->
+TODO: add lines for the /subscribe endpoint using snipsync. 
 <!--SNIPEND-->
 
-In the `start_subscription()` function, get the Temporal Server connection from the Flask application.
-The `WorkflowOptions` object is used to pass the email address given by the user to the Workflow Execution and sets the Workflow Id. This ensures that the email is unique across all Workflows so that the user can't sign up multiple times, only receive the emails they've subscribed to, and when they cancel; they cancel the Workflow run.
+In the `try` block, you start the `subscription` Workflow and set the name of the Task Queue, set the WorkflowId as the email address given by the user, and you specify the argument that will be passed to the `sendEmail` Activity. 
 
 With this endpoint in place, you can now send a POST request to `/subscribe` with an email address in the request body to start a new Workflow that sends an email to that address.
 
 But how would you get details about the subscription? Learn to query your Workflow to get back information on the state of things in the next section.
+
+TODO: Update the rest of this tutorial 
 
 ## Add a Query
 
