@@ -6,13 +6,13 @@ tags: [TypeScript, SDK]
 last_update:
   date: 2023-03-05
 title: Build a subscription workflow with Temporal and TypeScript
-description: This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start your business logic through a web action.
+description: This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start their business logic through a web action.
 image: /img/temporal-logo-twitter-card.png
 ---
 
 ### Introduction
 
-In this tutorial, you’ll build an email subscription web application using Temporal and TypeScript. You’ll create a web server using the [Node.js](https://nodejs.org/en) and [Express](https://expressjs.com/), and you will use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you’re building the business logic with Temporal’s Workflows and Activities, you’ll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and maintain.
+In this tutorial, you’ll build an email subscription web application using Temporal and TypeScript. You’ll create a web server using [Node.js](https://nodejs.org/en) and [Express](https://expressjs.com/), and you will use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you’re building the business logic with Temporal’s Workflows and Activities, you’ll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and maintain.
 
 You’ll create an endpoint for users to give their email address, and then create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you’ll handle using a Query, and they can end the subscription at any time by unsubscribing, which you’ll handle by cancelling the Workflow Execution. You can view the user’s entire process through Temporal’s Web UI. For this tutorial, you’ll simulate sending emails, but you can adapt this example to call a live email service in the future.
 
@@ -27,119 +27,134 @@ Before starting this tutorial:
 - [Set up a local development environment for Temporal and TypeScript](/getting_started/typescript/dev_environment/index.md).
 - Complete the [Hello World](/getting_started/typescript/hello_world_in_python/index.md) tutorial to ensure you understand the basics of creating Workflows and Activities with Temporal.
 
+
+## Create a new project
+
+:::info
+
+This is a step by step guide that shows you how to create a project from scratch, and the goal is for you to better understand the structure of a Temporal application by creating the files on your own. 
+
+Many Temporal projects are easier to spin up using the [package initializer](https://docs.temporal.io/typescript/package-initializer#optional-flags) to download a project from our [samples-typescript repository](https://github.com/temporalio/samples-typescript).
+
+:::
+
+To build an app with the Temporal TypeScript SDK, you'll create a new directory and use `npm` to initialize it as a Node.js project. Then you'll add the Temporal SDK packages and other dependencies to your project. 
+
+In a terminal, create a new project directory called `email-subscription-app`:
+
+```command
+mkdir email-subscription-app
+```
+
+Switch to the new directory:
+
+```command
+cd email-subscription-app
+```
+
+Create the `package.json` file in the root of your project and add the following code to the file that defines the project, sets up scripts, and defines the dependencies this project requires:
+
+[package.json](https://github.com/temporalio/email-subscription-project-ts/blob/ks/code-for-tutorial/package.json)
+
+```json
+{
+  "name": "email-subscription-app`",
+  "version": "0.1.0",
+
+  "scripts": {
+    "build": "tsc --build",
+    "build.watch": "tsc --build --watch",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "start": "ts-node src/worker.ts",
+    "start.watch": "nodemon src/worker.ts",
+    "workflow": "ts-node src/client.ts",
+    "workflow.watch": "nodemon src/client.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.0.0",
+    "@temporalio/client": "^1.0.0",
+    "@temporalio/worker": "^1.0.0",
+    "@temporalio/workflow": "^1.0.0",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.14",
+    "@types/node": "^16.18.22",
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-deprecation": "^1.2.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.8.3",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.4.2"
+  }
+}
+```
+
+You should check out a few parts of the `package.json`, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
+
+Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. 
+
+Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon) (a tool that automatically restarts your application when it detects a change in your code), TypeScript, ESLint, and ts-node.
+
+Save the file, then download the dependencies specified in the `package.json` file with the command: 
+
+```command
+npm install
+```
+
+Downloading the dependencies can take a few minutes to complete. Once the download is done, you will have new a `package-lock.json` file and a `node_modules` directory. 
+
+Your project workspace is configured, so you're ready to create your Temporal Activity and Workflow. You'll start with the Workflow.
+
+## Create a Workflow
+
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. You can learn more in the [Develop Workflows](https://docs.temporal.io/application-development/foundations?lang=typescript#develop-workflows) section of the Temporal documentation.
+
+To begin your Workflow, create a new subdirectory called `src`:
+
+```command
+mkdir src
+```
+
+Create the file `workflows.ts` in the `src` directory.
+
 ## Develop the Workflow
 
 A Workflow defines a sequence of steps defined by writing code, known as a Workflow Definition, and are carried out by running that code, which results in a Workflow Execution.
 
-The Temporal Python SDK recommends the use of a single [data class](https://docs.python.org/3/library/dataclasses.html) for parameters and return types. This lets you add fields without breaking compatibility. Before writing the Workflow Definition, you'll define the data objects used by the Workflow Definitions.
-
-To set up the data class, create a new file called `shared_objects.py` in your project directory:
-
-```command
-nano shared_objects.py
-```
-
-The data class will represent the data you'll send to your Activity and Workflow. You'll create a `ComposeEmail` data class with the following fields:
-
-- `email`: as a string to pass a user's email
-- `message`: as a string to pass a message to the user
-- `count`: as an integer to track the number of emails sent
-- `subscribed`: as a boolean to track whether the user is subscribed
-
-
-Add the following code to the `shared_objects.py` file:
-
-<!--SNIPSTART email-subscription-project-python-shared_objects {"selectedLines": ["1-14"]}-->
-[shared_objects.py](https://github.com/temporalio/email-subscription-project-python/blob/master/shared_objects.py)
-```py
-from dataclasses import dataclass
-
-TaskQueueName: str="email_subscription"
-
-@dataclass
-class WorkflowOptions:
-    email: str
-
-@dataclass
-class EmailDetails:
-    email: str = ""
-    message: str = ""
-    count: int = 0
-    subscribed: bool = False
-```
-<!--SNIPEND-->
-
-Now that you have the `WorkflowOptions` and `EmailDetails` data class defined, you can now move on to writing the Workflow Definition.
-
-To create a new Workflow Definition, create a new file called `workflows.py`. This file will contain the `SendEmailWorkflow` class and its attributes.
-
-```command
-nano workflows.py
-```
-
-Use the `workflows.py` file to write deterministic logic inside your Workflow Definition and to [start the Activity Execution](https://python.temporal.io/temporalio.workflow.html#start_activity).
+To create a new Workflow Definition, create a new file called `workflows.ts`. 
 
 Add the following code to define the Workflow:
 
-<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["1-38"]}-->
-[workflows.py](https://github.com/temporalio/email-subscription-project-python/blob/master/workflows.py)
-```py
+<!--SNIPSTART-->
+TODO: add the code from the file below using snipsync.
 
-import asyncio
-from datetime import timedelta
-
-from temporalio import workflow
-from temporalio.exceptions import CancelledError
-
-from shared_objects import EmailDetails, WorkflowOptions
-
-with workflow.unsafe.imports_passed_through():
-    from activities import send_email
-
-
-@workflow.defn
-class SendEmailWorkflow:
-    def __init__(self) -> None:
-        self.email_details = EmailDetails()
-
-    @workflow.run
-    async def run(self, data: WorkflowOptions):
-        duration = 12
-        self.email_details.email= data.email
-        self.email_details.message = "Welcome to our Subscription Workflow!"
-        self.email_details.subscribed = True
-        self.email_details.count = 0
-
-        while self.email_details.subscribed is True:
-            self.email_details.count += 1
-            if self.email_details.count > 1:
-                self.email_details.message = "Thank you for staying subscribed!"
-
-            try:
-                await workflow.start_activity(
-                    send_email,
-                    self.email_details,
-                    start_to_close_timeout=timedelta(seconds=10),
-                )
-                await asyncio.sleep(duration)
-```
+https://github.com/temporalio/email-subscription-project-ts/blob/ks/code-for-tutorial/src/workflows.ts
 <!--SNIPEND-->
 
-The `run()` method, decorated with `@workflow.run`, takes in the email address as an argument. This method initializes the `_email`, `_message`, `_subscribed`, and `_count` attributes of the `SendEmailWorkflow` instance.
+In this code, the variable `sendEmail` is assigned the value of `proxyActivites`, which is a method from the Temporal TypeScript SDK that lets you configure the Activity with different options. In this example, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. You also set the maximum number of retries to 3. 
 
-The `SendEmailWorkflow` class has a loop that checks if the `_subscribed` attribute is True, and if so, starts the `send_email()` Activity.
+The `subscription` function is the name of your Workflow. This function accepts an argument that is a string (ideally, an email address), and will attempt to run the `sendEmail` Activity. 
 
-The while loop increments the `_count` attribute and calls the `send_email()` Activity with the current `ComposeEmail` object. The loop will continue as long as the `_subscribed` attribute is true.
-
-The `start_activity()` method executes the `send_email()` Activity with the following parameters:
-
-- The `send_email()` Activity Definition
-- The `ComposeEmail` data class
-- A `start_to_close_timeout()` parameter, which tells the Temporal Server to time out the Activity 10 seconds from when the Activity starts
-
-The loop also includes a sleep statement that causes the Workflow to pause for a set amount of time between email. You can define this in seconds, days, months, or even years, depending on your business logic.
-
-Since the user's email address serves as the Workflow Id, attempting to subscribe with the same email address twice will result in a `Workflow Execution already started` error and prevent the Workflow Execution from spawning again.
+The user's email address serves as the Workflow Id, so attempting to subscribe with the same email address twice will result in a `Workflow Execution already started` error and prevent the Workflow Execution from spawning again.
 
 Therefore, only one Workflow Execution per email address can exist within the associated Namespace for the given retention period. This ensures that the user won't receive multiple email subscriptions. This also helps reduce the complexity of the code you have to write and maintain.
 
@@ -147,27 +162,16 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop an Activity
 
-Create a new file called `activities.py` and develop the asynchronous Activity Definition.
+Create a new file called `activities.ts` and develop the asynchronous Activity Definition.
 
 ```command
-nano activities.py
+nano activities.ts
 ```
 
-<!--SNIPSTART email-subscription-project-python-activity_function {"selectedLines": ["1-11"]}-->
-[activities.py](https://github.com/temporalio/email-subscription-project-python/blob/master/activities.py)
-```py
-from temporalio import activity
+<!--SNIPSTART-->
+TODO: add the code from the file below using snipsync.
 
-from shared_objects import EmailDetails
-
-
-@activity.defn
-async def send_email(details: EmailDetails) -> str:
-    print(
-        f"Sending email to {details.email} with message: {details.message}, count: {details.count}"
-    )
-    return "success"
-```
+https://github.com/temporalio/email-subscription-project-ts/blob/ks/code-for-tutorial/src/activities.ts
 <!--SNIPEND-->
 
 Each iteration of the Workflow loop will execute this Activity, which simulates sending a message to the user.
