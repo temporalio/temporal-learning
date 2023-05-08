@@ -114,7 +114,7 @@ Create a new file called `run_flask.py` to develop your Flask endpoints.
 Import your libraries and use the `connect_temporal()` function on the Flask app to connect to the Temporal Server.
 The `get_client()` function is used to retrieve the Client connection from the Flask app once it's initialized.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["2-16"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["2-20"]}-->
 <!--SNIPEND-->
 
 A Temporal Client enables you to communicate with the Temporal Cluster.
@@ -130,7 +130,7 @@ First, build the `/subscribe` endpoint.
 
 In the `run_flask.py` file, define a `/subscribe` endpoint as an asynchronous function, so that users can subscribe to the emails.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["18-35"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["22-37"]}-->
 <!--SNIPEND-->
 
 In the `start_subscription()` function, get the Temporal Server connection from the Flask application.
@@ -147,7 +147,7 @@ Add a new method called `details()` to the `SendEmailWorkflow` class and use the
 
 To allow users to retrieve information about their subscription details, add a new method called `details()` to the `SendEmailWorkflow` class in the `workflows.py` file. Decorate this method with `@workflow.query`.
 
-<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["53-55"]}-->
+<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["50-52"]}-->
 <!--SNIPEND-->
 
 The email_details object is an instance of `EmailDetails`.
@@ -161,7 +161,7 @@ To enable users to query the Workflow from the Flask application, add a new endp
 
 Use the [get_workflow_handle()](https://python.temporal.io/temporalio.client.Client.html#get_workflow_handle) function to return a Workflow handle by a Workflow Id.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["38-55"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["40-56"]}-->
 <!--SNIPEND-->
 
 Using `handle.query()` creates a Handle on the Workflow and calls the Query method on the handle to get the value of the variables.
@@ -179,14 +179,14 @@ Temporal allows you to cancel a Workflow by sending a cancellation request to th
 
 To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to return a [cancel()](https://python.temporal.io/temporalio.client.WorkflowHandle.html#cancel) method on the Workflow's handle.
 
-<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["58-71"]}-->
+<!--SNIPSTART email-subscription-project-python-run_flask {"selectedLines": ["58-80"]}-->
 <!--SNIPEND-->
 
 The `handle.cancel()` method sends a cancellation request to the Workflow Execution that was started with the `/subscribe` endpoint.
 
 When the Workflow receives the cancellation request, it will cancel the Workflow Execution and return a `CancelledError` to the Workflow Execution, which is handled in the `try/except` block in the `workflows.py` file.
 
-<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["32-50"]}-->
+<!--SNIPSTART email-subscription-project-python-workflows {"selectedLines": ["30-48"]}-->
 <!--SNIPEND-->
 
 With this endpoint in place, users can send a `DELETE` request to `/unsubscribe` with an email address in the request body to cancel the Workflow associated with that email address. This allows users to unsubscribe from the email list and prevent any further emails from sending.
