@@ -66,7 +66,7 @@ You must set either a Start-To-Close or Schedule-To-Close Activity Timeout.
 
 Now, that the Workflow is explained, develop your Activities to handle the logic of your data pipeline.
 
-## Develop Activities to your process data pipeline
+## Develop Activities to process your data
 
 Think of the Activities as steps in your data pipeline. Each Activity should handle something that you want executed.
 The Workflow will handle the execution of each step.
@@ -109,7 +109,9 @@ Now that you've defined the steps in your data pipeline, create a Worker that wi
 
 ## Create the Worker to host your Workflow and Activities
 
-Create a new file called `run_worker.py` and add the following code to host the Workflows and/or Activities:
+The Worker component plays a crucial role in our data pipeline, as it is responsible for hosting and executing Workflows and Activities. 
+
+To set up the Worker and enable the execution of our Workflows and Activities, create a new file called `run_worker.py`, and add the following code to host the Workflows and/or Activities:
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
 <!--SNIPEND-->
@@ -129,6 +131,9 @@ Now that you've developed a Worker, run the Workflow.
 ## Create your Workflow to execute the data pipeline
 
 The file `run_workflow.py` processes the Execution of the Workflow.
+The `run_workflow.py` file serves as a program that facilitates the execution of the Workflow associated with our data pipeline.
+While you can start this through the CLI, this example process and initiates the data processing logic programmatically.
+
 Create a new file called `run_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
@@ -200,21 +205,23 @@ Create a new file called `schedule_workflow.py` and add the following code:
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
 <!--SNIPEND-->
 
-Set the `create_schedule()` function on the Client and pass a unique identifier for the Schedule.
+Set the `create_schedule()` function on the Client and pass a unique identifier for the Schedule. You can use the unique identifier as a business process identifier, for example `temporal-community-workflow`. It is crucial for each Schedule to have a unique identifier to avoid conflicts and ensure clear identification. The unique identifier ensures unambiguous identification and distinguishes one Schedule from another, avoiding potential errors.
 
 Then use the [Schedule](https://python.temporal.io/temporalio.client.Schedule.html) class on the Client to set the Schedule [action](https://python.temporal.io/temporalio.client.Schedule.html#action) and [spec](https://python.temporal.io/temporalio.client.Schedule.html#spec).
+
+The `Schedule` provides a solution to running your actions periodically. The `spec` determines when the action is taken.
 
 In this example, the Action specifies the Workflow run, `TemporalCommunityWorkflow`, the Workflow Id, `temporal-community-workflow`, and the Task Queue name.
 
 Then in the [ScheduleSpec](https://python.temporal.io/temporalio.client.ScheduleSpec.html) set an interval timer, for example `every=timedelta(hours=10)`.
+
+While this tutorial uses an interval timer, you can set a [cron_expressions](https://python.temporal.io/temporalio.client.ScheduleSpec.html#cron_expressions), [calendars](https://python.temporal.io/temporalio.client.ScheduleSpec.html#calendars), and more to run your Workflow.
 
 :::note
 
 Modify the interval timer from `hours=10` to `minutes=1` to see the Schedule Workflow execute more frequently.
 
 :::
-
-### Run the Schedule
 
 Run the following command to start the Schedule.
 
@@ -232,7 +239,7 @@ After a few runs, you can see the **Recent Runs** fill up with previously run Wo
 
 Now that you've scheduled your Workflow, let's add the ability to delete the Schedule.
 
-### Delete the Schedule
+## Delete the Schedule
 
 Create a new file called `delete_schedule.py` and add the following code:
 
