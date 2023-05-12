@@ -267,7 +267,7 @@ Finish off the Workflow Definition with a for-loop to send Subscription emails u
 		err = workflow.ExecuteActivity(ctx, activities.SendSubscriptionEmail, data).Get(ctx, nil)
 
 		if err != nil {
-			logger.Error("Failed to send email ", "Error", err)
+			logger.Error("Failed to send email", "Error", err)
 		}
 
 		logger.Info("sent content email to " + subscription.EmailInfo.EmailAddress)
