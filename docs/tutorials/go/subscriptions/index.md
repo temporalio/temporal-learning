@@ -113,7 +113,7 @@ This struct contains the user's email address, along with the message they'll be
 // EmailInfo is the data that the SendContentEmail uses to send the message.
 type EmailInfo struct {
 	EmailAddress string
-	Mail string
+	Message string
 }
 ```
 <!--SNIPEND-->
