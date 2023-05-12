@@ -170,10 +170,10 @@ func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error
 	logger := workflow.GetLogger(ctx)
 	logger.Info("Subscription created for " + subscription.EmailInfo.EmailAddress)
 	// Query result to be returned
-	var queryResult string
 	// Query handler
-	e := workflow.SetQueryHandler(ctx, "GetDetails", func(input []byte) (string, error) {
-		queryResult = subscription.EmailInfo.EmailAddress + " is on billing period " + strconv.Itoa(subscriptionPeriodNum) + " out of " + strconv.Itoa(subscription.Periods.MaxSubscriptionPeriods)
+	err := workflow.SetQueryHandler(ctx, "GetDetails", func() (string, error) {
+		return fmt.Sprintf("%v is on billing period %v out of %v",
+			subscription.EmailInfo.EmailAddress, subscriptionPeriodNum, subscription.Periods.MaxSubscriptionPeriods), nil
  		return queryResult, nil
 	})
 	if e != nil {
