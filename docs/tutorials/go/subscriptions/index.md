@@ -257,7 +257,7 @@ Finish off the Workflow Definition with a for-loop to send Subscription emails u
 	}
 
 	// start subscription period. execute until MaxBillingPeriods is reached
-	for (subscriptionPeriodNum < subscription.Periods.MaxSubscriptionPeriods) {
+	for subscriptionPeriodNum < subscription.Periods.MaxSubscriptionPeriods {
 
 		data := EmailInfo{
 				EmailAddress: subscription.EmailInfo.EmailAddress,
