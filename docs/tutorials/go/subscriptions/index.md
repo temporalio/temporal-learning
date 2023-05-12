@@ -316,7 +316,7 @@ type Activities struct {
 
 }
 // email activities
-func (a *Activities) SendWelcomeEmail(ctx context.Context, emailInfo EmailInfo) (string, error) {
+func (*Activities) SendWelcomeEmail(ctx context.Context, emailInfo EmailInfo) (string, error) {
 	activity.GetLogger(ctx).Info("sending welcome email to customer", emailInfo.EmailAddress)
 	return "Sending welcome email completed for " + emailInfo.EmailAddress, nil
 }
