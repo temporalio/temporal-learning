@@ -127,7 +127,7 @@ This struct contains information about how long the Subscription lasts.
 // ...
 // Periods contains duration info for trial and billing periods
 type Periods struct {
-	SubcriptionPeriod time.Duration
+	SubscriptionPeriod time.Duration
 	MaxSubscriptionPeriods int
 }
 
