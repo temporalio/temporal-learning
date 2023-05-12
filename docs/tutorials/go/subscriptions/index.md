@@ -168,7 +168,7 @@ func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error
 	duration := time.Minute
 
 	logger := workflow.GetLogger(ctx)
-	logger.Info("Subscription created for " + subscription.EmailInfo.EmailAddress)
+	logger.Info("Subscription created", "EmailAddress", subscription.EmailInfo.EmailAddress)
 	// Query result to be returned
 	// Query handler
 	err := workflow.SetQueryHandler(ctx, "GetDetails", func() (string, error) {
