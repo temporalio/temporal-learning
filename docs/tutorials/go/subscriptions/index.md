@@ -74,7 +74,7 @@ Before the Workflow Definition can be written, you'll need to identify and defin
 ### Data objects
 
 In Go, data objects are known as **structs**—types that contain multiple fields within it. 
-You can use structs to organize our information and optimize updates to the Workflow.
+You can use structs to organize our information.
 
 Start by creating a file called `subscribe.go`.
 
