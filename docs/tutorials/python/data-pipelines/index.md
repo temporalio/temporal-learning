@@ -130,9 +130,10 @@ Now that you've developed a Worker, run the Workflow.
 
 ## Create your Workflow to execute the data pipeline
 
-The file `run_workflow.py` processes the Execution of the Workflow.
 The `run_workflow.py` file serves as a program that facilitates the execution of the Workflow associated with our data pipeline.
-While you can start this through the CLI, this example process and initiates the data processing logic programmatically.
+While you can run the Client through the CLI, this example process and initiates the data processing logic programmatically.
+
+Connecting and running the Workflow programmatically offers more flexibility and control over the execution process, like the ability to test, integrate, and execute based on your own business logic.
 
 The Workflow is executed by the Temporal Client, which is connected to an instance of the Temporal Server.
 
