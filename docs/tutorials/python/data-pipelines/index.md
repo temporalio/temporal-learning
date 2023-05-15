@@ -109,9 +109,9 @@ Now that you've defined the steps in your data pipeline, create a Worker that wi
 
 ## Create the Worker to host your Workflow and Activities
 
-The Worker component plays a crucial role in our data pipeline, as it is responsible for hosting and executing Workflows and Activities. 
+The Worker component plays a crucial role in your data pipeline by hosting and executing Workflows and Activities. It serves as the backbone of the execution process, responsible for listening to Task Queues and performing the necessary actions in response to incoming tasks.
 
-To set up the Worker and enable the execution of our Workflows and Activities, create a new file called `run_worker.py`, and add the following code to host the Workflows and/or Activities:
+To enable the execution of our Workflows and Activities, you need to set up a Worker. Start by creating a new file called `run_worker.py` and add the following code. This code will define the Worker's behavior, allowing it to host and execute the Workflows and/or Activities associated with your application.
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
 <!--SNIPEND-->
@@ -133,6 +133,8 @@ Now that you've developed a Worker, run the Workflow.
 The file `run_workflow.py` processes the Execution of the Workflow.
 The `run_workflow.py` file serves as a program that facilitates the execution of the Workflow associated with our data pipeline.
 While you can start this through the CLI, this example process and initiates the data processing logic programmatically.
+
+The Workflow is executed by the Temporal Client, which is connected to an instance of the Temporal Server.
 
 Create a new file called `run_workflow.py` and add the following code:
 
