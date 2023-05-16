@@ -35,8 +35,8 @@ origins:
     repo: temporal-ecommerce
   - owner: temporalio
     repo: background-checks
-  - owner: rachfop
-    repo: data-pipeline
+  - owner: temporalio
+    repo: data-pipeline-project-python
 
 targets:
   - docs/tutorials
