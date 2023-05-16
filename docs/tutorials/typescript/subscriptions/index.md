@@ -380,7 +380,7 @@ async function BillingCycle(_customer: Customer) {
   if (!isCanceled) await acts.sendSubscriptionOverEmail(customer);
 }
 
-// standard utility https://docs.temporal.io/typescript/workflows#signals-and-queries-design-patterns
+// standard utility https://docs.temporal.io/dev-guide/typescript/features#signals
 function useState<T = any>(name: string, initialValue: T) {
   const signal = wf.defineSignal<[T]>(name);
   const query = wf.defineQuery<T>(name);
