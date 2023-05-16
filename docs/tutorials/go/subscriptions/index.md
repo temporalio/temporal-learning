@@ -54,9 +54,7 @@ This tutorial will be mocking actual emails and billing, so setup of additional 
 
 ## Create the project
 
-In your code editor, create a new project.
-
-Run `go mod init` to create a Go module file.
+Run `go mod init [PATH]` to create a Go module file.
 
 Run `go mod tidy` to update the Go module file.
 
