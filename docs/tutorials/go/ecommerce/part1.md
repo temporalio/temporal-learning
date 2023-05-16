@@ -23,7 +23,7 @@ To make this possible, new design patterns are introduced that are very differen
 
 Instead of letting your API endpoints talk to a database over the network, they would instead call in-memory _Workflows_ that store state internally.
 Temporal handles persisting the state of your Workflows and distributes your Workflow between Workers as necessary.
-You, as the developer are responsible for implementing [Workflows](https://docs.temporal.io/application-development/foundations?lang=go/#develop-workflows) and [Activities](https://docs.temporal.io/application-development-guide/#develop-activities) as normal Go code.
+You, as the developer are responsible for implementing [Workflows](https://docs.temporal.io/dev-guide/go/foundations#develop-workflows) and [Activities](https://docs.temporal.io/dev-guide/go/foundations#activity-definition) as normal Go code.
 Meanwhile, Temporal handles the data persistence and horizontal scaling for you.
 
 In this blog post, I'll demonstrate how to build a shopping cart using long-living Workflows.
