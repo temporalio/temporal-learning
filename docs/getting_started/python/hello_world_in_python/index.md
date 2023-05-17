@@ -139,7 +139,7 @@ Create the file `workflows.py` in the root of your project and add the following
 
 In this example, the `run` method is decorated with `@workflow.run`, so it's the method that the Workflow will invoke.
 
-This method accepts a string value that will hold the name, and it returns a string. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
+This method accepts a string value that will hold the name, and it returns a string. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/python/foundations#workflow-parameters) section of the Temporal documentation.
 
 :::tip
 
@@ -168,7 +168,7 @@ Create a new file called `activities.py` and add the following code to define a 
 
 The logic within the `say_hello` function creates the string and returns the greeting.
 
-Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your [Activity Definition](https://docs.temporal.io/dev-guide/python/foundations#develop-activities) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/dev-guide/python/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a data class rather than sending multiple input parameters. This will make future updates easier.
 
@@ -283,7 +283,7 @@ Create the file `run_workflow.py` and add the following to connect to the server
 <!--SNIPSTART python-project-template-run-workflow-->
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/application-development/foundations/?lang=python#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
+Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/dev-guide/python/foundations#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
 
 :::tip Specify a Workflow ID
 
