@@ -27,7 +27,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
 
-* [Temporal Application Developers Guide](https://docs.temporal.io/application-development?lang=typescript)
+* [Temporal Application Developers Guide](https://docs.temporal.io/dev-guide/typescript)
 * [Temporal Java SDK API documentation](https://typescript.temporal.io/)
 * [Temporal Java SDK code samples](https://github.com/temporalio/samples-typescript)
 * [Temporal Java SDK on GitHub](https://github.com/temporalio/sdk-typescript)

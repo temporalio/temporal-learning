@@ -39,7 +39,7 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content: 'Our new course <a href="/courses/temporal_101/typescript">Temporal 101 in TypeScript</a> is now available!',
+      content: 'Our new course <a href="/courses/temporal_102/go">Temporal 102 with Go</a> is now available!',
       backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,
@@ -139,6 +139,10 @@ const config = {
             {
               label: "Support Forum",
               href: "https://community.temporal.io/",
+            },
+            {
+              label: 'Ask an expert',
+              href: 'https://pages.temporal.io/ask-an-expert'
             },
           ],
         },

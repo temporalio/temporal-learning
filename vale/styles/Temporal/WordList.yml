@@ -1,3 +1,4 @@
+# Forked from Google and removed Google-specific suggestions.
 extends: substitution
 message: "Use '%s' instead of '%s'."
 link: 'https://developers.google.com/style/word-list'
@@ -17,7 +18,6 @@ swap:
   '(?:WiFi|wifi)': Wi-Fi
   '[\.]+apk': APK
   '3\-D': 3D
-  'Google (?:I\-O|IO)': Google I/O
   'tap (?:&|and) hold': touch & hold
   'un(?:check|select)': clear
   above: preceding
@@ -28,7 +28,6 @@ swap:
   (?i)a\.k\.a|aka: or|also known as
   Android device: Android-powered device
   android: Android
-  API explorer: APIs Explorer
   application: app
   approx\.: approximately
   authN: authentication
@@ -41,14 +40,10 @@ swap:
   check: select
   CLI: command-line tool
   click on: click|click in
-  Cloud: Google Cloud Platform|GCP
-  Container Engine: Kubernetes Engine
   content type: media type
   curated roles: predefined roles
   data are: data is
-  Developers Console: Google API Console|API Console
   disabled?: turn off|off
-  ephemeral IP address: ephemeral external IP address
   fewer data: less data
   file name: filename
   firewalls: firewall rules

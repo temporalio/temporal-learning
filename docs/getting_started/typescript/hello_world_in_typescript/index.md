@@ -117,7 +117,7 @@ Create the `package.json` file in the root of your project and add the following
 
 You should check out a few parts of the `package.json`, and the first is the `scripts` section. These are the `npm` commands you'll use to build, lint, and start your application code.  
 
-Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npm.js/package/nanoid), an `npm` package which you'll use to generate a unique identifier for your Workflow. 
+Next, take a look at the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. There is also [Nanoid](https://npmjs.com/package/nanoid), an `npm` package which you'll use to generate a unique identifier for your Workflow. 
 
 Finally, look through the `devDependencies` section. These are the packages that let you set up a Node.js project with [Nodemon](https://www.npmjs.com/package/nodemon) (a tool that automatically restarts your application when it detects a change in your code), TypeScript, ESLint, and ts-node.
 
@@ -133,7 +133,7 @@ Your project workspace is configured, so you're ready to create your first Tempo
 
 ## Create a Workflow
 
-Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. You can learn more in the [Develop Workflows](https://docs.temporal.io/application-development/foundations?lang=typescript#develop-workflows) section of the Temporal documentation.
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. You can learn more in the [Develop Workflows](https://docs.temporal.io/dev-guide/typescript/foundations/#develop-workflows) section of the Temporal documentation.
 
 To begin your Workflow, create a new subdirectory called `src`:
 
@@ -159,7 +159,7 @@ In this code, the variable `greet` is assigned the value of `proxyActivites`, wh
 The `example` function executes an Activity called `greet`, and the function returns the result of the Activity. You'll create the `greet` function in the next section. 
 
 :::tip
-No matter how many inputs you pass to a Workflow, it's a best practice to use an object. There are some JSON restrictions that you should be aware of, and you can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
+No matter how many inputs you pass to a Workflow, it's a best practice to use an object. There are some JSON restrictions that you should be aware of, and you can learn more about the kinds of inputs you can pass to a Workflow in the [Workflow parameters](https://docs.temporal.io/dev-guide/typescript/foundations#workflow-parameters) section of the Temporal documentation.
 
 :::
 
@@ -175,7 +175,7 @@ For this tutorial, your Activity won't be complex; you'll create an Activity tha
 
 With the Temporal TypeScript SDK, you define Activities similarly to how you define Workflows: using an exportable TypeScript module.
 
-Your Activity Definition can accept input parameters. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=typescript#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your Activity Definition can accept input parameters. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Create the file `activities.ts` in the `src` directory:
 
@@ -287,7 +287,7 @@ A Workflow Id is unique in a namespace and is used for deduplication. Using an i
 
 :::tip Get your results now or later
 
-You can [get the results](https://docs.temporal.io/application-development/foundations?lang=typescript#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by logging the output of the `example` Workflow which in turn calls the `greet` Activity. 
+You can [get the results](https://docs.temporal.io/dev-guide/typescript/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by logging the output of the `example` Workflow which in turn calls the `greet` Activity. 
 ::: 
 
 Now that your client code is written, it's time for you to use this code to start your Workflow Execution. 

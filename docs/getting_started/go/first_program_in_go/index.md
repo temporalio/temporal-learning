@@ -44,7 +44,7 @@ Before starting this tutorial:
 
 ## ![](/img/icons/workflow.png) Application overview
 
-The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/application-development/foundations/?lang=go#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=go#develop-activities).
+The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/dev-guide/go/foundations/#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/dev-guide/go/foundations/#develop-activities).
 
 To run the application, you do the following:
 
@@ -257,7 +257,7 @@ In this project, the file `worker/main.go` contains the code for the Worker. Lik
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
 
-Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution. 
+Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 

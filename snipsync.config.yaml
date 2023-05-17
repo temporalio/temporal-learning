@@ -37,6 +37,10 @@ origins:
     repo: background-checks
   - owner: temporalio
     repo: subscription-workflow-go
+  - owner: temporalio
+    repo: data-pipeline-project-python
+  - owner: temporalio
+    repo: email-subscription-project-python
 
 targets:
   - docs/tutorials
