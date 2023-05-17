@@ -15,18 +15,17 @@ image: /img/temporal-logo-twitter-card.png
 ### Introduction
 
 When it comes to building data pipelines, choosing the right workflow model is crucial for achieving reliability, scalability, and maintainability.
-Temporal makes writing data pipelines easy with Workflows and Activities.
+Temporal makes writing data pipelines less complex  with Workflows and Activities.
 
-With Temporal, you can retrieve data from a source, process the information with steps, and output the flow of information to a destination with just code. Meaning all of your developer best practices can be implemented, tested, and ran as needed.
-Furthermore, Temporal offers built-in resilience and fault tolerance features that can handle unexpected failures and issues seamlessly.
+With Temporal, you can retrieve data from a source, process the information with steps, and output the flow of information to a destination, all using code. This means you can implement, test, and execute all your developer best practices as required. Furthermore, Temporal offers built-in resilience and fault tolerance features that can handle unexpected failures and issues seamlessly.
 
-In this tutorial, you'll build a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
+In this tutorial you'll build a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
 
 Then, to improve your understanding, you'll schedule your Workflows on an interval timer to automate the execution of these steps.
 
-By the end of this tutorial, you'll have a comprehensive understanding of how to implement Workflow as code-based data pipelines using Temporal's features; such as retries, timeouts, and schedules to ensure your pipeline's resilience and fault tolerance.
+By the end of this tutorial, you'll have a comprehensive understanding of how to implement code-based data pipelines using Temporal's features, such as Retries, Timeouts, and Schedules to ensure your pipeline's resilience and fault tolerance.
 
-All the code for this tutorial is stored on GitHub in the [data-pipeline-project-python](https://github.com/temporalio/data-pipeline-project-python) repository.
+You can find the completed application on GitHub in the [data-pipeline-project-python](https://github.com/temporalio/data-pipeline-project-python) repository.
 
 ## Prerequisites
 
@@ -111,7 +110,7 @@ Now that you've defined the steps in your data pipeline, create a Worker that wi
 
 The Worker component plays a crucial role in your data pipeline by hosting and executing Workflows and Activities. It serves as the backbone of the execution process, responsible for listening to Task Queues and performing the necessary actions in response to incoming tasks.
 
-To enable the execution of our Workflows and Activities, you need to set up a Worker. Start by creating a new file called `run_worker.py` and add the following code. This code will define the Worker's behavior, allowing it to host and execute the Workflows and/or Activities associated with your application.
+To enable the execution of your Workflows and Activities, you need to set up a Worker. Start by creating a new file called `run_worker.py` and add the following code. This code will define the Worker's behavior, allowing it to host and execute the Workflows and/or Activities associated with your application.
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
 <!--SNIPEND-->
@@ -128,7 +127,7 @@ The Worker listens and polls on a single Task Queue. A Worker Entity contains bo
 
 Now that you've developed a Worker, run the Workflow.
 
-## Create your Workflow to execute the data pipeline
+## Run the Workflow to execute the data pipeline
 
 The `run_workflow.py` file serves as a program that facilitates the execution of the Workflow associated with our data pipeline.
 While you can run the Client through the CLI, this example process and initiates the data processing logic programmatically.
@@ -151,14 +150,18 @@ For this example, `stories` is processed by a [Pandas Data Frame](https://pandas
 
 The code runs in an `asyncio` event loop.
 
-### Results
+To run your code, open two terminal windows. 
 
-To run your code, open two terminal windows and run the following:
+In the first terminal, run this command to start the worker:
 
 ```command
-# terminal one
 python run_worker.py
-# terminal two
+```
+
+
+In the second terminal, run this command to start the workflow:
+
+```command
 python run_workflow.py
 ```
 
@@ -229,7 +232,6 @@ Modify the interval timer from `hours=10` to `minutes=1` to see the Schedule Wor
 Run the following command to start the Schedule.
 
 ```command
-# terminal two
 python schedule_workflow.py
 ```
 
@@ -263,7 +265,6 @@ Alternatively, you can delete a Schedule from the CLI.
 Run the following command to delete the Schedule.
 
 ```command
-# terminal two
 temporal schedule delete --schedule-id workflow-schedule-id
 ```
 
