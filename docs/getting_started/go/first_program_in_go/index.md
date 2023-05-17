@@ -257,7 +257,7 @@ In this project, the file `worker/main.go` contains the code for the Worker. Lik
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
 
-Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution. 
+Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
