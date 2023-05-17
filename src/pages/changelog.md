@@ -1,5 +1,15 @@
 # Changelog
 
+## 2023-05-17
+
+* Adds new Python tutorials
+    * Data Pipeline
+    * Email Subscription
+* Upgrades Docusaurus to 2.4.1
+
+## 2023-05-02
+* Adds Temporal 102 with Go course.
+
 ## 2023-03-13
 
 * Adds TypeScript 101 course
