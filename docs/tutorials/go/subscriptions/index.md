@@ -43,7 +43,12 @@ Check out the [Subscription Workflow in the Go repository](https://github.com/te
 
 ## Prerequisites 
 
-Before starting this tutorial, make sure that you've set up:
+
+Before starting this tutorial:
+
+- [Set up a local development environment for developing Temporal Applications using the Go programming language](https://learn.temporal.io/getting_started/go/dev_environment/)
+- Follow the tutorial [Build your first Temporal Application in Go](https://learn.temporal.io/getting_started/go/hello_world_in_go/).
+
 - [Temporal Server](https://docs.temporal.io/clusters#temporal-server)
 - [Temporal Go SDK](https://pkg.go.dev/go.temporal.io/sdk)
 - [Go 1.17+](https://go.dev/dl/)
