@@ -22,7 +22,6 @@ The application will do the following:
     - The end of the subscription period has been reached.
     - The user has chosen to unsubscribe.
 
-The focus of this tutorial is implementing an email subscription application with Temporal’s [Workflows](https://docs.temporal.io/workflows), [Activities](https://docs.temporal.io/activities), and [Queries](https://docs.temporal.io/workflows#query).
 This is achieved by breaking down project requirements into Temporal logic:
 
 - A [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) that contains the logic needed to start and end the subscription. [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution) are created per email address.
@@ -91,10 +90,15 @@ import "time"
 Next, create a struct for `Subscription`. 
 This data type contains the user's email information, as well as the subscription progress.
 
-<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["19-23"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["12-17"]}-->
 [subscribe.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscribe.go)
 ```go
 // ...
+type Subscription struct {
+	EmailInfo    EmailInfo
+	SubscriptionPeriod time.Duration
+	MaxSubscriptionPeriods int
+}
 ```
 <!--SNIPEND-->
 
@@ -102,15 +106,15 @@ This data type contains the user's email information, as well as the subscriptio
 Let's start with `EmailInfo`.
 This struct contains the user's email address, along with the message they'll be sent.
 
-<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["5-9"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["6-10"]}-->
 [subscribe.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscribe.go)
 ```go
 // ...
-// EmailInfo is the data that the SendContentEmail uses to send the message.
 type EmailInfo struct {
 	EmailAddress string
 	Mail string
 }
+
 ```
 <!--SNIPEND-->
 
@@ -464,14 +468,15 @@ func main() {
 Create an `index` handler.
 This handler creates an input field to collect the email needed to kick off the Workflow.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-20"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["17-21"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-// create the index handler, accessed at localhost:8080
+// create the index handler, accessed at localhost:4000
 func indexHandler(w http.ResponseWriter, _ *http.Request) {
 	_, _ = fmt.Fprint(w, "<h1>Sign up here!")
 	_, _ = fmt.Fprint(w, "<form method='post' action='subscribe'><input required name='email' type='email'><input type='submit' value='Subscribe'>")
+}
 ```
 <!--SNIPEND-->
 
@@ -484,23 +489,23 @@ The email generates a unique [Workflow ID](https://docs.temporal.io/workflows#wo
 
 Create a parser for the handler.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["22-28"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["24-30"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-
-// create subscribe handler, which collects the email in the index handler form
 func subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		// in case of any error
 		_, _ = fmt.Fprint(w, "<h1>Error processing form</h1>")
+		return
+	}
 ```
 <!--SNIPEND-->
 
 Get the address from the form, and configure your Workflow Options.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["30-42"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["30-45"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
@@ -517,14 +522,18 @@ Get the address from the form, and configure your Workflow Options.
 	// use the email as the id in the workflow.
 	workflowOptions := client.StartWorkflowOptions{
 		ID:        "subscribe_email_" + email,
+		TaskQueue: taskQueueName,
+		WorkflowExecutionErrorWhenAlreadyStarted: true,
+	}
 ```
 <!--SNIPEND-->
 
 Define and execute the Workflow within the handler.
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["44-64"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["44-65"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
+		WorkflowExecutionErrorWhenAlreadyStarted: true,
 	}
 
 	// Define the subscription
@@ -533,7 +542,7 @@ Define and execute the Workflow within the handler.
 			EmailAddress: email,
 			Mail: "",
 		},
-			SubcriptionPeriod: 5,
+			SubscriptionPeriod: 5,
 			MaxSubscriptionPeriods: 12,
 	}
 
@@ -557,18 +566,20 @@ For this app, you'll use a switch case to handle the response and provide new in
 
 Create a new function. 
 Define the two cases.
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["68-75"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["68-77"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-// create unsubscribe handler, accessed at localhost:8080/unsubscribe
+
+// create unsubscribe handler, accessed at localhost:4000/unsubscribe
 func unsubscribeHandler(w http.ResponseWriter, r *http.Request) {
 	
 	switch r.Method {
 
 	case "GET":
 		// create input field for the email
-		// http.ServeFile(w, r, "form.html")
+		_, _ = fmt.Fprint(w, "<h1>Unsubscribe</h1><form method='post' action='/unsubscribe'><input required name='email' type='email'><input type='submit' value='Unsubscribe'>")
+
 ```
 <!--SNIPEND-->
 
@@ -621,16 +632,15 @@ This Query has two endpoints: `/getdetails` and `/showdetails`.
 
 Like `/unsubscribe`, the `/getdetails` handler incorporates a switch case for getting an email address and receiving information from a Workflow Execution.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["108-113"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["112-116"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-
-}
-
-// create part of the Query handler, accessed at localhost:8080/getdetails
 func getDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprint(w, "<h1>Get description details here!</h1>")
+	_, _ = fmt.Fprint(w, "<form method='get' action='/details'><input required name='email' type='email'><input type='submit' value='GetDetails'>")
+}
+
 ```
 <!--SNIPEND-->
 
@@ -640,13 +650,10 @@ The `/showdetails` handler uses the information gathered from `/getdetails` to r
 
 Define the variables needed to Query the Workflow, and then handle the result. 
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["115-138"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["118-144"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-}
-
-// create part of the Query handler that returns information at localhost:8080/details
 func showDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the query string
 	queryValues, err := url.ParseQuery(r.URL.RawQuery)
@@ -668,6 +675,12 @@ func showDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var result string
 	if err := resp.Get(&result); err != nil {
+		log.Fatalln("Unable to decode Query result", err)
+	}
+	log.Println("Received Query result", "Result: " + result)
+	fmt.Fprint(w, "Your details have been retrieved. Results: " + result)
+}
+// set up handlers, Client, port, Task Queue name.
 ```
 <!--SNIPEND-->
 
@@ -722,11 +735,11 @@ Initiate the Activities and create a Subscription struct called `testDetails`.
 // ...
 
 	testDetails := Subscription{
-		EmailInfo{
+		EmailInfo {
 			EmailAddress: "example@temporal.io",
 			Mail: "",
 		},
-		SubscriptionPeriod: 5 * time.Minute,
+		SubscriptionPeriod: ,
 		MaxSubscriptionPeriods: 12,
 	}
 
@@ -736,7 +749,7 @@ Initiate the Activities and create a Subscription struct called `testDetails`.
 <!--SNIPEND-->
 
 Register the Workflow and Activities.
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["28-33"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["28-31"]}-->
 [subscription_test.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscription_test.go)
 ```go
 // ...
@@ -744,18 +757,18 @@ Register the Workflow and Activities.
 	env.RegisterActivity(activities.SendCancellationEmail)
 	env.RegisterActivity(activities.SendSubscriptionEndedEmail)
 	
-	// Execute Workflow
-	env.ExecuteWorkflow(SubscriptionWorkflow, testDetails)
 ```
 <!--SNIPEND-->
 
 Finally, execute the Workflow.
 Require the test to not return an error.
 
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["35-37"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["33-36"]}-->
 [subscription_test.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscription_test.go)
 ```go
 // ...
+	env.ExecuteWorkflow(SubscriptionWorkflow, testDetails)
+	require.NoError(t, env.GetWorkflowError())
 }
 
 ```
