@@ -39,8 +39,6 @@ You can view the user's entire process through the Temporal Web UI.
 
 By the end of this tutorial, you'll have a clear understanding of how to use Temporal for creating and managing long-running Workflows.
 
-### Working sample
-
 Check out the [Subscription Workflow in the Go repository](https://github.com/temporalio/subscription-workflow-go) for a full view of all the tutorial's code.
 
 ## Prerequisites 
@@ -133,9 +131,9 @@ type Periods struct {
 ```
 <!--SNIPEND-->
 
-Now that our data types have been defined, you can now define the Workflow.
+Now that your data types have been defined, you can now define the Workflow.
 
-### Writing the Workflow Definition
+## Writing the Workflow Definition
 
 Create a new file called `workflow.go`.
 This will soon contain the logic needed to facilitate the Subscription.
@@ -174,13 +172,12 @@ func SubscriptionWorkflow(ctx workflow.Context, subscription Subscription) error
 			subscription.EmailInfo.EmailAddress, subscriptionPeriodNum, subscription.Periods.MaxSubscriptionPeriods), nil
  		return queryResult, nil
 	})
-	if e != nil {
+	if err != nil {
 		logger.Info("SetQueryHandler failed: " + e.Error())
 		return e 
 	}
 
-	var err error
-	// set Activity Options. Timeout can be set to a longer timespan (such as a month)
+	// create Activity Options variable. Timeout can be set to a longer timespan (such as a month)
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 10 * time.Minute,
 		WaitForCancellation: true,
@@ -241,9 +238,9 @@ Finish off the Workflow Definition with a for-loop to send Subscription emails u
 	logger.Info("Sending welcome email to " + subscription.EmailInfo.EmailAddress)
 
 	data := EmailInfo {
-				EmailAddress: subscription.EmailInfo.EmailAddress,
-				Mail:         "Welcome! Looks like you've been signed up!",
-		}
+			EmailAddress: subscription.EmailInfo.EmailAddress,
+			Mail:         "Welcome! Looks like you've been signed up!",
+	}
 			
 	// send welcome email, increment billing period
 	err = workflow.ExecuteActivity(ctx, activities.SendWelcomeEmail, data).Get(ctx, nil)
@@ -475,10 +472,11 @@ When viewed in the browser, it'll create an input field to collect the email nee
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-// create the index handler, accessed at localhost:8080
+// create the index handler, accessed at localhost:4000
 func indexHandler(w http.ResponseWriter, _ *http.Request) {
 	_, _ = fmt.Fprint(w, "<h1>Sign up here!</h1>")
 	_, _ = fmt.Fprint(w, "<form method='post' action='subscribe'><input required name='email' type='email'><input type='submit' value='Subscribe'>")
+}
 ```
 <!--SNIPEND-->
 
@@ -585,7 +583,6 @@ After the Workflow is found for the given email address, let the user know that 
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
-		// http.ServeFile(w, r, "form.html")
 		_, _ = fmt.Fprint(w, "<h1>Unsubscribe</h1><form method='post' action='/unsubscribe'><input required name='email' type='email'><input type='submit' value='Unsubscribe'>")
 
 	case "POST":
