@@ -138,6 +138,9 @@ Now that you've defined your data types, you can define the Workflow.
 
 ## Writing the Workflow Definition
 
+A Workflow Definition contains a sequence of steps for the application to run through Workflow Executions.
+The Subscription Workflow will include the logic needed to successfully start, run, and end individual subscriptions.
+
 Create a new file called `workflow.go`.
 This will soon contain the logic needed to facilitate the Subscription.
 
