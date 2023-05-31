@@ -134,7 +134,7 @@ type Subscription struct {
 ```
 <!--SNIPEND-->
 
-Now that you've defined your data types, you can define the Workflow.
+Now that you've defined your data types, define the Workflow.
 
 ## Writing the Workflow Definition
 
