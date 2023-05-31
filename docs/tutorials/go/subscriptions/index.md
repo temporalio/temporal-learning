@@ -69,7 +69,7 @@ Run `go mod tidy` again after adding new imports to the application.
 ## Develop the Workflow
 
 A Workflow starts with a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), a sequence of steps defined in code that are carried out in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
-Before writing the Workflow Definition, identify and define the data objects to be used in our application.
+Before writing the Workflow Definition, identify and define the data objects to be used in your application.
 
 ## Data objects
 
