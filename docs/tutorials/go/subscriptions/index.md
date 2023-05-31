@@ -334,7 +334,7 @@ func (a *Activities) SendSubscriptionEmail(ctx context.Context, emailInfo EmailI
 ```
 <!--SNIPEND-->
 
-These Activities can be customized to call an Email API to send actual emails.
+These Activities can be customized to call an email API to send actual emails.
 Of course, the Activities won't run if they're not registered to a Worker.
 Now, you'll build the Worker Process.
 
