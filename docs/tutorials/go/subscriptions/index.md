@@ -119,7 +119,7 @@ type EmailInfo struct {
 <!--SNIPEND-->
 
 The other data type you'll create is `Periods`. 
-This struct contains information about how long the Subscription lasts.
+This struct contains information about how long the subscription lasts.
 
 <!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["11-16"]}-->
 [subscribe.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscribe.go)
