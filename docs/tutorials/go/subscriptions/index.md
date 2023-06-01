@@ -2,7 +2,7 @@
 title: "Build an Email Subscription App with Temporal and Go"
 sidebar_position: 1
 keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
-description: "Tutorial for building a Subscription application with Temporal and Go."
+description: "Tutorial for building a subscription application with Temporal and Go."
 last_update:
   date: 2023-05-03
 image: /img/temporal-logo-twitter-card.png
@@ -10,7 +10,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-In this tutorial, you'll write a [Workflow](https://docs.temporal.io/workflows) for a Subscription application.
+In this tutorial, you'll write a [Workflow](https://docs.temporal.io/workflows) for a subscription application.
 The application sends emails at specified time intervals until the subscription's limit has been reached.
 
 The application will do the following:
@@ -38,7 +38,7 @@ The process is viewed through the Temporal Web UI.
 
 By the end of this tutorial, you'll understand how to use Temporal for creating and managing long-running Workflows.
 
-Check out the [Subscription Workflow in the Go repository](https://github.com/temporalio/subscription-workflow-go) for a full view of all the tutorial's code.
+Check out the [subscription Workflow in the Go repository](https://github.com/temporalio/subscription-workflow-go) for a full view of all the tutorial's code.
 
 ## Prerequisites 
 
@@ -139,10 +139,10 @@ Now that you've defined your data types, define the Workflow.
 ## Writing the Workflow Definition
 
 A Workflow Definition contains a sequence of steps for the application to run through Workflow Executions.
-The Subscription Workflow will include the logic needed to successfully start, run, and end individual subscriptions.
+The subscription Workflow will include the logic needed to successfully start, run, and end individual subscriptions.
 
 Create a new file called `workflow.go`.
-This will soon contain the logic needed to facilitate the Subscription.
+This will soon contain the logic needed to facilitate the subscription.
 
 Define your variables and initiate a logger.
 Make sure to establish your Workflow with Activity Options.
@@ -223,7 +223,7 @@ Next, create a function to handle a [cancellation](https://docs.temporal.io/acti
 		// information for the newly-ended subscription email
 		data := EmailInfo{
 			EmailAddress: subscription.EmailInfo.EmailAddress,
-			Mail:         "You have been unsubscribed from the Subscription Workflow. Good bye.",
+			Mail:         "You have been unsubscribed from the subscription Workflow. Good bye.",
 		}
 		logger.Info("Sending unsubscribe email", "EmailAddress", subscription.EmailInfo.EmailAddress)
 		// send the cancelled subscription email
@@ -234,7 +234,7 @@ Next, create a function to handle a [cancellation](https://docs.temporal.io/acti
 ```
 <!--SNIPEND-->
 
-Finish off the Workflow Definition with a for-loop to send Subscription emails until the `MaxBillingPeriods` amount is reached.
+Finish off the Workflow Definition with a for-loop to send subscription emails until the `MaxBillingPeriods` amount is reached.
 
 <!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["74-88", "90-118"]}-->
 [workflow.go](https://github.com/temporalio/subscription-workflow-go/blob/master/workflow.go)
@@ -260,7 +260,7 @@ Finish off the Workflow Definition with a for-loop to send Subscription emails u
 	for ; subscriptionPeriod < subscription.MaxSubscriptionPeriods; subscriptionPeriod++ {
 		data := EmailInfo{
 			EmailAddress: subscription.EmailInfo.EmailAddress,
-			Mail:         "This is yet another email in the Subscription Workflow.",
+			Mail:         "This is yet another email in the subscription Workflow.",
 		}
 
 		err = workflow.ExecuteActivity(ctx, activities.SendSubscriptionEmail, data).Get(ctx, nil)
@@ -415,7 +415,7 @@ Time to build a web server to interact with the app!
 
 The web server allows the user to communicate with the Temporal Application, and also serves as the entry point for starting the Workflow Execution.
 
-There are several handlers that make the Subscription possible. These handlers allow you to subscribe, unsubscribe, and get details about the Workflow.
+There are several handlers that make the subscription possible. These handlers allow you to subscribe, unsubscribe, and get details about the Workflow.
 An index handler exists as well.
 
 Create a `gateway` folder with the file `main.go`.
@@ -727,7 +727,7 @@ Create an instance of TestSuite and initiate the environment.
 ```
 <!--SNIPEND-->
 
-Initiate the Activities and create a Subscription struct called `testDetails`.
+Initiate the Activities and create a subscription struct called `testDetails`.
 
 <!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["15-26"]}-->
 [subscription_test.go](https://github.com/temporalio/subscription-workflow-go/blob/master/subscription_test.go)
@@ -775,7 +775,6 @@ Require the test to not return an error.
 
 ## Conclusion
 
-This tutorial demonstrates how to build a web application using Temporal and Go. 
-Through the use of Temporal's Workflows, Activities, and Queries, the tutorial shows how to create a web server that interacts with Temporal to manage the email subscription process.
+This tutorial shows how to create a web server that interacts with Temporal to manage the email subscription process.
 
 With this knowledge, you'll be able to use more complex Workflows and Activities to create even stronger applications.
