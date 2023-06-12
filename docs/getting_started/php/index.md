@@ -19,7 +19,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
-## Review Documentation and other resources
+## Review documentation and other resources
 
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
 
