@@ -39,7 +39,7 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content: 'Our new course <a href="/courses/temporal_102/go">Temporal 102 with Go</a> is now available!',
+      content: 'Get your tickets for <a href="https://temporal.io/replay">Replay 2023</a>!',
       backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,
