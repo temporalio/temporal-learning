@@ -30,8 +30,7 @@ Prerequisites:
 
 To be successful in this course, you should have experience writing backend applications that rely on external APIs.
 
-This course uses the Java programming language. Previous Java experience is helpful, but not required.
+This course uses the Java programming language. Previous Java experience is  required.
 
-This course is coming soon.
+ <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:140">Go to Course</a> 
 
-<a className="button button--primary" href="https://pages.temporal.io/get-updates-education">Get notified when we launch this course!</a>
