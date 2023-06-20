@@ -183,7 +183,7 @@ Unlike many modern applications that require complex leader election processes a
 1. Start the Workflow again.
 2. Verify the Workflow is running in the UI.
 3. Shut down the Temporal server by either using 'Ctrl+C' or via the Docker dashboard.
-5. After the Temporal cluster has stopped, restart it. Remember to specify the same database file if you are using Temporal CLI.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, remember to specify the same database file.
 
 Visit the UI. Your Workflow is still listed.
 
