@@ -10,5 +10,6 @@ image: /img/temporal-logo-twitter-card.png
 Practice building specific applications with Temporal by following these hands-on projects.
 
 * [Go tutorials](go/index.md)
-* [TypeScript tutorials](typescript/index.md)
 * [PHP tutorials](php/index.md)
+* [Python tutorials](python/index.md)
+* [TypeScript tutorials](typescript/index.md)

@@ -6,6 +6,8 @@ description: "Build Temporal applications with these Go tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+
 Go is an open source programming language that offers built-in concurrency and a robust standard library. It's popular for building microservices and command line tools.
 
 Temporal's [Go SDK](https://docs.temporal.io/dev-guide/go/foundations#add-your-sdk) lets you use Go to build applications that take advantage of Temporal's features.
