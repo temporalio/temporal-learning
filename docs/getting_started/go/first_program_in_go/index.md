@@ -200,7 +200,22 @@ You can make the call [synchronously or asynchronously](https://docs.temporal.io
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run `start/main.go` from the project root using the following command:
+Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+
+:::note
+If you are using Temporal CLI, start your server and specifiy a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+
+Start Temporal CLI with the following command:
+
+```command
+temporal server start-dev --db-filename your_temporal.db --ui-port 8080
+```
+
+When you stop and start the server again, remember to specify the same database file each time.
+
+:::
+
+Then run `start/main.go` from the project root using the following command:
 
 ```command
 go run start/main.go
@@ -326,9 +341,9 @@ Try it out by following these steps:
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run starter/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
-5. After the Temporal cluster has stopped, restart it and visit the UI.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
 
-Your Workflow is still listed:
+Visit the UI. Your Workflow is still listed:
 
 ![The second Workflow appears in the list of Workflows](images/second_workflow.png)
 
