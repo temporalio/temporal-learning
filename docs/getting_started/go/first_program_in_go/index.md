@@ -341,7 +341,7 @@ Try it out by following these steps:
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run starter/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
-5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, remember to specify the same database file.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
 
 Visit the UI. Your Workflow is still listed:
 
