@@ -1,9 +1,9 @@
 ---
 title: Temporal 101 with Python
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: Temporal 101 with Python
 public: false
-draft: true
+draft: false
 tags: [courses, Python]
 custom_edit_url: null
 hide_table_of_contents: true
