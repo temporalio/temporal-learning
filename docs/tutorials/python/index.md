@@ -1,10 +1,12 @@
 ---
 title: "Python tutorials"
-sidebar_position: 4
+sidebar_position: 3
 keywords: [python,tutorial,temporal,workflows,flask,pytest]
 description: "Build Temporal applications with these Python tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
+
+![Temporal Python SDK](/img/sdk_banners/banner_python.png)
 
 Python is a programming language that lets you work quickly and integrate systems more effectively. It's popular for building and scripting applications.
 

@@ -10,6 +10,8 @@ description: In this tutorial you'll build a realistic monthly subscription paym
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />

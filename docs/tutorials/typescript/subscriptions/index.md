@@ -10,6 +10,8 @@ description: In this tutorial, we will tour all of the Workflow APIs you should 
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />
