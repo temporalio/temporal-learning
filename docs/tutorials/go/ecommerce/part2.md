@@ -12,6 +12,8 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />

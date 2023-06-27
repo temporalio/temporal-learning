@@ -7,9 +7,9 @@ pagination_next: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-Practice building specific applications with Temporal by following these hands-on projects.
+Go beyond code samples and individual concepts as you practice building specific applications with Temporal with step-by-step tutorials.
 
-* [Go tutorials](go/index.md)
-* [PHP tutorials](php/index.md)
-* [Python tutorials](python/index.md)
-* [TypeScript tutorials](typescript/index.md)
+import DocCardList from '@theme/DocCardList';
+import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
+
+<DocCardList items={useCurrentSidebarCategory().items}/>
