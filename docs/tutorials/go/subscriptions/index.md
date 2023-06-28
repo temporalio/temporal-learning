@@ -102,7 +102,7 @@ type EmailDetails struct {
 ```
 <!--SNIPEND-->
 
-Define any constants in this file as well.
+Define your constants in this file as well.
 For this tutorial, you'll define the application's access port as a constant, along with the Task Queue name.
 
 <!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["3-4"]}-->
@@ -124,21 +124,21 @@ The subscription Workflow will include the logic needed to successfully start, r
 Create a new file called `workflow.go`.
 Import libraries and create the function `SubscriptionWorkflow()`.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["1-13"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["2-13"]}-->
 
 Set a logger and establish the `duration` that the Workflow sleeps between emails.
 This can be any span of time from seconds to years.
 For this tutorial, keep it to minutes or seconds.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["14-17"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["14-18"]}-->
 
 Add a Query Handler to receive detail requests and return Workflow information.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["18-23"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["19-24"]}-->
 
 Set the Workflow's Activity Options.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["27-31"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["26-30"]}-->
 
 Next, create a function to handle [cancellations](https://docs.temporal.io/activities#cancellation).
 
@@ -176,11 +176,11 @@ Since your Workflow must welcome new subscribers, you'll define an update for a 
 Define the update in the variable `data`, signifying the data passed from the Activity to the Workflow.
 Execute the Activity for the first email.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["56-70"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["56-69"]}-->
 
 Finish off the Workflow Definition with a for-loop to send subscription emails until the user cancels their subscription.
 
-<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["72-94", "90-118"]}-->
+<!--SNIPSTART subscription-workflow-go-workflow {"selectedLines": ["72-93"]}-->
 [workflow.go](https://github.com/temporalio/subscription-workflow-go/blob/master/workflow.go)
 ```go
 // ...
@@ -206,13 +206,6 @@ Finish off the Workflow Definition with a for-loop to send subscription emails u
 	}
 	return nil
 }
-
-// ...
-		}
-	}
-	return nil
-}
-
 ```
 <!--SNIPEND-->
 
@@ -257,7 +250,7 @@ To execute the code defined so far, you must create a [Worker Process](https://d
 
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
-<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["1-9"]}-->
+<!--SNIPSTART subscription-workflow-go-worker {"selectedLines": ["1-11"]}-->
 [worker/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/worker/main.go)
 ```go
 package main
@@ -269,6 +262,8 @@ import (
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 )
+
+func main() {
 ```
 <!--SNIPEND-->
 
