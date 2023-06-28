@@ -20,6 +20,16 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'temporal', // Usually your GitHub org/user name.
   projectName: 'temporal-learning', // Usually your repo name.
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'preload',
+        href: 'https://iq.temporal.io',
+        as: 'document',
+      },
+    },
+  ],
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -191,14 +201,6 @@ const config = {
           ],
         },
       ],
-    },
-    algolia: {
-      apiKey: "4a2fa646f476d7756a7cdc599b625bec",
-      indexName: "temporal",
-      externalUrlRegex: 'temporal\\.io',
-      // contextualSearch: true, // Optional, If you have different version of docs etc (v1 and v2) doesn't display dup results
-      appId: "T5D6KNJCQS", // Optional, if you run the DocSearch crawler on your own
-      // algoliaOptions: {}, // Optional, if provided by Algolia
     },
   },
   presets: [
