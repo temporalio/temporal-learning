@@ -10,6 +10,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 import { ResponsivePlayer } from '@site/src/components'
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
@@ -155,32 +159,36 @@ public class InitiateMoneyTransfer {
 ```
 <!--SNIPEND-->
 
+Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+
+:::note
+If you are using Temporal CLI, start your server and specifiy a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+
+Start Temporal CLI with the following command:
+
+```command
+temporal server start-dev --db-filename your_temporal.db --ui-port 8080
+```
+
+When you stop and start the server again, remember to specify the same database file each time.
+
+:::
+
+
 Run the `InitiateMoneyTransfer` class within IntelliJ or from the project root using the following command:
 
 ```command
 ./gradlew initiateTransfer
 ```
 
-<details>
-<summary>Troubleshooting</summary>
 
-If you get a `Connection refused: /127.0.0.1:7233` error, make sure the [Temporal server is running](https://docs.temporal.io/clusters/quick-install).
+Next you'll explore one of the unique value propositions Temporal offers: application state visibility. 
 
-If you get `ALREADY_EXISTS: Workflow execution is already running. WorkflowId: money-transfer-workflow, RunId:<...>`, stop your Temporal docker-compose process [started earlier](/getting_started/java/dev_environment/index.md) and recreate the Temporal docker-compose containers using the following commands:
+## View the state of the Workflow with the Temporal Web UI
 
-```command
-docker-compose rm -f
-```
+Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow execution.
 
-```command
-docker-compose up
-```
-
-</details>
-
-### State visibility
-
-OK, now it's time to check out one of the really cool value propositions offered by Temporal: application state visibility. Visit the [Temporal Web UI](http://localhost:8080) where you will see your Workflow listed.
+Visit the [Temporal Web UI](http://localhost:8080) where you will see your Workflow listed.
 
 Next, click the "Run Id" for your Workflow. Now we can see everything we want to know about the execution of the Workflow code we told the server to track, such as what parameter values it was given, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
 
@@ -267,9 +275,9 @@ Unlike many modern applications that require complex leader election processes a
 1. Start the Workflow again.
 2. Verify the Workflow is running in the UI.
 3. Shut down the Temporal server by either using 'Ctrl+C' or via the Docker dashboard.
-4. After the Temporal server has stopped, restart it and visit the UI.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
 
-Your Workflow is still there!
+Visit the UI. Your Workflow is still listed.
 
 ### Recover from an Activity error
 

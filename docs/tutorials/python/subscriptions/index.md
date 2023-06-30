@@ -10,6 +10,8 @@ description: This tutorial teaches you how to implement an email subscription ap
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+
 ### Introduction
 
 In this tutorial, you'll build an email subscription web application using Temporal and Python. You'll create a web server using the [Flask](https://flask.palletsprojects.com/) framework to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and support.

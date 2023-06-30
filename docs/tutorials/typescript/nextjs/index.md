@@ -10,6 +10,8 @@ description: Explore how Temporal integrates into an existing Next.js applicatio
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />

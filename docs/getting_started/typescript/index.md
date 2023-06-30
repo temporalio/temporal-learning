@@ -23,7 +23,7 @@ Write a program from the ground up with tests.
 
 In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's Go SDK to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
 
-## Review Documentation and other resources
+## Review documentation and other resources
 
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
 
