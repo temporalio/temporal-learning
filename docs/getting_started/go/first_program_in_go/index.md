@@ -53,7 +53,7 @@ To run the application, you do the following:
 
 The following diagram illustrates what happens when you start the Workflow:
 
-![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
+![High level project design](/img/temporal-high-level-application-design.png)
 
 The Temporal Server doesn't run your code. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
