@@ -745,6 +745,6 @@ Follow up with a cancellation request.
 
 ## Conclusion
 
-This tutorial shows how to create a web server that interacts with Temporal to manage the email subscription process.
+This tutorial creates a web server that interacts with Temporal to manage an email subscription process, that users can subscribe, unsubscribe, and lookup the status of their subscription details with.
 
 With this knowledge, you'll be able to use more complex Workflows and Activities to create even stronger applications.
