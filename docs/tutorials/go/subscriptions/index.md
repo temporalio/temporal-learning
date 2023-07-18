@@ -44,7 +44,7 @@ Before starting this tutorial:
 - Install the latest versions of:
 	- [Temporal Server](https://docs.temporal.io/clusters#temporal-server)
 	- [Temporal Go SDK](https://pkg.go.dev/go.temporal.io/sdk)
-	- [Go 1.17+](https://go.dev/dl/)
+	- [Go](https://go.dev/dl/)
 - [Set up a local development environment for Temporal and Go](https://learn.temporal.io/getting_started/go/dev_environment/).
 - Complete the [Hello World](https://learn.temporal.io/getting_started/go/hello_world_in_go/).
 
