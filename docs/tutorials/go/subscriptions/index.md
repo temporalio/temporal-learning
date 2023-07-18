@@ -71,6 +71,7 @@ Before writing the Workflow Definition, define the data object that your applica
 
 Go uses **structs** as data objects. Structs are data types that contain multiple fields within it. 
 Use structs to organize each subscription's user and duration information.
+This practice ensures backward compatibility with Workflows.
 
 Start by creating a file called `subscribe.go`.
 
@@ -383,7 +384,7 @@ Finally, tell the Worker to listen to the [Task Queue](https://docs.temporal.io/
 <!--SNIPEND-->
 
 All the application components are there, but they aren't running yet. 
-Time to build a web server to interact with the app.
+Build a web server with [Go's HTTP library](https://pkg.go.dev/net/http) to interact with the app.
 
 ## Build the web server
 
@@ -558,7 +559,7 @@ Define the two cases.
 <!--SNIPEND-->
 
 Canceling the Workflow will happen in your "DELETE" case.
-After canceling the Workflow for the given email address, tell the user that their subscription has ended.
+After cancelling the Workflow for the given email address, tell the user that their subscription has ended.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["78-106"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
@@ -670,7 +671,7 @@ Integration testing is essential to software development.
 Testing ensures that all the components of an application are working as expected.
 
 The Temporal Go SDK includes functions to help test your Workflow Executions.
-Using this, along with the [Testify module](https://github.com/stretchr/testify), lets you to test for canceled Workflow Executions.
+Using this, along with the [Testify module](https://github.com/stretchr/testify), lets you to test for cancelled Workflow Executions.
 
 Create a new file called `subscription_test.go`.
 Import the Temporal Go SDK Test Suite, Go's testing and time libraries, and the `require` module from Testify.
