@@ -382,7 +382,7 @@ Finally, tell the Worker to listen to the [Task Queue](https://docs.temporal.io/
 ```
 <!--SNIPEND-->
 
-All the application components are there, but aren't running. 
+All the application components are there, but they aren't running yet. 
 Time to build a web server to interact with the app.
 
 ## Build the web server
