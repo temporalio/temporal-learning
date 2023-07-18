@@ -64,7 +64,7 @@ After you create the project, start defining the project's Temporal components.
 
 ## Develop the Workflow
 
-A Workflow starts with a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), a sequence of steps defined in code and carried out in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
+A Workflow starts with a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), which is a sequence of steps defined in code and carried out in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 Before you write the Workflow Definition, define the data object that your application will use.
 
 ### Data objects
