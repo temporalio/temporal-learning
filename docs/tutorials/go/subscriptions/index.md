@@ -244,7 +244,7 @@ Execute the Activity for the first email.
 ```
 <!--SNIPEND-->
 
-Finish off the Workflow Definition with a for-loop to send subscription emails until the user cancels their subscription.
+Finish off the Workflow Definition with a loop to send subscription emails until the user cancels their subscription.
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["72-93"]}-->
 [workflow.go](https://github.com/temporalio/subscription-workflow-go/blob/master/workflow.go)
