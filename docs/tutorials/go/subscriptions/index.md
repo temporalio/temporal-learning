@@ -114,7 +114,7 @@ const ClientHostPort string = "localhost:4000"
 ```
 <!--SNIPEND-->
 
-After defining the data types and constants, you'll then develop the Workflow Definition.
+After defining the data types and constants, you'll develop the Workflow Definition.
 
 ### Write the Workflow Definition
 
