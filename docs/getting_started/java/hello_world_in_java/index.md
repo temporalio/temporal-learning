@@ -165,17 +165,6 @@ BUILD SUCCESSFUL in 19s
 Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and replace the current contents of the `dependencies` block with the following: 
 
 <!--SNIPSTART hello-world-project-template-java-gradle-dependencies-->
-[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/build.gradle)
-```gradle
-dependencies {
-    implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'
-    implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'
-    
-    testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'
-}
-```
 <!--SNIPEND-->
 
 Below is a more detailed explanation about the dependencies you will be installing:
@@ -260,59 +249,11 @@ Your output will be similar to this:
 Next you will need to ensure that the Java version Maven is compiling against supports building Temporal Applications. Temporal requires a minimum version of Java 1.8. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with `1.8`.
 
 <!--SNIPSTART hello-world-project-template-java-maven-version-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/pom.xml)
-```xml
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
-```
 <!--SNIPEND-->
 
 Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` replace the generated `<dependencies>` section in the file with the following:
 
 <!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/pom.xml)
-```xml
-  <dependencies>
-
-
-    <dependency>
-      <groupId>io.temporal</groupId>
-      <artifactId>temporal-sdk</artifactId>
-      <version>1.19.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>2.0.6</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.temporal</groupId>
-      <artifactId>temporal-testing</artifactId>
-      <version>1.19.0</version>
-      <scope>test</scope>
-    </dependency>  
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>5.1.1</version>
-      <scope>test</scope>
-    </dependency>  
-  
-  </dependencies>
-```
 <!--SNIPEND-->
 
 Below is a more detailed explanation about the dependencies you will be installing:
@@ -390,24 +331,6 @@ In the Temporal Java SDK, a Workflow Definition is made of two parts:
 Create `HelloWorldWorkflow.java` in the source code location of your project at `app/src/main/java/helloworldapp/` and add the following code to create a `HelloWorldWorkflow` interface that defines the expected functionality of your workflow:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-interface-->
-[app/src/main/java/helloworldapp/HelloWorldWorkflow.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorkflow.java)
-```java
-package helloworldapp;
-
-import io.temporal.workflow.WorkflowInterface;
-import io.temporal.workflow.WorkflowMethod;
-
-@WorkflowInterface
-public interface HelloWorldWorkflow {
-
-    /**
-     * This is the method that is executed when the Workflow Execution is started. The Workflow
-     * Execution completes when this method finishes execution.
-     */
-    @WorkflowMethod
-    String getGreeting(String name);
-}
-```
 <!--SNIPEND-->
 
 The `HelloWorldWorkflow` interface is annotated with `@WorkflowInterface`, signifying that the interface is a Temporal Workflow. Within this interface is a single method `getGreeting(String name)` that takes a single String parameter, `name`, and is annotated with `@WorkflowMethod`. This annotation denotes the starting point of Workflow execution and execution completes when this method returns.
@@ -415,48 +338,6 @@ The `HelloWorldWorkflow` interface is annotated with `@WorkflowInterface`, signi
 Next, create `HelloWorldWorkflowImpl.java` and add the following code to implement the Workflow and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-->
-[app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java)
-```java
-package helloworldapp;
-
-import io.temporal.activity.ActivityOptions;
-import io.temporal.workflow.Workflow;
-
-import java.time.Duration;
-
-public class HelloWorldWorkflowImpl implements HelloWorldWorkflow {
-
-    /* 
-     * At least one of the following options needs to be defined:
-     * - setStartToCloseTimeout
-     * - setScheduleToCloseTimeout
-     */
-    ActivityOptions options = ActivityOptions.newBuilder()
-            .setStartToCloseTimeout(Duration.ofSeconds(60))
-            .build();
-
-    /*
-     * Define the HelloWorldActivity stub. Activity stubs are proxies for activity invocations that
-     * are executed outside of the workflow thread on the activity worker, that can be on a
-     * different host. Temporal is going to dispatch the activity results back to the workflow and
-     * unblock the stub as soon as activity is completed on the activity worker.
-     * 
-     * The activity options that were defined above are passed in as a parameter.
-     */
-    private final HelloWorldActivities activity = Workflow.newActivityStub(HelloWorldActivities.class, options);
-
-    // This is the entry point to the Workflow.
-    @Override
-    public String getGreeting(String name) {
-
-        /**   
-         * If there were other Activity methods they would be orchestrated here or from within other Activities.
-         * This is a blocking call that returns only after the activity has completed.
-         */
-        return activity.composeGreeting(name);
-    }
-}
-```
 <!--SNIPEND-->
 
 In this implementation, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, startToCloseTimeOut is the one you should always set. In this implementation you create a `HelloWorldActivities` stub that will act as a proxy for activity invocations. 
@@ -481,20 +362,6 @@ With the Temporal Java SDK, you define Activities similarly to how you define Wo
 Create the file `HelloWorldActivities.java` in `app/src/main/java/helloworldapp/` and add the following code to define the `HelloWorldActivities` interface:
 
 <!--SNIPSTART hello-world-project-template-java-activity-interface-->
-[app/src/main/java/helloworldapp/HelloWorldActivities.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldActivities.java)
-```java
-package helloworldapp;
-
-import io.temporal.activity.ActivityInterface;
-
-@ActivityInterface
-public interface HelloWorldActivities {
-
-    // Define your activity methods which can be called during workflow execution
-    String composeGreeting(String name);
-    
-}
-```
 <!--SNIPEND-->
 
 The `HelloWorldActivities` interface is annotated with `@ActivityInterface`, signifying that the interface is a Temporal Activity. Within this interface is a single method signature, `composeGreeting(String name)`. Activity Interfaces can have multiple methods, but for this example you'll have just the one.
@@ -502,19 +369,6 @@ The `HelloWorldActivities` interface is annotated with `@ActivityInterface`, sig
 Next, create `HelloWorldActivitiesImpl.java` in `app/src/main/java/helloworldapp/` and add the following code to implement the Activity and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-activity-->
-[app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java)
-```java
-package helloworldapp;
-
-public class HelloWorldActivitiesImpl implements HelloWorldActivities {
-
-    @Override
-    public String composeGreeting(String name) {
-        return "Hello " + name + "!";
-    }
-
-}
-```
 <!--SNIPEND-->
 
 This class implements the single method from the interface named `composeGreeting` to compose a String that returns a standard "Hello World!" message using the passed in parameter. 
@@ -538,62 +392,6 @@ rm -f app/src/test/java/helloworldapp/AppTest.java
 Create a new file called `HelloWorldWorkflowTest.java` that contains the following code:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-test-->
-[app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java)
-```java
-package helloworldapp;
-
-import io.temporal.client.WorkflowOptions;
-import io.temporal.testing.TestWorkflowRule;
-import org.junit.Rule;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-
-public class HelloWorldWorkflowTest {
-
-    @Rule
-    public TestWorkflowRule testWorkflowRule =
-            TestWorkflowRule.newBuilder()
-                    .setWorkflowTypes(HelloWorldWorkflowImpl.class)
-                    .setDoNotStart(true)
-                    .build();
-
-    @Test
-    public void testIntegrationGetGreeting() {
-        testWorkflowRule.getWorker().registerActivitiesImplementations(new HelloWorldActivitiesImpl());
-        testWorkflowRule.getTestEnvironment().start();
-
-        HelloWorldWorkflow workflow =
-                testWorkflowRule
-                        .getWorkflowClient()
-                        .newWorkflowStub(
-                                HelloWorldWorkflow.class,
-                                WorkflowOptions.newBuilder().setTaskQueue(testWorkflowRule.getTaskQueue()).build());
-        String greeting = workflow.getGreeting("John");
-        assertEquals("Hello John!", greeting);
-        testWorkflowRule.getTestEnvironment().shutdown();
-    }
-
-    @Test
-    public void testMockedGetGreeting() {
-        HelloWorldActivities formatActivities = mock(HelloWorldActivities.class, withSettings().withoutAnnotations());
-        when(formatActivities.composeGreeting(anyString())).thenReturn("Hello World!");
-        testWorkflowRule.getWorker().registerActivitiesImplementations(formatActivities);
-        testWorkflowRule.getTestEnvironment().start();
-
-        HelloWorldWorkflow workflow =
-                testWorkflowRule
-                        .getWorkflowClient()
-                        .newWorkflowStub(
-                                HelloWorldWorkflow.class,
-                                WorkflowOptions.newBuilder().setTaskQueue(testWorkflowRule.getTaskQueue()).build());
-        String greeting = workflow.getGreeting("World");
-        assertEquals("Hello World!", greeting);
-        testWorkflowRule.getTestEnvironment().shutdown();
-    }
-}
-```
 <!--SNIPEND-->
 
 The first test, `testIntegrationGetGreeting`, creates a test execution environment to test the integration between the Activity and the Workflow. The second test, `testMockedGetGreeting`, mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the tests ensures the Workflow's return value returns the expected value.
@@ -683,17 +481,6 @@ You'll connect to the Temporal Cluster using a Temporal Client, which provides a
 Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp`and define the Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-java-shared-constants-->
-[app/src/main/java/helloworldapp/Shared.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/Shared.java)
-```java
-package helloworldapp;
-
-public interface Shared {
-
-    // Define the task queue name
-    final String HELLO_WORLD_TASK_QUEUE = "HelloWorldTaskQueue";
-
-}
-```
 <!--SNIPEND-->
 
 Now you'll create the Worker process. In this tutorial you'll create a small standalone Worker program so you can see how all of the components work together. 
@@ -701,60 +488,6 @@ Now you'll create the Worker process. In this tutorial you'll create a small sta
 Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register 1the:
 
 <!--SNIPSTART hello-world-project-template-java-worker-->
-[app/src/main/java/helloworldapp/HelloWorldWorker.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorker.java)
-```java
-package helloworldapp;
-
-import io.temporal.client.WorkflowClient;
-import io.temporal.serviceclient.WorkflowServiceStubs;
-import io.temporal.worker.Worker;
-import io.temporal.worker.WorkerFactory;
-
-public class HelloWorldWorker {
-
-    public static void main(String[] args) {
-
-        // Get a Workflow service stub.
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-
-        /*
-        * Get a Workflow service client which can be used to start, Signal, and Query Workflow Executions.
-        */
-        WorkflowClient client = WorkflowClient.newInstance(service);
-
-        /*
-        * Define the workflow factory. It is used to create workflow workers that poll specific Task Queues.
-        */
-        WorkerFactory factory = WorkerFactory.newInstance(client);
-
-        /*
-        * Define the workflow worker. Workflow workers listen to a defined task queue and process
-        * workflows and activities.
-        */
-        Worker worker = factory.newWorker(Shared.HELLO_WORLD_TASK_QUEUE);
-
-        /*
-        * Register our workflow implementation with the worker.
-        * Workflow implementations must be known to the worker at runtime in
-        * order to dispatch workflow tasks.
-        */
-        worker.registerWorkflowImplementationTypes(HelloWorldWorkflowImpl.class);
-
-        /*
-        * Register our Activity Types with the Worker. Since Activities are stateless and thread-safe,
-        * the Activity Type is a shared instance.
-        */
-        worker.registerActivitiesImplementations(new HelloWorldActivitiesImpl());
-
-        /*
-        * Start all the workers registered for a specific task queue.
-        * The started workers then start polling for workflows and activities.
-        */
-        factory.start();
-
-    }
-}
-```
 <!--SNIPEND-->
 
 This program first implements a service stub to be used when instantiating the client. The code first instantiates a factory and then creates a new worker that listens on a Task Queue. This worker will only process workflows and activities from this Task Queue. You register the Workflow and Activity with the Worker and then start the worker using `factory.start()`.
@@ -787,54 +520,6 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Create `InitiateHelloWorld.java` in `app/src/main/java/helloworldapp/` and add the following code to the file to connect to the server and start the Workflow:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-initiator-->
-[app/src/main/java/helloworldapp/InitiateHelloWorld.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/InitiateHelloWorld.java)
-```java
-package helloworldapp;
-
-import io.temporal.client.WorkflowClient;
-import io.temporal.client.WorkflowOptions;
-import io.temporal.client.WorkflowStub;
-import io.temporal.serviceclient.WorkflowServiceStubs;
-
-public class InitiateHelloWorld {
-
-    public static void main(String[] args) throws Exception {
-
-        // This gRPC stubs wrapper talks to the local docker instance of the Temporal service.
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-
-        // WorkflowClient can be used to start, signal, query, cancel, and terminate Workflows.
-        WorkflowClient client = WorkflowClient.newInstance(service);
-
-        // Define our workflow unique id
-        final String WORKFLOW_ID = "HelloWorldWorkflowID";
-
-        /*
-         * Set Workflow options such as WorkflowId and Task Queue so the worker knows where to list and which workflows to execute.
-         */
-        WorkflowOptions options = WorkflowOptions.newBuilder()
-                    .setWorkflowId(WORKFLOW_ID)
-                    .setTaskQueue(Shared.HELLO_WORLD_TASK_QUEUE)
-                    .build();
-
-        // Create the workflow client stub. It is used to start our workflow execution.
-        HelloWorldWorkflow workflow = client.newWorkflowStub(HelloWorldWorkflow.class, options);
-
-        /*
-         * Execute our workflow and wait for it to complete. The call to our getGreeting method is
-         * synchronous.
-         * 
-         * Replace the parameter "World" in the call to getGreeting() with your name.
-         */
-        String greeting = workflow.getGreeting("World");
-
-        String workflowId = WorkflowStub.fromTyped(workflow).getExecution().getWorkflowId();
-        // Display workflow execution results
-        System.out.println(workflowId + " " + greeting);
-        System.exit(0);
-    }
-}
-```
 <!--SNIPEND-->
 
 Like the Worker you created, this program uses stubs and a client to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/dev-guide/java/foundations/#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
@@ -866,18 +551,6 @@ To run your Temporal Application, you need to start the Workflow and the Worker.
 First, open the file `app/build.gradle` and add the following commands to the end of the file in order to define tasks for Gradle to execute your Worker and Client application:
 
 <!--SNIPSTART hello-world-project-template-java-gradle-tasks-->
-[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/build.gradle)
-```gradle
-task sayHello(type: JavaExec) {
-    mainClass = 'helloworldapp.InitiateHelloWorld'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task startWorker(type: JavaExec) {
-    mainClass = 'helloworldapp.HelloWorldWorker'
-    classpath = sourceSets.main.runtimeClasspath
-}
-```
 <!--SNIPEND-->
 
 Next, ensure that your local Temporal Cluster is running. 

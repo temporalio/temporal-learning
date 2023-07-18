@@ -76,40 +76,6 @@ In the following snippet,  `WorkflowClientInterface` is the entry point to get a
 Here we create an instance of `GreetingWorkflowInterface` with execution timeout of 1 minute. Then we print some information and start the workflow.
 
 <!--SNIPSTART php-hello-client {"enable_source_link": true}-->
-[app/src/SimpleActivity/ExecuteCommand.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/ExecuteCommand.php)
-```php
-class ExecuteCommand extends Command
-{
-    protected const NAME = 'simple-activity';
-    protected const DESCRIPTION = 'Execute SimpleActivity\GreetingWorkflow';
-
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        $workflow = $this->workflowClient->newWorkflowStub(
-            GreetingWorkflowInterface::class,
-            WorkflowOptions::new()->withWorkflowExecutionTimeout(CarbonInterval::minute())
-        );
-
-        $output->writeln("Starting <comment>GreetingWorkflow</comment>... ");
-
-        // Start a workflow execution. Usually this is done from another program.
-        // Uses task queue from the GreetingWorkflow @WorkflowMethod annotation.
-        $run = $this->workflowClient->start($workflow, 'Antony');
-
-        $output->writeln(
-            sprintf(
-                'Started: WorkflowID=<fg=magenta>%s</fg=magenta>',
-                $run->getExecution()->getID(),
-            )
-        );
-
-        // getResult waits for workflow to complete
-        $output->writeln(sprintf("Result:\n<info>%s</info>", $run->getResult()));
-
-        return self::SUCCESS;
-    }
-}
-```
 <!--SNIPEND-->
 
 Now let's look at the workflow.
@@ -121,24 +87,6 @@ With the PHP SDK, you define an interface and an implementation.
 First, let's take a look at the workflow interface:
 
 <!--SNIPSTART php-hello-workflow-interface {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingWorkflowInterface.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingWorkflowInterface.php)
-```php
-use Temporal\Workflow\WorkflowInterface;
-use Temporal\Workflow\WorkflowMethod;
-
-#[WorkflowInterface]
-interface GreetingWorkflowInterface
-{
-    /**
-     * @param string $name
-     * @return string
-     */
-    #[WorkflowMethod(name: "SimpleActivity.greet")]
-    public function greet(
-        string $name
-    );
-}
-```
 <!--SNIPEND-->
 
 The important thing here are attributes `#[WorkflowInterface]` and `#[WorkflowMethod]`.  Both of them define the "workflow".
@@ -147,32 +95,6 @@ The first one marks the class/interface, the second one marks the method in the 
 In our case the workflow is the method that accepts string `$name`.  To see what it actually does, look at the implementation in the class `GreetingWorkflow`:
 
 <!--SNIPSTART php-hello-workflow {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingWorkflow.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingWorkflow.php)
-```php
-class GreetingWorkflow implements GreetingWorkflowInterface
-{
-    private $greetingActivity;
-
-    public function __construct()
-    {
-        /**
-         * Activity stub implements activity interface and proxies calls to it to Temporal activity
-         * invocations. Because activities are reentrant, only a single stub can be used for multiple
-         * activity invocations.
-         */
-        $this->greetingActivity = Workflow::newActivityStub(
-            GreetingActivityInterface::class,
-            ActivityOptions::new()->withStartToCloseTimeout(CarbonInterval::seconds(2))
-        );
-    }
-
-    public function greet(string $name): \Generator
-    {
-        // This is a blocking call that returns only after the activity has completed.
-        return yield $this->greetingActivity->composeGreeting('Hello', $name);
-    }
-}
-```
 <!--SNIPEND-->
 
 This is the implementation of our workflow.  It communicates with one activity and delegates all the work to it.
@@ -192,21 +114,6 @@ To instantiate an instance of the activity we use a static helper `Workflow::new
 And at last we arrive at the activity code. Consider it as a particular task in the business logic. As you have noticed we again use an interface to instantiate an object:
 
 <!--SNIPSTART php-hello-activity-interface {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingActivityInterface.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingActivityInterface.php)
-```php
-use Temporal\Activity\ActivityInterface;
-use Temporal\Activity\ActivityMethod;
-
-#[ActivityInterface(prefix: 'SimpleActivity.')]
-interface GreetingActivityInterface
-{
-    #[ActivityMethod(name: "ComposeGreeting")]
-    public function composeGreeting(
-        string $greeting,
-        string $name
-    ): string;
-}
-```
 <!--SNIPEND-->
 
 Activities and workflow classes in PHP are marked with special attributes.
@@ -216,16 +123,6 @@ Our activity consists of one method, which accepts two string arguments.
 The implementation of this interface is a very straight forward - just compose a new string of provided arguments:
 
 <!--SNIPSTART php-hello-activity {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingActivity.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingActivity.php)
-```php
-class GreetingActivity implements GreetingActivityInterface
-{
-    public function composeGreeting(string $greeting, string $name): string
-    {
-        return $greeting . ' ' . $name;
-    }
-}
-```
 <!--SNIPEND-->
 
 Both workflow and activity code in our example have both interface and implementation.
