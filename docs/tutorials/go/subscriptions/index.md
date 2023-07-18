@@ -81,7 +81,7 @@ package subscribeemails
 ```
 <!--SNIPEND-->
 
-Next, create a struct for `EmailDetails`. 
+Next, create a struct for the `EmailDetails` data object. 
 This data type holds the subscriber's email information and details about the subscription, such as:
 
  - `EmailAddress`: the email address of the subscriber
