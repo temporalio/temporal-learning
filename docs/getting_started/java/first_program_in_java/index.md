@@ -43,7 +43,7 @@ Before starting this tutorial:
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
+## ![](images/repair-tools.png) Project setup
 
 This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's ["Creating a Repository from a Template" guide](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
 
@@ -67,7 +67,7 @@ To build the project, either open it with [IntelliJ](https://www.jetbrains.com/i
 
 Once your project has finished building, you are ready to go.
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/workflow.png) Application overview
+## ![](images/workflow.png) Application overview
 
 This project template mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/java/workflows) which orchestrates the execution of an Account object's `withdraw()` and `deposit()` methods, representing a transfer of money from one account to another. Temporal calls these particular methods [Activity functions](https://docs.temporal.io/java/activities).
 
@@ -78,7 +78,7 @@ To run the application you will do the following:
 
 Here's a high-level illustration of what's happening:
 
-![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
+![High level project design](images/temporal-high-level-application-design.png)
 
 ### The Workflow function
 
@@ -168,11 +168,11 @@ Withdrawing $18.740000 from account 001-001. ReferenceId: 2ab46ccb-3791-4dd2-84e
 Depositing $18.740000 into account 002-002. ReferenceId: 2ab46ccb-3791-4dd2-84e6-62319eb710a2
 ```
 
-<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/confetti.png" />
+<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://github.com/temporalio/temporal-learning/blob/main/docs/getting_started/java/first_program_in_java/images/confetti.png?raw=true" />
 
 **Congratulations**, you just ran a Temporal Workflow application!
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/warning.png) Failure simulation
+## ![](images/warning.png) Failure simulation
 
 So, you've just got a taste of one of Temporal's amazing value propositions: visibility into the Workflow and the status of the Workers executing the code. Let's explore another key value proposition, maintaining the state of a Workflow, even in the face of failures. To demonstrate this we will simulate some failures for our Workflow. Make sure your Worker is stopped before proceeding.
 
@@ -210,7 +210,7 @@ On the next scheduled attempt, the Worker will pick up right where the Workflow 
 
 ## Conclusion
 
-<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/boost.png" />
+<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://github.com/temporalio/temporal-learning/blob/main/docs/getting_started/java/first_program_in_java/images/boost.png?raw=true" />
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 

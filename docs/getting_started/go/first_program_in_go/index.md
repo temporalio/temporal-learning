@@ -42,7 +42,7 @@ Before starting this tutorial:
 - [Set up a local development environment for developing Temporal Applications using the Go programming language](/getting_started/go/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
-## ![](/img/icons/workflow.png) Application overview
+## ![](images/workflow.png) Application overview
 
 The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/dev-guide/go/foundations/#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/dev-guide/go/foundations/#develop-activities).
 
@@ -53,13 +53,13 @@ To run the application, you do the following:
 
 The following diagram illustrates what happens when you start the Workflow:
 
-![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
+![High level project design](images/temporal-high-level-application-design.png)
 
 The Temporal Server doesn't run your code. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
 Now that you know how the application will work, it's time to download the application to your local machine so you can try it out yourself.
 
-## ![](/img/icons/download.png) Download the example application
+## ![](images/download.png) Download the example application
 
 The application you'll use in this tutorial is available in a [GitHub repository](https://github.com/temporalio/money-transfer-project-template-go).
 
@@ -327,7 +327,7 @@ After a Workflow completes, the full history persists for a set retention period
 
 You just ran a Temporal Workflow application and saw how Workflows, Activities, and Workers interact. Now you'll explore how Temporal gives you tools to handle failures.
 
-## ![](/img/icons/warning.png) Simulate failures
+## ![](images/warning.png) Simulate failures
 
 Despite your best efforts, there's going to be a time when something goes wrong in your application. You might encounter a network glitch, a server might go offline, or you might introduce a bug into your code. One of Temporal's most important features is its ability to maintain the state of a Workflow when something fails. To demonstrate this, you will simulate some failures for your Workflow and see how Temporal responds.
 
