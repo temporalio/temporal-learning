@@ -84,7 +84,7 @@ Because the default retention period for a Temporal Cluster is 7 days, this appl
 
 ![Diagram of component topology of the Temporal Application](images/component-topology.svg)
 
-The Temporal Client communicates with the Temporal Cluster (Temporal Server + Database + Elasticsearch).
+The Temporal Client communicates with the Temporal Cluster (Temporal Server + Database).
 
 The Temporal Cluster communicates with the Workers that execute our application code.
 Our application has one Worker Process and one Worker Entity.
