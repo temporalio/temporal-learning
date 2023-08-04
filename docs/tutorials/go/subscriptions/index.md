@@ -113,7 +113,7 @@ Import libraries and create the function `SubscriptionWorkflow()`.
 
 Set a logger and establish the `duration` that the Workflow sleeps between emails.
 This can be any span of time from seconds to years.
-For this tutorial, keep it to minutes or seconds.
+For the purpose of this tutorial, set it to 12 seconds.
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["14-18"]}-->
 <!--SNIPEND-->
