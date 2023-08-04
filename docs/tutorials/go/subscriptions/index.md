@@ -134,9 +134,7 @@ Next, create a function to handle [cancellations](https://docs.temporal.io/activ
 <!--SNIPEND-->
 
 As you can see, every Activity Execution involves defining the update for the Workflow Execution.
-Since your Workflow must welcome new subscribers, you'll define an update for a newly started Workflow as well.
-
-Define the update in the variable `data`, signifying the data passed from the Activity to the Workflow.
+Define the Workflow update in the variable `data`.
 Execute the Activity for the first email.
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["57-69"]}-->
