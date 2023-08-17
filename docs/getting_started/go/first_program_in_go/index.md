@@ -42,9 +42,9 @@ Before starting this tutorial:
 - [Set up a local development environment for developing Temporal Applications using the Go programming language](/getting_started/go/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
-## ![](/img/icons/workflow.png) Application overview
+## ![](images/workflow.png) Application overview
 
-The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/application-development/foundations/?lang=go#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=go#develop-activities).
+The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/dev-guide/go/foundations/#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/dev-guide/go/foundations/#develop-activities).
 
 To run the application, you do the following:
 
@@ -53,13 +53,13 @@ To run the application, you do the following:
 
 The following diagram illustrates what happens when you start the Workflow:
 
-![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
+![High level project design](images/temporal-high-level-application-design.png)
 
 The Temporal Server doesn't run your code. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
 Now that you know how the application will work, it's time to download the application to your local machine so you can try it out yourself.
 
-## ![](/img/icons/download.png) Download the example application
+## ![](images/download.png) Download the example application
 
 The application you'll use in this tutorial is available in a [GitHub repository](https://github.com/temporalio/money-transfer-project-template-go).
 
@@ -200,7 +200,22 @@ You can make the call [synchronously or asynchronously](https://docs.temporal.io
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run `start/main.go` from the project root using the following command:
+Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+
+:::note
+If you are using Temporal CLI, start your server and specifiy a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+
+Start Temporal CLI with the following command:
+
+```command
+temporal server start-dev --db-filename your_temporal.db --ui-port 8080
+```
+
+When you stop and start the server again, remember to specify the same database file each time.
+
+:::
+
+Then run `start/main.go` from the project root using the following command:
 
 ```command
 go run start/main.go
@@ -257,7 +272,7 @@ In this project, the file `worker/main.go` contains the code for the Worker. Lik
 <!--SNIPSTART money-transfer-project-template-go-worker-->
 <!--SNIPEND-->
 
-Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution. 
+Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
 
 Your `start/main.go` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
@@ -312,7 +327,7 @@ After a Workflow completes, the full history persists for a set retention period
 
 You just ran a Temporal Workflow application and saw how Workflows, Activities, and Workers interact. Now you'll explore how Temporal gives you tools to handle failures.
 
-## ![](/img/icons/warning.png) Simulate failures
+## ![](images/warning.png) Simulate failures
 
 Despite your best efforts, there's going to be a time when something goes wrong in your application. You might encounter a network glitch, a server might go offline, or you might introduce a bug into your code. One of Temporal's most important features is its ability to maintain the state of a Workflow when something fails. To demonstrate this, you will simulate some failures for your Workflow and see how Temporal responds.
 
@@ -326,9 +341,9 @@ Try it out by following these steps:
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run starter/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
-5. After the Temporal cluster has stopped, restart it and visit the UI.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
 
-Your Workflow is still listed:
+Visit the UI. Your Workflow is still listed:
 
 ![The second Workflow appears in the list of Workflows](images/second_workflow.png)
 

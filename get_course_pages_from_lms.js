@@ -16,6 +16,8 @@ const courseData = [
   {code: '101_go', language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)"},
   {code: '102_go', language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)"},
   {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)"},
+  {code: '101_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)"},
+  {code: '101_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)"},
 ]
 
 const options = {

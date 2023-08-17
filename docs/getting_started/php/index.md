@@ -19,10 +19,10 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
-## Review Documentation and other resources
+## Review documentation and other resources
 
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
 
-* [Temporal Application Developers Guide](https://docs.temporal.io/application-development?lang=php)
+* [Temporal Application Developers Guide](https://docs.temporal.io/dev-guide/php)
 * [Temporal PHP SDK code samples](https://github.com/temporalio/samples-php)
 * [Temporal PHP SDK on GitHub](https://github.com/temporalio/sdk-php)

@@ -93,14 +93,14 @@ With your project workspace configured, you're ready to create your first Tempor
 
 Workflows are where you configure and organize the execution of Activities. You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*. 
 
-In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations/#workflow-parameters) section of the Temporal documentation.
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
 
 Create the file `workflow.go` in the root of your project and add the following code to create a `GreetingWorkflow` function to define the Workflow:
 
 <!--SNIPSTART hello-world-project-template-go-workflow-->
 <!--SNIPEND-->
 
-The `GreetingWorkflow` function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
+The `GreetingWorkflow` function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
 
 :::tip
 
@@ -129,7 +129,7 @@ The `ComposeGreeting` Activity Definition also accepts a `Context` . This parame
 
 The logic within the `ComposeGreeting` function creates the string and returns the greeting, along with `nil` for the error. In a more complex case, you can return an error from your Activity and then configure your Workflow to handle the error.
 
-Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=go#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/dev-guide/go/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a struct rather than sending multiple input parameters. This will make future updates easier.
 
@@ -230,7 +230,7 @@ Then create the file `start/main.go` and add the following code to the file to c
 <!--SNIPSTART hello-world-project-template-go-start-workflow-->
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses `client.Dial` to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/application-development/foundations/?lang=go#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
+Like the Worker you created, this program uses `client.Dial` to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/dev-guide/go/foundations/#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
 
 :::tip Specify a Workflow ID
 
@@ -240,7 +240,7 @@ Using a Workflow ID that reflects some business process or entity is a good prac
 
 :::
 
-You can [get the results](https://docs.temporal.io/application-development/foundations/?lang=go#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling  `we.Get`, which blocks the program's execution until the Workflow Execution completes.
+You can [get the results](https://docs.temporal.io/dev-guide/go/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling  `we.Get`, which blocks the program's execution until the Workflow Execution completes.
 
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
 

@@ -14,7 +14,6 @@ The following Docker Images are spun up into a Container stack using [Docker Com
 
 - Temporal Server: Services that facilitate the Temporal Event Loop. The Temporal Server is one half of what makes up a Temporal Cluster.
 - PostgreSQL: Database to persist the state of each Workflow Execution. The Database is the other half of what makes up a Temporal Cluster.
-- Elasticsearch: Database to manage Search Attributes. Optional component of a Temporal Cluster.
 - Temporal Web UI: Browser-based UI that provides Visibility tooling.
 - Grafana: So we can show Dashboards from the metrics.
 - Prometheus: So we can ingest metrics.
@@ -26,7 +25,7 @@ The following Docker Images are spun up into a Container stack using [Docker Com
 - App CLI tools: Process listening for commands that call the application APIs.
 - Dataconverter: Process that runs the Data Converter encryption command.
 
-The project uses existing Docker Images for the Temporal Server, PostgreSQL, Elasticsearch, Grafana, Prometheus, and Mailhog with some minor configuration tweaks.
+The project uses existing Docker Images for the Temporal Server, PostgreSQL, Grafana, Prometheus, and Mailhog with some minor configuration tweaks.
 Everything is wired together using environment variables and hardcoded hostnames.
 The implementation can be viewed in these Docker Compose files:
 

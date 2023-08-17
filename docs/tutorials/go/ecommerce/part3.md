@@ -12,6 +12,8 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />
@@ -36,7 +38,7 @@ import { ResponsivePlayer } from '@site/src/components'
 
 ## Testing Setup
 
-The following is a basic setup for testing a Temporal Workflow using `go test` and [Testify](https://github.com/stretchr/testify) based on [Temporal's Go testing docs](https://docs.temporal.io/application-development/testing).
+The following is a basic setup for testing a Temporal Workflow using `go test` and [Testify](https://github.com/stretchr/testify) based on [Temporal's Go testing docs](https://docs.temporal.io/dev-guide/go/testing).
 
 You can find the full source code for the test suite in the `workflow_test.go` file.
 

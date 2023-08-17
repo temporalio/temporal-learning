@@ -10,6 +10,8 @@ description: Explore how Temporal integrates into an existing Next.js applicatio
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />
@@ -113,7 +115,7 @@ export async function purchase(id: string): Promise<string> {
 ```
 
 Activities are the only way to interact with the outside world in Temporal (e.g. making API requests, or accessing the filesystem).
-See the [Activities docs](https://docs.temporal.io/application-development/foundations?lang=typescript/#develop-activities) for more info.
+See the [Activities docs](https://docs.temporal.io/dev-guide/typescript/foundations//#develop-activities) for more info.
 
 Inside of `/temporal/src/workflows.ts` we'll write a Workflow function that calls this Activity:
 
@@ -156,7 +158,7 @@ async function run() {
 }
 ```
 
-See the full [Worker docs](https://docs.temporal.io/application-development/foundations?lang=typescript/#run-worker-processes) for more info.
+See the full [Worker docs](https://docs.temporal.io/dev-guide/typescript/foundations//#run-worker-processes) for more info.
 You should now be able to run your Worker with `npm run build:temporal && npm run start:worker`, but it's not very exciting because you have no way to start a Workflow yet.
 
 :::tip Pro tip
@@ -282,7 +284,7 @@ You will also want to have a plan for **monitoring and scaling your Temporal Wor
 
 At this point, you have a working full stack example of a Temporal Workflow running inside your Next.js app.
 
-You can explore adding [Signals](https://docs.temporal.io/application-development/features?lang=typescript/#signals)  [Queries](https://docs.temporal.io/application-development/features?lang=typescript/#queries) to your Workflow, then adding a new API Route to call them.
+You can explore adding [Signals](https://docs.temporal.io/dev-guide/typescript/features//#signals)  [Queries](https://docs.temporal.io/dev-guide/typescript/features//#queries) to your Workflow, then adding a new API Route to call them.
 You can choose to set up one API Route per Signal or Query, or have one API Route handle all of them, Temporal has no opinion on how you set up routing.
 
 Again, for a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick).

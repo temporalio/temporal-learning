@@ -10,6 +10,8 @@ description: In this tutorial you'll build a realistic monthly subscription paym
 image: /img/temporal-logo-twitter-card.png
 ---
 
+![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+
 import { OutdatedNotice } from '@site/src/components'
 
 <OutdatedNotice />
@@ -216,7 +218,7 @@ So, let's continue and finally implement subscription workflow.
 
 :::info Why not use a Signal?
 
-Another way to cancel the subscription is to send a [signal](https://docs.temporal.io/application-development/features?lang=php#signals) to the workflow. For example, we
+Another way to cancel the subscription is to send a [signal](https://docs.temporal.io/dev-guide/php/features#signals) to the workflow. For example, we
 can wait with condition:
 
 ```php
