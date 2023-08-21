@@ -162,7 +162,7 @@ In the next section, you'll query your Workflow to get back information on the s
 ## Add a Query
 
 Create a function called `showDetailsHandler()` in which a user can get information about their subscription details.
-Make sure to include error handlers to check for JSON responses.
+Make sure to include error handlers to ensure proper "GET" requests and responses.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["155-195"]-->
 <!--SNIPEND-->
@@ -178,45 +178,46 @@ Now that users can subscribe and view the details of their subscription, you nee
 
 ## Unsubscribe users with a Workflow Cancellation request
 
-<!--TODO -->
+Users will want to unsubscribe from the email list at some point, so give them a way to do that.
+
+Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
+
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["99-152"]-->
+<!--SNIPEND-->
+
+The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution started on the `/subscribe` endpoint.
+
+When the Workflow receives the cancellation request, it will cancel the Workflow Execution and return a `CancelledError` to the Workflow Execution.
+This is then handled by the error handlers included in the `unsubscribeHandler()` function.
+
+Users can now send a "DELETE" request to `/unsubscribe` to cancel the Workflow associated with the request body's email address. 
+This allows users to unsubscribe from the email list and prevent any further emails from sending.
+
+Now that you've added the ability to unsubscribe from the email list, test your application code to ensure it works as expected.
 
 ## Create integration tests
 
-Integration testing is essential to software development.
-Testing ensures that all the components of an application are working as expected.
+Integration testing is an essential part of software development that helps ensure that different components of an application work together correctly.
+In this section, you'll write an integration test using the Go SDK to test the cancellation of a Workflow.
 
 The Temporal Go SDK includes functions to help test your Workflow Executions.
-Using this, along with the [Testify module](https://github.com/stretchr/testify), lets you to test for cancelled Workflow Executions.
+Use these functions alongside the [Testify module](https://github.com/stretchr/testify) to create integration tests against a test server or a given Client.
 
-Create a new file called `subscription_test.go`.
-Import the Temporal Go SDK Test Suite, Go's testing and time libraries, and the `require` module from Testify.
+To set up the test environment, create a new file called `subscription_test.go`.
+Create a test function called `Test_CanceledSubscriptionWorkflow()`.
 
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["2-7"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe-test-->
 <!--SNIPEND-->
 
-Create a function called `Test_CanceledSubscriptionWorkflow`, along with instances of TestSuite and the environment.
+This function creates a Workflow Execution by starting the Workflow with some test data.
+The function then cancels it with the `CancelWorkflow()`.
 
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["9-13"]}-->
-<!--SNIPEND-->
-
-Create a subscription struct called `testDetails`.
-
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["13-18"]}-->
-<!--SNIPEND-->
-
-Register the Workflow and Activities.
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["20-22"]}-->
-<!--SNIPEND-->
-
-Finally, execute the Workflow.
-Follow up with a cancellation request.
-
-<!--SNIPSTART subscription-workflow-go-subscribe-test {"selectedLines": ["24-28"]}-->
-<!--SNIPEND-->
+With the test function created, run it to see if it works.
+Use the command `go test` to start the test.
 
 ## Conclusion
 
 This tutorial demonstrates how to build an email subscription application using Temporal and Go.
-By leveraging Workflows, Activities, and Queries, you created a web server that interacts with Temporal to manage each subscription.
+By leveraging Workflows, Activities, and Queries, the tutorial shows how to create a web server that interacts with Temporal to manage the subscription process.
 
 With this knowledge, you'll be able to use more complex Workflows and Activities to create even stronger applications.
