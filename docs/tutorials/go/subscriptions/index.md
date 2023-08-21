@@ -210,10 +210,34 @@ Create a test function called `Test_CanceledSubscriptionWorkflow()`.
 <!--SNIPEND-->
 
 This function creates a Workflow Execution by starting the Workflow with some test data.
-The function then cancels it with the `CancelWorkflow()`.
+The function then cancels it with the `CancelWorkflow()` function that was assigned to `RegisterDelayedCallback()`.
 
 With the test function created, run it to see if it works.
 Use the command `go test` to start the test.
+
+```
+subscription-workflow-go % go test
+2023/08/21 11:43:40 INFO  Subscription created EmailAddress example@temporal.io
+2023/08/21 11:43:40 INFO  Sending welcome email EmailAddress example@temporal.io
+2023/08/21 11:43:40 INFO  Sending email to customer ActivityID 2 ActivityType SendEmail Attempt 1 WorkflowType SubscriptionWorkflow WorkflowID default-test-workflow-id RunID default-test-run-id EmailAddress example@temporal.io
+2023/08/21 11:43:40 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 2 ActivityType SendEmail
+2023/08/21 11:43:40 INFO  Sending email to customer ActivityID 3 ActivityType SendEmail Attempt 1 WorkflowType SubscriptionWorkflow WorkflowID default-test-workflow-id RunID default-test-run-id EmailAddress example@temporal.io
+2023/08/21 11:43:40 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 3 ActivityType SendEmail
+2023/08/21 11:43:40 INFO  Sent content email EmailAddress example@temporal.io
+2023/08/21 11:43:40 DEBUG Auto fire timer TimerID 0 TimerDuration 5s TimeSkipped 5s
+2023/08/21 11:43:40 DEBUG RequestCancelTimer TimerID 4
+2023/08/21 11:43:40 INFO  Sending email to customer ActivityID 5 ActivityType SendEmail Attempt 1 WorkflowType SubscriptionWorkflow WorkflowID default-test-workflow-id RunID default-test-run-id EmailAddress example@temporal.io
+2023/08/21 11:43:40 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 5 ActivityType SendEmail
+2023/08/21 11:43:40 INFO  Sent cancellation email EmailAddress example@temporal.io
+PASS
+ok      subscribeemails 0.285s
+```
+
+With a cancellation request that fires after five seconds, this test shows the successful creation of a subscription as well as its cancellation.
+You've successfully written, executed, and passed a Cancellation Workflow test. 
+
+Temporal's Go SDK provides a number of functions that help you test your Workflow Executions. 
+By following the best practices for testing your code, you can be confident that your Workflows are reliable and performant.
 
 ## Conclusion
 
