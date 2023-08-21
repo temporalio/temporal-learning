@@ -8,6 +8,21 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-accept-workflow-definition-->
+[workflows/accept.go](https://github.com/temporalio/background-checks/blob/master/workflows/accept.go)
+```go
+func Accept(ctx workflow.Context, input *AcceptWorkflowInput) (*AcceptWorkflowResult, error) {
+	err := emailCandidate(ctx, input)
+	if err != nil {
+		return &AcceptWorkflowResult{}, err
+	}
+
+	submission, err := waitForSubmission(ctx)
+
+	result := AcceptWorkflowResult(*submission)
+	return &result, err
+}
+
+```
 <!--SNIPEND-->
 
 ![Swim lane diagram of the Candidate Acceptance Child Workflow Execution](images/candidate-accept-flow.svg)
