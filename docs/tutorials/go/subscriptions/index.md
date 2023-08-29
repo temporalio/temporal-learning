@@ -23,8 +23,6 @@ You'll find the code for this tutorial on GitHub in the [subscription-workflow-g
 
 ## Prerequisites 
 
-Before starting this tutorial:
-
 - [Set up a local development environment for Temporal and Go](https://learn.temporal.io/getting_started/go/dev_environment/).
 - Complete the [Hello World](https://learn.temporal.io/getting_started/go/hello_world_in_go/) to ensure you understand the basics of creating Workflows and Activities with Temporal.
 - Install the latest versions of [Temporal Server](https://docs.temporal.io/clusters#temporal-server) and the [Go SDK](https://pkg.go.dev/go.temporal.io/sdk)
@@ -60,7 +58,7 @@ This struct will represent the data you'll send to your Activity and Workflow.
 You'll create an `EmailDetails` struct with the following fields:
  - `EmailAddress`: a string to pass a user's email
  - `Message`: a string to pass a message to the user
- - `IsSubscribed`: a boolean to  track whether the user is subscribed
+ - `IsSubscribed`: a boolean to track whether the user is subscribed
  - `SubscriptionCount`: an integer to track the number of emails sent
 
 Add the following code to the `subscribe.go` file:
@@ -137,8 +135,8 @@ func SubscriptionWorkflow(ctx workflow.Context, emailDetails EmailDetails) error
 ```
 <!--SNIPEND-->
 
-The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails.`
-`EmailDetails` is used to propagate the function's `data` struct, which is used alongside `ctx` to execute the Activity.
+The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails.
+`EmailDetails` propagates the function's `data` struct, which is used alongside `ctx` to execute the Activity.
 
 In addition to a Query handler, the Workflow Definition needs a cancellation handler.
 Create a new function within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution.
@@ -172,8 +170,8 @@ Create a new function within `SubscriptionWorkflow()` to send cancellation email
 <!--SNIPEND-->
 
 The `SubscriptionWorkflow()` function needs a `for` loop to continue sending emails.
-The `for` loop executes the email Activity while `IsSubscribed` is `true`, and will even pause the Workflow between emails.
-You can define this in seconds, days, months, or even years, depending on your business logic.
+The `for` loop executes the email Activity while `IsSubscribed` is `true`, and even uses a Timer to pause the Workflow between emails.
+The Timer can pause the Workflow for seconds, days, months, or even years, depending on your business logic.
 
 Add the following code to run a `for` loop:
 
