@@ -355,7 +355,7 @@ Now that the connection to the Temporal Server is open, define your first endpoi
 
 Create a `subscribeHandler()` function so users can subscribe to the emails.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["28-96"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["27-96"]}-->
 [gateway/main.go](https://github.com/temporalio/subscription-workflow-go/blob/master/gateway/main.go)
 ```go
 // ...
