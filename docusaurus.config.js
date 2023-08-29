@@ -130,7 +130,7 @@ const config = {
             },
             {
               label: "Meetups",
-              href: "https://lu.ma/temporal",
+              href: "https://temporal.io/community#events",
             },
             {
               label: "Workshops",
