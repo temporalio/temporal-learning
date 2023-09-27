@@ -37,6 +37,7 @@ const config = {
     },
   ],
   themeConfig: {
+    /*
     announcementBar: {
       id: 'in_progress',
       content: 'Get your tickets for <a href="https://temporal.io/replay">Replay 2023</a>!',
@@ -44,6 +45,7 @@ const config = {
       textColor: '#f9fafb',
       isCloseable: true,
     },
+    */
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,
