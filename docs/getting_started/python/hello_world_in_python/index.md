@@ -204,9 +204,9 @@ The test function `test_execute_workflow` creates a `WorkflowEnvironment` so it 
 
 :::note
 
-The `time-skipping` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local` instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs. 
+The `start_time_skipping()` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local()` option instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs. 
 
-The `time-skipping` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
+The `start_time_skipping()` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
 
 :::
 
@@ -214,7 +214,7 @@ This code tests the Workflow and invokes the actual `say_hello` Activity. Howeve
 
 Add the following code to create a test that uses a mocked `say_hello` Activity:
 
-<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
+<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-51"]}-->
 <!--SNIPEND-->
 
 This creates a function called `say_hello_mocked` which the Workflow test will use as the mock Activity function. The `test_mock_activity` test then checks that the outcome of the Workflow is `"Hello, World from mocked activity!"` for the passed input parameter `World`, using the same type of test setup as the previous test function.
