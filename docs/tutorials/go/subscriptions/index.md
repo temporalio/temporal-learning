@@ -1,35 +1,30 @@
 ---
-title: "Build a subscription workflow with Temporal and Go"
+title: Build an email subscription workflow with Temporal and Go
 sidebar_position: 3
 keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
-description: Build a subscription application with Temporal and Go.
+description: Implement an email subscription application in Go with Temporal's Workflows, Activities, and Queries, using the Temporal Client in a web API.
 last_update:
-  date: 2023-08-30
+  date: 2023-09-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
 ### Introduction
 
-In this tutorial, you'll build a subscription web application using Temporal and Go.
-You'll create a web server to handle requests and use Temporal [Workflows](https://docs.temporal.io/workflows), [Activities](https://docs.temporal.io/activities), and [Queries](https://docs.temporal.io/workflows#query) to build the core of the application.
+In this tutorial, you'll build an email subscription web application using Temporal and Go. You'll create a web server to handle requests, and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or queue. This reduces the complexity of the code you have to write and support.
 
-Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and support.
+You'll create an endpoint for users to give their email address, and then create a new Workflow Execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution. You can view the user's entire process through Temporal's Web UI. For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
 
-You'll create an endpoint for users to give their email address, and then create a new [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution) using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution. You can view the user's entire process through [Temporal's Web UI](https://docs.temporal.io/web-ui). For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
+By the end of this tutorial, you'll have a clear understanding of how to use Temporal to create and manage long-running Workflows within a web application.
 
-By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
-
-You'll find the code for this tutorial on GitHub in the [subscription-workflow-go](https://github.com/temporalio/subscription-workflow-go) repository.
+You'll find the code for this tutorial on GitHub in the [email-subscription-project-go](https://github.com/temporalio/email-subscription-project-go) repository.
 
 ## Prerequisites 
 
 - [Set up a local development environment for Temporal and Go](https://learn.temporal.io/getting_started/go/dev_environment/).
 - Complete the [Hello World](https://learn.temporal.io/getting_started/go/hello_world_in_go/) to ensure you understand the basics of creating Workflows and Activities with Temporal.
-- Install the latest versions of [Temporal Server](https://docs.temporal.io/clusters#temporal-server) and the [Go SDK](https://pkg.go.dev/go.temporal.io/sdk)
-
-Create a new directory for the project called `email-subscription-project`.
-Run `go mod init subscribeemail` to create a Go module file in the project directory.
-Run `go mod tidy` to update the Go module file.
+- Create a new directory for the project called `email-subscription-project`.
+- Run `go mod init subscribeemail` to create a Go module file in the project directory.
+- Run `go mod tidy` to update the Go module file.
 
 :::note
 
@@ -41,14 +36,10 @@ Always run `go mod tidy` after importing new packages to the application.
 
 A Workflow defines a sequence of steps defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a Workflow Execution.
 
-The Temporal Go SDK recommends the use of a single struct for parameters and return types.
-This lets you add fields without breaking Workflow compatibility.
+The Temporal Go SDK recommends the use of a single struct for parameters and return types. This lets you change fields without breaking Workflow compatibility.
 Before writing the Workflow Definition, you'll define the data object used by the Workflow Definition.
 
-To set up the struct, create a new file called `subscribe.go` in your project directory.
-
-<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["1"]}-->
-<!--SNIPEND-->
+To set up the struct, create a new file called `subscribe.go` in your project directory. This file will hold some constants you'll use in the application.
 
 This struct will represent the data you'll send to your Activity and Workflow.
 You'll create an `EmailDetails` struct with the following fields:
@@ -57,41 +48,26 @@ You'll create an `EmailDetails` struct with the following fields:
  - `IsSubscribed`: a boolean to track whether the user is subscribed
  - `SubscriptionCount`: an integer to track the number of emails sent
 
-Add the following code to the `subscribe.go` file:
+Add the following code to the `subscribe.go` file to define the struct, as well as the Task Queue name and the host and port your web API will use:
 
-<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["4-11"]}-->
+<!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["1-11"]}-->
 <!--SNIPEND-->
 
-Now that you have your `EmailDetails` struct defined, you can now move on to writing the Workflow Definition.
+Now that you have your `EmailDetails` struct defined, you can move on to writing the Workflow Definition.
 
-To create a new Workflow Definition, create a new file called `workflow.go`.
-This file will contain the `SubscriptionWorkflow()` function.
+To create a new Workflow Definition, create a new file called `workflow.go`. This file will contain the `SubscriptionWorkflow()` function.
 
 Use the `workflow.go` file to write deterministic logic inside your Workflow Definition and to execute the Activity.
 
 Add the following code to define the Workflow:
 
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["4-29", "54-62", "65-68"]}-->
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "25-29", "64-92"]}-->
 <!--SNIPEND-->
 
-The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails.
-`ctx` contains `workflow.Context`, which the Go SDK uses to pass around Workflow Execution context.
-`EmailDetails` propagates the function's `data` struct, which is used alongside `ctx` to execute the Activity.
+The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails`.  `ctx` references `workflow.Context`, which the Go SDK uses to pass around Workflow Execution context.
+`EmailDetails` propagates the function's `data` struct. which will be used to execute the Activity.
 
-In addition to a Query handler, the Workflow Definition needs a cancellation handler.
-Create a new function within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution.
-
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["32-52"]}-->
-<!--SNIPEND-->
-
-The `SubscriptionWorkflow()` function needs a `for` loop to continue sending emails.
-The `for` loop executes the email Activity while `IsSubscribed` is `true`, and even uses a Timer to pause the Workflow between emails.
-The Timer can pause the Workflow for seconds, days, months, or even years, depending on your business logic.
-
-Add the following code to run a `for` loop:
-
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["71-92"]}-->
-<!--SNIPEND-->
+The `SubscriptionWorkflow()` function uses a `for` loop to send the emails. The `for` loop executes the `SendEmail` Activity while `IsSubscribed` is `true`, and uses a Timer to pause the Workflow between emails.  The Timer can pause the Workflow for seconds, days, months, or even years, depending on your business logic.
 
 Since the user's email address is set to the [Workflow Id](https://docs.temporal.io/workflows#workflow-id), attempting to subscribe with the same email address twice will result in an error and prevent the Workflow Execution from spawning again.
 
@@ -102,7 +78,7 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop the Activities
 
-Create a new file called activities.py and develop the Activity Definition.
+Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
 <!--SNIPSTART subscription-workflow-go-activities-->
 <!--SNIPEND-->
@@ -160,6 +136,21 @@ In the next section, you'll query your Workflow to get back information on the s
 
 ## Add a Query
 
+You can let users get information about their subscription details by using a Query.
+
+To allow users to retrieve information about their subscription details, add a new Query handler to the `SendEmailWorkflow` Workflow.
+
+Open the `workflow.go` file and add a Query handler to the top of the Workflow Definition, right after the logging statement::
+
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["15-24"]}-->
+<!--SNIPEND-->
+
+This Query handler returns the contents of the `emailDetails` variable. Queries should never mutate anything in the Workflow.
+
+You can use Queries even if the Workflow completes, which is useful for when the user unsubscribes but still wants to retrieve information about their subscription.
+
+Now that you've added the ability to Query your Workflow, add the ability to Query from the web API. 
+
 Create a function called `showDetailsHandler()` in which a user can get information about their subscription details.
 Make sure to include error handlers to ensure proper "GET" requests and responses.
 
@@ -179,18 +170,27 @@ Now that users can subscribe and view the details of their subscription, you nee
 
 Users will want to unsubscribe from the email list at some point, so give them a way to do that.
 
+To gracefully handle the Unsubscribe request, the Workflow Definition needs a cancellation handler.
+
+Create a new `defer` block within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution:
+
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["32-52"]}-->
+<!--SNIPEND-->
+
+To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to return a [cancel()](https://python.temporal.io/temporalio.client.WorkflowHandle.html#cancel) method on the Workflow's handle.
+
 Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["99-152"]}-->
 <!--SNIPEND-->
 
-The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution started on the `/subscribe` endpoint.
+The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint. 
 
 When the Workflow receives the cancellation request, it will cancel the Workflow Execution and return a `CancelledError` to the Workflow Execution.
 This is then handled by the error handlers included in the `unsubscribeHandler()` function.
 
 Users can now send a "DELETE" request to `/unsubscribe` to cancel the Workflow associated with the request body's email address. 
-This allows users to unsubscribe from the email list and prevent any further emails from sending.
+This lets users unsubscribe from the email list and prevent any further emails from sending.
 
 Now that you've added the ability to unsubscribe from the email list, test your application code to ensure it works as expected.
 

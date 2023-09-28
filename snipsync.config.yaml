@@ -36,7 +36,7 @@ origins:
   - owner: temporalio
     repo: background-checks
   - owner: temporalio
-    repo: subscription-workflow-go
+    repo: email-subscription-project-go
   - owner: temporalio
     repo: data-pipeline-project-python
   - owner: temporalio
