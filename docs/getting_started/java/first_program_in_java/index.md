@@ -99,7 +99,7 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
 
 :::note
-If you are using Temporal CLI, start your server and specifiy a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
 
 Start Temporal CLI with the following command:
 
