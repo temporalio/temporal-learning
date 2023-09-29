@@ -27,7 +27,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ### Introduction
 
-Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process.
+Whether you're writing a complex transaction-based Workflow or working with remote APIs, creating reliable applications is a complex process.
 
 The Temporal Cluster and a language-specific SDK, in this case the [Go SDK](https://github.com/temporalio/go-sdk), provide a comprehensive solution to the complexities that arise from modern application development. You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications.
 
