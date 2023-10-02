@@ -12,9 +12,9 @@ These courses are also [available online](https://learn.temporal.io/courses/temp
 
 ## Temporal 102
 
-- Temporal 102 with Go [code](https://github.com/temporalio/edu-102-go-code) and [slides](/replay2023/temporal-101-with-go-for-replay-2023.pdf)
-- Temporal 102 with TypeScript [code](https://github.com/temporalio/edu-102-typescript-code) and [slides](/replay2023/temporal-101-with-typescript-for-replay-2023.pdf)
-- Temporal 102 with Java [code](https://github.com/temporalio/edu-102-java-code) and [slides](/replay2023/temporal-101-with-java-for-replay-2023.pdf)
+- Temporal 102 with Go [code](https://github.com/temporalio/edu-102-go-code) and [slides](/replay2023/temporal-102-with-go-for-replay-2023.pdf)
+- Temporal 102 with TypeScript [code](https://github.com/temporalio/edu-102-typescript-code) and [slides](/replay2023/temporal-102-with-typescript-for-replay-2023.pdf)
+- Temporal 102 with Java [code](https://github.com/temporalio/edu-102-java-code) and [slides](/replay2023/temporal-102-with-java-for-replay-2023.pdf)
 
 Temporal 102 with Go is [available online](https://learn.temporal.io/courses/temporal_102/), with other courses to follow.
 
