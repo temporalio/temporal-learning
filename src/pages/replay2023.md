@@ -1,4 +1,4 @@
-# Replay 2023 Slides
+# Replay 2023 Temporal Workshops
 
 Thanks for attending the Temporal workshops at Replay 2023. You'll find the slides and code repositories for the workshops here:
 
