@@ -61,7 +61,7 @@ Use the `workflow.go` file to write deterministic logic inside your Workflow Def
 
 Add the following code to define the Workflow:
 
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "25-29", "54-92"]}-->
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "24-29", "53-92"]}-->
 <!--SNIPEND-->
 
 The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails`.  `ctx` references `workflow.Context`, which the Go SDK uses to pass around Workflow Execution context.
@@ -120,7 +120,7 @@ Now that the connection to the Temporal Server is open, define your first endpoi
 
 Create a `subscribeHandler()` function in the same file so users can subscribe to the emails.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["27-96"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["26-96"]}-->
 <!--SNIPEND-->
 
 Use error handlers to ensure that the function only responds to a "POST" request in JSON format.
@@ -154,7 +154,7 @@ Now that you've added the ability to Query your Workflow, add the ability to Que
 Create a function called `showDetailsHandler()` in which a user can get information about their subscription details.
 Make sure to include error handlers to ensure proper "GET" requests and responses.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["154-195"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["153-195"]}-->
 <!--SNIPEND-->
 
 The resulting function returns the email address associated with the Workflow—in other words, the Workflow Id.
@@ -174,7 +174,7 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 
 Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["98-152"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["97-152"]}-->
 <!--SNIPEND-->
 
 The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint. 
