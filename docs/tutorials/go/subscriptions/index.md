@@ -61,7 +61,7 @@ Use the `workflow.go` file to write deterministic logic inside your Workflow Def
 
 Add the following code to define the Workflow:
 
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "25-29", "64-92"]}-->
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "25-29", "54-92"]}-->
 <!--SNIPEND-->
 
 The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails`.  `ctx` references `workflow.Context`, which the Go SDK uses to pass around Workflow Execution context.
@@ -69,7 +69,7 @@ The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDe
 
 The `SubscriptionWorkflow()` function uses a `for` loop to send the emails. The `for` loop executes the `SendEmail` Activity while `IsSubscribed` is `true`, and uses a Timer to pause the Workflow between emails.  The Timer can pause the Workflow for seconds, days, months, or even years, depending on your business logic.
 
-Since the user's email address is set to the [Workflow Id](https://docs.temporal.io/workflows#workflow-id), attempting to subscribe with the same email address twice will result in an error and prevent the Workflow Execution from spawning again.
+Later in this tutorial, you will find that the user's email address is set to the [Workflow Id](https://docs.temporal.io/workflows#workflow-id). This means that attempting to subscribe with the same email address twice will result in an error and prevent the Workflow Execution from spawning again.
 
 Therefore, only one running Workflow Execution per email address can exist within the associated [Namespace](https://docs.temporal.io/namespaces). 
 This ensures that the user won't receive multiple email subscriptions. This also helps reduce the complexity of the code you have to write and maintain.
@@ -104,7 +104,7 @@ This tutorial uses [Go's HTTP library](https://pkg.go.dev/net/http) as the entry
 Create a `gateway` folder with the file `main.go`.
 Establish your JSON request and response structs, set the endpoint handlers, and connect to the Temporal Client.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["1-25", "198-215"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["1-25", "197-215"]}-->
 <!--SNIPEND-->
 
 The Temporal Client enables you to communicate with the Temporal Cluster. Communication with a Temporal Cluster includes, but isn't limited to, the following:
@@ -118,7 +118,7 @@ Temporal recommends JSON formatting for data that's handled by other programs—
 
 Now that the connection to the Temporal Server is open, define your first endpoint.
 
-Create a `subscribeHandler()` function so users can subscribe to the emails.
+Create a `subscribeHandler()` function in the same file so users can subscribe to the emails.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["27-96"]}-->
 <!--SNIPEND-->
@@ -154,34 +154,27 @@ Now that you've added the ability to Query your Workflow, add the ability to Que
 Create a function called `showDetailsHandler()` in which a user can get information about their subscription details.
 Make sure to include error handlers to ensure proper "GET" requests and responses.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["155-195"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["154-195"]}-->
 <!--SNIPEND-->
 
 The resulting function returns the email address associated with the Workflow—in other words, the Workflow Id.
-The handle only gets the value of the `EmailDetails` variables.
-Queries should never mutate anything in the Workflow.
-
-Queries can be used even if after the Workflow completes.
-This is useful for retrieving information after unsubscribing from the subscription.
 
 Now that users can subscribe and view the details of their subscription, you need to provide them with a way to unsubscribe.
 
 ## Unsubscribe users with a Workflow Cancellation request
 
-Users will want to unsubscribe from the email list at some point, so give them a way to do that.
-
-To gracefully handle the Unsubscribe request, the Workflow Definition needs a cancellation handler.
+Users will need to unsubscribe from the email list at some point. To gracefully handle the Unsubscribe request, the Workflow Definition needs a cancellation handler.
 
 Create a new `defer` block within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution:
 
-<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["32-52"]}-->
+<!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["31-52"]}-->
 <!--SNIPEND-->
 
 To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to return a [cancel()](https://python.temporal.io/temporalio.client.WorkflowHandle.html#cancel) method on the Workflow's handle.
 
 Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
 
-<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["99-152"]}-->
+<!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["98-152"]}-->
 <!--SNIPEND-->
 
 The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint. 
