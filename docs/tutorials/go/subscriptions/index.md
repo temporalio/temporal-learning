@@ -78,6 +78,8 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop the Activities
 
+An [Activity](https://docs.temporal.io/activities) is a normal function or method that executes a single, well-defined action (either short or long running), such as calling another service, transcoding a media file, or sending an email message. Workflow code orchestrates the execution of Activities, persisting the results.
+
 Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
 <!--SNIPSTART subscription-workflow-go-activities-->
@@ -88,6 +90,8 @@ Each iteration of the Workflow loop will execute this Activity, which simulates 
 Now that the Activity Definition and Workflow Definition have been created, it's time to write the Worker process.
 
 ## Build the Worker
+
+Temporal Workflows and Activities are executed by [Workers](https://docs.temporal.io/workers) that listen on specific Task Queues. When Workflows and Activities return, the Workers send the results back to the Temporal Cluster.
 
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
