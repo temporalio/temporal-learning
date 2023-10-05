@@ -5,7 +5,7 @@ Thanks for attending the Temporal workshops at Replay 2023. You'll find the slid
 ## Temporal 101
 
 - Temporal 101 with Go [code](https://github.com/temporalio/edu-101-go-code) and [slides](/replay2023/temporal-101-with-go-for-replay-2023.pdf)
-- Temporal 101 with TypeScript [code](https://github.com/temporalio/edu-101-typescript-code) [slides](/replay2023/temporal-101-with-typescript-for-replay-2023.pdf)
+- Temporal 101 with TypeScript [code](https://github.com/temporalio/edu-101-typescript-code) and [slides](/replay2023/temporal-101-with-typescript-for-replay-2023.pdf)
 - Temporal 101 with Java [code](https://github.com/temporalio/edu-101-java-code) and [slides](/replay2023/temporal-101-with-java-for-replay-2023.pdf)
 
 These courses are also [available online](https://learn.temporal.io/courses/temporal_101/).
