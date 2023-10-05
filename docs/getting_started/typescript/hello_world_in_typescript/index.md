@@ -41,7 +41,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using Node.js and TypeScript](/getting_started/typescript/dev_environment/index.md)
 
-The TypeScript SDK requires Node.js 14 or later.
+The TypeScript SDK requires Node.js 18 or later.
 
 ## Create a new project
 

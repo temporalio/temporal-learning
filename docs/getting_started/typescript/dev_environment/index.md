@@ -16,7 +16,7 @@ To follow the TypeScript SDK tutorials and build your own Temporal applications,
 
 ## Install Node.js
 
-The TypeScript SDK requires Node.js 14 or later.
+The TypeScript SDK requires Node.js 18 or later.
 
 Install Node.js via your package manager by following [the official Node.js instructions](https://nodejs.org/en/download/package-manager/).
 
