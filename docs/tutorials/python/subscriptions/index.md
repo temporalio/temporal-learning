@@ -5,7 +5,7 @@ keywords: [Python, temporal, sdk, tutorial]
 tags: [Python, SDK]
 last_update:
   date: 2023-03-01
-title: Build a subscription workflow with Temporal and Python
+title: Build an email subscription workflow with Temporal and Python
 description: This tutorial teaches you how to implement an email subscription application with Temporal's Workflows, Activities, and Queries; however, the key learning allows users to subscribe and start your business logic through a web action.
 image: /img/temporal-logo-twitter-card.png
 ---
