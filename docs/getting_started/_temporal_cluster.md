@@ -72,7 +72,7 @@ Leave the local Temporal Cluster running as you work through tutorials and other
 
 :::tip Change the Web UI port
 
-The Temporal Web UI may be on a different port in some examples or tutorials. To change the port for the Web UI, use the `--ui-port` option when starting the server::
+The Temporal Web UI may be on a different port in some examples or tutorials. To change the port for the Web UI, use the `--ui-port` option when starting the server:
 
 ```command
 temporal server start-dev --ui-port 8080
@@ -82,7 +82,7 @@ The Temporal Web UI will now be available at [`http://localhost:8080`](http://lo
 
 :::
 
-The `temporal server start-dev` command uses an in-memory database, so stopping the server will erase all your Workflows and all your Task Queues. If you want to retain those between runs, start the server and specify a database filename using the `--db-filename` option, like this::
+The `temporal server start-dev` command uses an in-memory database, so stopping the server will erase all your Workflows and all your Task Queues. If you want to retain those between runs, start the server and specify a database filename using the `--db-filename` option, like this:
 
 ```command
 temporal server start-dev --db-filename your_temporal.db

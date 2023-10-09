@@ -27,7 +27,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ### Introduction
 
-Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process.
+Whether you're writing a complex transaction-based Workflow or working with remote APIs, creating reliable applications is a complex process.
 
 The Temporal Cluster and a language-specific SDK, in this case the [Go SDK](https://github.com/temporalio/go-sdk), provide a comprehensive solution to the complexities that arise from modern application development. You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications.
 
@@ -162,7 +162,7 @@ Temporal Workflows automatically retry Activities that fail by default, but you 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, there are two non-retryable errors: one for an invalid account number, and one for insufficient funds. If the Workflow encounters any error other than these, it'll retry the failed Activity indefinitely, but if it encounters one of these two errors, it will continue on with the Workflow. In the case of an error with the `Deposit` activity, the Workflow will attempt to put the money back.
 .
 
-In this Workflow, each Activity uses the same options, but you could specifiy different options for each Activity.
+In this Workflow, each Activity uses the same options, but you could specify different options for each Activity.
 
 :::caution This is a simplified example.
 Transferring money is a tricky subject, and this tutorial's example doesn't cover all of the possible issues that can go wrong. This simplified example doesn't cover all of the possible errors that could occur with a transfer. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
@@ -203,7 +203,7 @@ Now that you've seen how to use the SDK to start a Workflow Execution, try runni
 Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
 
 :::note
-If you are using Temporal CLI, start your server and specifiy a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
 
 Start Temporal CLI with the following command:
 
@@ -333,12 +333,12 @@ Despite your best efforts, there's going to be a time when something goes wrong 
 
 ### Recover from a server crash
 
-Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this stopping the local Temporal Cluster while a Workflow is running.
+Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
 
 Try it out by following these steps:
 
 1. Make sure your Worker is stopped before proceeding so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. 
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run starter/main.go`.
+2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run start/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
 5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
