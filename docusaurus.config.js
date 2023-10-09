@@ -37,13 +37,13 @@ const config = {
     },
   ],
   themeConfig: {
-    // announcementBar: {
-    //   id: 'in_progress',
-    //   content: 'Get your tickets for <a href="https://temporal.io/replay">Replay 2023</a>!',
-    //   backgroundColor: '#1d1d24',
-    //   textColor: '#f9fafb',
-    //   isCloseable: true,
-    // },
+    announcementBar: {
+      id: 'in_progress',
+      content: 'Take our new course, <a href="/courses/intro_to_temporal_cloud/">Introduction to Temporal Cloud</a>.',
+      backgroundColor: '#1d1d24',
+      textColor: '#f9fafb',
+      isCloseable: true,
+    },
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,

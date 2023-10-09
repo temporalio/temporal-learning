@@ -30,7 +30,7 @@ When you've completed the course, you'll be able to:
 - Create an endpoint for integration with a third-party observability tool
 - Access both account- and Namespace-level usage information
 
-Audience
-This course is designed for users who are new to Temporal Cloud, but have at least a basic understanding of Temporal. Although primarily intended to help new Temporal Cloud users with onboarding, this course is available to all, and even people who are in the earliest stages of evaluating Temporal Cloud should find it valuable.
+
+This course is for users who are new to Temporal Cloud, but have at least a basic understanding of Temporal. Although primarily intended to help new Temporal Cloud users with onboarding, this course is available to all, and even people who are in the earliest stages of evaluating Temporal Cloud should find it valuable.
 
  <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:144">Go to Course</a> 
