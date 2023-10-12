@@ -24,7 +24,7 @@ Download and run a small application and explore how Temporal executes Workflows
 
 * [Go](go/first_program_in_go/index.md)
 * [Java](java/first_program_in_java/index.md)
-* TypeScript (coming soon!)
+* [TypeScript](typescript/first_program_in_typescript/index.md)
 * Python (coming soon!)
 
 ## Build a Temporal Application from scratch
