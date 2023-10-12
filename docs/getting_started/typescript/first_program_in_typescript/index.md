@@ -145,14 +145,15 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 [workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/workflows.ts)
+
 ```typescript
-	// RetryPolicy specifies how to automatically handle retries if an Activity fails.
-    retry: {
+    //RetryPolicy specifies how to automatically handle retries if an Activity fails.
+    retry : {
         initialInterval: '1 second',
         maximumInterval: '1 minute',
         backoffCoefficient: 2,
         maximumAttempts: 500,
-        nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError'],
+        nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError']
     }
 ```
 
@@ -495,7 +496,7 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 
 In `workflows.ts`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
-<!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["10-20"]}-->
+<!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
 <!--SNIPEND-->
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation:
