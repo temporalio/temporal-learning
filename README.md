@@ -41,6 +41,12 @@ $ yarn clearsnips
 
 Don't commit files with snippets.
 
+### A note about TypeScript code
+
+TypeScript code gets transpiled to JavaScript code during the build process. Any snippets with the `ts` language get automatically rendered in a two-tab display that shows the TypeScript and JavaScript versions side-by-side.
+
+As a result, all code you include needs to be complete, or the site will fail to build.
+
 ## Run the development server
 
 To preview the site, run the local server with the following command:
