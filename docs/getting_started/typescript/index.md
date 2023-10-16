@@ -15,6 +15,10 @@ Take your first steps into building apps with Temporal and TypeScript by setting
 
 Make sure you have everything you need to start working with Temporal on your local machine.
 
+## [Run your first Temporal application with the TypeScript SDK](first_program_in_typescript/index.md)
+
+Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
+
 ## [Build a Temporal App from Scratch in TypeScript](hello_world_in_typescript/index.md)
 
 Write a program from the ground up with tests. 

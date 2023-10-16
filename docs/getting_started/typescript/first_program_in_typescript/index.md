@@ -144,7 +144,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
-<!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["11-17"]}-->
+<!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
 <!--SNIPEND-->
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, there are two non-retryable errors: one for an invalid account number, and one for insufficient funds. If the Workflow encounters any error other than these, it'll retry the failed Activity indefinitely, but if it encounters one of these two errors, it will continue on with the Workflow. In the case of an error with the `deposit` Activity, the Workflow will attempt to put the money back.
