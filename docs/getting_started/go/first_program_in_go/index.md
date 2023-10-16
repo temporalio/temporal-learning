@@ -87,7 +87,7 @@ With the project downloaded, let's explore the code, starting with the Workflow.
 
 ## Explore the application's Workflow and Activity Definitions
 
-A Temporal application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. 
+A Temporal Application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. 
 
 You use a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) to define the Workflow Execution's constraints. A Workflow Definition in Go is a regular Go function that accepts a Workflow Context and some input values. 
 
@@ -132,7 +132,7 @@ If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposi
 <!--SNIPSTART money-transfer-project-template-go-activity-refund-->
 <!--SNIPEND-->
 
-This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `Deposit` Activity to refund the money, using a separate activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `Deposit` Activity, the `Refund` won't be affected. You'll see this scenario shortly.
+This Activity function is almost identical to the `Deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `Deposit` Activity to refund the money, using a separate Activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `Deposit` Activity, the `Refund` won't be affected. You'll see this scenario shortly.
 
 :::tip Why you use Activities
 

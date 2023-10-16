@@ -85,7 +85,7 @@ With the project downloaded, let's explore the code, starting with the Workflow.
 
 ## Explore the application's Workflow and Activity Definitions
 
-A Temporal application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. 
+A Temporal Application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. 
 
 You use a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) to define the Workflow Execution's constraints. A Workflow Definition in TypeScript is a regular TypeScript function that accepts some input values. 
 
@@ -105,7 +105,7 @@ In this case, the `moneyTransfer` function accepts an `input` variable of the ty
 
 It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
-Notice that the `PaymentDetails` includes a `referenceId` field. Some APIs let you send a unique "idempotency key" along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once. 
+Notice that the `PaymentDetails` interface includes a `referenceId` field. Some APIs let you send a unique "idempotency key" along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once. 
 
 The Workflow Definition calls the Activities `withdraw` and `deposit` to handle the money transfers. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in Typescript by defining Typescript functions that receive some input values.
 
@@ -123,14 +123,14 @@ The `deposit` Activity function looks almost identical to the `withdraw` functio
 <!--SNIPSTART money-transfer-project-template-ts-deposit-activity-->
 <!--SNIPEND-->
 
-There's are some commented lines in this Activity definition that you'll use later in the tutorial to simulate an error in the Activity.
+There are some commented lines in this Activity Definition that you'll use later in the tutorial to simulate an error in the Activity.
 
 If the `withdraw` Activity fails, there's nothing else to do, but if the `deposit` Activity fails, the money needs to go back to the original account, so there's a third Activity called `refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-ts-refund-activity-->
 <!--SNIPEND-->
 
-This Activity function is almost identical to the `deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `deposit` Activity to refund the money, using a separate activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `deposit` Activity, the `refund` won't be affected. You'll see this scenario shortly.
+This Activity function is almost identical to the `deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `deposit` Activity to refund the money, using a separate Activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `deposit` Activity, the `refund` won't be affected. You'll see this scenario shortly.
 
 :::tip Why you use Activities
 
@@ -144,18 +144,8 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
-[workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/workflows.ts)
-
-```typescript
-    //RetryPolicy specifies how to automatically handle retries if an Activity fails.
-    retry : {
-        initialInterval: '1 second',
-        maximumInterval: '1 minute',
-        backoffCoefficient: 2,
-        maximumAttempts: 500,
-        nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError']
-    }
-```
+<!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["11-17"]}-->
+<!--SNIPEND-->
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, there are two non-retryable errors: one for an invalid account number, and one for insufficient funds. If the Workflow encounters any error other than these, it'll retry the failed Activity indefinitely, but if it encounters one of these two errors, it will continue on with the Workflow. In the case of an error with the `deposit` Activity, the Workflow will attempt to put the money back.
 .
@@ -178,7 +168,7 @@ You have two ways to start a Workflow with Temporal, either via the SDK or via t
 
 To start a Workflow Execution, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue) the Workflow should use, and start the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
 
-The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in a shared location. In this application you'll find the Task Queue defined in the `shared.ts` file:
+The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this application you'll find the Task Queue defined in the `shared.ts` file:
 
 <!--SNIPSTART money-transfer-project-template-ts-task-queue-->
 <!--SNIPEND-->
@@ -373,111 +363,40 @@ Depositing $400 into account 43-812.
 
 
 2023-10-11T19:03:29.445Z [WARN] Activity failed {
-  isLocal: false,
+  ...
   attempt: 1,
-  namespace: 'default',
-  taskToken: 'CiQzYmExODRjMi0wODAxLTQyNTEtOGNjNy1hMzNlM2I5MTAzNDgSD3BheS1pbnZvaWNlLTgwMRokM2FkZjIxOTktZTNkOC00OTM2LTliZDctOGM4NzMwMjM2OWViIAsoATIBMkIHZGVwb3NpdEoICAEQkYFAGAE=',
-  workflowId: 'pay-invoice-801',
-  workflowRunId: '3adf2199-e3d8-4936-9bd7-8c87302369eb',
-  workflowType: 'moneyTransfer',
-  activityId: '2',
+  ...
   activityType: 'deposit',
   taskQueue: 'money-transfer',
   error: Error: This deposit has failed
-      at BankingService.depositThatFails (/Users/azhou/Desktop/money-transfer-project-template-ts/src/banking-client.ts:106:11)
-      at Activity.deposit [as fn] (/Users/azhou/Desktop/money-transfer-project-template-ts/src/activities.ts:30:22)
-      at Activity.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:72:23)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:78:97
-      at ActivityInboundLogInterceptor.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity-log-interceptor.ts:66:20)
-      at next (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/common/src/interceptors.ts:29:59)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:79:30
-      at AsyncLocalStorage.run (node:async_hooks:346:14)
-      at Activity.run (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:76:30)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/worker.ts:985:48,
-  durationMs: 0
+  ...
 }
 Depositing $400 into account 43-812.
 
 
 2023-10-11T19:03:30.455Z [WARN] Activity failed {
-  isLocal: false,
+  ...
   attempt: 2,
-  namespace: 'default',
-  taskToken: 'CiQzYmExODRjMi0wODAxLTQyNTEtOGNjNy1hMzNlM2I5MTAzNDgSD3BheS1pbnZvaWNlLTgwMRokM2FkZjIxOTktZTNkOC00OTM2LTliZDctOGM4NzMwMjM2OWViIAsoAjIBMkIHZGVwb3NpdEoICAEQlIFAGAE=',
-  workflowId: 'pay-invoice-801',
-  workflowRunId: '3adf2199-e3d8-4936-9bd7-8c87302369eb',
-  workflowType: 'moneyTransfer',
-  activityId: '2',
+  ...
   activityType: 'deposit',
   taskQueue: 'money-transfer',
   error: Error: This deposit has failed
-      at BankingService.depositThatFails (/Users/azhou/Desktop/money-transfer-project-template-ts/src/banking-client.ts:106:11)
-      at Activity.deposit [as fn] (/Users/azhou/Desktop/money-transfer-project-template-ts/src/activities.ts:30:22)
-      at Activity.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:72:23)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:78:97
-      at ActivityInboundLogInterceptor.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity-log-interceptor.ts:66:20)
-      at next (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/common/src/interceptors.ts:29:59)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:79:30
-      at AsyncLocalStorage.run (node:async_hooks:346:14)
-      at Activity.run (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:76:30)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/worker.ts:985:48,
-  durationMs: 0
+  ...
 }
 Depositing $400 into account 43-812.
 
 
 2023-10-11T19:03:32.461Z [WARN] Activity failed {
-  isLocal: false,
+  ...
   attempt: 3,
-  namespace: 'default',
-  taskToken: 'CiQzYmExODRjMi0wODAxLTQyNTEtOGNjNy1hMzNlM2I5MTAzNDgSD3BheS1pbnZvaWNlLTgwMRokM2FkZjIxOTktZTNkOC00OTM2LTliZDctOGM4NzMwMjM2OWViIAsoAzIBMkIHZGVwb3NpdEoICAEQl4FAGAE=',
-  workflowId: 'pay-invoice-801',
-  workflowRunId: '3adf2199-e3d8-4936-9bd7-8c87302369eb',
-  workflowType: 'moneyTransfer',
-  activityId: '2',
+  ...
   activityType: 'deposit',
   taskQueue: 'money-transfer',
   error: Error: This deposit has failed
-      at BankingService.depositThatFails (/Users/azhou/Desktop/money-transfer-project-template-ts/src/banking-client.ts:106:11)
-      at Activity.deposit [as fn] (/Users/azhou/Desktop/money-transfer-project-template-ts/src/activities.ts:30:22)
-      at Activity.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:72:23)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:78:97
-      at ActivityInboundLogInterceptor.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity-log-interceptor.ts:66:20)
-      at next (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/common/src/interceptors.ts:29:59)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:79:30
-      at AsyncLocalStorage.run (node:async_hooks:346:14)
-      at Activity.run (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:76:30)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/worker.ts:985:48,
-  durationMs: 0
+  ...
 }
 Depositing $400 into account 43-812.
 
-
-2023-10-11T19:03:36.474Z [WARN] Activity failed {
-  isLocal: false,
-  attempt: 4,
-  namespace: 'default',
-  taskToken: 'CiQzYmExODRjMi0wODAxLTQyNTEtOGNjNy1hMzNlM2I5MTAzNDgSD3BheS1pbnZvaWNlLTgwMRokM2FkZjIxOTktZTNkOC00OTM2LTliZDctOGM4NzMwMjM2OWViIAsoBDIBMkIHZGVwb3NpdEoICAEQmoFAGAE=',
-  workflowId: 'pay-invoice-801',
-  workflowRunId: '3adf2199-e3d8-4936-9bd7-8c87302369eb',
-  workflowType: 'moneyTransfer',
-  activityId: '2',
-  activityType: 'deposit',
-  taskQueue: 'money-transfer',
-  error: Error: This deposit has failed
-      at BankingService.depositThatFails (/Users/azhou/Desktop/money-transfer-project-template-ts/src/banking-client.ts:106:11)
-      at Activity.deposit [as fn] (/Users/azhou/Desktop/money-transfer-project-template-ts/src/activities.ts:30:22)
-      at Activity.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:72:23)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:78:97
-      at ActivityInboundLogInterceptor.execute (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity-log-interceptor.ts:66:20)
-      at next (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/common/src/interceptors.ts:29:59)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:79:30
-      at AsyncLocalStorage.run (node:async_hooks:346:14)
-      at Activity.run (/Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/activity.ts:76:30)
-      at /Users/azhou/Desktop/money-transfer-project-template-ts/node_modules/@temporalio/worker/src/worker.ts:985:48,
-  durationMs: 0
-}
-Depositing $400 into account 43-812.
 ...
 
 ```
