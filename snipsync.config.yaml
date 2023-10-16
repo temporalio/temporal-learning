@@ -4,6 +4,8 @@ origins:
   - owner: temporalio
     repo: hello-world-project-template-java
   - owner: temporalio
+    repo: money-transfer-project-template-ts
+  - owner: temporalio
     repo: money-transfer-project-template-go
   - owner: temporalio
     repo: hello-world-project-template-go
