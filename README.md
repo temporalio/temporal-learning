@@ -270,14 +270,16 @@ This script generates new pages with new datestamps, which means Git will see th
 
 ## Explore and maintain theme customizations
 
-The default Docusaurus theme doesn't display author and date info at the top of the article. We swizzled the `DocItem/Content` component and placed these items into the header.
+The default Docusaurus theme doesn't display author and date info at the top of the article. We extracted the `DocItem/Content` component and placed these items into the header.
 
-To update this, swizzle the followiung components and **extract**, rather than **wrap** them:
+If a future change to the underlying components breaks this, you'll need to [swizzle](https://docusaurus.io/docs/swizzling) the following components and **extract**, rather than **wrap** them:
 
 * DocItem/Content
 * DocItem/Footer
 
-Do a `diff` on  the relevant bits and test. Then remove the `DocItem/Footer` node.
+Do a `diff` on  the relevant bits and test. Some of the content you need is in the `DocItem/Fooder` node.
+
+Once you have migrated the changes into the `DocItem/Content` component, delete the `DocItem/Footer` node you swizzled, as you only needed it for the code it contained..
 
 # Commit changes and make a pull request
 
