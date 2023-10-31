@@ -168,7 +168,7 @@ Withdrawing $18.740000 from account 001-001. ReferenceId: 2ab46ccb-3791-4dd2-84e
 Depositing $18.740000 into account 002-002. ReferenceId: 2ab46ccb-3791-4dd2-84e6-62319eb710a2
 ```
 
-<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://github.com/temporalio/temporal-learning/blob/main/docs/getting_started/java/first_program_in_java/images/confetti.png?raw=true" />
+<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="images/confetti.png" />
 
 **Congratulations**, you just ran a Temporal Workflow application!
 
@@ -210,7 +210,7 @@ On the next scheduled attempt, the Worker will pick up right where the Workflow 
 
 ## Conclusion
 
-<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://github.com/temporalio/temporal-learning/blob/main/docs/getting_started/java/first_program_in_java/images/boost.png?raw=true" />
+<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="images/boost.png" />
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 
