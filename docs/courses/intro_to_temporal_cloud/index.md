@@ -1,6 +1,6 @@
 ---
 title: Introduction to Temporal Cloud
-sidebar_position: 1
+sidebar_position: 3
 sidebar_label: Introduction to Temporal Cloud
 public: false
 draft: false
