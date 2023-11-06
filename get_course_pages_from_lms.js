@@ -18,8 +18,12 @@ const courseData = [
     description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Go SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
   },
   {code: '102_go', language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "temporal_102/go.md", index: 1,
-    keywords: "[Temporal, application development, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
-    description: "Dive into advanced Temporal application development in this comprehensive course, covering the full development lifecycle. Gain expertise in testing, debugging, deployment, and updating applications, while adopting best practices to address common Temporal development challenges."
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    description: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
+  },
+  {code: '102_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_102/java.md", index: 2,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    description: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
   },
   {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_101/typescript.md", index: 2,
     keywords: "[Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
@@ -111,9 +115,9 @@ function generateMarkdown(course, metadata, base_url, index) {
   let date = `${yy}-${mm}-${dd}`
 
   let str = `---
-title: ${course.name}
+title: "${course.name}"
 sidebar_position: ${index}
-sidebar_label: ${course.name}
+sidebar_label: "${course.name}"
 public: ${publicCourse}
 draft: ${!active}
 tags: [courses, ${metadata.language}]

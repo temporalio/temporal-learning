@@ -1,6 +1,6 @@
 ---
 title: Temporal 102 with Go
-sidebar_position: 3
+sidebar_position: 1
 sidebar_label: Temporal 102 with Go
 public: false
 draft: false
