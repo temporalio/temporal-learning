@@ -10,7 +10,7 @@ description: "Go beyond the basics and gain a deeper understand of how Temporal 
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2023-11-06
+  date: 2023-11-07
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -25,7 +25,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-In this course, you'll go beyond those basics, acquiring skills that will help you on your journey to production deployment. Along the way, you'll encounter several common problems faced by Temporal developers, find out why they occur, and more importantly, how to identify and solve them, as well as how to avoid them in the future. By emphasizing key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
+In this course, you'll go beyond the basics of Temporal application development, acquiring skills that will help you on your journey to production deployment. Along the way, you'll encounter several common problems faced by Temporal developers, find out why they occur, and more importantly, how to identify and solve them, as well as how to avoid them in the future. By emphasizing key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
 
 When you've completed the course, you'll be able to:
 
