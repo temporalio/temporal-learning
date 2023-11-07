@@ -1,5 +1,5 @@
 ---
-title: Temporal 101
+title: "Temporal 101: Introducing the Temporal Platform"
 sidebar_position: 1
 public: false
 draft: false
@@ -29,7 +29,6 @@ When you've completed the course, you'll be able to:
 - Use Temporal’s tooling to manage the lifecycle of your application
 
 import DocCardList from '@theme/DocCardList';
-import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
 
-<DocCardList items={useCurrentSidebarCategory().items}/>
+<DocCardList />
 

@@ -1,7 +1,6 @@
 ---
-title: Temporal 102
+title: "Temporal 102: Exploring Durable Execution"
 sidebar_position: 2
-sidebar_label: Temporal 102
 public: false
 draft: false
 tags: [courses]
@@ -30,8 +29,7 @@ When you've completed the course, you'll be able to:
 * Prepare for using Temporal in a production environment
 
 import DocCardList from '@theme/DocCardList';
-import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
 
-<DocCardList items={useCurrentSidebarCategory().items}/>
+<DocCardList />
 
 
