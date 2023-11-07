@@ -22,6 +22,13 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 **Cost**: Free
 
+### Select your programmming language to learn more and enroll
+
+<a class="button button--primary" href="temporal_101/go">Go</a>&nbsp;
+<a class="button button--primary" href="temporal_101/java">Java</a>&nbsp;
+<a class="button button--primary" href="temporal_101/typescript">TypeScript</a>&nbsp;
+<a class="button button--primary" href="temporal_101/python">Python</a>&nbsp;
+
 -----
 
 ## [Temporal 102: Exploring Durable Execution](temporal_102/index.md)
@@ -32,6 +39,11 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 **Cost**: Free
 
+### Select your programmming language to learn more and enroll
+
+<a class="button button--primary" href="temporal_102/go">Go</a>&nbsp;
+<a class="button button--primary" href="temporal_102/java">Java</a>&nbsp;
+
 -----
 
 ## [Introduction to Temporal Cloud](intro_to_temporal_cloud/index.md)
@@ -41,6 +53,11 @@ In this course, you will learn the role of Temporal Cloud, how to log into and n
 **Estimated time**: ⏱️ 1 hour
 
 **Cost**: Free
+
+
+<a class="button button--primary" href="intro_to_temporal_cloud">Learn more and enroll</a>&nbsp;
+
+-----
 
 :::info More courses coming soon!
 

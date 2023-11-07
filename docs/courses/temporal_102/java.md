@@ -1,12 +1,12 @@
 ---
 title: "Temporal 102: Exploring Durable Execution with Java"
 sidebar_position: 2
-sidebar_label: "Temporal 102: Exploring Durable Execution with Java"
+sidebar_label: "Temporal 102 with Java"
 public: false
 draft: false
 tags: [courses, Java]
 keywords: [Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]
-description: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
+description: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:

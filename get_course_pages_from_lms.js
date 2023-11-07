@@ -29,7 +29,7 @@ const courseData = [
   },
   {code: '102_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_102/java.md", index: 2,
     keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
-    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
   },
   {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_101/typescript.md", index: 2,
     keywords: "[Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",

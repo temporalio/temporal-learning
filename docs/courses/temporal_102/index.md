@@ -28,8 +28,8 @@ When you've completed the course, you'll be able to:
 * Analyze an Event History to debug problems with Workflow Execution
 * Prepare for using Temporal in a production environment
 
-import DocCardList from '@theme/DocCardList';
+### Select your programmming language to learn more and enroll
 
-<DocCardList />
-
+<a class="button button--primary" href="go">Go</a>&nbsp;
+<a class="button button--primary" href="java">Java</a>&nbsp;
 

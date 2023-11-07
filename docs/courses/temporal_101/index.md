@@ -19,7 +19,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's Go SDK to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
+In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's SDKs to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
 
 When you've completed the course, you'll be able to:
 
@@ -28,7 +28,10 @@ When you've completed the course, you'll be able to:
 - Interpret Temporal's Workflow execution model
 - Use Temporal’s tooling to manage the lifecycle of your application
 
-import DocCardList from '@theme/DocCardList';
+### Select your programmming language to learn more and enroll
 
-<DocCardList />
+<a class="button button--primary" href="go">Go</a>&nbsp;
+<a class="button button--primary" href="java">Java</a>&nbsp;
+<a class="button button--primary" href="typescript">Java</a>&nbsp;
+<a class="button button--primary" href="python">Java</a>&nbsp;
 
