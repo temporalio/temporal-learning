@@ -14,6 +14,12 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+**Estimated time**: ⏱️ 4 hours
+
+**Cost**: Free
+
+## Description
+
 In this course, you will go beyond the basics of Temporal application development. You will acquire skills necessary to use Temporal throughout the development lifecycle by learning how to test, debug, and deploy applications. You'll encounter several common problems faced by Temporal developers, understand why they occur, and how to identify, solve, and avoid them. Through heavy emphasis on key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
 
 When you've completed the course, you'll be able to:

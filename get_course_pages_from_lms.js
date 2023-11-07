@@ -37,7 +37,7 @@ const courseData = [
     keywords: "[Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
     description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
   },
-  {code: `intro2cld`, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 1,
+  {code: `intro2cld`, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
     keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
     description: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
   }
@@ -67,7 +67,8 @@ const req = https.request(options, res => {
     const url = 'https://temporal.talentlms.com/catalog';
     const fs = require('fs');
 
-    //console.log(data)
+    // console.log(data)
+
     let courses = JSON.parse(data);
     //console.log(courses)
 
@@ -104,15 +105,24 @@ req.end();
  */
 function generateMarkdown(course, metadata, base_url, index) {
   console.log(metadata)
-  let today = (new Date()).toString().split(' ').splice(1,3).join(' ');
+  const today = (new Date()).toString().split(' ').splice(1,3).join(' ');
 
-  let active = course.status === "active";
-  let publicCourse = course.shared === 1;
-  let url = `${base_url}/info/id:${course.id}`;
-  let apidate = course.last_update_on;
-  let dateparts = apidate.split(",")[0];
-  let [dd,mm,yy] = dateparts.split("/");
-  let date = `${yy}-${mm}-${dd}`
+  const active = course.status === "active";
+  const publicCourse = course.shared === 1;
+  const url = `${base_url}/info/id:${course.id}`;
+  const apidate = course.last_update_on;
+  const dateparts = apidate.split(",")[0];
+  const [dd,mm,yy] = dateparts.split("/");
+  const date = `${yy}-${mm}-${dd}`;
+  let hours = course.custom_field_2;
+  if (parseInt(hours) > 1) {
+    hours = `⏱️ ${hours} hours`
+  }else {
+    hours = `⏱️ ${hours} hour`
+  }
+
+  // parse text from LMS and massage
+  const description = course.description.replace("Prerequisites:", "### Prerequisites:")
 
   let str = `---
 title: "${course.name}"
@@ -135,6 +145,10 @@ image: /img/temporal-logo-twitter-card.png
 
 ${metadata.banner}
 
+**Estimated time**: ${hours}
+
+**Cost**: Free
+
 `
 if (!active) {
   str += `:::info Course coming soon!
@@ -147,7 +161,7 @@ We're still building this course. The course outcomes and content are subject to
 `
 }
 
-str += course.description + '\n\n';
+str += "## Description\n\n" + description + '\n\n';
 
 if (active) {
   str += ` <a className="button button--primary" href="${url}">Go to Course</a> `;
