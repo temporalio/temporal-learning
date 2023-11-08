@@ -32,4 +32,5 @@ When you've completed the course, you'll be able to:
 
 <a class="button button--primary" href="go">Go</a>&nbsp;
 <a class="button button--primary" href="java">Java</a>&nbsp;
+<a class="button button--primary" href="typescript">TypeScript</a>&nbsp;
 

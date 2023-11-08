@@ -27,6 +27,10 @@ Write a program from the ground up with tests.
 
 In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's Java SDK to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing workflow.
 
+## [Take Temporal 102 in Java](/courses/temporal_102/java.md)
+
+In this course, you'll go beyond the basics of Temporal application development, acquiring skills that will help you on your journey to production deployment. Along the way, you'll encounter several common problems faced by Temporal developers, find out why they occur, and more importantly, how to identify and solve them, as well as how to avoid them in the future. By emphasizing key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
+
 ## Review documentation and other resources
 
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
