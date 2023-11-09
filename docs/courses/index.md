@@ -43,6 +43,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 <a class="button button--primary" href="temporal_102/go">Go</a>&nbsp;
 <a class="button button--primary" href="temporal_102/java">Java</a>&nbsp;
+<a class="button button--primary" href="temporal_102/typescript">TypeScript</a>&nbsp;
 
 -----
 
