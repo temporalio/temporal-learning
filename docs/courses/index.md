@@ -1,16 +1,18 @@
 ---
-id: courses
 title: "Courses"
+hide_title: true
 sidebar_position: 3
 hide_table_of_contents: true
 custom_edit_url: null
 pagination_prev: getting_started/index
-pagination_next: null
+pagination_next: tutorials/index
 last_update:
   date: 2023-11-07
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
 ---
+
+![Temporal Courses](/img/banners/courses.png)
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
