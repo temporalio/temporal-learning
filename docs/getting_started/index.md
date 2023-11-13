@@ -45,10 +45,10 @@ Download and run a small application and explore how Temporal executes Workflows
 
 Write a program from the ground up in one of the supported languages:
 
-<Link className="button button--primary" to="go/hello_world_in_go">Go</Link>&nbs;
-<Link className="button button--primary" to="java/hello_world_in_java">Java</Link>&nbs;
-<Link className="button button--primary" to="typescript/hello_world_in_typescript">TypeScript</Link>&nbs;
-<Link className="button button--primary" to="python/hello_world_in_python">Python</Link>&nbs;
+<Link className="button button--primary" to="go/hello_world_in_go">Go</Link>&nbsp;
+<Link className="button button--primary" to="java/hello_world_in_java">Java</Link>&nbsp;
+<Link className="button button--primary" to="typescript/hello_world_in_typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="python/hello_world_in_python">Python</Link>&nbsp;
 
 ----
 
