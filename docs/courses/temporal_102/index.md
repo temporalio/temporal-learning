@@ -1,7 +1,7 @@
 ---
 title: "Temporal 102: Exploring Durable Execution"
 sidebar_position: 2
-public: false
+public: true
 draft: false
 tags: [courses]
 keywords: [Temporal, application development, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]
@@ -12,6 +12,8 @@ last_update:
   date: 2023-11-06
 image: /img/temporal-logo-twitter-card.png
 ---
+
+import Link from '@docusaurus/Link';
 
 **Estimated time**: ⏱️ 4 hours
 
@@ -28,9 +30,9 @@ When you've completed the course, you'll be able to:
 * Analyze an Event History to debug problems with Workflow Execution
 * Prepare for using Temporal in a production environment
 
-### Select your programmming language to learn more and enroll
+### Select your programming language to learn more and enroll
 
-<a class="button button--primary" href="go">Go</a>&nbsp;
-<a class="button button--primary" href="java">Java</a>&nbsp;
-<a class="button button--primary" href="typescript">TypeScript</a>&nbsp;
+<Link className="button button--primary" to="go">Go</Link>&nbsp;
+<Link className="button button--primary" to="java">Java</Link>&nbsp;
+<Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
 

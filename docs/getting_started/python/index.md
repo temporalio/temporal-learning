@@ -13,11 +13,27 @@ Take your first steps into building apps with Temporal and Python by setting up 
 
 ## [Set up a local development environment for Temporal and Python](dev_environment/index.md)
 
+**Estimated time**: ⏱️ ~5 minutes
+
 Make sure you have everything you need to start working with Temporal on your local machine.
+
+---
 
 ## [Build a Temporal App from Scratch in Python](hello_world_in_python/index.md)
 
+**Estimated time**: ⏱️ ~20 minutes
+
 Write a program from the ground up with tests. 
+
+----
+
+## [Take Temporal 101 with Python](/courses/temporal_101/python.md)
+
+**Estimated time**: ⏱️ 2 hours
+
+In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's Python SDK to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
+
+----
 
 ## Review documentation and other resources
 

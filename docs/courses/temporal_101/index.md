@@ -13,6 +13,8 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import Link from '@docusaurus/Link';
+
 **Estimated time**: ⏱️ 2 hours
 
 **Cost**: Free
@@ -28,10 +30,10 @@ When you've completed the course, you'll be able to:
 - Interpret Temporal's Workflow execution model
 - Use Temporal’s tooling to manage the lifecycle of your application
 
-### Select your programmming language to learn more and enroll
+### Select your programming language to learn more and enroll
 
-<a class="button button--primary" href="go">Go</a>&nbsp;
-<a class="button button--primary" href="java">Java</a>&nbsp;
-<a class="button button--primary" href="typescript">TypeScript</a>&nbsp;
-<a class="button button--primary" href="python">Python</a>&nbsp;
+<Link className="button button--primary" to="go">Go</Link>&nbsp;
+<Link className="button button--primary" to="java">Java</Link>&nbsp;
+<Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="python">Python</Link>&nbsp;
 

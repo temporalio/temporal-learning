@@ -1,8 +1,8 @@
 ---
 title: "Temporal 101 with Java"
-sidebar_position: 3
+sidebar_position: 2
 sidebar_label: "Temporal 101 with Java"
-public: false
+public: true
 draft: false
 tags: [courses, Java]
 keywords: [Temporal, Workflows, Activities, Java SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]

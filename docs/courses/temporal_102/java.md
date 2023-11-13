@@ -2,7 +2,7 @@
 title: "Temporal 102: Exploring Durable Execution with Java"
 sidebar_position: 2
 sidebar_label: "Temporal 102 with Java"
-public: false
+public: true
 draft: false
 tags: [courses, Java]
 keywords: [Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]

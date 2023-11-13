@@ -8,6 +8,7 @@ last_update:
 description: In this tutorial you will build a Temporal Application using the Python SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
+pagination_next: courses/temporal_101/python
 ---
 
 import Tabs from '@theme/Tabs';

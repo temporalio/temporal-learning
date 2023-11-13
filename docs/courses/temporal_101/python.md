@@ -2,7 +2,7 @@
 title: "Temporal 101 with Python"
 sidebar_position: 4
 sidebar_label: "Temporal 101 with Python"
-public: false
+public: true
 draft: false
 tags: [courses, Python]
 keywords: [Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]

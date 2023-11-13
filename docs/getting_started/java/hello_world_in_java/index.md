@@ -12,6 +12,7 @@ tags:
   - sdk
   - tutorial
 image: /img/temporal-logo-twitter-card.png
+pagination_next: courses/temporal_101/java
 ---
 
 import Tabs from '@theme/Tabs';

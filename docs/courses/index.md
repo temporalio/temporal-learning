@@ -1,16 +1,20 @@
 ---
-id: courses
 title: "Courses"
+hide_title: true
 sidebar_position: 3
 hide_table_of_contents: true
 custom_edit_url: null
 pagination_prev: getting_started/index
-pagination_next: null
+pagination_next: tutorials/index
 last_update:
   date: 2023-11-07
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
 ---
+
+import Link from '@docusaurus/Link';
+
+![Temporal Courses](/img/banners/courses.png)
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
@@ -22,12 +26,12 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 **Cost**: Free
 
-### Select your programmming language to learn more and enroll
+### Select your programming language to learn more and enroll
 
-<a class="button button--primary" href="temporal_101/go">Go</a>&nbsp;
-<a class="button button--primary" href="temporal_101/java">Java</a>&nbsp;
-<a class="button button--primary" href="temporal_101/typescript">TypeScript</a>&nbsp;
-<a class="button button--primary" href="temporal_101/python">Python</a>&nbsp;
+<Link class="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
+<Link class="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
+<Link class="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
+<Link class="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
 
 -----
 
@@ -39,11 +43,11 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 **Cost**: Free
 
-### Select your programmming language to learn more and enroll
+### Select your programming language to learn more and enroll
 
-<a class="button button--primary" href="temporal_102/go">Go</a>&nbsp;
-<a class="button button--primary" href="temporal_102/java">Java</a>&nbsp;
-<a class="button button--primary" href="temporal_102/typescript">TypeScript</a>&nbsp;
+<Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -56,7 +60,7 @@ In this course, you will learn the role of Temporal Cloud, how to log into and n
 **Cost**: Free
 
 
-<a class="button button--primary" href="intro_to_temporal_cloud">Learn more and enroll</a>&nbsp;
+<Link className="button button--primary" to="intro_to_temporal_cloud">Learn more and enroll</Link>
 
 -----
 
