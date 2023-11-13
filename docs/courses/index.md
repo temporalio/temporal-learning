@@ -43,7 +43,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 **Cost**: Free
 
-### Select your programmming language to learn more and enroll
+### Select your programming language to learn more and enroll
 
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
