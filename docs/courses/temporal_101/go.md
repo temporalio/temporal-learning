@@ -2,7 +2,7 @@
 title: "Temporal 101 with Go"
 sidebar_position: 1
 sidebar_label: "Temporal 101 with Go"
-public: false
+public: true
 draft: false
 tags: [courses, Go]
 keywords: [Temporal, Workflows, Activities, Go SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]

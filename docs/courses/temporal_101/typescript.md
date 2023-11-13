@@ -2,7 +2,7 @@
 title: "Temporal 101 with TypeScript"
 sidebar_position: 3
 sidebar_label: "Temporal 101 with TypeScript"
-public: false
+public: true
 draft: false
 tags: [courses, TypeScript]
 keywords: [Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]

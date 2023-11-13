@@ -2,7 +2,7 @@
 title: "Temporal 102 with Go"
 sidebar_position: 1
 sidebar_label: "Temporal 102 with Go"
-public: false
+public: true
 draft: false
 tags: [courses, Go]
 keywords: [Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]
