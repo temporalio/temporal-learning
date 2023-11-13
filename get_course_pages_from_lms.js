@@ -23,6 +23,18 @@ const courseData = [
     keywords: "[Temporal, Workflows, Activities, Go SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
     metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Go SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
   },
+  {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_101/typescript.md", index: 3,
+    keywords: "[Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the TypeScript SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '101_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_101/java.md", index: 2,
+    keywords: "[Temporal, Workflows, Activities, Java SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Java SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '101_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "temporal_101/python.md", index: 4,
+    keywords: "[Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
   {code: '102_go', main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "temporal_102/go.md", index: 1,
     keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
     metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
@@ -34,18 +46,6 @@ const courseData = [
   {code: '102_ts', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_102/typescript.md", index: 3,
     keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
     metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
-  },
-  {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_101/typescript.md", index: 2,
-    keywords: "[Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
-    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the TypeScript SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
-  },
-  {code: '101_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_101/java.md", index: 3,
-    keywords: "[Temporal, Workflows, Activities, Java SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
-    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Java SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
-  },
-  {code: '101_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "temporal_101/python.md", index: 4,
-    keywords: "[Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
-    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
   },
   {code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
     keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
