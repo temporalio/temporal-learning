@@ -227,7 +227,7 @@ Dataclasses in Python, when properly type-annotated, can be easily serialized an
 
 With the dataclass in place, you can now focus on defining the Activity itself.
 
-## Define the Activity class
+### Define the Activity class
 
 Shifting our attention to the core of the execution, Activities can be either functions or methods within a class.
 In this case, you'll encapsulate them within a class to efficiently manage connections to the weather API.
@@ -289,7 +289,7 @@ This will provide the grid forecast endpoints for three format options in these 
 
 :::
 
-Now that the Activity class is defined, it's time to shift our focus to updating the Worker, where these Activities will be executed.
+Now that you have defined the Activity class, it's time to update the Worker where these Activities will be executed.
 
 ## Modify the Worker
 
@@ -638,5 +638,5 @@ By completing this tutorial, you have achieved the following goals:
 2. **Workflow and Activity Integration:** You've learned how to define and orchestrate Workflows and Activities to handle external API calls effectively.
 3. **Client-Worker Communication:** You've seen how to configure a Worker to execute Workflow and Activity tasks and how a Flask client can trigger these Workflows.
 
-This tutorial serves as a foundation for building robust, scalable applications with Temporal and Python, capable of handling complex workflows and external service integrations.
+This tutorial serves as a foundation for building robust, scalable applications with Temporal and Python, capable of handling complex Workflows and external service integrations.
 The skills you've acquired here will be invaluable as you continue to explore and build distributed applications using Temporal.
