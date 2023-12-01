@@ -40,7 +40,7 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content: 'Our course <a href="/courses/temporal_102">Temporal 102: Exploring Durable Execution</a> is now available in <a href="/courses/temporal_102/java">Java</a> and <a href="/courses/temporal_102/typescript">TypeScript</a>!',
+      content: 'Our course <a href="/courses/temporal_102">Temporal 102: Exploring Durable Execution</a> is now available in <a href="/courses/temporal_102/python">Python</a>, <a href="/courses/temporal_102/java">Java</a>, and <a href="/courses/temporal_102/typescript">TypeScript</a>!',
       backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,

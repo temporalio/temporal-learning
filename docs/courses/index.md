@@ -22,16 +22,16 @@ Go deeper with self-paced online courses that provide in-depth hands-on learning
 
 In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's SDKs to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
 
-**Estimated time**: ⏱️ 2 hours
+**Estimated time**: ~⏱️ 2 hours, self-paced.
 
 **Cost**: Free
 
 ### Select your programming language to learn more and enroll
 
-<Link class="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
-<Link class="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
-<Link class="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
-<Link class="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
 
 -----
 
@@ -39,7 +39,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 In this course, you will go beyond the basics of Temporal application development. You will acquire skills necessary to use Temporal throughout the development lifecycle by learning how to test, debug, and deploy applications. You'll encounter several common problems faced by Temporal developers, understand why they occur, and how to identify, solve, and avoid them. Through heavy emphasis on key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
 
-**Estimated time**: ⏱️ 4 hours
+**Estimated time**: ~⏱️ 4 hours, self-paced.
 
 **Cost**: Free
 
@@ -48,6 +48,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
 
 -----
 
