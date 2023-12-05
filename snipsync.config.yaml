@@ -43,6 +43,8 @@ origins:
     repo: data-pipeline-project-python
   - owner: temporalio
     repo: email-subscription-project-python
+  - owner: rachfop
+    repo: weather-api
 
 targets:
   - docs/tutorials
