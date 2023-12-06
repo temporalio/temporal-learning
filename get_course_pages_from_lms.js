@@ -47,11 +47,16 @@ const courseData = [
     keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
     metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
   },
+  {code: '102_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "temporal_102/python.md", index: 4,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
+  },
   {code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
     keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
     metaDescription: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
   }
 ]
+
 
 const options = {
   hostname: 'temporal.talentlms.com',
@@ -131,7 +136,6 @@ function generateCoursePage(metadata, baseURL) {
   const today = (new Date()).toString().split(' ').splice(1,3).join(' ');
 
   const active = metadata.status === "active";
-  const publicCourse = metadata.shared === 1;
   const url = `${baseURL}/info/id:${metadata.id}`;
   const apidate = metadata.last_update_on;
   const dateparts = apidate.split(",")[0];
@@ -146,7 +150,6 @@ function generateCoursePage(metadata, baseURL) {
 title: "${metadata.name}"
 sidebar_position: ${metadata.index}
 sidebar_label: "${metadata.name}"
-public: ${publicCourse}
 draft: ${!active}
 tags: [courses, ${metadata.language}]
 keywords: ${metadata.keywords}
@@ -163,7 +166,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ${metadata.banner}
 
-**Estimated time**: ${hours}
+**Estimated time**: ~${hours}, self-paced.
 
 **Cost**: Free
 
