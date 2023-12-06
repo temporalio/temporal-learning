@@ -35,7 +35,7 @@ Write a program from the ground up with tests.
 
 ## [Take Temporal 101 with Go](/courses/temporal_101/go.md)
 
-**Estimated time**: ⏱️ ~2 hours
+**Estimated time**: ⏱️ ~2 hours, self-paced.
 
 In this course, you will explore the basic building blocks of Temporal: Workflows and Activities. You’ll use these building blocks along with Temporal's Go SDK to develop a small application that communicates with an external service. You'll see how Temporal helps you recover from failures and explore Temporal's execution model and event history. You'll use the Temporal Web UI and Temporal’s command-line tools to explore and interact with your Workflows, and you'll use what you've learned to add new features to your existing Workflow.
 
@@ -43,7 +43,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 ## [Take Temporal 102 with Go](/courses/temporal_102/go.md)
 
-**Estimated time**: ⏱️ ~4 hours
+**Estimated time**: ⏱️ ~4 hours, self-paced.
 
 In this course, you will go beyond the basics of Temporal application development. You will acquire skills necessary to use Temporal throughout the full development lifecycle by learning how to test, debug, deploy, and update applications. You'll encounter several common problems faced by Temporal developers, understand why they occur, and how to identify, solve, and avoid them. Through heavy emphasis on key concepts and best practices, you'll gain a deeper understanding of how Temporal works and how to use it effectively.
 
