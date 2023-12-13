@@ -350,7 +350,6 @@ Through this process, the Flask app, acting as the frontend client, interacts se
 
 Following the successful integration of the Flask application with the Temporal backend, it's vital to shift our focus to the testing phase.
 
-
 ## Test the Activity
 
 Testing your Temporal application is an essential step to ensure the reliability and correctness of its Workflows and Activities.
