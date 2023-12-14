@@ -153,21 +153,6 @@ Below, there are two language tabs (TypeScript and JavaScript). TypeScript is se
 Next, add the following TypeScript code to define the Workflow:
 
 <!--SNIPSTART typescript-hello-workflow-->
-[hello-world/src/workflows.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/workflows.ts)
-```ts
-import * as workflow from '@temporalio/workflow';
-// Only import the activity types
-import type * as activities from './activities';
-
-const { greet } = workflow.proxyActivities<typeof activities>({
-  startToCloseTimeout: '1 minute',
-});
-
-/** A workflow that simply calls an activity */
-export async function example(name: string): Promise<string> {
-  return await greet(name);
-}
-```
 <!--SNIPEND-->
 
 In this code, the variable `greet` is assigned the value of `proxyActivites`, which is a method from the Temporal TypeScript SDK that lets you configure the Activity with different options. In this example, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, `startToCloseTimeOut` is the one you should always set.
@@ -196,12 +181,6 @@ Create the file `activities.ts` in the `src` directory:
 Add the following code to define a `greet` function:
 
 <!--SNIPSTART typescript-hello-activity-->
-[hello-world/src/activities.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/activities.ts)
-```ts
-export async function greet(name: string): Promise<string> {
-  return `Hello, ${name}!`;
-}
-```
 <!--SNIPEND-->
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Next, you'll write code to configure and launch a Worker.
@@ -213,46 +192,6 @@ A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow an
 Create a file called `worker.ts` and add the following code to define the Worker:
 
 <!--SNIPSTART typescript-hello-worker-->
-[hello-world/src/worker.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/worker.ts)
-```ts
-import { NativeConnection, Worker } from '@temporalio/worker';
-import * as activities from './activities';
-
-async function run() {
-  // Step 1: Establish a connection with Temporal server.
-  //
-  // Worker code uses `@temporalio/worker.NativeConnection`.
-  // (But in your application code it's `@temporalio/client.Connection`.)
-  const connection = await NativeConnection.connect({
-    address: 'localhost:7233',
-    // TLS and gRPC metadata configuration goes here.
-  });
-  // Step 2: Register Workflows and Activities with the Worker.
-  const worker = await Worker.create({
-    connection,
-    namespace: 'default',
-    taskQueue: 'hello-world',
-    // Workflows are registered using a path as they run in a separate JS context.
-    workflowsPath: require.resolve('./workflows'),
-    activities,
-  });
-
-  // Step 3: Start accepting tasks on the `hello-world` queue
-  //
-  // The worker runs until it encounters an unexepected error or the process receives a shutdown signal registered on
-  // the SDK Runtime object.
-  //
-  // By default, worker logs are written via the Runtime logger to STDERR at INFO level.
-  //
-  // See https://typescript.temporal.io/api/classes/worker.Runtime#install to customize these defaults.
-  await worker.run();
-}
-
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-```
 <!--SNIPEND-->
 
 In the code, you create and call an async function named `run`. It creates and runs a Worker. It configures the Worker with a `workflowsPath` (the location of your workflow file), your Activity functions, and the name of the Task Queue. In this example, you name the Task Queue `hello-world`.
@@ -337,44 +276,6 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Open a new tab in your terminal, create a `client.ts` file in the `src` directory, and add the following code to your file to create a client that will kick off your Workflow Execution:
 
 <!--SNIPSTART typescript-hello-client-->
-[hello-world/src/client.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/client.ts)
-```ts
-import { Connection, Client } from '@temporalio/client';
-import { example } from './workflows';
-import { nanoid } from 'nanoid';
-
-async function run() {
-  // Connect to the default Server location
-  const connection = await Connection.connect({ address: 'localhost:7233' });
-  // In production, pass options to configure TLS and other settings:
-  // {
-  //   address: 'foo.bar.tmprl.cloud',
-  //   tls: {}
-  // }
-
-  const client = new Client({
-    connection,
-    // namespace: 'foo.bar', // connects to 'default' namespace if not specified
-  });
-
-  const handle = await client.workflow.start(example, {
-    taskQueue: 'hello-world',
-    // type inference works! args: [name: string]
-    args: ['Temporal'],
-    // in practice, use a meaningful business ID, like customerId or transactionId
-    workflowId: 'workflow-' + nanoid(),
-  });
-  console.log(`Started workflow ${handle.workflowId}`);
-
-  // optional: wait for client result
-  console.log(await handle.result()); // Hello, Temporal!
-}
-
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-```
 <!--SNIPEND-->
 
 In the `client.ts` file, the `run` function sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name` parameter (in this example, the name is Temporal) and assigns the Workflow a unique identifier with Nanoid. The client dispatches the Workflow on the same `hello-world` Task Queue that the Worker is polling on.
@@ -462,48 +363,6 @@ your Worker, Workflow, and the Activities.
 Now create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
 
 <!--SNIPSTART hello-world-project-template-ts-workflow-test-->
-[hello-world/src/mocha/workflows.test.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/mocha/workflows.test.ts)
-```ts
-import { TestWorkflowEnvironment } from '@temporalio/testing';
-import { before, describe, it } from 'mocha';
-import { Worker } from '@temporalio/worker';
-import { example } from '../workflows';
-import * as activities from '../activities';
-import assert from 'assert';
-
-describe('Example workflow', () => {
-  let testEnv: TestWorkflowEnvironment;
-
-  before(async () => {
-    testEnv = await TestWorkflowEnvironment.createLocal();
-  });
-
-  after(async () => {
-    await testEnv?.teardown();
-  });
-
-  it('successfully completes the Workflow', async () => {
-    const { client, nativeConnection } = testEnv;
-    const taskQueue = 'test';
-
-    const worker = await Worker.create({
-      connection: nativeConnection,
-      taskQueue,
-      workflowsPath: require.resolve('../workflows'),
-      activities,
-    });
-
-    const result = await worker.runUntil(
-      client.workflow.execute(example, {
-        args: ['Temporal'],
-        workflowId: 'test',
-        taskQueue,
-      })
-    );
-    assert.equal(result, 'Hello, Temporal!');
-  });
-});
-```
 <!--SNIPEND-->
 
 This test creates a test execution environment and then register the Activity to the Worker. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
