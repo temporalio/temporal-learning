@@ -6,6 +6,8 @@ origins:
   - owner: temporalio
     repo: hello-world-project-template-java
   - owner: temporalio
+    repo: money-transfer-project-template-ts
+  - owner: temporalio
     repo: money-transfer-project-template-go
   - owner: temporalio
     repo: hello-world-project-template-go
@@ -37,6 +39,12 @@ origins:
     repo: temporal-ecommerce
   - owner: temporalio
     repo: background-checks
+  - owner: temporalio
+    repo: email-subscription-project-go
+  - owner: temporalio
+    repo: data-pipeline-project-python
+  - owner: temporalio
+    repo: email-subscription-project-python
 
 targets:
   - docs/tutorials

@@ -1,6 +1,7 @@
 ---
 slug: /
 title: Home
+hide_title: true
 sidebar_position: 1
 hide_table_of_contents: true
 keywords: [temporal, sdk, learn, learning, courses, tutorials]
@@ -9,7 +10,7 @@ custom_edit_url: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Learn Temporal
+![Learn Temporal](/img/banners/learntemporal.png)
 
 import Intro from '@site/src/components/Intro'
 

@@ -8,6 +8,7 @@ last_update:
 description: In this tutorial you will build a Temporal Application using the Python SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
+pagination_next: courses/temporal_101/python
 ---
 
 import Tabs from '@theme/Tabs';
@@ -139,7 +140,7 @@ Create the file `workflows.py` in the root of your project and add the following
 
 In this example, the `run` method is decorated with `@workflow.run`, so it's the method that the Workflow will invoke.
 
-This method accepts a string value that will hold the name, and it returns a string. You can learn more in the [Workflow parameters](https://docs.temporal.io/application-development/foundations#workflow-parameters) section of the Temporal documentation.
+This method accepts a string value that will hold the name, and it returns a string. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/python/foundations#workflow-parameters) section of the Temporal documentation.
 
 :::tip
 
@@ -150,6 +151,14 @@ You can pass multiple inputs to a Workflow, but it's a good practice to send a s
 The method calls the `workflow.execute_activity` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Start-To-Close Timeout](https://docs.temporal.io/activities#start-to-close-timeout) or [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout).
 
 Finally, the `run` method returns the result of the Activity Execution.
+
+:::info
+
+In the Temporal Python SDK, Workflow files are reloaded in a sandbox for every run. To keep from reloading an import on every run, you can mark it as *passthrough* so it reuses the module from outside the sandbox. Standard library modules and `temporalio` modules are passed through by default. All other modules that are used in a deterministic way, such as activity function references or third-party modules, should be passed through this way.
+
+This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [knowledge base](https://docs.temporal.io/kb/python-sandbox-environment).
+
+:::
 
 With your Workflow Definition created, you're ready to create the `say_hello` Activity.
 
@@ -168,7 +177,7 @@ Create a new file called `activities.py` and add the following code to define a 
 
 The logic within the `say_hello` function creates the string and returns the greeting.
 
-Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/application-development/foundations?lang=python#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your [Activity Definition](https://docs.temporal.io/dev-guide/python/foundations#develop-activities) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/dev-guide/python/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a data class rather than sending multiple input parameters. This will make future updates easier.
 
@@ -204,9 +213,10 @@ The test function `test_execute_workflow` creates a `WorkflowEnvironment` so it 
 
 :::note
 
+The `start_time_skipping()` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local()` option instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs. 
 The `time-skipping` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local` instead, which uses a full local instance of the Temporal server instead. Both of these options download instances of Temporal server on your first test run. This instance runs as a separate process during your test runs.
 
-The `time-skipping` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial.
+The `time-skipping` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial. 
 
 :::
 
@@ -214,7 +224,7 @@ This code tests the Workflow and invokes the actual `say_hello` Activity. Howeve
 
 Add the following code to create a test that uses a mocked `say_hello` Activity:
 
-<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-48"]}-->
+<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-51"]}-->
 <!--SNIPEND-->
 
 This creates a function called `say_hello_mocked` which the Workflow test will use as the mock Activity function. The `test_mock_activity` test then checks that the outcome of the Workflow is `"Hello, World from mocked activity!"` for the passed input parameter `World`, using the same type of test setup as the previous test function.
@@ -283,7 +293,7 @@ Create the file `run_workflow.py` and add the following to connect to the server
 <!--SNIPSTART python-project-template-run-workflow-->
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/application-development/foundations/?lang=python#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
+Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/dev-guide/python/foundations#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
 
 :::tip Specify a Workflow ID
 

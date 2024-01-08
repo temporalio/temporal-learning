@@ -39,7 +39,7 @@ While you can use any tool you like, such as Gradle or Apache Maven, to build an
 
 Install Maven using the following [instructions](https://maven.apache.org/install.html).
 
-Add the following lines to your Maven configuration:
+Add the following lines to your Maven configuration (located in `~/.m2/settings.xml` by default -- you may need to create the file):
 
 ```xml
 <dependencies>

@@ -1,7 +1,6 @@
 extends: existence
 message: Section '%v' should not start with a gerund (verb ending in "ing")
 level: error
-code: false
 scope: heading
 ignorecase: false
 raw:

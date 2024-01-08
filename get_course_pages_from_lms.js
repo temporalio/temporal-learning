@@ -12,11 +12,51 @@
 const https = require('https');
 const LMS_API_TOKEN = process.env.LMS_API_TOKEN;
 
+/*
+ * This is the course data we care about. The LMS will have other courses. This is the detail about the courses
+ * we need to display on the site.
+ * We'll pull the courses from TalentLMS and pare that list down to this list.
+ * The "code" field is the course code in the LMS - that's the "key" that maps this data to LMS data.
+*/
 const courseData = [
-  {code: '101_go', language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)"},
-  {code: '102_go', language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)"},
-  {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)"},
+  {code: '101_go', main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "temporal_101/go.md", index: 1,
+    keywords: "[Temporal, Workflows, Activities, Go SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Go SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '101_typescript', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_101/typescript.md", index: 3,
+    keywords: "[Temporal, Workflows, Activities, TypeScript SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the TypeScript SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '101_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_101/java.md", index: 2,
+    keywords: "[Temporal, Workflows, Activities, Java SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Java SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '101_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "temporal_101/python.md", index: 4,
+    keywords: "[Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]",
+    metaDescription: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+  },
+  {code: '102_go', main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "temporal_102/go.md", index: 1,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution.."
+  },
+  {code: '102_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "temporal_102/java.md", index: 2,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
+  },
+  {code: '102_ts', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "temporal_102/typescript.md", index: 3,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
+  },
+  {code: '102_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "temporal_102/python.md", index: 4,
+    keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
+    metaDescription: "Go beyond the basics and gain a deeper understand of how Temporal works as you explore Temporal's event history, application lifecycle, write tests, and explore Durable Execution."
+  },
+  {code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
+    keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
+    metaDescription: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
+  }
 ]
+
 
 const options = {
   hostname: 'temporal.talentlms.com',
@@ -32,11 +72,17 @@ const options = {
 const req = https.request(options, res => {
   // console.log(`statusCode: ${res.statusCode}`);
 
-  res.on('data', (data) => {
-    const url = 'https://temporal.talentlms.com/catalog';
-    const fs = require('fs');
+  let data = "";
 
-    //console.log(data)
+  res.on('data', function (chunk) {
+      data += chunk;
+  });
+
+  res.on('end', function() {
+    const baseURL = 'https://temporal.talentlms.com/catalog';
+
+    // console.log(data)
+
     let courses = JSON.parse(data);
     //console.log(courses)
 
@@ -44,21 +90,24 @@ const req = https.request(options, res => {
     let allowlist = courseData.map(c => c.code)
     courses = courses.filter(course => allowlist.includes(course.code) );
 
-    let index = 1;
+    // iterate over courses and fill out metadata to generate individual pages.
     for (let course of courses) {
-
       let metadata = courseData.find(c => c.code === course.code);
 
-      let md = generateMarkdown(course, metadata, url, index)
+      // push the fields from the LMS into the metadata
+      metadata.hours = convertHours(course.custom_field_2);
+      metadata.description = course.description;
+      metadata.name = course.name;
+      metadata.status = course.status;
+      metadata.shared = course.shared;
+      metadata.id = course.id;
+      metadata.last_update_on = course.last_update_on;
+      metadata.filepath = `docs/courses/${metadata.filename}`;
 
-      let f = course.code.match(/(.*)_(.*)/)
-      let filename = `temporal_${f[1]}/${f[2]}.md`;
-
-      console.log(filename)
-
-      fs.writeFileSync(`docs/courses/${filename}`, md);
-      index++;
+      generateCoursePage(metadata, baseURL)
     }
+
+
   });
 });
 
@@ -69,30 +118,42 @@ req.on('error', error => {
 req.end();
 
 
+function convertHours(hours) {
+  let result = "";
+  if (parseInt(hours) > 1) {
+    result = `⏱️ ${hours} hours`
+  }else {
+    result = `⏱️ ${hours} hour`
+  }
+  return(result);
+}
+
 /* generate the markdown for the course.
  *
- * Takes the course data, the base url, and an index which specifies
- * the sidebar position.
+ * Takes the course data and base URL.
  */
-function generateMarkdown(course, metadata, base_url, index) {
-  console.log(metadata)
-  let today = (new Date()).toString().split(' ').splice(1,3).join(' ');
+function generateCoursePage(metadata, baseURL) {
+  const today = (new Date()).toString().split(' ').splice(1,3).join(' ');
 
-  let active = course.status === "active";
-  let publicCourse = course.shared === 1;
-  let url = `${base_url}/info/id:${course.id}`;
-  let apidate = course.last_update_on;
-  let dateparts = apidate.split(",")[0];
-  let [dd,mm,yy] = dateparts.split("/");
-  let date = `${yy}-${mm}-${dd}`
+  const active = metadata.status === "active";
+  const url = `${baseURL}/info/id:${metadata.id}`;
+  const apidate = metadata.last_update_on;
+  const dateparts = apidate.split(",")[0];
+  const [dd,mm,yy] = dateparts.split("/");
+  const date = `${yy}-${mm}-${dd}`;
+  const hours = metadata.hours;
+
+  // parse text from LMS and massage
+  const description = metadata.description.replace("Prerequisites:", "### Prerequisites:")
 
   let str = `---
-title: ${course.name}
-sidebar_position: ${index}
-sidebar_label: ${course.name}
-public: ${publicCourse}
+title: "${metadata.name}"
+sidebar_position: ${metadata.index}
+sidebar_label: "${metadata.name}"
 draft: ${!active}
 tags: [courses, ${metadata.language}]
+keywords: ${metadata.keywords}
+description: "${metadata.metaDescription}"
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
@@ -104,6 +165,10 @@ image: /img/temporal-logo-twitter-card.png
 <!-- DO NOT edit this file directly. -->
 
 ${metadata.banner}
+
+**Estimated time**: ~${hours}, self-paced.
+
+**Cost**: Free
 
 `
 if (!active) {
@@ -117,7 +182,7 @@ We're still building this course. The course outcomes and content are subject to
 `
 }
 
-str += course.description + '\n\n';
+str += "## Description\n\n" + description + '\n\n';
 
 if (active) {
   str += ` <a className="button button--primary" href="${url}">Go to Course</a> `;
@@ -126,5 +191,10 @@ if (active) {
   str += ` <a className="button button--primary" href="https://pages.temporal.io/get-updates-education">Get notified when we launch this course!</a> `;
 }
 
-  return str;
+// write it
+  const fs = require('fs');
+  console.log(metadata.filepath)
+  fs.writeFileSync(metadata.filepath, str);
 }
+
+

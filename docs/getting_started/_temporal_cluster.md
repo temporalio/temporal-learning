@@ -63,14 +63,16 @@ Once you've installed Temporal CLI and added it to your `PATH`, open a new Termi
 temporal server start-dev
 ```
 
-This command automatically starts the Web UI, creates the default [Namespace](https://docs.temporal.io/namespaces), and uses an in-memory database.
+This command starts a local Temporal Cluster. It starts the Web UI, creates the default [Namespace](https://docs.temporal.io/namespaces), and uses an in-memory database.
 
 * The Temporal Server will be available on `localhost:7233`.
 * The Temporal Web UI will be available at [`http://localhost:8233`](http://localhost:8233/).
 
+Leave the local Temporal Cluster running as you work through tutorials and other projects. You can stop the Temporal Cluster at any time by pressing `CTRL+C`.
+
 :::tip Change the Web UI port
 
-The Temporal Web UI may be on a different port in some examples or tutorials. To change the port for the Web UI, use the `--ui-port` option when starting the server::
+The Temporal Web UI may be on a different port in some examples or tutorials. To change the port for the Web UI, use the `--ui-port` option when starting the server:
 
 ```command
 temporal server start-dev --ui-port 8080
@@ -80,4 +82,10 @@ The Temporal Web UI will now be available at [`http://localhost:8080`](http://lo
 
 :::
 
-Leave the cluster running as you work through tutorials and other projects. You can stop the cluster at any time by pressing `CTRL+C`.
+The `temporal server start-dev` command uses an in-memory database, so stopping the server will erase all your Workflows and all your Task Queues. If you want to retain those between runs, start the server and specify a database filename using the `--db-filename` option, like this:
+
+```command
+temporal server start-dev --db-filename your_temporal.db
+```
+
+When you stop and restart the Temporal Cluster and specify the same filename again, your Workflows and other information will be available.

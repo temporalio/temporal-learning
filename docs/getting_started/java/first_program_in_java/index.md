@@ -10,6 +10,10 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import { OutdatedNotice } from '@site/src/components'
+
+<OutdatedNotice />
+
 import { ResponsivePlayer } from '@site/src/components'
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
@@ -39,7 +43,7 @@ Before starting this tutorial:
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/repair-tools.png) Project setup
+## ![](images/repair-tools.png) Project setup
 
 This tutorial uses a fully working template application which can be downloaded as a zip or converted to a new repository in your own Github account and cloned. Github's ["Creating a Repository from a Template" guide](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) will walk you through the steps.
 
@@ -63,7 +67,7 @@ To build the project, either open it with [IntelliJ](https://www.jetbrains.com/i
 
 Once your project has finished building, you are ready to go.
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/workflow.png) Application overview
+## ![](images/workflow.png) Application overview
 
 This project template mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/java/workflows) which orchestrates the execution of an Account object's `withdraw()` and `deposit()` methods, representing a transfer of money from one account to another. Temporal calls these particular methods [Activity functions](https://docs.temporal.io/java/activities).
 
@@ -74,7 +78,7 @@ To run the application you will do the following:
 
 Here's a high-level illustration of what's happening:
 
-![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
+![High level project design](images/temporal-high-level-application-design.png)
 
 ### The Workflow function
 
@@ -92,32 +96,36 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 <!--SNIPSTART money-transfer-project-template-java-workflow-initiator-->
 <!--SNIPEND-->
 
+Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+
+:::note
+If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+
+Start Temporal CLI with the following command:
+
+```command
+temporal server start-dev --db-filename your_temporal.db --ui-port 8080
+```
+
+When you stop and start the server again, remember to specify the same database file each time.
+
+:::
+
+
 Run the `InitiateMoneyTransfer` class within IntelliJ or from the project root using the following command:
 
 ```command
 ./gradlew initiateTransfer
 ```
 
-<details>
-<summary>Troubleshooting</summary>
 
-If you get a `Connection refused: /127.0.0.1:7233` error, make sure the [Temporal server is running](https://docs.temporal.io/clusters/quick-install).
+Next you'll explore one of the unique value propositions Temporal offers: application state visibility. 
 
-If you get `ALREADY_EXISTS: Workflow execution is already running. WorkflowId: money-transfer-workflow, RunId:<...>`, stop your Temporal docker-compose process [started earlier](/getting_started/java/dev_environment/index.md) and recreate the Temporal docker-compose containers using the following commands:
+## View the state of the Workflow with the Temporal Web UI
 
-```command
-docker-compose rm -f
-```
+Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow execution.
 
-```command
-docker-compose up
-```
-
-</details>
-
-### State visibility
-
-OK, now it's time to check out one of the really cool value propositions offered by Temporal: application state visibility. Visit the [Temporal Web UI](http://localhost:8080) where you will see your Workflow listed.
+Visit the [Temporal Web UI](http://localhost:8080) where you will see your Workflow listed.
 
 Next, click the "Run Id" for your Workflow. Now we can see everything we want to know about the execution of the Workflow code we told the server to track, such as what parameter values it was given, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
 
@@ -160,11 +168,11 @@ Withdrawing $18.740000 from account 001-001. ReferenceId: 2ab46ccb-3791-4dd2-84e
 Depositing $18.740000 into account 002-002. ReferenceId: 2ab46ccb-3791-4dd2-84e6-62319eb710a2
 ```
 
-<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/confetti.png" />
+<img alt="Celebratory confetti" class="docs-image-centered docs-image-max-width-20" src="images/confetti.png" />
 
 **Congratulations**, you just ran a Temporal Workflow application!
 
-## ![](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/warning.png) Failure simulation
+## ![](images/warning.png) Failure simulation
 
 So, you've just got a taste of one of Temporal's amazing value propositions: visibility into the Workflow and the status of the Workers executing the code. Let's explore another key value proposition, maintaining the state of a Workflow, even in the face of failures. To demonstrate this we will simulate some failures for our Workflow. Make sure your Worker is stopped before proceeding.
 
@@ -175,9 +183,9 @@ Unlike many modern applications that require complex leader election processes a
 1. Start the Workflow again.
 2. Verify the Workflow is running in the UI.
 3. Shut down the Temporal server by either using 'Ctrl+C' or via the Docker dashboard.
-4. After the Temporal server has stopped, restart it and visit the UI.
+5. After the Temporal cluster has stopped, restart it. If you are using Temporal CLI, run the same command you used previously to ensure you use the same database file.
 
-Your Workflow is still there!
+Visit the UI. Your Workflow is still listed.
 
 ### Recover from an Activity error
 
@@ -202,7 +210,7 @@ On the next scheduled attempt, the Worker will pick up right where the Workflow 
 
 ## Conclusion
 
-<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="https://raw.githubusercontent.com/temporalio/documentation-images/main/static/boost.png" />
+<img alt="Business person blasting off with a backpack rocket" class="docs-image-centered docs-image-max-width-20" src="images/boost.png" />
 
 You now know how to run a Temporal Workflow and understand some of the key values Temporal offers.
 

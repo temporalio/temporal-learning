@@ -16,6 +16,7 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
   favicon: "img/favicon.png",
+  trailingSlash: true,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'temporal', // Usually your GitHub org/user name.
@@ -39,7 +40,7 @@ const config = {
   themeConfig: {
     announcementBar: {
       id: 'in_progress',
-      content: 'Our new course <a href="/courses/temporal_101/typescript">Temporal 101 in TypeScript</a> is now available!',
+      content: 'Our course <a href="/courses/temporal_102">Temporal 102: Exploring Durable Execution</a> is now available in <a href="/courses/temporal_102/python">Python</a>, <a href="/courses/temporal_102/java">Java</a>, and <a href="/courses/temporal_102/typescript">TypeScript</a>!',
       backgroundColor: '#1d1d24',
       textColor: '#f9fafb',
       isCloseable: true,
@@ -130,7 +131,7 @@ const config = {
             },
             {
               label: "Meetups",
-              href: "https://lu.ma/temporal",
+              href: "https://temporal.io/community#events",
             },
             {
               label: "Workshops",
@@ -139,6 +140,10 @@ const config = {
             {
               label: "Support Forum",
               href: "https://community.temporal.io/",
+            },
+            {
+              label: 'Ask an expert',
+              href: 'https://pages.temporal.io/ask-an-expert'
             },
           ],
         },
@@ -301,6 +306,14 @@ const config = {
       async: true,
       defer: true,
     },
+    {
+      src: "https://widget.kapa.ai/kapa-widget.bundle.js",
+      "data-website-id": "91a88508-9cdc-441f-b1df-37aa9329e6bc",
+      "data-project-name": "Temporal",
+      "data-project-color": "#000000",
+      "data-project-logo": "https://avatars.githubusercontent.com/u/56493103?s=280&v=4",
+      async: true,
+    }
     // {
     //   src: "/scripts/feedback.js",
     //   async: true,
