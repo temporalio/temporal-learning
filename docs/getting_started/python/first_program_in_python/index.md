@@ -2,7 +2,7 @@
 title: Run your first Temporal application with the Python SDK
 id: run-your-first-app-tutorial-python
 sidebar_position: 2
-description: In this tutorial, you'll run your first Temporal app using the Go SDK and explore Workflows, Activities, Task Queues, and compensating transactions. Then you'll see how Temporal recovers from failures.
+description: In this tutorial, you'll run your first Temporal app using the Python SDK and explore Workflows, Activities, Task Queues, and compensating transactions. Then you'll see how Temporal recovers from failures.
 keywords: [python, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Python, SDK]
 last_update:
@@ -39,16 +39,16 @@ In this tutorial, you'll run your first Temporal Application and explore how Tem
 
 Before starting this tutorial:
 
-- [Set up a local development environment for developing Temporal Applications using the Go programming language](/getting_started/python/dev_environment/index.md)
+- [Set up a local development environment for developing Temporal Applications using the Python programming language](/getting_started/python/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
 ## ![](/img/icons/workflow.png) Application overview
 
-The project in this tutorial mimics a _money transfer_ application that has a single [Workflow function](https://docs.temporal.io/application-development/foundations/?lang=python#develop-workflows) that orchestrates the execution of `withdraw()`, `deposit()`, and `refund()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities).
+The project in this tutorial mimics a _money transfer_ application that has a single [Workflow Execution](https://docs.temporal.io/application-development/foundations/?lang=python#develop-workflows) that orchestrates the execution of `withdraw()`, `deposit()`, and `refund()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities).
 
 To run the application, you do the following:
 
-1. Send a message to the Temporal Cluster to start the money transfer. The Temporal Server tracks the progress of your Workflow function execution.
+1. Send a message to the Temporal Cluster to start the money transfer. The Temporal Server tracks the progress of your Workflow Execution.
 2. Run a Worker. A Worker is a wrapper around your compiled Workflow and Activity code. A Worker's only job is to execute the Activity and Workflow functions and communicate the results back to the Temporal Server.
 
 The following diagram illustrates what happens when you start the Workflow:
@@ -93,14 +93,14 @@ The sample application in this tutorial models a money transfer between two acco
 
 This is what the Workflow Definition looks like for this kind of process:
 
-<!--SNIPSTART money-transfer-project-template-python-workflow-->
+<!--SNIPSTART python-money-transfer-project-template-workflows-->
 <!--SNIPEND-->
 
 The `MoneyTransferWorkflow` Class takes in the details about the transaction, executes Activities to withdraw and deposit the money, and returns the results of the process.
 
 In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `data_obj.py`:
 
-<!--SNIPSTART money-transfer-project-template-python-data-obj-->
+<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
 <!--SNIPEND-->
 
 It's a good practice to send a single, data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
@@ -111,14 +111,14 @@ The Workflow Definition calls the Activities `withdraw()` and `deposit()` to han
 
 The `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
-<!--SNIPSTART money-transfer-project-template-python-activity-withdraw-->
+<!--SNIPSTART python-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
 <!--SNIPEND-->
 
 If the transfer succeeded, the `withdraw()` function returns the confirmation.
 
 The `deposit()` Activity function looks almost identical to the `withdraw()` function:
 
-<!--SNIPSTART money-transfer-project-template-python-activity-deposit-->
+<!--SNIPSTART python-money-transfer-project-template-deposit-->
 <!--SNIPEND-->
 
 :::tip Why you use Activities
@@ -133,14 +133,13 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
-<!--SNIPSTART money-transfer-project-template-python-workflow {"selectedLines": ["20-26"]} -->
+<!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
 <!--SNIPEND-->
 
 
-By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 500 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
+By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
 
 In the case of an error with the `deposit()` Activity, the Workflow will attempt to put the money back.
-
 
 In this Workflow, each Activity uses the same options, but you could specify different options for each Activity.
 
@@ -157,13 +156,13 @@ Let's see that in action.
 
 ## Start the Workflow
 
-You have two ways to start a Workflow with Temporal, either via the SDK or via the [tctl command-line tool](https://docs.temporal.io/tctl). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
+You have two ways to start a Workflow with Temporal, either through the SDK or the [Temporal command-line tool](https://docs.temporal.io/cli). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue) the Workflow should use, and Activities it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
 
 The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers.
 
-<!--SNIPSTART money-transfer-project-template-python-banking-client -->
+<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["3"]}-->
 <!--SNIPEND-->
 
 :::note
@@ -174,21 +173,21 @@ This tutorial uses a separate program to start the Workflow, but you don't have 
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run `banking-client.py` from the project root using the following command:
+Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal, and then run `run_workflow.py` from the project root using the following command:
 
 ```command
-python banking-client.py
+python run_workflow.py
 ```
 
 The Workflow is now running. Leave the program running.
 
-Next, you'll explore one of the unique value propositions Temporal offers: application state visibility. 
+Next, you'll explore one of the unique value propositions Temporal offers: application state visibility.
 
 ## View the state of the Workflow with the Temporal Web UI
 
 Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow execution.
 
-Visit the [Temporal Web UI](http://localhost:8080), where you will see your Workflow listed.
+Visit the [Temporal Web UI](http://localhost:8233), where you will see your Workflow listed.
 
 ![The Workflow running](images/workflow_running.png)
 
@@ -218,21 +217,21 @@ A Worker
 
 After the Worker executes code, it returns the results back to the Temporal Server.
 
-In this project, the file `worker.py` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
+In this project, the file `run_worker.py` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
 
-<!--SNIPSTART money-transfer-project-template-python-worker-->
+<!--SNIPSTART python-money-transfer-project-template-run-worker-->
 <!--SNIPEND-->
 
 Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
 
-Your `banking-client.py` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
+Your `run_workflow.py` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
 Open a new terminal window.
 
-In this new terminal window, run `worker.py` from the project root using the following command:
+In this new terminal window, run `run_worker.py` from the project root using the following command:
 
 ```command
-python worker.py
+python run_worker.py
 ```
 
 When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
@@ -249,7 +248,7 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 
 The Worker continues running, waiting for more Tasks to execute.
 
-Switch back to the terminal window where your `python banking-client.py` program is running, and you'll see it's completed:
+Switch back to the terminal window where your `python run_workflow.py` program is running, and you'll see it's completed:
 
 ```output
 Transfer complete.
@@ -285,7 +284,7 @@ Unlike many modern applications that require complex leader election processes a
 Try it out by following these steps:
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python banking-details.py`.
+2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python run_workflow.py`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
 5. After the Temporal cluster has stopped, restart it and visit the UI.
@@ -302,18 +301,17 @@ This demo application makes a call to an external service in an Activity. If tha
 
 To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity function. Let your Workflow continue to run but don't start the Worker yet.
 
-Open the `activity.py` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
+Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
 
-<!--SNIPSTART money-transfer-project-template-python-activity-deposit-->
+<!--SNIPSTART  python-money-transfer-project-template-deposit-->
 <!--SNIPEND-->
-
 
 Save your changes and switch to the terminal that was running your Worker.
 
 Start the Worker again:
 
 ```command
-python worker.py
+python run_worker.py
 ```
 
 You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function. The important thing to note here is that the Worker keeps retrying the `deposit()` function:
@@ -352,18 +350,18 @@ Click the **Stack Trace** link to see a stack trace showing you the errors, as w
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors.  With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
 
-In `workflow.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
+In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
-<!--SNIPSTART money-transfer-project-template-python-workflow-->
+<!--SNIPSTART python-project-template-run-workflow-->
 <!--SNIPEND-->
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation:
 
-Your Workflow is running, but only the `withdraw()` Activity function has succeeded. In any other application, the whole process would likely have to be abandoned and rolled back. 
+Your Workflow is running, but only the `withdraw()` Activity function has succeeded. In any other application, the whole process would likely have to be abandoned and rolled back.
 
 With Temporal, you can debug and resolve the issue while the Workflow is running.
 
-Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` function in the `activity.py` file and save your changes.
+Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` function in the `activities.py` file and save your changes.
 
 How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
 
@@ -388,12 +386,12 @@ First, cancel the currently running worker with `CTRL+C`:
 Then restart the worker:
 
 ```command
-python worker.py
+python run_worker.py
 ```
 
 The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `deposit()` Activity function.
 
-Switch back to the terminal where your `banking-client.py` program is running, and you'll see it complete:
+Switch back to the terminal where your `run_workflow.py` program is running, and you'll see it complete:
 
 ```output
 Transfer complete.
@@ -417,7 +415,7 @@ You also saw how Temporal recovers from failures and how it retries Activities.
 
 Try the following things before moving on to get more practice working with a Temporal application:
 
-- Change the retry policy in `workflow.py` so it only retries 3 times. Then change the `deposit()` Activity in `activities.py`, so it uses the `refund()` function. 
+- Change the retry policy in `workflows.py` so it only retries 1 time. Then change the `deposit()` Activity in `activities.py`, so it uses the `refund()` function.
   - Does the Workflow place the money back into the original account?
 
 ### Review
@@ -460,5 +458,3 @@ Because the Task Queue name is specified in two different parts of the code (the
 Restart the Worker.
 
 </details>
-
-
