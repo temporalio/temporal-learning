@@ -98,7 +98,7 @@ This is what the Workflow Definition looks like for this kind of process:
 
 The `MoneyTransferWorkflow` Class takes in the details about the transaction, executes Activities to withdraw and deposit the money, and returns the results of the process.
 
-In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `data_obj.py`:
+In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.py`:
 
 <!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
 <!--SNIPEND-->
