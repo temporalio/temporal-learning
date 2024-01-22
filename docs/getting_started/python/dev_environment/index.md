@@ -117,7 +117,7 @@ Successfully installed temporalio-x.y
 
 Next, you'll configure a local Temporal cluster for development.
 
-## Set up a local Temporal development cluster
+## Set up a local Temporal development cluster with Temporal CLI
 
 import Cluster from '@site/docs/getting_started/_temporal_cluster.md'
 
