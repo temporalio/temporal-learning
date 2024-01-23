@@ -91,8 +91,7 @@ The repository for this tutorial is a GitHub Template repository, which means yo
 With the project downloaded, let's explore the code, starting with the Workflow.
 
 ## Explore the application's Workflow and Activity Definitions
-
-A Temporal application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. Workflow Executions(https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities). Activities are single, well-defined actions such as calling another service, transcoding a media file, or sending an email message. [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) defines the Workflow Execution's constraints. 
+A Temporal application is a set of Temporal [Workflow Executions](https://docs.temporal.io/workflows#workflow-execution), which are reliable, durable function executions. These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) is the code that defines the constraints of a Workflow Execution.
 
 A Workflow Definition in Python uses the `@workflow.defn` decorator on the Workflow class to identify a Workflow.
 
@@ -281,7 +280,7 @@ Here's what happens when the Worker runs and connects to the Temporal Cluster:
 - This causes the Server to send Activity Tasks to the Task Queue.
 - The Worker then grabs each of the Activity Tasks in sequence from the Task Queue and executes each of the corresponding Activities.
 
-Every one of these steps gets recorded in the Event History. You can review them in Temporal Web by clicking on the **History** tab next to **Summary**.
+Each of these steps gets recorded in the Event History. You can audit them in Temporal Web by clicking on the **History** tab next to **Summary**.
 
 After a Workflow completes, the full history persists for a set retention period (typically 7 to 30 days) before the history is deleted. You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
 
