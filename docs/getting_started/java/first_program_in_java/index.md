@@ -98,7 +98,7 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure you've [installed the Temporal single binary on your local machine](/getting_started/java/dev_environment/index.md). 
+Make sure you've [installed Temporal CLI on your local machine](/getting_started/typescript/dev_environment/index.md). 
 
 Start the Temporal development server with the following command, which specifies a database file and sets the Temporal Web UI port to `8080`:
 
