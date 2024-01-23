@@ -96,19 +96,20 @@ There are two ways to start a Workflow with Temporal, either via the SDK or via 
 <!--SNIPSTART money-transfer-project-template-java-workflow-initiator-->
 <!--SNIPEND-->
 
-Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-:::note
-If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
+Make sure you've [installed Temporal CLI on your local machine](/getting_started/typescript/dev_environment/index.md). 
 
-Start Temporal CLI with the following command:
+Start the Temporal development server with the following command, which specifies a database file and sets the Temporal Web UI port to `8080`:
 
 ```command
 temporal server start-dev --db-filename your_temporal.db --ui-port 8080
 ```
 
-When you stop and start the server again, remember to specify the same database file each time.
+:::note
+Temporal's development server uses an in-memory database by default, and that won't work for the demonstrations in this tutorial. Specifying a database file ensures that records persist when you restart the service.
 
+When you stop and start the server again, remember to specify the same database file each time.
 :::
 
 

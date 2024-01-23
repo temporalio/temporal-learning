@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the Go S
 keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Go, SDK]
 last_update:
-  date: 2023-03-03
+  date: 2024-01-12
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -200,19 +200,18 @@ You can make the call [synchronously or asynchronously](https://docs.temporal.io
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure the [Temporal cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+Make sure you've [installed Temporal CLI on your local machine](/getting_started/typescript/dev_environment/index.md). 
 
-:::note
-If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
-
-Start Temporal CLI with the following command:
+Start the Temporal development server with the following command, which specifies a database file and sets the Temporal Web UI port to `8080`:
 
 ```command
 temporal server start-dev --db-filename your_temporal.db --ui-port 8080
 ```
 
-When you stop and start the server again, remember to specify the same database file each time.
+:::note
+Temporal's development server uses an in-memory database by default, and that won't work for the demonstrations in this tutorial. Specifying a database file ensures that records persist when you restart the service.
 
+When you stop and start the server again, remember to specify the same database file each time.
 :::
 
 Then run `start/main.go` from the project root using the following command:
