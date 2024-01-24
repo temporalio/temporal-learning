@@ -15,31 +15,30 @@ import TabItem from '@theme/TabItem';
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
-To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need the JDK, the Temporal Java SDK  and a Temporal development server.
-
+To follow the Java SDK tutorials and build your own Temporal applications with Java, you'll need a JDK and the Temporal Java SDK. You will also install and run a Temporal Cluster, a group of services that provide Temporal platform features.
 
 ## Get the Java JDK
 
-Make sure you have the [Java JDK](https://www.oracle.com/ca-en/java/technologies/javase-downloads.html) installed. These tutorials were produced using Java SE 19.0.2. You can check which version you have installed using this command:
+If you haven't done so already, install the [Java JDK](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://openjdk.org/install/). To check the version of your current Java installation, issue the version command:
 
 ```command
-java -version
+java --version
 ```
 
-## Get the Temporal SDK for Java
+We developed these tutorials using Java SE 19.0.2. 
 
-While you can use any tool you like, such as Gradle or Apache Maven, to build and package your Temporal applications, our tutorials are based on Gradle.
+## Install the Temporal Java SDK
+
+Our tutorials use the [Apache Maven](https://maven.apache.org/) software project management tool. You can use Maven, [Gradle](https://gradle.org), or any other tool you prefer to build and package your Temporal applications.
 
 <Tabs groupId="build-tool" queryString>
   <TabItem value="maven" label="Maven">
 
 ### Configure Maven
 
-[Apache Maven](https://maven.apache.org/) is a tool for build and dependency management popular with Java developers.
+[Apache Maven](https://maven.apache.org/) is popular build and dependency management tool. Install Maven by following the [instructions](https://maven.apache.org/install.html) at Apache.org.
 
-Install Maven using the following [instructions](https://maven.apache.org/install.html).
-
-Add the following lines to your Maven configuration (located in `~/.m2/settings.xml` by default -- you may need to create the file):
+To configure Maven for Temporal, add the following lines to your Maven configuration file. By default, this file is located in the user's home (in `.m2/settings.xml`) or the Maven install (in `conf/settings.xml`). If a Maven settings file does not already exist on your system, create one.
 
 ```xml
 <dependencies>
@@ -63,13 +62,11 @@ Add the following lines to your Maven configuration (located in `~/.m2/settings.
 
 ### Configure Gradle
 
-[Gradle](https://gradle.org) is a dependency management and build tool for Java projects. You'll need it installed to work with the projects in these tutorials.
+Like Maven, [Gradle](https://gradle.org) is a dependency management and build tool for Java projects. It enables you to build the projects in these tutorials.
 
-You can install Gradle separately, or use [IntelliJ IDEA](https://www.jetbrains.com/idea/), which comes packaged with Gradle.
+Gradle is bundled with [IntelliJ IDEA](https://www.jetbrains.com/idea/). To install it separately, follow the [instructions](https://gradle.org/install/) at the Gradle.org site.
 
-Install Gradle using the following [instructions](https://gradle.org/install/).
-
-Add the following lines to your Gradle configuration file, `build.gradle`, to configure the Temporal SDK.
+Configure your installation to work with the Temporal SDK by adding by adding the following lines to your Gradle configuration file, `build.gradle`. This file is normally placed at your project root or you can customize it to live elsewhere.
 
 ```groovy
 implementation 'io.temporal:temporal-sdk:1.19.0' 
@@ -79,12 +76,9 @@ testImplementation 'io.temporal:temporal-testing:1.19.0'
   </TabItem>
 </Tabs>
 
+Next, you'll configure a local Temporal Cluster for development.
 
-
-
-Next, you'll configure a local Temporal cluster for development.
-
-## Set up a local Temporal development cluster with Temporal CLI
+## Set up a local Temporal development Cluster with Temporal CLI
 
 import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
 
