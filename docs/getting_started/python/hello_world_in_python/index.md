@@ -194,15 +194,17 @@ Create a new folder in your project directory called `tests`:
 mkdir tests
 ```
 
-In the `tests` folder, create a new file called `test_run_worker.py`. This file will contain the tests for your Workflow and Activity.
-
 Create an empty `__init__.py` file within that directory:
 
 ```command
-touch tests/__init__.py`
+touch tests/__init__.py
 ```
 
-Then create the file `tests/test_run_workflow.py` file and add the following content to test the Workflow:
+Create the `test_run_workflow.py` file in the `tests` directory and add the following content to test the Workflow:
+
+```command
+touch tests/test_run_workflow.py
+```
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-28"]} -->
 <!--SNIPEND-->
