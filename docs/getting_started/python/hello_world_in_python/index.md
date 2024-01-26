@@ -191,7 +191,7 @@ The Temporal Python SDK includes functions that help you test your Workflow exec
 Create a new folder in your project directory called `tests`:
 
 ```command
-mkdir tests
+mkdir tests && cd tests
 ```
 
 In the `tests` folder, create a new file called `test_run_worker.py`. This file will contain the tests for your Workflow and Activity.
@@ -199,7 +199,7 @@ In the `tests` folder, create a new file called `test_run_worker.py`. This file 
 Create an empty `__init__.py` file within that directory:
 
 ```command
-touch tests/__init__.py`
+touch tests/__init__.py
 ```
 
 Then create the file `tests/test_run_workflow.py` file and add the following content to test the Workflow:
