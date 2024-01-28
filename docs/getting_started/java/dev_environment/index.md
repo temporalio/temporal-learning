@@ -15,7 +15,9 @@ import TabItem from '@theme/TabItem';
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
-Before engaging with the Java SDK tutorials and building Temporal applications, confirm you have all the required components. You'll need a Java Development Kit (JDK) and the Temporal Java SDK. You'll also establish and run a Temporal Cluster--a group of services that provides Temporal Platform features. The following sections help you locate each required piece.
+Before engaging with the Java SDK tutorials and building Temporal applications, confirm you have all the required components. The following sections help you locate and install each piece of this project.
+
+You'll need a [Java Development Kit](https://www.oracle.com/java/technologies/downloads/) (JDK), a build system  (like [IntelliJ](https://www.jetbrains.com/idea/)) or stand-alone build tool (like [Apache Maven](https://maven.apache.org)), and the [Temporal Java SDK](https://github.com/temporalio/sdk-java). You'll use these along with a Temporal Cluster--a group of services that provides Temporal Platform features--to create and explore how Java and Temporal work together.
 
 ## Get the Java JDK
 
@@ -36,7 +38,7 @@ Our tutorials use [Apache Maven](https://maven.apache.org/) to manage dependenci
   
 ### Configure Maven
 
-To install [Apache Maven](https://maven.apache.org/), follow the [instructions](https://maven.apache.org/install.html) at Apache.org. Configure Maven for Temporal, by adding the following lines to `settings.xml`, your Maven configuration file. Match the version of `temporal-sdk` and `temporal-testing` to the server version installed on your system. Issue `temporal --version` after installing the tools.
+To install [Apache Maven](https://maven.apache.org/), [download a copy](https://maven.apache.org/download.cgi) and follow the [instructions](https://maven.apache.org/install.html) at Apache.org. Configure Maven for Temporal by adding the following dependencies to `settings.xml`, your Maven configuration file. 
 
 ```xml
 <dependencies>
@@ -54,14 +56,17 @@ To install [Apache Maven](https://maven.apache.org/), follow the [instructions](
   </dependency>  
 </dependencies>
 ```
-By default, this file is placed in the user's home (in `.m2/settings.xml`) or the Maven install (in `conf/settings.xml`). Create a new file if a Maven settings file does not already exist on your system.
+
+By default, the settings file is placed in the user's home (in `.m2/settings.xml`) or the Maven install (in `conf/settings.xml`). Create a new file if a Maven settings file does not already exist on your system.
+
+Match the version of `temporal-sdk` and `temporal-testing` to the Temporal server version installed on your system. Issue `temporal --version` after installing the Temporal tools so you know which version to use in `settings.xml`.
 
   </TabItem>
   <TabItem value="gradle" label="Gradle">
 
 ### Configure Gradle
 
-Gradle is bundled with [IntelliJ IDEA](https://www.jetbrains.com/idea/). To install it separately from IntelliJ, follow the [instructions](https://gradle.org/install/) at the Gradle.org site.
+Gradle is bundled with [IntelliJ IDEA](https://www.jetbrains.com/idea/). To download and install it separately from IntelliJ, follow the [instructions](https://gradle.org/install/) at the Gradle.org site.
 
 Add the following lines to `build.gradle`, your Gradle configuration file. This lets your installation works with the Temporal SDK. This file is normally placed at your project root. You can customize it to live elsewhere.
 
@@ -70,7 +75,7 @@ implementation 'io.temporal:temporal-sdk:1.22.2'
 testImplementation 'io.temporal:temporal-testing:1.22.2'
 ```
 
-Match the version of `temporal-sdk` and `temporal-testing` to the server version installed on your system. Issue `temporal --version` after installing the tools.
+Match the version of `temporal-sdk` and `temporal-testing` to the Temporal server version installed on your system. Issue `temporal --version` after installing the Temporal tools, so you know which version to set in your `build.gradle` configuration.
 
   </TabItem>
 </Tabs>
