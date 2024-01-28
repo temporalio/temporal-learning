@@ -41,20 +41,23 @@ Our tutorials use [Apache Maven](https://maven.apache.org/) to manage dependenci
 To install [Apache Maven](https://maven.apache.org/), [download a copy](https://maven.apache.org/download.cgi) and follow the [instructions](https://maven.apache.org/install.html) at Apache.org. Configure Maven for Temporal by adding the following dependencies to `settings.xml`, your Maven configuration file. 
 
 ```xml
-<dependencies>
-  <dependency>
-    <groupId>io.temporal</groupId>
-    <artifactId>temporal-sdk</artifactId>
-    <version>1.22.2</version>
-  </dependency>
+  <dependencies>
+    <!-- Temporal dependencies
+     | External sources needed to compile, build, test, and run Temporal's Java SDK
+    -->
+    <dependency>
+      <groupId>io.temporal</groupId>
+      <artifactId>temporal-sdk</artifactId>
+      <version>1.22.2</version>
+    </dependency>
 
-  <dependency>
-    <groupId>io.temporal</groupId>
-    <artifactId>temporal-testing</artifactId>
-    <version>1.22.2</version>
-    <scope>test</scope>
-  </dependency>  
-</dependencies>
+    <dependency>
+      <groupId>io.temporal</groupId>
+      <artifactId>temporal-testing</artifactId>
+      <version>1.22.2</version>
+      <scope>test</scope>
+    </dependency>  
+  </dependencies>
 ```
 
 By default, the settings file is placed in the user's home (in `.m2/settings.xml`) or the Maven install (in `conf/settings.xml`). Create a new file if a Maven settings file does not already exist on your system.
