@@ -37,6 +37,6 @@ When you've completed the course, you'll be able to:
 
 To be successful in this course, you should have experience writing backend applications that rely on external APIs.
 
-This course uses the Python programming language. Although the code examples and hands-on exercises are written in Pythhon, they include explanations and avoid advanced language features, so a developer with minimal Python experience should be able to successfully complete this course.
+This course uses the Python programming language. Although the code examples and hands-on exercises are written in Python, they include explanations and avoid advanced language features, so a developer with minimal Python experience should be able to successfully complete this course.
 
  <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:143">Go to Course</a> 

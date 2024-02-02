@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the Type
 keywords: [ts, typescript, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [TypeScript, SDK]
 last_update:
-  date: 2023-10-11
+  date: 2024-01-12
 code_repo: https://github.com/temporalio/money-transfer-project-template-ts/
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -168,7 +168,7 @@ You have two ways to start a Workflow with Temporal, either via the SDK or via t
 
 To start a Workflow Execution, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue) the Workflow should use, and start the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
 
-The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this application you'll find the Task Queue defined in the `shared.ts` file:
+The Task Queue is where Temporal Workers look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this application you'll find the Task Queue defined in the `shared.ts` file:
 
 <!--SNIPSTART money-transfer-project-template-ts-task-queue-->
 <!--SNIPEND-->
@@ -188,19 +188,18 @@ You can make the call [synchronously or asynchronously](https://docs.temporal.io
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 
-Make sure the [Temporal Cluster](https://docs.temporal.io/clusters/quick-install) is running in a terminal.
+Make sure you've [installed Temporal CLI on your local machine](/getting_started/typescript/dev_environment/index.md). 
 
-:::note
-If you are using Temporal CLI, start your server and specify a database filename. Temporal CLI uses an in-memory database by default, and that won't work for the demonstrations in this tutorial.
-
-Start Temporal CLI with the following command:
+Start the Temporal development server with the following command, which specifies a database file and sets the Temporal Web UI port to `8080`:
 
 ```command
 temporal server start-dev --db-filename your_temporal.db --ui-port 8080
 ```
 
-When you stop and start the server again, remember to specify the same database file each time.
+:::note
+Temporal's development server uses an in-memory database by default, and that won't work for the demonstrations in this tutorial. Specifying a database file ensures that records persist when you restart the service.
 
+When you stop and start the server again, remember to specify the same database file each time.
 :::
 
 Then run `client.ts` from the project root using the following command:
