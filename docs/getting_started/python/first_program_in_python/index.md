@@ -19,7 +19,7 @@ image: /img/temporal-logo-twitter-card.png
 - **Time**: ⏱️ ~10 minutes
 - **Goals**: 🙌
   - Explore Temporal's core terminology and concepts.
-  - Complete several runs of a Temporal Workflow application using a Temporal Cluster and the [Python SDK](https://github.com/temporalio/python-sdk).
+  - Complete several runs of a Temporal Workflow application using a Temporal Cluster and the [Python SDK](https://github.com/temporalio/sdk-python).
   - Practice reviewing the state of the Workflow.
   - Understand the inherent reliability of Workflow functions.
 
@@ -29,7 +29,7 @@ image: /img/temporal-logo-twitter-card.png
 
 You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications. Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process. Developing your application on the Temporal Platform guarantees that your code runs to completion no matter what. 
 
-The language-specific SDK, in this case the Temporal [Python SDK](https://github.com/temporalio/python-sdk), provides a comprehensive solution to the complexities that arise from modern application development. 
+The language-specific SDK, in this case the Temporal [Python SDK](https://github.com/temporalio/sdk-python), provides a comprehensive solution to the complexities that arise from modern application development. 
 
 Temporal provides reliability primitives to ensure durable execution of your code, such as seamless and fault-tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
 
@@ -78,15 +78,16 @@ The repository for this tutorial is a GitHub Template repository, which means yo
 Now that you've downloaded the project, let's dive into the code. 
 
 ## Explore the application's Workflow and Activity Definitions
+
 The Temporal Application will consist of the following pieces:
 
-1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using a Temporal SDK. A Workflow defines the overall flow of the application. 
-2. An [Activity](https://docs.temporal.io/activities) to hold the failure-prone parts of your code that can be automatically retried upon some failure. Activities are functions called during Workflow Execution and represents the execution aspect of your business logic. 
+1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application. 
+2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulate business logic that is prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
 3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently. 
 
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution). 
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions,](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts. 
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts. 
 
 The following diagram illustrates what happens when you start the Workflow:
 
@@ -96,6 +97,7 @@ None of your application code runs on the Temporal Server. Your Worker, Workflow
 
 
 ### Workflow Definition 
+
 A Workflow Definition in Python uses the **`@workflow.defn`** decorator on the Workflow class to identify a Workflow.
 
 This is what the Workflow Definition looks like for this kind of process:
@@ -103,7 +105,7 @@ This is what the Workflow Definition looks like for this kind of process:
 <!--SNIPSTART python-money-transfer-project-template-workflows-->
 <!--SNIPEND-->
 
-- The `MoneyTransferWorkflow` Class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
+- The `MoneyTransferWorkflow` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
 
 - The `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`. This is a data structure holding details that the Workflow uses to perform the money transfer. 
 
@@ -114,7 +116,7 @@ This type is defined in the file `shared.py`:
 
 :::tip
 
-It's a good practice to send a single, data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
+It's a good practice to send a single data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
 :::
 
@@ -124,18 +126,19 @@ Notice that the `MoneyTransfer` includes a `reference_id` field. Some APIs let y
 :::
 
 ### Activity Definition 
+
 In the Temporal Python SDK, you define an Activity by decorating a function with **`@activity.defn`**.
 
 [Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity functions, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers. 
 
-1. First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
+First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART python-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
 <!--SNIPEND-->
 
-2. Second, if the transfer succeeded, the `withdraw()` function returns the confirmation.
+Second, if the transfer succeeded, the `withdraw()` function returns the confirmation.
 
-3. Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
+Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 <!--SNIPSTART python-money-transfer-project-template-deposit-->
 <!--SNIPEND-->
@@ -150,10 +153,11 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 :::
 
-## Retry Policy
+## Exploring the Retry Policy
+
 Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems. 
 
-If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the Retry Policy.
+If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the [Retry Policy](https://docs.temporal.io/dev-guide/python/features#activity-retries).
 
 At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
@@ -169,7 +173,7 @@ In this Workflow, each Activity uses the same Retry Policy options, but you coul
 
 :::caution This is a simplified example.
 
-Transferring money is a tricky subject, and this tutorial's example doesn't cover all possible issues that can go wrong. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
+Transferring money is a tricky subject, and this tutorial's example doesn't cover all possible issues that can go wrong. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this Workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
 
 This example only shows some core features of Temporal and is not intended for production use.
 :::
@@ -256,7 +260,7 @@ In production environments, Temporal applications often operate with hundreds or
 
 One thing that people new to Temporal may find surprising is that the Temporal Cluster does not execute your code. The entity responsible for executing your code is known as a Worker, and it's common to run Workers on multiple servers. 
 
-A Worker
+A Worker:
 
 - Can only execute Workflows and Activities registered to it.
 - Knows which piece of code to execute based on the Tasks it gets from the Task Queue.
@@ -273,13 +277,13 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
 
 ```output
-2022/11/14 10:55:43 INFO  No logger configured for temporal client. Created default one.
-2022/11/14 10:55:43 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@
-2022/11/14 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 5 ActivityType Withdraw
-2022/11/14 10:55:43 Withdrawing $250 from account 85-150.
+2024/02/12 10:55:43 INFO  No logger configured for temporal client. Created default one.
+2024/02/12 10:55:43 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@
+2024/02/12 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 5 ActivityType Withdraw
+2024/02/12 10:55:43 Withdrawing $250 from account 85-150.
 
-2022/11/14 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 11 ActivityType Deposit
-2022/11/14 10:55:43 Depositing $250 into account 43-812.
+2024/02/12 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 11 ActivityType Deposit
+2024/02/12 10:55:43 Depositing $250 into account 43-812.
 ```
 
 The Worker continues running, waiting for more Tasks to execute.
@@ -363,22 +367,22 @@ You will see the Worker complete the `withdraw()` Activity function, but it erro
 The important thing to note here is that the Worker keeps retrying the `deposit()` function:
 
 ```output
-2022/11/14 10:59:09 INFO  No logger configured for temporal client. Created default one.
-2022/11/14 10:59:09 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2022/11/14 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
-2022/11/14 10:59:09 Withdrawing $250 from account 85-150.
+2024/02/12 10:59:09 INFO  No logger configured for temporal client. Created default one.
+2024/02/12 10:59:09 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
+2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
+2024/02/12 10:59:09 Withdrawing $250 from account 85-150.
 
-2022/11/14 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
-2022/11/14 10:59:09 Depositing $250 into account 43-812.
+2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
+2024/02/12 10:59:09 Depositing $250 into account 43-812.
 
-2022/11/14 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
-2022/11/14 10:59:10 Depositing $250 into account 43-812.
+2024/02/12 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
+2024/02/12 10:59:10 Depositing $250 into account 43-812.
 
-2022/11/14 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
-2022/11/14 10:59:12 Depositing $250 into account 43-812.
+2024/02/12 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
+2024/02/12 10:59:12 Depositing $250 into account 43-812.
 
-2022/11/14 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
-2022/11/14 10:59:16 Depositing $250 into account 43-812.
+2024/02/12 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
+2024/02/12 10:59:16 Depositing $250 into account 43-812.
 
 ...
 
@@ -403,12 +407,11 @@ In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the
 <!--SNIPSTART python-project-template-run-workflow-->
 <!--SNIPEND-->
 
-You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation:
+You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
 
 Your Workflow is running, but only the `withdraw()` Activity function has succeeded. In any other application, you would likely have to abandon the entire process and perform a rollback.
 
 With Temporal, you can debug and resolve the issue while the Workflow is running.
-
 
 6. Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` function in the `activities.py` file and save your changes.
 
@@ -448,7 +451,7 @@ Transfer complete.
             Deposit: {'amount': 250, 'receiver': '43-812', 'reference_id': '1f35f7c6-4376-4fb8-881a-569dfd64d472', 'sender': '85-150'}
 ```
 
-10. Visit the [Web UI](http://localhost:8080) again, and you'll see the Workflow has completed:
+10. Visit the [Web UI](http://localhost:8233) again, and you'll see the Workflow has completed:
 
 ![Both Workflows completed successfully](images/completed_workflows.png)
 
