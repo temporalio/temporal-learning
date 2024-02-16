@@ -82,7 +82,7 @@ Now that you've downloaded the project, let's dive into the code.
 The Temporal Application will consist of the following pieces:
 
 1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application. 
-2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulate business logic that is prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
+2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure. 
 3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently. 
 
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution). 
@@ -145,7 +145,7 @@ Lastly, the `deposit()` Activity function looks almost identical to the `withdra
 
 :::tip Why you use Activities
 
-At first glance, you might think you can incorporate your logic into the Workflow Definition; however, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints). For example, they need to be replayable, and modifying the Workflow code makes it much harder to replay.
+At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints) and must produce the same output each time, given the same input. This means that any non-deterministic work such as interacting with the outside world, like accessing files or network resources, must be done by Activities. 
 
 In addition, by using Activities, you can take advantage of Temporal's ability to retry Activities indefinitely, which you'll explore later in this tutorial. 
 
@@ -153,7 +153,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 :::
 
-## Exploring the Retry Policy
+## Set the Retry Policy
 
 Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems. 
 
@@ -186,9 +186,12 @@ Let's see that in action.
 
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/dev-guide/sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
-To start the Workflow, make sure the [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal.  
+First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command: 
+```command
+temporal server start-dev
+```
 
-Run `run_workflow.py` from the project root using the following command:
+To start the Workflow, run `run_workflow.py` from the project root using the following command:
 
 ```command
 python run_workflow.py
@@ -216,7 +219,7 @@ This tutorial uses a separate program to start the Workflow, but you don't have 
 
 Next, you'll explore one of the unique value propositions Temporal offers: application state visibility.
 
-## Web UI & Execution Visibility 
+## View the state of the Workflow with the Temporal Web UI
 
 Temporal records every execution, its progress, and application state through Temporal's Web UI. This provides insights into errors and app performance. 
 
@@ -325,14 +328,14 @@ Despite your best efforts, there's going to be a time when something goes wrong 
 
 ### Recover from a server crash
 
-Unlike many modern applications that require complex leader election processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
+Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
 
 Try it out by following these steps:
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python run_workflow.py`.
 3. Verify the Workflow is running in the UI.
-4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
+4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
 5. After the Temporal Cluster has stopped, restart it and visit the UI.
 
 Your Workflow is still listed:
@@ -362,7 +365,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 python run_worker.py
 ```
 
-You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function. 
+Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function. 
 
 The important thing to note here is that the Worker keeps retrying the `deposit()` function:
 
@@ -422,16 +425,16 @@ How can you possibly update a Workflow that's already halfway complete? You rest
 ```output
 # continuing logs from previous retries...
 
-2022/11/14 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
-2022/11/14 11:00:12 Depositing $250 into account 43-812.
+2024/02/12 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
+2024/02/12 11:00:12 Depositing $250 into account 43-812.
 
-2022/11/14 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
+2024/02/12 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
 
 ^C
 
-2022/11/14 11:01:10 INFO  Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
-2022/11/14 11:01:10 INFO  Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2022/11/14 11:01:10 WARN  Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
+2024/02/12 11:01:10 INFO  Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
+2024/02/12 11:01:10 INFO  Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
+2024/02/12 11:01:10 WARN  Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
 
 ```
 
