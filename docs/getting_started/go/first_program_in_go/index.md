@@ -153,7 +153,7 @@ Temporal Workflows automatically retry Activities that fail by default, but you 
 		InitialInterval:        time.Second,
 		BackoffCoefficient:     2.0,
 		MaximumInterval:        100 * time.Second,
-		MaximumAttempts:        0, // unlimited retries
+		MaximumAttempts:        500, // 0 is unlimited retries
 		NonRetryableErrorTypes: []string{"InvalidAccountError", "InsufficientFundsError"},
 	}
 
