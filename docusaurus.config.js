@@ -39,10 +39,11 @@ const config = {
   ],
   themeConfig: {
     announcementBar: {
-      id: 'in_progress',
-      content: 'Our course <a href="/courses/temporal_102">Temporal 102: Exploring Durable Execution</a> is now available in <a href="/courses/temporal_102/python">Python</a>, <a href="/courses/temporal_102/java">Java</a>, and <a href="/courses/temporal_102/typescript">TypeScript</a>!',
-      backgroundColor: '#1d1d24',
-      textColor: '#f9fafb',
+      id: "replay_announcement",
+      content:
+        'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024">Submit a talk proposal</a> or <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">secure your ticket</a>.',
+      backgroundColor: "#141414",
+      textColor: "#ffffff",
       isCloseable: true,
     },
     colorMode: {
