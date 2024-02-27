@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the Go S
 keywords: [go, golang, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Go, SDK]
 last_update:
-  date: 2024-01-12
+  date: 2024-02-27
 code_repo: https://github.com/temporalio/money-transfer-project-template-go
 image: /img/temporal-logo-twitter-card.png
 ---
