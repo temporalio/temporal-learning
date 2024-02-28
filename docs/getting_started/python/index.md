@@ -19,6 +19,14 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 ---
 
+## [Run your first Temporal application with the Python SDK](first_program_in_python/index.md)
+
+**Estimated time**: ⏱️ ~10 minutes
+
+Run a Temporal Application using the Temporal Python SDK.
+
+---
+
 ## [Build a Temporal App from Scratch in Python](hello_world_in_python/index.md)
 
 **Estimated time**: ⏱️ ~20 minutes
