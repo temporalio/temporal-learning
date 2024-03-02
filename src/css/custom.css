@@ -76,6 +76,7 @@ html[data-theme="light"] {
 a,
 a:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 @font-face {
@@ -165,11 +166,9 @@ h1 {
   }
 }
 
-
 .navbar__logo img {
   height: 35px;
 }
-
 
 .header-link {
   text-decoration: none;
@@ -296,8 +295,9 @@ h1 {
 }
 
 /* Buttons should not have underlined text. */
-a.button { text-decoration: none; }
-
+a.button {
+  text-decoration: none;
+}
 
 /* light theme buttons are somewhat harsh - soften the colors */
 html[data-theme="light"] a.button--primary {
@@ -310,11 +310,11 @@ html[data-theme="light"] a.button--primary:hover {
   border: 1px solid var(--ifm-link-color);
 }
 
- /* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
- pre.prism-code.language-command > code::before {
-   content: "$ ";
-   font-weight: bolder;
- }
+/* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
+pre.prism-code.language-command > code::before {
+  content: "$ ";
+  font-weight: bolder;
+}
 
 @media only screen and (min-width: 1400px) {
   .navbar__items--right {
