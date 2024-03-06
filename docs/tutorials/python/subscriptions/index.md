@@ -35,23 +35,30 @@ A Workflow defines a sequence of steps defined by writing code, known as a Workf
 
 The Temporal Python SDK recommends the use of a single [data class](https://docs.python.org/3/library/dataclasses.html) for parameters and return types. This lets you add fields without breaking compatibility. Before writing the Workflow Definition, you'll define the data objects used by the Workflow Definitions. You'll also define the Task Queue name you'll use in your Worker.
 
-You'll create a `WorkflowOptions` data class with an email field. You'll use this data class to start the Workflow Execution.
-
-Then you'll create an `EmailDetails` data class which you'll use to hold data about the current state of the subscription. It will contain these fields:
-
-- `email`: as a string to pass a user's email
-- `message`: as a string to pass a message to the user
-- `count`: as an integer to track the number of emails sent
-- `subscribed`: as a boolean to track whether the user is currently subscribed
-
-When you write a Query to retrieve the current state of the Workflow, you'll use this data class as well.
-
 Create a new file called `shared_objects.py` in your project directory.
 
-Add the following code to the `shared_objects.py` file to define the Task Queue name and the data classes:
+Add the following code to the `shared_objects.py` file which will:
+
+1. Import the `dataclasses` library.
+2. Set the Task Queue variable name to `email_subscription`.
+3. Add `WorkflowOptions` and `EmailDetails` data classes.
 
 <!--SNIPSTART email-subscription-project-python-shared_objects-->
 <!--SNIPEND-->
+
+The following describes each data class and their objects.
+
+- `WorkflowOptions`: this data class starts the Workflow Execution.
+  - It will contain the following field:
+    - `email`: a string to pass the user's email
+- `EmailDetails`: this data class holds data about the current state of the subscription.
+  - It will contain the following field:
+    - `email`: as a string to pass a user's email
+    - `message`: as a string to pass a message to the user
+    - `count`: as an integer to track the number of emails sent
+    - `subscribed`: as a boolean to track whether the user is currently subscribed
+
+When you Query your Workflow to retrieve the current statue of the Workflow, you'll use the `EmailDetails` data class.
 
 Now that you have the Task Queue and the data classes defined, you can write the Workflow Definition.
 
