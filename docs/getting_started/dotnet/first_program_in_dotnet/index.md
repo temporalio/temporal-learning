@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the .NET
 keywords: [.NET, dotnet, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [.NET, SDK]
 last_update:
-  date: 2024-02-22
+  date: 2024-03-20
 code_repo: https://github.com/temporalio/money-transfer-project-template-dotnet
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -81,7 +81,7 @@ Open a new terminal window and use `git` to clone the repository:
 
 
 ```command
-git clone https://github.com/temporalio/money-transfer-project-dotnet
+git clone https://github.com/temporalio/money-transfer-project-template-dotnet
 ```
 
 
@@ -89,7 +89,7 @@ Once you have the repository cloned, change to the project directory:
 
 
 ```command
-cd money-transfer-project-dotnet
+cd money-transfer-temporal-template-dotnet
 ```
 
 
@@ -111,15 +111,15 @@ Now that you've downloaded the project, let's dive into the code.
 The Temporal Application will consist of the following pieces:
 
 
-1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the .NET SDK. A Workflow defines the overall flow of the application.
+1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice such as C# using the .NET SDK. A Workflow defines the overall flow of the application.
 2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
 3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently.
 
 
-Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as .NET/C#. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
+Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as C# using the .NET SDK. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=.NET#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=.NET#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts. In C#, Workflows and Activities are defined using attributes [Workflow] and [Activity].
 
 
 The following diagram illustrates what happens when you start the Workflow:
@@ -131,45 +131,42 @@ The following diagram illustrates what happens when you start the Workflow:
 None of your application code runs on the Temporal Server. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
 
-
-
 ### Workflow Definition
 
 
-In the .NET SDK, a Workflow Definition is marked by the **[Workflow]** attribute placed directly above the class name.
+In the Temporal .NET SDK, a Workflow Definition is marked by the **`[Workflow]`** attribute placed above the class.
 
 
-This is what the Workflow Definition looks like for this kind of process:
+This is what the Workflow Definition looks like for this process:
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-workflows-->
+<!--SNIPSTART money-transfer-project-template-dotnet-workflow-->
 <!--SNIPEND-->
 
+- The **`[WorkflowRun]`** attribute is placed on the `RunAsync` method within the `MoneyTransferWorkflow` class.
 
-- The `MoneyTransferWorkflow` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
+- The `MoneyTransferWorkflow` class is designed to manage the transaction process, which entails withdrawing funds from one account and depositing the money into another through executing the Activities. It returns the results of the process.
 
-
-- The `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`. This is a data structure holding details that the Workflow uses to perform the money transfer.
-
-
-This type is defined in the file `shared.cs`:
+- The `MoneyTransferWorkflow` class contains an asynchronous method, `RunAsync`, that takes a `PaymentDetails` object as input. This holds the transaction details to perform the money transfer.
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
+This type is defined in the file `Shared.cs`:
+
+<!--SNIPSTART money-transfer-project-template-dotnet-shared-->
 <!--SNIPEND-->
 
 
 :::tip
 
 
-It's a good practice to send a single data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
+It's a good practice to send a single data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
 
 :::
 
 
 :::note
-Notice that the `MoneyTransfer` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
+Notice that the `PaymentDetails` record includes a `ReferenceId` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
 
 
 :::
@@ -178,7 +175,7 @@ Notice that the `MoneyTransfer` includes a `reference_id` field. Some APIs let y
 ### Activity Definition
 
 
-In the Temporal .NET SDK, you mark a method or class as an Activity by adding the **[Activity]** attribute. 
+In the Temporal .NET SDK, you mark a method within a class as an Activity by adding the **`[Activity]`** attribute above the method.
 
 
 Activities are where you perform the business logic for your application. In the money transfer application, you have three Activity functions, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
@@ -187,7 +184,7 @@ Activities are where you perform the business logic for your application. In the
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
+<!--SNIPSTART money-transfer-project-template-dotnet-withdraw-activity-->
 <!--SNIPEND-->
 
 
@@ -197,7 +194,7 @@ Second, if the transfer succeeded, the `withdraw()` function returns the confirm
 Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-deposit-->
+<!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
 <!--SNIPEND-->
 
 
@@ -225,14 +222,13 @@ Temporal makes your software durable and fault tolerant by default which allows 
 If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the Retry Policy.
 
 
-At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
+In the `MoneyTransferWorkflow` class, you define a Retry Policy right at the beginning of its main method, `RunAsync`.
+
+You'll see a **Retry Policy** defined that looks like this:
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
+<!--SNIPSTART money-transfer-project-template-dotnet-workflow {"selectedLines": ["13-20"]} -->
 <!--SNIPEND-->
-
-
-
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
 
@@ -265,19 +261,18 @@ Let's see that in action.
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/dev-guide/sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 
-First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/dotnet/dev_environment/). This is done by opening a new terminal window and running the following command:
+First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a Terminal from the [previous tutorial](https://learn.temporal.io/getting_started/dotnet/dev_environment/). This is done by opening a new terminal window and running the following command:
 ```command
 temporal server start-dev
 ```
 
 
-To start the Workflow, run `workflow.cs` from the project root using the following command:
-
-
+To start the Workflow, run the following command:
 ```command
-dotnet run RunWorkflow.cs
+dotnet run --project MoneyTransferClient
 ```
 
+This command runs the `RunWorkflow.cs` file within the MoneyTransferClient project, starting the Workflow process.
 
 The Workflow is now running. Leave the program running.
 
@@ -294,7 +289,7 @@ The Temporal Server is an essential part of the overall system, but requires add
 The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers.
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-shared {"selectedLines": ["3"]}-->
+<!--SNIPSTART money-transfer-project-template-dotnet-shared-->
 <!--SNIPEND-->
 
 
@@ -363,11 +358,11 @@ Your `RunWorkflow.cs` program is still running in your terminal, waiting for the
 Open a new terminal window.
 
 
-In this new terminal window, run `RunWorker.cs` from the project root using the following command:
+In this new terminal window, run `RunWorker.cs` using the following command:
 
 
 ```command
-dotnet run RunWorker.cs
+dotnet run --project MoneyTransferWorker
 ```
 
 
@@ -393,7 +388,7 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-run-worker-->
+<!--SNIPSTART money-transfer-project-template-dotnet-worker-->
 <!--SNIPEND-->
 
 
@@ -415,7 +410,7 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 The Worker continues running, waiting for more Tasks to execute.
 
 
-Switch back to the terminal window where your `dotnet run RunWorkflow.cs` program is running, and you'll see it's completed:
+Switch back to the terminal window where your `dotnet run --project MoneyTransferClient` program is running, and you'll see it's completed:
 
 
 ```output
@@ -474,7 +469,7 @@ Try it out by following these steps:
 
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `dotnet run RunWorkflow.cs`.
+2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `dotnet run --project MoneyTransferClient`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
 5. After the Temporal Cluster has stopped, restart it and visit the UI.
@@ -504,7 +499,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 1. Open the `Activities.cs` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
 
 
-<!--SNIPSTART dotnet-money-transfer-project-template-deposit-->
+<!--SNIPSTART money-transfer-project-template-dotnet-deposit-->
 <!--SNIPEND-->
 
 
@@ -515,7 +510,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 
 
 ```command
-dotnet RunWorker.cs
+dotnet run --project MoneyTransferWorker
 ```
 
 
@@ -526,26 +521,26 @@ The important thing to note here is that the Worker keeps retrying the `deposit(
 
 
 ```output
-2024/02/12 10:59:09 INFO No logger configured for temporal client. Created default one.
-2024/02/12 10:59:09 INFO Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
-2024/02/12 10:59:09 Withdrawing $250 from account 85-150.
+2024/03/20 10:59:09 INFO No logger configured for temporal client. Created default one.
+2024/03/20 10:59:09 INFO Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
+2024/03/20 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
+2024/03/20 10:59:09 Withdrawing $250 from account 85-150.
 
 
-2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
-2024/02/12 10:59:09 Depositing $250 into account 43-812.
+2024/03/20 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
+2024/03/20 10:59:09 Depositing $250 into account 43-812.
 
 
-2024/02/12 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
-2024/02/12 10:59:10 Depositing $250 into account 43-812.
+2024/03/20 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
+2024/03/20 10:59:10 Depositing $250 into account 43-812.
 
 
-2024/02/12 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
-2024/02/12 10:59:12 Depositing $250 into account 43-812.
+2024/03/20 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
+2024/03/20 10:59:12 Depositing $250 into account 43-812.
 
 
-2024/02/12 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
-2024/02/12 10:59:16 Depositing $250 into account 43-812.
+2024/03/20 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
+2024/03/20 10:59:16 Depositing $250 into account 43-812.
 
 
 ...
@@ -575,10 +570,10 @@ You can view more information about the process in the [Temporal Web UI](http://
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
 
 
-In `workflows.cs`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
+In `Workflow.cs`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 
-<!--SNIPSTART dotnet-project-template-run-workflow-->
+<!--SNIPSTART money-transfer-project-template-dotnet-start-workflow-->
 <!--SNIPEND-->
 
 
@@ -604,19 +599,19 @@ How can you possibly update a Workflow that's already halfway complete? You rest
 # continuing logs from previous retries...
 
 
-2024/02/12 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
-2024/02/12 11:00:12 Depositing $250 into account 43-812.
+2024/03/20 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
+2024/03/20 11:00:12 Depositing $250 into account 43-812.
 
 
-2024/02/12 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
+2024/03/20 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
 
 
 ^C
 
 
-2024/02/12 11:01:10 INFO Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
-2024/02/12 11:01:10 INFO Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/02/12 11:01:10 WARN Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
+2024/03/20 11:01:10 INFO Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
+2024/03/20 11:01:10 INFO Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
+2024/03/20 11:01:10 WARN Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
 
 
 ```
@@ -626,7 +621,7 @@ How can you possibly update a Workflow that's already halfway complete? You rest
 
 
 ```command
-dotnet RunWorker.cs
+dotnet run --project MoneyTransferWorker
 ```
 
 
@@ -676,7 +671,7 @@ Exploring the key advantages Temporal offers:
 Try the following things before moving on to get more practice working with a Temporal application:
 
 
-- Change the Retry Policy in `workflows.cs` so it only retries 1 time. Then change the `deposit()` Activity in `Activities.cs`, so it uses the `refund()` function.
+- Change the Retry Policy in `Workflow.cs` so it only retries 1 time. Then change the `deposit()` Activity in `Activities.cs`, so it uses the `refund()` function.
 - Does the Workflow place the money back into the original account?
 
 
