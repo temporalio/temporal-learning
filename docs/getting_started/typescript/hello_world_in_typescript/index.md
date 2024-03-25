@@ -337,7 +337,7 @@ To set up your tests, add `mocha` and `@temporalio/testing` to your `package.jso
 
 ```typescript
 "devDependencies": {
-    "@temporalio/testing": "~1.8.0",
+    "@temporalio/testing": "~1.9.0",
     "@types/mocha": "8.x",
     "mocha": "8.x"
 }
