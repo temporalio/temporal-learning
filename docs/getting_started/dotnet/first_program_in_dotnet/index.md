@@ -475,7 +475,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 1. Open the `Activities.cs` file and switch out the comments on the `return` statements so that the `DepositAsync()` method throws an exception:
 
 
-<!--SNIPSTART money-transfer-project-template-dotnet-deposit-->
+<!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
 <!--SNIPEND-->
 
 
@@ -523,7 +523,7 @@ You can view more information about the process in the [Temporal Web UI](http://
 :::note
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options.
 
-Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
+Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). By default the code will be retried forever, unless a Schedule-To-Close Timeout or Start-To-Close Timeout is specified.
 
 :::
 
