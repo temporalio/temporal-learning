@@ -262,7 +262,7 @@ To start the Workflow, run the following command:
 dotnet run --project MoneyTransferClient
 ```
 
-This command runs the `RunWorkflow.cs` file within the MoneyTransferClient project, starting the Workflow process.
+This command runs the `Program.cs` file within the MoneyTransferClient project, starting the Workflow process.
 
 The Workflow is now running. Leave the program running.
 
@@ -339,16 +339,16 @@ You need at least one Worker running to execute your Workflows. You'll start the
 ## Start the Worker
 
 
-A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `RunWorker.cs` contains the code for the Worker.
+A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `Program.cs` contains the code for the Worker within the MoneyTransferWorker project.
 
 
-Your `RunWorkflow.cs` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
+Your `Program.cs` file within the MoneyTransferClient project is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
 
 Open a new terminal window.
 
 
-In this new terminal window, run `RunWorker.cs` using the following command:
+In this new terminal window, run the following command to start the Worker:
 
 
 ```command
@@ -386,14 +386,9 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 
 
 ```output
-2024/03/20 10:55:43 INFO No logger configured for temporal client. Created default one.
-2024/03/20 10:55:43 INFO Started Worker Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@
-2024/03/20 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 5 ActivityType Withdraw
-2024/03/20 10:55:43 Withdrawing $250 from account 85-150.
-
-
-2024/03/20 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 11 ActivityType Deposit
-2024/03/20 10:55:43 Depositing $250 into account 43-812.
+Running worker...
+Withdrawing $400 from account 85-150.
+Depositing $400 into account 43-812.
 ```
 
 
@@ -404,9 +399,9 @@ Switch back to the terminal window where your `dotnet run --project MoneyTransfe
 
 
 ```output
-Transfer complete.
-Withdraw: {'amount': 250, 'receiver': '43-812', 'reference_id': 'fff4d970-226d-4db5-8e1c-3047a63f9c85', 'sender': '85-150'}
-Deposit: {'amount': 250, 'receiver': '43-812', 'reference_id': 'fff4d970-226d-4db5-8e1c-3047a63f9c85', 'sender': '85-150'}
+Starting transfer from account 85-150 to account 43-812 for $400
+Started Workflow pay-invoice-08829009-7e33-4d07-a60c-37ce1da28979
+Workflow result: Transfer complete (transaction IDs: W-188e2f31-ac1e-4d87-9012-39d80fec77bf, D-fc212878-1884-4fe8-a16a-22b43272e992)
 ```
 
 
@@ -451,7 +446,7 @@ Try it out by following these steps:
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `dotnet run --project MoneyTransferClient`.
-3. Verify the Workflow is running in the UI.
+3. Verify the Workflow is running in the [Web UI](http://localhost:8233).
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
 5. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8233](http://localhost:8233/).
 
@@ -502,30 +497,14 @@ The important thing to note here is that the Worker keeps retrying the `DepositA
 
 
 ```output
-2024/03/20 10:59:09 INFO No logger configured for temporal client. Created default one.
-2024/03/20 10:59:09 INFO Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/03/20 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
-2024/03/20 10:59:09 Withdrawing $250 from account 85-150.
-
-
-2024/03/20 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
-2024/03/20 10:59:09 Depositing $250 into account 43-812.
-
-
-2024/03/20 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
-2024/03/20 10:59:10 Depositing $250 into account 43-812.
-
-
-2024/03/20 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
-2024/03/20 10:59:12 Depositing $250 into account 43-812.
-
-
-2024/03/20 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
-2024/03/20 10:59:16 Depositing $250 into account 43-812.
-
-
+Running worker...
+Withdrawing $400 from account 85-150.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
 ...
-
 
 ```
 
@@ -570,27 +549,21 @@ With Temporal, you can debug and resolve the issue while the Workflow is running
 How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
 
 
-7. To restart the Worker, cancel the currently running Worker with `CTRL+C`:
+7. To restart the Worker, go to the terminal where the Worker is running and cancel the Worker with `CTRL+C`:
 
 
 ```output
-# continuing logs from previous retries...
-
-
-2024/03/20 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
-2024/03/20 11:00:12 Depositing $250 into account 43-812.
-
-
-2024/03/20 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
-
-
-^C
-
-
-2024/03/20 11:01:10 INFO Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
-2024/03/20 11:01:10 INFO Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/03/20 11:01:10 WARN Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
-
+Running worker...
+Withdrawing $400 from account 85-150.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+Depositing $400 into account 43-812.
+^CWorker cancelled
 
 ```
 
@@ -606,13 +579,11 @@ dotnet run --project MoneyTransferWorker
 The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `DepositAsync()` Activity method.
 
 
-9. Switch back to the terminal where your `RunWorkflow.cs` program is running, and you'll see it complete:
+9. Switch back to the terminal where your `Program.cs` file in MoneyTransferClient folder is running, and you'll see it complete:
 
 
 ```output
-Transfer complete.
-Withdraw: {'amount': 250, 'receiver': '43-812', 'reference_id': '1f35f7c6-4376-4fb8-881a-569dfd64d472', 'sender': '85-150'}
-Deposit: {'amount': 250, 'receiver': '43-812', 'reference_id': '1f35f7c6-4376-4fb8-881a-569dfd64d472', 'sender': '85-150'}
+Workflow result: Transfer complete (transaction IDs: W-caa90e06-3a48-406d-86ff-e3e958a280f8, D-1910468b-5951-4f1d-ab51-75da5bba230b)
 ```
 
 
