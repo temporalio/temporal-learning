@@ -3,7 +3,7 @@ title: "Get started with Temporal and .NET"
 sidebar_position: 4
 sidebar_label: .NET
 last_update:
-  date: 2024-02-22
+  date: 2024-03-26
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
@@ -13,7 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and .NET by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-Set up a local development environment for Temporal and .NET
+## [Set up a local development environment for Temporal and .NET](dev_environment/index.md)
 
 **Estimated time**: ⏱️ ~5 minutes
 
