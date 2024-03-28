@@ -1,6 +1,6 @@
 ---
 title: "Introduction to Temporal Cloud"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Introduction to Temporal Cloud"
 draft: false
 tags: [courses, Temporal Cloud]
