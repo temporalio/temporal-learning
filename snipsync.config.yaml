@@ -1,5 +1,9 @@
 origins:
   - owner: temporalio
+    repo: money-transfer-project-template-dotnet
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+  - owner: temporalio
     repo: money-transfer-project-template-java
   - owner: temporalio
     repo: hello-world-project-template-java

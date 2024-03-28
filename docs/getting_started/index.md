@@ -36,6 +36,7 @@ Download and run a small application and explore how Temporal executes Workflows
 <Link className="button button--primary" to="go/first_program_in_go">Go</Link>&nbsp;
 <Link className="button button--primary" to="java/first_program_in_java">Java</Link>&nbsp;
 <Link className="button button--primary" to="typescript/first_program_in_typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="python/first_program_in_python">Python</Link>&nbsp;
 
 -----
 
