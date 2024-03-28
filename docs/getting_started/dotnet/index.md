@@ -2,8 +2,6 @@
 title: "Get started with Temporal and .NET"
 sidebar_position: 4
 sidebar_label: .NET
-last_update:
-  date: 2024-03-26
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
@@ -26,7 +24,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 **Estimated time**: ⏱️ ~10 minutes
 
-Run a Temporal Application using the Temporal .NET SDK.
+Download and run a small application, explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
 ---
 
