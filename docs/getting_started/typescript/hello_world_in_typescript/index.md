@@ -343,10 +343,10 @@ To set up your tests, add `mocha` and `@temporalio/testing` to your `package.jso
 }
 ```
 
-Running the tests requires using the `mocha` command along with requiring the following libraries and pointing the test runner to the appropriate folder:
+Running the tests requires using the `mocha` command along with requiring the following libraries and pointing the test runner to the appropriate folder. Here's what the command would look like to run the tests:
 
-```bash
-$ mocha \
+```command
+npx  mocha \
   --require ts-node/register \
   --require source-map-support/register \
   src/mocha/*.test.ts
@@ -362,18 +362,22 @@ However, since this is quite verbose to type into the command line every time, w
 },
 ```
 
-Now, all you need to type is `npm test` to run your tests.
+Save the file and execute your tests with the script:
+
+```command
+npm test
+```
 
 The following code provides an example of how you could test this Workflow. In order to do this,
 you need to import the `TestWorkflowEnvironment`, the pieces from `Mocha` that you need, as well as
 your Worker, Workflow, and the Activities.
 
-Now create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
+Create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
 
 <!--SNIPSTART hello-world-project-template-ts-workflow-test-->
 <!--SNIPEND-->
 
-This test creates a test execution environment and then register the Activity to the Worker. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+This test creates a test execution environment and then registers the Activity to the Worker. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
 
 Run the following command from the project root to execute the unit tests:
 
