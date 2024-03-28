@@ -7,7 +7,7 @@ custom_edit_url: null
 pagination_prev: getting_started/index
 pagination_next: tutorials/index
 last_update:
-  date: 2023-12-11
+  date: 2024-03-28
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
 ---
