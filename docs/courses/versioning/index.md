@@ -9,7 +9,7 @@ description: "In this course, you'll go beyond the fundamentals, learning how to
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2023-12-11
+  date: 2024-3-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -21,7 +21,7 @@ import Link from '@docusaurus/Link';
 
 ## Description
 
-In this course, you'll go beyond the fundamentals, learning how to safely evolve your Temporal application code in production. There are three primary approaches to versioning Temporal Workflows, and this course will cover each of them, bookended by examples of how to monitor and test your Workflow Execution History, so you can verify that your Versioning is working correctly.
+In this course, you'll go beyond the fundamentals, learning how to safely evolve your Temporal application code in production. There are several approaches to versioning Temporal Workflows, and this course will cover each of them, bookended by examples of how to monitor and test your Workflow Execution History, so you can verify that your Versioning is working correctly.
 
 When you've completed the course, you'll be able to:
 
