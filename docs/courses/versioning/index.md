@@ -9,7 +9,7 @@ description: "In this course, you'll go beyond the fundamentals, learning how to
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2024-3-28
+  date: 2024-03-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
