@@ -140,7 +140,7 @@ This is what the Workflow Definition looks like for this process:
 - The `MoneyTransferWorkflow` class contains an asynchronous method, `RunAsync`, that takes a `PaymentDetails` object as input. This holds the transaction details to perform the money transfer.
 
 
-This type is defined in the file `Shared.cs`:
+This type is defined in the file `PaymentDetails.cs`:
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
 <!--SNIPEND-->

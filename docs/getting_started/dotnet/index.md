@@ -2,31 +2,29 @@
 title: "Get started with Temporal and .NET"
 sidebar_position: 4
 sidebar_label: .NET
-last_update:
-  date: 2024-02-22
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_dotnet.png)
+![Temporal .NET SDK](/img/sdk_banners/banner_dotnet.png)
 
-<!--Take your first steps into building apps with Temporal and Python by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation. --!>
+Take your first steps into building apps with Temporal and .NET by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-<!--  ## Set up a local development environment for Temporal and .NET
+## [Set up a local development environment for Temporal and .NET](dev_environment/index.md)
 
 **Estimated time**: ⏱️ ~5 minutes
 
 Make sure you have everything you need to start working with Temporal on your local machine.
 
 ---
--->
+
 
 ## [Run your first Temporal application with the .NET SDK](first_program_in_dotnet/index.md)
 
 **Estimated time**: ⏱️ ~10 minutes
 
-Run a Temporal Application using the Temporal .NET SDK.
+Download and run a small application, explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
 ---
 
@@ -36,7 +34,7 @@ Run a Temporal Application using the Temporal .NET SDK.
 
 **Estimated time**: ⏱️ ~20 minutes
 
-Write a program from the ground up with tests. 
+Write a program from the ground up with tests.
 
 ----
 
