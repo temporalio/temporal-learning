@@ -9,7 +9,7 @@ description: "Go beyond the basics and gain a deeper understand of how Temporal 
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2023-11-06
+  date: 2024-03-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
