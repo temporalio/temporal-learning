@@ -20,7 +20,27 @@ The .NET SDK requires .NET 6.0 or later.
 
 Install .NET by following [the official .NET instructions](https://dotnet.microsoft.com/en-us/download).
 
-## Set up the Temporal .NET SDK
+## Install the Temporal .NET SDK
+
+If you are creating a new project using the Temporal .NET SDK, you can start by creating a new directory:
+
+```command
+mkdir dotnetproject
+```
+
+Next, switch to the new directory:
+
+```command
+cd dotnetproject
+```
+
+Then, initialize a .NET project in that directory:
+
+```command
+dotnet new console
+```
+
+Finally, install the Temporal .NET SDK.
 
 Add the Temporalio package from [NuGet](https://www.nuget.org/packages/Temporalio). For example, using the dotnet CLI:
 
