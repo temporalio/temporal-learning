@@ -7,7 +7,7 @@ custom_edit_url: null
 pagination_prev: getting_started/index
 pagination_next: tutorials/index
 last_update:
-  date: 2023-11-07
+  date: 2024-03-28
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -49,6 +49,23 @@ In this course, you will go beyond the basics of Temporal application developmen
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
+
+-----
+
+## [Versioning Workflows](versioning/index.md)
+
+In this course, you'll go beyond the fundamentals, learning how to safely evolve your Temporal application code in production. There are three primary approaches to versioning Temporal Workflows, and this course will cover each of them, bookended by examples of how to monitor and test your Workflow Execution History, so you can verify that your Versioning is working correctly.
+
+**Estimated time**: ⏱️ 1.5 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="versioning/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="versioning/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="versioning/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="versioning/python">Python</Link>&nbsp;
 
 -----
 

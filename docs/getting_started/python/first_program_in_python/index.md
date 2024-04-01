@@ -27,9 +27,9 @@ image: /img/temporal-logo-twitter-card.png
 
 ### Introduction
 
-You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications. Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process. Developing your application on the Temporal Platform guarantees that your code runs to completion no matter what. 
+You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications. Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process. Developing your application on the Temporal Platform guarantees that your code runs to completion no matter what.
 
-The language-specific SDK, in this case the Temporal [Python SDK](https://github.com/temporalio/sdk-python), provides a comprehensive solution to the complexities that arise from modern application development. 
+The language-specific SDK, in this case the Temporal [Python SDK](https://github.com/temporalio/sdk-python), provides a comprehensive solution to the complexities that arise from modern application development.
 
 Temporal provides reliability primitives to ensure durable execution of your code, such as seamless and fault-tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
 
@@ -75,28 +75,28 @@ The repository for this tutorial is a GitHub Template repository, which means yo
 
 :::
 
-Now that you've downloaded the project, let's dive into the code. 
+Now that you've downloaded the project, let's dive into the code.
 
 ## Explore the application's Workflow and Activity Definitions
 
 The Temporal Application will consist of the following pieces:
 
-1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application. 
-2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure. 
-3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently. 
+1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application.
+2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
+3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently.
 
-Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution). 
+Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts. 
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
 
 The following diagram illustrates what happens when you start the Workflow:
 
 ![High-level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
 
-None of your application code runs on the Temporal Server. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications. 
+None of your application code runs on the Temporal Server. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
 
 
-### Workflow Definition 
+### Workflow Definition
 
 A Workflow Definition in Python uses the **`@workflow.defn`** decorator on the Workflow class to identify a Workflow.
 
@@ -107,7 +107,7 @@ This is what the Workflow Definition looks like for this kind of process:
 
 - The `MoneyTransferWorkflow` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
 
-- The `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`. This is a data structure holding details that the Workflow uses to perform the money transfer. 
+- The `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`. This is a data structure holding details that the Workflow uses to perform the money transfer.
 
 This type is defined in the file `shared.py`:
 
@@ -120,16 +120,16 @@ It's a good practice to send a single data class object into a Workflow as its i
 
 :::
 
-:::note 
+:::note
 Notice that the `MoneyTransfer` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
 
 :::
 
-### Activity Definition 
+### Activity Definition
 
 In the Temporal Python SDK, you define an Activity by decorating a function with **`@activity.defn`**.
 
-[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity functions, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers. 
+[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity functions, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
 
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
@@ -145,9 +145,9 @@ Lastly, the `deposit()` Activity function looks almost identical to the `withdra
 
 :::tip Why you use Activities
 
-At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints) and must produce the same output each time, given the same input. This means that any non-deterministic work such as interacting with the outside world, like accessing files or network resources, must be done by Activities. 
+At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints) and must produce the same output each time, given the same input. This means that any non-deterministic work such as interacting with the outside world, like accessing files or network resources, must be done by Activities.
 
-In addition, by using Activities, you can take advantage of Temporal's ability to retry Activities indefinitely, which you'll explore later in this tutorial. 
+In addition, by using Activities, you can take advantage of Temporal's ability to retry Activities indefinitely, which you'll explore later in this tutorial.
 
 Use Activities for your business logic, and use Workflows to coordinate the Activities.
 
@@ -155,7 +155,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 ## Set the Retry Policy
 
-Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems. 
+Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems.
 
 If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the [Retry Policy](https://docs.temporal.io/dev-guide/python/features#activity-retries).
 
@@ -186,7 +186,7 @@ Let's see that in action.
 
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/dev-guide/sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
-First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command: 
+First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command:
 ```command
 temporal server start-dev
 ```
@@ -201,7 +201,7 @@ The Workflow is now running. Leave the program running.
 
 To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
 
-In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. 
+In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL.
 
 The Temporal Server is an essential part of the overall system, but requires additional components for operation. The complete system is known as the Temporal Cluster, which is a deployment of the Temporal Server, plus the additional components used with it such as a database like Apache Cassandra, PostgreSQL, or MySQL.
 
@@ -221,7 +221,7 @@ Next, you'll explore one of the unique value propositions Temporal offers: appli
 
 ## View the state of the Workflow with the Temporal Web UI
 
-Temporal records every execution, its progress, and application state through Temporal's Web UI. This provides insights into errors and app performance. 
+Temporal records every execution, its progress, and application state through Temporal's Web UI. This provides insights into errors and app performance.
 
 Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow Execution.
 
@@ -229,7 +229,7 @@ Temporal's Web UI lets you see details about the Workflow you're running. You ca
 
 ![The Workflow running](images/workflow_running.png)
 
-2. Click the **Workflow ID** for your Workflow. 
+2. Click the **Workflow ID** for your Workflow.
 
 Now you can see everything you want to know about the execution of the Workflow, including the input values it received, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
 
@@ -247,7 +247,7 @@ You need at least one Worker running to execute your Workflows. You'll start the
 
 ## Start the Worker
 
-A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `run_worker.py` contains the code for the Worker. 
+A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `run_worker.py` contains the code for the Worker.
 
 Your `run_workflow.py` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
 
@@ -259,9 +259,9 @@ In this new terminal window, run `run_worker.py` from the project root using the
 python run_worker.py
 ```
 
-In production environments, Temporal applications often operate with hundreds or thousands of Workers. This is because adding more Workers not only enhances your application's availability but also boosts its scalability. 
+In production environments, Temporal applications often operate with hundreds or thousands of Workers. This is because adding more Workers not only enhances your application's availability but also boosts its scalability.
 
-One thing that people new to Temporal may find surprising is that the Temporal Cluster does not execute your code. The entity responsible for executing your code is known as a Worker, and it's common to run Workers on multiple servers. 
+One thing that people new to Temporal may find surprising is that the Temporal Cluster does not execute your code. The entity responsible for executing your code is known as a Worker, and it's common to run Workers on multiple servers.
 
 A Worker:
 
@@ -312,7 +312,7 @@ Here's what happens when the Worker runs and connects to the Temporal Cluster:
 
 Each of these steps gets recorded in the Event History. You can audit them in Temporal Web by clicking on the **History** tab next to **Summary**.
 
-After a Workflow completes, the full history persists for a set retention period (typically 7 to 30 days) before the history is deleted. 
+After a Workflow completes, the full history persists for a set retention period (typically 7 to 30 days) before the history is deleted.
 
 :::note
 
@@ -348,7 +348,7 @@ If the Temporal Cluster goes offline, you can pick up where you left off when it
 
 This demo application makes a call to an external service in an Activity. If that call fails due to a bug in your code, the Activity produces an error.
 
-To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity function. 
+To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity function.
 
 Let your Workflow continue to run but don't start the Worker yet.
 
@@ -365,7 +365,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 python run_worker.py
 ```
 
-Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function. 
+Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function.
 
 The important thing to note here is that the Worker keeps retrying the `deposit()` function:
 
@@ -393,7 +393,7 @@ The important thing to note here is that the Worker keeps retrying the `deposit(
 
 The Workflow keeps retrying using the `RetryPolicy` specified when the Workflow first executes the Activity.
 
-You can view more information about the process in the [Temporal Web UI](http://localhost:8233). 
+You can view more information about the process in the [Temporal Web UI](http://localhost:8233).
 
 4. Click the Workflow. You'll see more details including the state, the number of attempts run, and the next scheduled run time:
 
@@ -458,7 +458,7 @@ Transfer complete.
 
 ![Both Workflows completed successfully](images/completed_workflows.png)
 
-You have just fixed a bug in a running application without losing the state of the Workflow or restarting the transaction! 
+You have just fixed a bug in a running application without losing the state of the Workflow or restarting the transaction!
 
 ## Conclusion
 

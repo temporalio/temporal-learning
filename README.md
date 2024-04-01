@@ -260,7 +260,17 @@ This should catch most of the issues.
 
 Course content comes from an external LMS. Don't edit the course pages directly.
 
-Run the following command to generate the course pages from the LMS: 
+In order to run the next command, you will need to get an API token from the LMS:
+
+1. Log into [Talent LMS](https://temporal.talentlms.com/) and switch to the Administrator role
+2. Click the **Account & Settings** link
+3. Scroll down to the **Security** section
+4. Copy the value in the field below the **Enable API** label
+5. Run `export LMS_API_TOKEN='APITOKENHERE'` (replacing `APITOKENHERE` with the value copied
+   during the previous step)
+
+In the same terminal where you set this variable, run the following command to generate 
+the course pages from the LMS: 
 
 ```command
 node get_course_pages_from_lms.js
