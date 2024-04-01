@@ -51,7 +51,7 @@ In this tutorial, you'll run your first Temporal Application. You'll use Tempora
 Before starting this tutorial:
 
 
-- Set up a local development environment for developing Temporal Applications using the .NET programming language
+- [Set up a local development environment for developing Temporal Applications using a .NET programming language](/getting_started/dotnet/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
 
