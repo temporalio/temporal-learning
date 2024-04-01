@@ -51,7 +51,7 @@ In this tutorial, you'll run your first Temporal Application. You'll use Tempora
 Before starting this tutorial:
 
 
-- Set up a local development environment for developing Temporal Applications using the .NET programming language
+- [Set up a local development environment for developing Temporal Applications using a .NET programming language](/getting_started/dotnet/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
 
 
@@ -140,7 +140,7 @@ This is what the Workflow Definition looks like for this process:
 - The `MoneyTransferWorkflow` class contains an asynchronous method, `RunAsync`, that takes a `PaymentDetails` object as input. This holds the transaction details to perform the money transfer.
 
 
-This type is defined in the file `Shared.cs`:
+This type is defined in the file `PaymentDetails.cs`:
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
 <!--SNIPEND-->
