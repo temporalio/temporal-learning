@@ -25,13 +25,13 @@ Install .NET by following [the official .NET instructions](https://dotnet.micros
 If you don't already have a .NET project, create one by running the following command:
 
 ```command
-dotnet new console -o exampledotnettemporal
+dotnet new console -o temporaldotnet
 ```
 
 Switch to the new directory for your project:
 
 ```command
-cd exampledotnettemporal
+cd temporaldotnet
 ```
 
 Then, install the [Temporal .NET SDK](https://www.nuget.org/packages/Temporalio):
