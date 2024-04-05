@@ -1,0 +1,268 @@
+{
+  "semantics": [
+    {
+      "label": "Namn på \"Sjekk\"-knapp",
+      "default": "Sjekk"
+    },
+    {
+      "label": "Namn på \"Send inn\"-knapp",
+      "default": "Send inn"
+    },
+    {
+      "label": "Namn på \"Prøv igjen\"-knapp",
+      "default": "Prøv igjen"
+    },
+    {
+      "label": "Poengforklaring",
+      "default": "Rett svar gir 1 poeng, feil svar gir –1 poeng. Poengsummen kan ikkje bli negativ."
+    },
+    {
+      "fields": [
+        {
+          "label": "Innstillingar",
+          "fields": [
+            {
+              "label": "Bakgrunnsbilete",
+              "description": "Legg til eit bakgrunnsbilete for oppgåva. (Valfritt)"
+            },
+            {
+              "label": "Oppgåvestorleik",
+              "description": "Spesifiser storleiken på oppgåvefeltet (i pikslar)."
+            }
+          ]
+        },
+        {
+          "label": "Oppgåve",
+          "description": "Start med å plassere sleppsoner.<br />Plasser så flyttbare element, og merk av kva sleppsoner dei skal kunne bli flytta til.<br />Rediger til slutt sleppsonene igjen ved å merke av elementa som høyrer til den enkelte sleppsona. Då har du laga fasit.",
+          "fields": [
+            {
+              "label": "Element",
+              "entity": "Element",
+              "field": {
+                "label": "Element",
+                "fields": [
+                  {
+                    "description": "Velg typen innhald du vil legge til."
+                  },
+                  {},
+                  {},
+                  {},
+                  {},
+                  {
+                    "label": "Vel sleppsoner"
+                  },
+                  {
+                    "label": "Gjennomsiktigheit for bakgrunn"
+                  },
+                  {
+                    "label": "Elementet kan bli flytta til sleppsoner fleire gonger.",
+                    "description": "Kopierer dette elementet slik at det kan bli flytta til fleire sleppsoner."
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Sleppsoner",
+              "entity": "Sleppsone",
+              "field": {
+                "label": "Sleppsone",
+                "fields": [
+                  {
+                    "label": "Tittel"
+                  },
+                  {
+                    "label": "Vis tittel"
+                  },
+                  {},
+                  {},
+                  {},
+                  {},
+                  {
+                    "label": "Vel rette element for denne sleppsona"
+                  },
+                  {
+                    "label": "Gjennomsiktigheit for bakgrunn"
+                  },
+                  {
+                    "label": "Tips og tilbakemelding",
+                    "fields": [
+                      {
+                        "label": "Tipstekst"
+                      },
+                      {
+                        "label": "Melding ved plassering i rett sleppsone",
+                        "description": "Etter at brukar har valt \"Sjekk\", visast denne meldinga dersom elementet er plassert i rett sleppsone."
+                      },
+                      {
+                        "label": "Melding ved plassering i feil sleppsone",
+                        "description": "Etter at brukar har valt \"Sjekk\", visast denne meldinga dersom elementet er plassert i feil sleppsone."
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Denne sleppsona kan berre innehalde eitt element",
+                    "description": "Sørg for at det berre finst eitt rett svar for denne sleppsona."
+                  },
+                  {
+                    "label": "Aktiver automatisk justering",
+                    "description": "Vil automatisk justere alle element plasserte i denne sleppsona."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Tilbakemelding",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Standardinnstilling"
+            }
+          ],
+          "label": "Lag tilbakemeldingar for dei enkelte poengområda",
+          "description": "Vel \"Legg til poengområde\"-knappen for å legge til så mange poengområde du vil ha. Døme: 0–20 % Du må nok jobbe meir, 21–40 % Ikkje så verst, 41–80 % Middels resultat, 81–100 % Framifrå resultat!",
+          "entity": "poengområde",
+          "field": {
+            "fields": [
+              {
+                "label": "Poengområde"
+              },
+              {},
+              {
+                "label": "Tilbakemelding for definert poengområde",
+                "placeholder": "Skriv inn tilbakemelding"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Oppgåveinnstillingar",
+      "description": "Desse innstillingane lar deg bestemme korleis oppgåvetypen skal oppføre seg.",
+      "fields": [
+        {
+          "label": "Aktiver \"Prøv igjen\"-knapp"
+        },
+        {
+          "label": "Aktiver \"Sjekk\"-knapp"
+        },
+        {
+          "label": "Gi eitt poeng for heile oppgåva",
+          "description": "Aktiver denne funksjonen berre dersom du ikkje vil gi eitt poeng for kvart element som er plassert korrekt."
+        },
+        {
+          "label": "Gi minuspoeng",
+          "description": "Gir minuspoeng for element som er plasserte i feil sleppsone. Denne funksjonen må vere aktivert når same element kan bli plassert i fleire sleppsoner, eller når det berre er ei sleppsone. Dersom han ikkje er aktivert i slike tilfelle, kan brukaren få maksimal poengsum sjølv med tilfeldige val."
+        },
+        {
+          "label": "Vis poengforklaring",
+          "description": "Dersom \"Gi minuspoeng\" er aktivert: Vis poengforklaring når brukar sjekkar svar."
+        },
+        {
+          "label": "Gjennomsiktigheit på flyttbare element",
+          "description": "Dersom denne verdien er sett, vil han overstyre innstillingane til alle flyttbare element. Feltet skal innehalde verdiar frå 0 til 100, der 0 betyr full gjennomsiktigheit, og 100 betyr inga gjennomsiktigheit."
+        },
+        {
+          "label": "Sleppsoneframheving",
+          "description": "Vel når sleppsoner skal framhevast.",
+          "options": [
+            {
+              "label": "Når element blir flytta"
+            },
+            {
+              "label": "Alltid"
+            },
+            {
+              "label": "Aldri"
+            }
+          ]
+        },
+        {
+          "label": "Mellomrom ved automatisk justering (i pikslar)"
+        },
+        {
+          "label": "Tillat fullskjermvisning",
+          "description": "Hak av for å vise fullskjermknapp."
+        },
+        {
+          "label": "Vis poengsum",
+          "description": "Hak av for å vise poeng for kvart svar. Ikkje tilgjengeleg viss \"Gi eitt poeng for heile oppgåva\" er aktivert."
+        },
+        {
+          "label": "Vis tittel",
+          "description": "Fjern hake viss du ikkje vil vise tittelen. Tittelen visast berre ved oppsummeringar, statistikk osb."
+        }
+      ]
+    },
+    {
+      "label": "Tilpass språk",
+      "fields": [
+        {
+          "label": "Namn på \"Fullskjerm\"-knapp",
+          "default": "Fullskjerm"
+        },
+        {
+          "label": "Namn på \"Avslutt fullskjerm\"-knapp",
+          "default": "Avslutt fullskjerm"
+        }
+      ]
+    },
+    {
+      "label": "Prefiks (nummerering) av flyttbart element",
+      "default": "Flyttbart element {num} av {total}."
+    },
+    {
+      "label": "Suffiks (informasjon om plassering) for flyttbart element",
+      "default": "Plassert i sleppsone {num}."
+    },
+    {
+      "label": "Prefiks (nummerering) for sleppsone",
+      "default": "Sleppsone {num} av {total}."
+    },
+    {
+      "label": "Tekst når det ikkje er valt sleppsone",
+      "default": "Inga sleppsone."
+    },
+    {
+      "label": "Namn på \"Vis tips\"-knapp",
+      "default": "Vis tips"
+    },
+    {
+      "label": "Tekst for \"Tips tilgjengeleg\"",
+      "default": "Tips tilgjengeleg"
+    },
+    {
+      "label": "Merkelapp for \"Rett svar\"",
+      "default": "Rett svar"
+    },
+    {
+      "label": "Merkelapp for feil svar",
+      "default": "Feil svar"
+    },
+    {
+      "label": "Tittel på avsnittet som gir brukar tilbakemelding om rette og feil svar",
+      "default": "Tilbakemelding"
+    },
+    {
+      "label": "Tekstalternativ til resultatlinja for skjermlesarbrukarar",
+      "default": "Du fekk :num av :total poeng"
+    },
+    {
+      "label": "Tekstalternativ til \"Poengforklaring\"-knappen",
+      "default": "Vis poengforklaring"
+    },
+    {
+      "label": "Beskriving av \"Sjekk\"-knappen for assisterande teknologi",
+      "default": "Sjekk svara. Svara blir merkte som rette, feil eller utan svar."
+    },
+    {
+      "label": "Beskriving av \"Prøv igjen\"-knappen (for assisterande teknologi)",
+      "default": "Prøv igjen. Alle svar blir nullstilte, og oppgåva startar på nytt."
+    }
+  ]
+}
