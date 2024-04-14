@@ -69,7 +69,7 @@ In this lesson, you will learn how to migrate your code from the Money Transfer 
 
 ## Worker code
 
-You will reuse the code from [Run your first Temporal application with the Python SDK](/docs/getting_started/python/first_program_in_python/index) tutorial.
+You will build off the code used in the [Run your first Temporal application with the Python SDK](/docs/getting_started/python/first_program_in_python/) tutorial.
 
 This tutorial will modify your Worker code created in the previous tutorial and start your Workflow using the CLI.
 
