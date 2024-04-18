@@ -8601,10 +8601,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-snipsync@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.npmjs.org/snipsync/-/snipsync-1.8.0.tgz"
-  integrity sha512-AkZSe8UGmf6ZZ84+1aWrE8RFyKR8pL/0Dp5ZT0vEOAdyncGzp4tw4YwsFFi73YUG8FCAkreynSHhOfewX+EjBQ==
+snipsync@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/snipsync/-/snipsync-1.9.0.tgz#493fc2d215c19ae85fdf987573de8cc85bb9abb3"
+  integrity sha512-Uw/YLrZwFUDl4yLRQNVkDdCmMVfuSYw+6JsXI0VKbVQwKS/0GhZV0Apw6A88DC3Ew337yA+H0ekD3qHvO68Hlw==
   dependencies:
     "@octokit/rest" "^18.12.0"
     anzip "^0.2.0"
