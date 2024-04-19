@@ -85,31 +85,39 @@ Create the `package.json` file in the root of your project and add the following
     "lint": "eslint .",
     "start": "ts-node src/worker.ts",
     "start.watch": "nodemon src/worker.ts",
-    "workflow": "ts-node src/client.ts"
+    "workflow": "ts-node src/client.ts",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
   },
   "nodemonConfig": {
     "execMap": {
       "ts": "ts-node"
     },
     "ext": "ts",
-    "watch": ["src"]
+    "watch": [
+      "src"
+    ]
   },
   "dependencies": {
-    "@temporalio/activity": "^1.5.2",
-    "@temporalio/client": "^1.5.2",
-    "@temporalio/worker": "^1.5.2",
-    "@temporalio/workflow": "^1.5.2",
+    "@temporalio/activity": "^1.9.0",
+    "@temporalio/client": "^1.9.0",
+    "@temporalio/worker": "^1.9.0",
+    "@temporalio/workflow": "^1.9.0",
     "nanoid": "3.x"
   },
   "devDependencies": {
+    "@temporalio/testing": "^1.9.0",
     "@tsconfig/node16": "^1.0.0",
+    "@types/mocha": "8.x",
     "@types/node": "^16.11.43",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-deprecation": "^1.2.1",
+    "mocha": "8.x",
     "nodemon": "^2.0.12",
+    "prettier": "^2.8.8",
     "ts-node": "^10.8.1",
     "typescript": "^4.4.2"
   }
@@ -329,16 +337,16 @@ To set up your tests, add `mocha` and `@temporalio/testing` to your `package.jso
 
 ```typescript
 "devDependencies": {
-    "@temporalio/testing": "~1.8.0",
+    "@temporalio/testing": "~1.9.0",
     "@types/mocha": "8.x",
     "mocha": "8.x"
 }
 ```
 
-Running the tests requires using the `mocha` command along with requiring the following libraries and pointing the test runner to the appropriate folder:
+Running the tests requires using the `mocha` command along with requiring the following libraries and pointing the test runner to the appropriate folder. Here's what the command would look like to run the tests:
 
-```bash
-$ mocha \
+```command
+npx  mocha \
   --require ts-node/register \
   --require source-map-support/register \
   src/mocha/*.test.ts
@@ -354,18 +362,22 @@ However, since this is quite verbose to type into the command line every time, w
 },
 ```
 
-Now, all you need to type is `npm test` to run your tests.
+Save the file and execute your tests with the script:
+
+```command
+npm test
+```
 
 The following code provides an example of how you could test this Workflow. In order to do this,
 you need to import the `TestWorkflowEnvironment`, the pieces from `Mocha` that you need, as well as
 your Worker, Workflow, and the Activities.
 
-Now create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
+Create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
 
 <!--SNIPSTART hello-world-project-template-ts-workflow-test-->
 <!--SNIPEND-->
 
-This test creates a test execution environment and then register the Activity to the Worker. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+This test creates a test execution environment and then registers the Activity to the Worker. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
 
 Run the following command from the project root to execute the unit tests:
 
