@@ -66,7 +66,7 @@ const config = {
     prism: {
       theme: require("prism-react-renderer/themes/nightOwlLight"),
       darkTheme: require("prism-react-renderer/themes/dracula"),
-      additionalLanguages: ["java", "ruby", "php"],
+      additionalLanguages: ["java", "ruby", "php", "csharp"],
     },
     docs: {
       sidebar: {
