@@ -81,12 +81,11 @@ You will need it when connecting your Worker to your Namespace and when starting
 
 Now that you have generated your CA certificate and uploaded to your Temporal Namespace, you can update your Worker code.
 
-## 2. Update Worker code
+## 2. Implement Worker code
 
 You will build off the code used in the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
 
 When working with Temporal Cloud, you will provide an encrypted connection using Mutual Transport Layer Security (mTLS) to secure the communication between your application and the Temporal Cloud service.
-
 
 ### Update the Temporal SDK import statements
 
