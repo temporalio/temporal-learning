@@ -48,7 +48,7 @@ If you have an existing certificate management infrastructure or using tools lik
 
 ### Use tcld to generate certificates
 
-You can generate CA and end-entity certificates by using [tcld](/cloud/tcld).
+You can generate CA and end-entity certificates by using tcld.
 
 To create a new CA certificate, use `tcld gen ca`.
 
