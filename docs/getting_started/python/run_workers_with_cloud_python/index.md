@@ -17,21 +17,21 @@ import TabItem from '@theme/TabItem';
 Temporal Cloud oversees the execution process by preserving the source of truth for your Workflow Execution Event Histories.
 This independent supervision ensures the durable execution of your distributed applications and services.
 
-In the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python), you learned to start and run Workers and Workflow with a local instance of the Temporal Service.
+In [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python), you started a Worker and ran a Workflow with a local instance of the Temporal Service.
 
 While this setup is suitable for local development and testing, it may not be ideal for production workloads that require scalability and high availability.
 
-In this tutorial, you will learn how to migrate your application from a local Temporal Server to a managed Temporal Cloud environment, generate certificates, update your Worker code, and run your Workflow.
+In this tutorial, you will migrate your application from a local Temporal Server to a managed Temporal Cloud environment, generate certificates, update your Worker code, and run your Workflow.
 
 ### Prerequisites
 
 Before getting started, review the following prerequisites:
 
-- Access to a [Temporal Cloud account](https://docs.temporal.io/cloud/get-started).
-- Completed the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
+- Get access to a [Temporal Cloud account](https://docs.temporal.io/cloud/get-started).
+- Complete the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
 - A method to generate certificates for your Namespace.
 
-## 1. Generate certificates
+## Generate certificates
 
 Certificates are crucial for securing access and communication with Temporal Cloud.
 They are required for configuring mutual Transport Layer Security (mTLS) protocol, which is used to secure Temporal Cloud access.
@@ -62,7 +62,7 @@ Specify the organization identification for your Namespace.
 
 The contents of the generated `ca.pem` should be pasted into the **CA Certificates** section of your Namespace settings page.
 
-### Add your CA certificate to your Namespace
+## Add your CA certificate to your Namespace
 
 With the certificates generated, you can now add them to your Namespace.
 
@@ -81,7 +81,7 @@ You will need it when connecting your Worker to your Namespace and when starting
 
 Now that you have generated your CA certificate and uploaded to your Temporal Namespace, you can update your Worker code.
 
-## 2. Implement Worker code
+## 2. Update Worker code to connect to Temporal Cloud
 
 You will build off the code used in the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
 
@@ -192,18 +192,18 @@ The Cloud Namespace Name Id is crucial for deriving the gRPC endpoint needed whe
 
 ## 4. Run your application connected to Temporal Cloud
 
-After completing the above steps, your application is ready to connect to Temporal Cloud.
+After completing these steps, your application is ready to connect to Temporal Cloud.
 
 1. Run the `temporal workflow start` command.
 
-```bash
+```command
 temporal workflow start \
  --task-queue money-transfer \
  --type MoneyTransfer \
- --tls-cert-path $TEMPORAL_MTLS_TLS_CERT \
- --tls-key-path $TEMPORAL_MTLS_TLS_KEY \
- --namespace $TEMPORAL_NAMESPACE \
- --address $TEMPORAL_HOST_URL
+ --tls-cert-path ${TEMPORAL_MTLS_TLS_CERT} \
+ --tls-key-path ${TEMPORAL_MTLS_TLS_KEY} \
+ --namespace ${TEMPORAL_NAMESPACE} \
+ --address ${TEMPORAL_HOST_URL}
 ```
 
 Ensure that the certificate path, private key path, Namespace, and address argument values match your project.
