@@ -29,7 +29,7 @@ Before getting started, review the following prerequisites:
 
 - Get access to a [Temporal Cloud account](https://docs.temporal.io/cloud/get-started).
 - Complete the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
-- A method to generate certificates for your Namespace.
+- Provide a method to generate certificates for your Namespace.
 
 ## Generate certificates
 
@@ -44,8 +44,8 @@ You have a few options to generate certificates.
 
 The next step uses [certstrap](https://github.com/square/certstrap) to generate certificates.
 
-**Create a Certificate Authority (CA)
-**
+**Create a Certificate Authority (CA)**
+
 Create a new Certificate Authority (CA) using Certstrap:
 
 ```command
@@ -103,8 +103,7 @@ Sign the certificate request and generate the end-entity certificate:
 This command takes the CSR from the previous step and signs it with your CA (`Cert`).
 The result is an end-entity certificate (`your-namespace.crt`) that is now a valid certificate signed by your CA.
 
-
-##### 6. Use the Certificates with Temporal Cloud
+**Use the Certificates with Temporal Cloud**
 
 You can now use the generated client certificate (`your-namespace.crt`) and the CA certificate (`Cert.crt`) with Temporal Cloud.
 You will upload the contents of the `Cert.crt` file to the **CA Certificates** section of your **Namespace** settings.
@@ -177,7 +176,7 @@ Remove the existing Client configuration and add the following code to connect t
 ```
 
 This code reads the TLS certificate from environment variables and uses them to configure the `TLSConfig` object.
-It also retrieves the host URL and namespace from environment variables and passes them to the `Client.connect()` method.
+It also retrieves the host URL and Namespace from environment variables and passes them to the `Client.connect()` method.
 
 Next, you will set the required environment variables.
 
