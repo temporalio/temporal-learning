@@ -30,8 +30,8 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 <Link className="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -47,8 +47,8 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -64,8 +64,8 @@ In this course, you'll go beyond the fundamentals, learning how to safely evolve
 
 <Link className="button button--primary" to="versioning/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="versioning/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="versioning/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="versioning/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="versioning/typescript">TypeScript</Link>&nbsp;
 
 -----
 
