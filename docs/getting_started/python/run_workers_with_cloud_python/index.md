@@ -36,37 +36,80 @@ Before getting started, review the following prerequisites:
 Certificates are crucial for securing access and communication with Temporal Cloud.
 They are required for configuring mutual Transport Layer Security (mTLS) protocol, which is used to secure Temporal Cloud access.
 
-You have options to generate certificates.
+You have a few options to generate certificates.
 
 - Use existing certificate management infrastructure to generate certificates for your Namespace.
 - Use Temporal's built-in certificate generation tool [tcld](https://docs.temporal.io/cloud/tcld).
 - Use open-source tools like [certstrap](https://github.com/square/certstrap).
 
-The next step uses [tcld](https://docs.temporal.io/cloud/tcld) to generate certificates.
-If you have an existing certificate management infrastructure or using tools like certstrap, generate certificates accordingly and move onto the next step.
+The next step uses [certstrap](https://github.com/square/certstrap) to generate certificates.
 
+**Create a Certificate Authority (CA)
+**
+Create a new Certificate Authority (CA) using Certstrap:
 
-### Use tcld to generate certificates
-
-You can generate CA and end-entity certificates by using tcld.
-
-To create a new CA certificate, use `tcld gen ca`.
-
-```sh
-mkdir temporal-certs
-cd temporal-certs
-tcld generate-certificates --organization <Your Organization> -d 1y --ca-cert ca.pem --ca-key ca.key
+```command
+./certstrap init --common-name "Cert"
 ```
 
-Specify the organization identification for your Namespace.
+This command creates a self-signed CA certificate named `Cert.crt` in the `out` folder within the Certstrap directory.
+This CA certificate will be used to sign and issue end-entity certificates.
 
-The contents of the generated `ca.pem` should be pasted into the **CA Certificates** section of your Namespace settings page.
+**Set the Namespace Name**
 
-## Add your CA certificate to your Namespace
+Set the Namespace Name as the common name for the end-entity certificate:
 
-With the certificates generated, you can now add them to your Namespace.
+<Tabs>
+  <TabItem value="macos" label="macOs" default>
 
-1. Sign into your [Cloud account](https://cloud.temporal.io/).
+For Linux or macOS:
+
+```command
+export NAMESPACE_NAME=your-namespace
+```
+
+</TabItem>
+    <TabItem value="windows" label="Windows" default>
+
+For Windows:
+
+```command
+set NAMESPACE_NAME=your-namespace
+```
+
+</TabItem>
+</Tabs>
+
+Replace `your-namespace` with the name of your Temporal Cloud namespace.
+
+**Request an End-Entity Certificate**
+
+Next, request a certificate with a common name equal to the Namespace Name:
+
+```command
+./certstrap request-cert --common-name ${NAMESPACE_NAME}
+```
+
+This command creates a Certificate Signing Request (CSR) for an end-entity certificate, but not the actual certificate itself.
+
+**Sign the Certificate Request**
+
+Sign the certificate request and generate the end-entity certificate:
+
+```command
+./certstrap sign ${NAMESPACE_NAME} --CA "Cert"
+```
+
+This command takes the CSR from the previous step and signs it with your CA (`Cert`).
+The result is an end-entity certificate (`your-namespace.crt`) that is now a valid certificate signed by your CA.
+
+
+##### 6. Use the Certificates with Temporal Cloud
+
+You can now use the generated client certificate (`your-namespace.crt`) and the CA certificate (`Cert.crt`) with Temporal Cloud.
+You will upload the contents of the `Cert.crt` file to the **CA Certificates** section of your **Namespace** settings.
+
+1. Sign in to your [Cloud account](https://cloud.temporal.io/).
 2. On the left-hand navigation menu, select **Namespaces**.
 3. Select your Namespace and then choose **Edit**.
 4. Paste your CA Certificate into the **CA Certificates** section.
@@ -81,13 +124,11 @@ You will need it when connecting your Worker to your Namespace and when starting
 
 Now that you have generated your CA certificate and uploaded to your Temporal Namespace, you can update your Worker code.
 
-## 2. Update Worker code to connect to Temporal Cloud
+## Update Worker code to connect to Temporal Cloud
 
 You will build off the code used in the [Run your first Temporal application with the Python SDK](/getting_started/python/first_program_in_python/) tutorial.
 
 When working with Temporal Cloud, you will provide an encrypted connection using Mutual Transport Layer Security (mTLS) to secure the communication between your application and the Temporal Cloud service.
-
-### Update the Temporal SDK import statements
 
 Open the `run_worker.py` file and update your import statements.
 
@@ -104,8 +145,6 @@ For more information, see [Security model](https://docs.temporal.io/cloud/securi
 
 Next, you will make use of the optional `os` module.
 
-### Import the `os` module
-
 To access environment variables for the managed Temporal Cloud environment, use the `os` module.
 Add the following import statement at the top of your file:
 
@@ -116,8 +155,6 @@ Add the following import statement at the top of your file:
 You can use any library needed to access your environment variables that is supported in Python.
 
 Next, update the configuration used to make a connection with the Worker Client.
-
-### Update the Client configuration
 
 Remove the existing Client configuration and add the following code to connect to a Worker Client instance.
 
@@ -142,14 +179,16 @@ Remove the existing Client configuration and add the following code to connect t
 This code reads the TLS certificate from environment variables and uses them to configure the `TLSConfig` object.
 It also retrieves the host URL and namespace from environment variables and passes them to the `Client.connect()` method.
 
-## 3. Set the required environment variables
+Next, you will set the required environment variables.
+
+## Set the required environment variables
 
 Before running your application, set the following environment variables with the appropriate values provided by your managed Temporal Cloud environment:
 
-- `TEMPORAL_MTLS_TLS_CERT`: Path to the TLS certificate file.
-- `TEMPORAL_MTLS_TLS_KEY`: Path to the TLS private key file.
+- `TEMPORAL_MTLS_TLS_CERT`: The path to the `.pem` file with your mTLS x509 Certificate.
+- `TEMPORAL_MTLS_TLS_KEY`: The path to the file with your mTLS private key.
 - `TEMPORAL_HOST_URL`: The host URL of your managed Temporal Cloud environment.
-- `TEMPORAL_NAMESPACE`: The namespace associated with your Temporal Cloud environment.
+- `TEMPORAL_NAMESPACE`: The Namespace Name and Account Id associated with your Temporal Cloud environment.
 
 <Tabs>
   <TabItem value="macos" label="MacOS">
@@ -174,7 +213,7 @@ set TEMPORAL_NAMESPACE=namespace.account-id
   </TabItem>
 </Tabs>
 
-Replace `namespace`, `account-id`, and `port` (The default port is `7233`) with the appropriate values for your Temporal Cloud environment.
+Replace `namespace`, `account-id`, and `port` (the default port is `7233`) with the appropriate values for your Temporal Cloud environment.
 
 **What is a Temporal Namespace?**
 
@@ -190,7 +229,7 @@ The following is an example of a Cloud Namepace Name Id, where `docs-assembly` i
 
 The Cloud Namespace Name Id is crucial for deriving the gRPC endpoint needed when configuring a Client to access Temporal Cloud.
 
-## 4. Run your application connected to Temporal Cloud
+## Run your application connected to Temporal Cloud
 
 After completing these steps, your application is ready to connect to Temporal Cloud.
 
