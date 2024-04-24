@@ -153,26 +153,31 @@ Add the following import statement at the top of your file:
 
 Next, update the configuration used to make a connection with the Worker.
 
-Replace the localhost with the address from the environment variable and add [TLS configuration](https://nodejs.temporal.io/api/interfaces/client.TLSConfig):
+Add the [NativeConnection](https://nodejs.temporal.io/api/classes/worker.NativeConnection) and pass in the [TLS configuration](https://nodejs.temporal.io/api/interfaces/client.TLSConfig):
 
 ```diff
--    address: "localhost:7233",
-+    address: process.env.TEMPORAL_ADDRESS!,
-+       tls: {
-+          clientCertPair: {
-+            crt: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_CERT!),
-+            key: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_KEY!),
-+          },
+async function run() {
++    const connection = await NativeConnection.connect({
++      address: process.env.TEMPORAL_ADDRESS!,
++      tls: {
++        clientCertPair: {
++          crt: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_CERT!),
++          key: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_KEY!),
++        },
++      },
++    });
 ```
 
 This code reads the TLS certificate and key files using the `fs/promises` module and uses them to configure the `NativeConnection` object.
 
-Next, update the Worker configuration to read the Namespace from environment variables.
+Next, update the Worker configuration to read the Namespace from the shared file.
+
+Open `shared.ts` and replace the following:
 
 
 ```diff
--    namespace: "default",
-+    namespace: process.env.TEMPORAL_NAMESPACE!,
+-  export const namespace = 'default';
++  export const namespace = process.env.TEMPORAL_NAMESPACE!,
 ```
 
 This retrieves the Namespace from environment variable and passes it to the `Worker.create()` method.
