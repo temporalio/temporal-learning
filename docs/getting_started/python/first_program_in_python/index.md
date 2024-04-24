@@ -184,7 +184,7 @@ Let's see that in action.
 
 ## Start the Workflow
 
-You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.iohttps://docs.temporal.io/dev-guide/sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
+You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/encyclopedia/temporal-sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command:
 ```command
