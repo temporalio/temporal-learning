@@ -221,9 +221,9 @@ This format, **Namespace name.Account Id**, serves as a globally unique identifi
 
 The **Namespace name** (user-defined) on the left, combined with the **Account Id** (system-assigned) on the right, forms the complete **Cloud Namespace ID**.
 
-The following is an example of a Cloud Namepace Name Id, where `docs-assembly` is the Namespace name and `a2dd6` is the Account Id.
+The following is an example of a Cloud Namespace Name Id, where `docs-assembly` is the Namespace name and `a2dd6` is the Account Id.
 
-![Cloud Namepace Name Id](namespace-id.png)
+![Cloud Namespace Name Id](namespace-id.png)
 
 The Cloud Namespace Name Id is crucial for deriving the gRPC endpoint needed when configuring a Client to access Temporal Cloud.
 
