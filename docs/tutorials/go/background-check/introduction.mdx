@@ -1,10 +1,9 @@
 ---
 id: introduction
-title: Introduction to the Temporal Go SDK
+title: Introduction to the Temporal Go SDK Background Check tutorial
 sidebar_label: Introduction
 sidebar_position: 1
-description: Learn more about Temporal Go SDK.
-slug: /dev-guide/go/introduction
+description: Learn more about the Temporal Go SDK Background Check tutorial.
 toc_max_heading_level: 4
 keywords:
 - dev guide
@@ -16,63 +15,35 @@ tags:
 - temporal-sdk
 ---
 
+Welcome to the Temporal Go SDK Background Check tutorial.
 
-Welcome to the Temporal Go SDK developer’s guide.
+## Why Temporal?
 
-:::info Temporal Go SDK API reference
+**Why should you use Temporal to build applications?**
 
-[pkg.go.dev/go.temporal.io/sdk](https://pkg.go.dev/go.temporal.io/sdk)
+If you are reading this, chances are you already have some notion of why you want to use Temporal.
+However, if you are still unsure, there are three major reasons why Temporal might be right for you.
 
-Short link: [t.mp/go-api](https://t.mp/go-api)
+1. **Reliabile execution.**
+  With Temporal, you can rely on your application to work.
+  The design of the system ensures that, once started, an application's main function executes to completion, whether that takes minutes, hours, days, weeks, or even years.
+  Temporal calls this "Durable Execution".
 
-:::
+2. **Code structure.**
+  Temporal's programming model offers developers a way to express their business logic into coherent "Workflows" that are much easier to develop than distributed code bases.
 
-:::competency Recommend a Temporal SDK
+3. **State visibility.**
+  The Temporal system provides out-of-the-box tooling that enables developers to see the state of their applications whenever they need to.
 
-The information on this page helps a developer recommend a Temporal SDK based on project needs.
+## Audience
 
-:::
+**Who is this tutorial for?**
 
-The [Temporal Go SDK](https://github.com/temporalio/sdk-go) released on March 23, 2020, and enables developers to build, test, and execute Temporal applications in Go.
+This tutorial is for any developer who wants to learn how to develop Temporal Applications.
+This tutorial assumes that you have some experience with the Go programming language.
+And it assumes that you, the developer, are ready to build an application to learn Temporal.
 
-This guide documents the concepts, features, and tools that developers encounter on their journey.
-It contextualizes Temporal Application development through a specific set of use cases.
-For example, we work within the Background Check use case for the first several sections.
-And it relies on a set of sample applications specifically tailored to meet the needs of this guide.
-You can expect to see several applications in use to capture the iterative steps, provide a means to showcase best practices, and teach core concepts.
-
-## Supported runtimes
-
-**What are the supported Go runtimes?**
-
-The Temporal Go SDK supports Go 1.18+.
-
-The Temporal Go SDK does not currently support generics.
-
-Ensure you have the latest version of the Temporal Go SDK by checking [releases](https://github.com/temporalio/sdk-go/releases).
-
-## Add to project
-
-```shell
-go get go.temporal.io/sdk
-```
-
-Import SDK packages in your code:
-
-```go
-import (
-    "go.temporal.io/sdk/client"
-    // other imports...
-)
-```
-
-## Expected skills and experiences
-
-**What Go programming skills and experiences should a developer have to succeed with the Go SDK?**
-
-The Temporal Platform enables developers to build a wide range of applications that serve a variety of use cases.
-
-We recommend that developers are equipped with some of the following skills to develop production-level Temporal Applications:
+However, with that said, Temporal enables developers to build a wide range of applications that serve a variety of use cases. Thus, we recommend that developers are equipped with some of the following Go programming skills and experiences to develop production-level Temporal Applications and to generally succeed with the Temporal Go SDK.**
 
 :::tip Recommended
 
@@ -145,31 +116,56 @@ For intricate and vast use cases, having some experience with the following coul
 
 :::
 
-## Code samples and resources {#additional-resources}
+## Competencies
 
-**Where can I find code samples and other resources to learn to use the Go SDK?**
+**What does this tutorial cover?**
 
-- Continue reading this guide.
-- [Temporal 101 with Go](https://learn.temporal.io/courses/temporal_101/go): free introductory course.
-- [Temporal 102 with Go](https://learn.temporal.io/courses/temporal_102/go): our free course that builds on Temporal 101.
-- [Documentation samples repository](https://github.com/temporalio/documentation-samples-go)
-- [Go SDK samples repository](https://github.com/temporalio/samples-go)
-- The [Go SDK](https://www.youtube.com/watch?v=-KWutSkFda8&list=PLl9kRkvFJrlRYHYaTPnsvE46szyMIZLdk&pp=iAQB) YouTube playlist
-- Tutorials
-  - [Build an eCommerce App With Temporal and Go](https://learn.temporal.io/tutorials/go/ecommerce/)
+This tutorial contextualizes the concepts, features, and tools that developers encounter on their journey through Temporal Application development.
 
-**Where can I get help with using the Go SDK?**
+It provides focused learning through a specific use-case and relies on a set of sample applications specifically tailored to meet the needs of each chapter.
+Each application is meant to capture the iterative steps, showcasing best practices, and teach core concepts.
+
+Essentially, you will iterate on the application in each chapter, learning new things as you go.
+
+**What will you learn while you build the application?**
+
+By building the application, you will attempt to adopt the following competencies, where each competency is supported by a set of learning objectives:
+
+- **Construct a new Temporal Application project.**
+  - **Describe the tools available and recommended to develop Workflows.**
+  - **Describe the code that actually constitutes a Temporal application.**
+  - **Implement an appropriate testing framework.**
+- **How to develop applications for Durable Execution.**
+  - **Identify SDK API calls that map to Events.**
+  - **Recognize non-deterministic Workflow code.**
+  - **Explain how Workflow code execution progresses.**
+
+<!-- TODO
+- **How to patch (version) Temporal Application code.**
+- **How to gracefully handle application level errors from Activity Executions.**
+- **How to cancel an in progress Workflow Execution.**
+- **How to pass messages to and get data from from Workflow Executions.**
+- **How to develop applications for throughput and distributed process states.**
+-->
+
+There is more to learn beyond these competencies. But, once you have become comfortable with these, then you should be able to build Temporal Applications for most use cases.
+
+## Not covered
+
+**What is not covered in this tutorial?**
+
+This tutorial does not cover production level aspects of the application and its deployment.
+
+- Data encryption: While a Background Check application is a good example of an application that handles personal identifiable information (PII) this tutorial does not cover that topic.
+- Metrics: Emitting and monitoring metrics is typically an essential aspect of production level deployments. This tutorial does not cover that topic.
+- Performance tuning: Improving the speed at which a Temporal Worker (your bundled application code) is capable of executing the next step in your application becomes essential for scaled out usage. This tutorial does not cover that topic.
+
+## Feedback
+
+**Where can I get help or provide feedback?**
+
+There are multiple places you can go to engage with Temporal maintainers and the Temporal community to get help or provide feedback.
 
 - _#go-sdk_ channel in [Slack](https://t.mp/slack)
 - [Community Forum](https://community.temporal.io/tag/go-sdk)
-
-## How to follow updates to the Go SDK {#updates}
-
-- The [Temporal newsletter](https://t.mp/news) includes major SDK updates.
-- [GitHub Releases](https://github.com/temporalio/sdk-go/releases) has all SDK releases. It also has a feed that can be added to a feed reader or [converted to emails](https://blogtrottr.com/): `https://github.com/temporalio/sdk-go/releases.atom`.
-
-## How to contribute to the Temporal Go SDK {#contribution}
-
-The Temporal Go SDK is MIT licensed, and contributions are welcome.
-Please review our [contribution guidelines](https://github.com/temporalio/sdk-go/blob/master/CONTRIBUTING.md).
-
+- [Go SDK repository](https://github.com/temporalio/sdk-go/)
