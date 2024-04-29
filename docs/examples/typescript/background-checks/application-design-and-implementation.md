@@ -1,10 +1,10 @@
 ---
 id: application-design
 sidebar_position: 4
-keywords: [go, golang, temporal, sdk, tutorial]
+keywords: [typescript, temporal, sdk, tutorial]
 title: How to design and implement the Background Check application
 description: Start by mapping business process to Workflows.
-tags: [Go, SDK]
+tags: [Typescript, SDK]
 image: /img/temporal-logo-twitter-card.png
 ---
 

@@ -1,7 +1,7 @@
 ---
 id: application-requirements
 sidebar_position: 3
-keywords: [go, golang, temporal, sdk, tutorial]
+keywords: [typescript, temporal, sdk, tutorial]
 title: What are the requirements of the Background Check application?
 description: The Background Check application is a simplified and scaled-down implementation for the use case. The requirements are simplified and scaled to match the implementation.
 image: /img/temporal-logo-twitter-card.png

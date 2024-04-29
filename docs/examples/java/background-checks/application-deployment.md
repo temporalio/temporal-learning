@@ -1,10 +1,10 @@
 ---
 id: application-deployment
 sidebar_position: 12
-keywords: [go, golang, temporal, sdk, tutorial]
+keywords: [java, temporal, sdk, tutorial]
 title: How do you deploy the Background Check application?
-description: The application and anything the application needs for the demo is deployed using Docker Compose.
-tags: [Go, SDK]
+description: The application and anything the application needs for the demo to be deployed.
+tags: [Java, SDK]
 image: /img/temporal-logo-twitter-card.png
 ---
 

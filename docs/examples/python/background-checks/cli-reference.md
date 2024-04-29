@@ -1,7 +1,7 @@
 ---
 id: cli-reference
 sidebar_position: 14
-keywords: [go, golang, temporal, sdk, tutorial]
+keywords: [python, temporal, sdk, tutorial]
 title: Background Checks CLI reference
 image: /img/temporal-logo-twitter-card.png
 ---
