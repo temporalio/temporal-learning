@@ -19,5 +19,5 @@ In this four-part series, you'll explore how you can use Temporal to develop an 
 * [Build an eCommerce App With Temporal and Go, Part 1: Getting Started](./part1.md)
 * [Build an eCommerce App With Temporal and Go, Part 2: Reminder Emails](./part2.md)
 * [Build an eCommerce App With Temporal and Go, Part 3: Testing](./part3.md)
-* [Build an eCommerce App With Temporal and Go, Part 2: REST API](./part4.md)
+* [Build an eCommerce App With Temporal and Go, Part 4: REST API](./part4.md)
 
