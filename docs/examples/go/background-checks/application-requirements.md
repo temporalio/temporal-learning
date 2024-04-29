@@ -10,7 +10,7 @@ image: /img/temporal-logo-twitter-card.png
 The Background Check application is a simplified and scaled-down implementation for the use case.
 The requirements are simplified and scaled to match the implementation.
 
-We can break down the application requirements in various ways.
+You can break down the application requirements in various ways.
 
 - User experience requirements
 - Application functional requirements
@@ -18,14 +18,14 @@ We can break down the application requirements in various ways.
 
 ## Who are the users of this application?
 
-We need to consider three users for this application:
+You need to consider three users for this application:
 
 - **Company:** The Company user is typically the HR person who is communicating with the Candidate and has their information.
   The Company HR person is the one who initiates Background Checks.
 - **Candidate:** The Candidate is the user who is the subject of the Background Check.
   They will have to consent to the Background Check.
 - **Researcher:** The Researcher is the user who does a manual "search" for information regarding the Candidate.
-  In our application, the Researcher verifies the Candidate's employment information.
+  Intheapplication, the Researcher verifies the Candidate's employment information.
 
 ### What are the Company experience requirements?
 
@@ -36,7 +36,7 @@ In real life, the HR person would probably already have more of the Candidate's 
 To simplify the experience for this application, the Candidate enters that information at the same time that they accept the Background Check.
 
 The HR person must also be ready to select which checks need to be performed for the position the Candidate is being hired for.
-For this application, we assume that the HR person can select from just two packages:
+For this application, assume that the HR person can select from just two packages:
 
 - Standard package
 - Full package
@@ -53,7 +53,7 @@ After entering the information and clicking the button, the HR person has two op
 After the Background Check fully completes, the option to cancel goes away.
 All that remains is the option to see the final status.
 
-For this application, we simulate this experience through the use of a shared mailbox.
+For this application, you simulate this experience through the use of a shared mailbox.
 A dedicated UI is available to the HR person as well as a [Company CLI](cli-reference.md#bgc-company).
 
 The HR person also has a separate option that is always available to them to list the metadata of Background Checks that are in the system and filter them by Candidate, status, or Background Check Id.
@@ -74,11 +74,11 @@ For this application, the experience can be simulated through either a UI or CLI
 
 ## What are the application's functional requirements?
 
-Already we can start to see some of the functional requirements, such as application APIs, data encryption for personally identifiable information (PII), the ability to await on Candidate input for hours or days if needed, and the ability to conduct checks concurrently whenever possible.
+Already you can start to see some of the functional requirements, such as application APIs, data encryption for personally identifiable information (PII), the ability to await on Candidate input for hours or days if needed, and the ability to conduct checks concurrently whenever possible.
 
 **APIs**
 
-Based on the experiences of the three user types, we know we need APIs for the following:
+Based on the experiences of the three user types, you need APIs for the following:
 
 - Start a Background Check
 - Accept Background Check
@@ -97,13 +97,13 @@ For API details, see the [Application API reference](api-reference.md).
 
 **CLIs**
 
-As a backup, or an alternative to using a UI, we can have a CLI for each user type that uses the same APIs that the UIs do.
+As a backup, or an alternative to using a UI, you can have a CLI for each user type that uses the same APIs that the UIs do.
 
 For CLI details, see the [Application CLI reference](cli-reference.md).
 
-**How we handle PII**
+**How you handle PII**
 
-Because we are dealing with PII, the application must have a way to encrypt and decrypt data.
+Because you are dealing with PII, the application must have a way to encrypt and decrypt data.
 The PII that the application processes includes a Candidate's SSN, contact information, DOB, and personal addresses.
 Data must be consistently encrypted while it is in the Temporal Platform but be decryptable when needed.
 
@@ -116,8 +116,8 @@ During this step, the Candidate also needs a secure way to provide their SSN and
 When this step is complete, the Searches can start automatically.
 
 The second is when a Researcher must respond to a Research Request.
-In our application, a Researcher is used to verify employment of the Candidate.
-We must pretend that, after receiving email with the Research Request, the Researcher would make some phone calls and send some email of their own to verify employment.
+Intheapplication, a Researcher is used to verify employment of the Candidate.
+You must pretend that, after receiving email with the Research Request, the Researcher would make some phone calls and send some email of their own to verify employment.
 They must then send their results back to the application.
 
 In both cases, there is no guarantee of when the Candidate or Researcher might take action.
@@ -146,7 +146,7 @@ However, all checks beyond the SSN trace should be conducted in parallel to save
 
 ## What is the step-by-step flow?
 
-Now we can envision the high-level step-by-step flow.
+Now you can envision the high-level step-by-step flow.
 
 ![Swim lane diagram of the high-level step-by-step flow for the Full package](images/step-by-step-high-level-swim-lane.svg)
 
