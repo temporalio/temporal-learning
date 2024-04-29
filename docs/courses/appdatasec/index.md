@@ -1,6 +1,6 @@
 ---
-title: "Versioning Workflows"
-sidebar_position: 3
+title: "Securing Application Data"
+sidebar_position: 4
 public: true
 draft: false
 tags: [courses]
