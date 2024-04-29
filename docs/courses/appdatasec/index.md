@@ -22,8 +22,7 @@ import Link from '@docusaurus/Link';
 
 ## Description
 
-In this course, you'll implement Custom Data Conversion for your Temporal Workflows. 
-By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
+In this course, you'll implement Custom Data Conversion for your Temporal Workflows, including the use of Encryption Codecs. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
 
 When you've completed the course, you'll be able to:
 
