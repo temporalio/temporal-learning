@@ -89,7 +89,7 @@ The Temporal Client communicates with the Temporal Cluster (Temporal Server + Da
 The Temporal Cluster communicates with the Workers that execute the application code.
 The application has one Worker Process and one Worker Entity.
 
-However, in real life,theapplication could use as many Worker Processes (each with multiple Worker Entities) as needed.
+However, in real life,the application could use as many Worker Processes (each with multiple Worker Entities) as needed.
 
 ## How do you ensure PII is encrypted in the Temporal Platform?
 
