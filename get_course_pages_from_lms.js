@@ -71,6 +71,26 @@ const courseData = [
     keywords: "[Temporal, application development, durable execution, development lifecycle, testing, debugging, deployment, best practices, automated testing, event history, workflow execution, production updates]",
     metaDescription: "In this course, you'll go beyond the fundamentals, learning how to safely evolve your Temporal application code in production. There are three primary approaches to versioning Temporal Workflows."
   },
+  {
+    code: 'appdatasec_go', main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "appdatasec/go.md", index: 1,
+    keywords: "[Temporal, application development, security, converters, deployment, best practices, codecs, compression, encryption, encoding, decoding, serialization, key rotation]",
+    metaDescription: "In this course, you'll implement Custom Data Conversion for your Temporal Workflows. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data."
+  },
+  {
+    code: 'appdatasec_java', language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "appdatasec/java.md", index: 2,
+    keywords: "[Temporal, application development, security, converters, deployment, best practices, codecs, compression, encryption, encoding, decoding, serialization, key rotation]",
+    metaDescription: "In this course, you'll implement Custom Data Conversion for your Temporal Workflows. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data."
+  },
+  {
+    code: 'appdatasec_ts', language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "appdatasec/typescript.md", index: 3,
+    keywords: "[Temporal, application development, security, converters, deployment, best practices, codecs, compression, encryption, encoding, decoding, serialization, key rotation]",
+    metaDescription: "In this course, you'll implement Custom Data Conversion for your Temporal Workflows. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data."
+  },
+  {
+    code: 'appdatasec_python', language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "appdatasec/python.md", index: 4,
+    keywords: "[Temporal, application development, security, converters, deployment, best practices, codecs, compression, encryption, encoding, decoding, serialization, key rotation]",
+    metaDescription: "In this course, you'll implement Custom Data Conversion for your Temporal Workflows. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data."
+  },
   {code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
     keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
     metaDescription: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
