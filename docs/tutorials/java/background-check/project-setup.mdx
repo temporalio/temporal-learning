@@ -189,7 +189,7 @@ This command automatically starts the Temporal Web UI, creates a default Namespa
 
 The Temporal Web UI serves to [http://localhost:8233](http://localhost:8233/).
 
-For more command details and options, see the [CLI reference](/cli/server#start-dev)
+For more command details and options, see the [CLI reference](https://docs.temporal.io/cli/server#start-dev)
 
 #### Create a custom Namespace
 
@@ -205,7 +205,7 @@ Use the `temporal operator namespace create` command using the Temporal CLI to c
 temporal operator namespace create backgroundcheck_namespace
 ```
 
-For command details and options, see the [CLI reference](/cli/operator#create).
+For command details and options, see the [CLI reference](https://docs.temporal.io/cli/operator#create).
 
 ### Temporal Cloud
 
@@ -217,14 +217,14 @@ We recommend starting off with Temporal Cloud if you already have a production u
 
 In other words, Temporal Cloud is perfect if you are ready to run at scale and don’t want the overhead of managing your own self-hosted Cluster.
 
-To create a Namespace in Temporal Cloud, follow the instructions in [How to create a Namespace](/cloud/namespaces#create-a-namespace).
+To create a Namespace in Temporal Cloud, follow the instructions in [How to create a Namespace](https://docs.temporal.io/cloud/namespaces#create-a-namespace).
 
 :::info Safely store your certificate and private key
 
 Store certificates and private keys generated for your Namespace as files or environment variables in your project.
 You need access to your certificate and key to run your Workers and start Workflows.
 
-For more information on certificate requirements, see [How to manage certificates in Temporal Cloud](/cloud/certificates).
+For more information on certificate requirements, see [How to manage certificates in Temporal Cloud](https://docs.temporal.io/cloud/certificates).
 
 :::
 
@@ -232,7 +232,7 @@ For more information on certificate requirements, see [How to manage certificate
 
 We recommend using a self-hosted environment if you are starting something new and need to scale with production-level features, but don’t yet need or want to pay for Temporal Cloud.
 
-For example, running a self-hosted Cluster lets you try different databases, view Cluster metrics, use custom [Search Attributes](/visibility#search-attribute), and even play with the [Archival](/clusters#archival) feature.
+For example, running a self-hosted Cluster lets you try different databases, view Cluster metrics, use custom [Search Attributes](https://docs.temporal.io/visibility#search-attribute), and even play with the [Archival](https://docs.temporal.io/clusters#archival) feature.
 
 For the purposes of this guide, we show how to use a self-hosted environment that runs completely out of Docker.
 We acknowledge that it takes a fair amount of experience to elevate from a self-hosted environment in Docker to something that can run at an enterprise production scale.
@@ -406,7 +406,7 @@ the dependencies.
 
 ### Boilerplate Workflow Code {#boilerplate-workflow-code}
 
-In the Temporal Java SDK programming model, a [Workflow Definition](/workflows#workflow-definition) is defined as an interface and its implementation.
+In the Temporal Java SDK programming model, a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) is defined as an interface and its implementation.
 
 #### Boilerplate Workflow Interface {#workflow-code}
 
@@ -483,13 +483,13 @@ Workflow Interface.
 To have a Workflow call Activities, you'll instantiate an object representing
 those Activities. There are various options that can be passed in during creation
 time, but Temporal requires that you set _either_ `StartToCloseTimeout` or `ScheduleToCloseTimeout`
-when creating your Activities stub. You can read more about these options [in our documentation](/activities#start-to-close-timeout)
+when creating your Activities stub. You can read more about these options [in our documentation](https://docs.temporal.io/activities#start-to-close-timeout)
 
 As with regular Java methods, Workflow Methods support the passing of parameters.
 However, all Workflow Definition parameters must be serializable (using the Jackson JSON 
 Payload Converter).
 
-To request the execution of an Activity, also referred to as an [Activity Execution](/activities#activity-execution), 
+To request the execution of an Activity, also referred to as an [Activity Execution](https://docs.temporal.io/activities#activity-execution), 
 call the Activity Method from within the Workflow Method. Use the `activities`
 object that was created in the Workflow Definition to call the Activity Method 
 along with the any parameters that need to be passed. 
@@ -929,7 +929,7 @@ temporal workflow start \
  --namespace backgroundcheck_namespace
 ```
 
-For more details, see the [temporal workflow start](/cli/workflow#start) command API reference.
+For more details, see the [temporal workflow start](https://docs.temporal.io/cli/workflow#start) command API reference.
 
 After you start the Workflow, you can see it in the Temporal Platform.
 Use the Temporal CLI or the Temporal Web UI to monitor the Workflow's progress.

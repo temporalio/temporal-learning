@@ -43,12 +43,12 @@ tags:
   - workflow-testing
 ---
 
-When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](/encyclopedia/temporal-sdks#replays) a Workflow Execution is a major aspect of that.
+When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](https://docs.temporal.io/encyclopedia/temporal-sdks#replays) a Workflow Execution is a major aspect of that.
 This chapter introduces the development patterns which enable that.
 
 :::note Develop for a Durable Execution
 
-This chapter of the Temporal Python SDK developer's guide introduces best practices to developing deterministic Workflows that can be Replayed, enabling a [Durable Execution](/temporal#durable-execution).
+This chapter of the Temporal Python SDK developer's guide introduces best practices to developing deterministic Workflows that can be Replayed, enabling a [Durable Execution](https://docs.temporal.io/temporal#durable-execution).
 
 By the end of this section you will know basic best practices for Workflow Definition development.
 
@@ -62,7 +62,7 @@ The information in this chapter is also available in the [Temporal 102 course](h
 
 :::
 
-This chapter builds on the [Construct a new Temporal Application project](/dev-guide/python/project-setup) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
+This chapter builds on the [Construct a new Temporal Application project](https://docs.temporal.io/dev-guide/python/project-setup) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
 
 This chapter walks through the following sequence:
 
@@ -73,7 +73,7 @@ This chapter walks through the following sequence:
 
 ## Retrieve a Workflow Execution's Event History {#retrieve-event-history}
 
-There are a few ways to view and download a Workflow Execution's [Event History](/workflows#event-history).
+There are a few ways to view and download a Workflow Execution's [Event History](https://docs.temporal.io/workflows#event-history).
 We recommend starting off by using either the Temporal CLI or the Web UI to access it.
 
 ### Using the Temporal CLI
@@ -238,7 +238,7 @@ Developers are encouraged to use the SDK’s APIs when possible and avoid potent
   - Use `workflow.now()` instead of `datetime.now()` or `workflow.time()` instead `time.time()` for current time.
   - Leverage the custom `asyncio` event loop in Workflows; use `asyncio.sleep()` as needed.
 
-Read more about [How the Python Sandbox works](/encyclopedia/python-sdk-sandbox) for details.
+Read more about [How the Python Sandbox works](https://docs.temporal.io/encyclopedia/python-sdk-sandbox) for details.
 
 Other common ways to introduce non-deterministic issues into a Workflow:
 
@@ -291,7 +291,7 @@ Result:
 ```
 
 The preceding output shows eleven Events in the Event History ordered in a particular sequence.
-All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](/workflows#command) coming from the Worker.
+All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](https://docs.temporal.io/workflows#command) coming from the Worker.
 
 Let's take a closer look:
 
@@ -299,14 +299,14 @@ Let's take a closer look:
 - `WorkflowTaskScheduled`: This Event indicates a Workflow Task is in the Task Queue.
 - `WorkflowTaskStarted`: This Event indicates that a Worker successfully polled the Task and started evaluating Workflow code.
 - `WorkflowTaskCompleted`: This Event indicates that the Worker suspended execution and made as much progress that it could.
-- `ActivityTaskScheduled`: This Event indicates that the ExecuteActivity API was called and the Worker sent the [ScheduleActivityTask](/references/commands#scheduleactivitytask) Command to the Server.
+- `ActivityTaskScheduled`: This Event indicates that the ExecuteActivity API was called and the Worker sent the [ScheduleActivityTask](https://docs.temporal.io/references/commands#scheduleactivitytask) Command to the Server.
 - `ActivityTaskStarted`: This Event indicates that the Worker successfully polled the Activity Task and started evaluating Activity code.
 - `ActivityTaskCompleted`: This Event indicates that the Worker completed evaluation of the Activity code and returned any results to the Server.
   In response, the Server schedules another Workflow Task to finish evaluating the Workflow code resulting in the remaining Events, `WorkflowTaskScheduled`.`WorkflowTaskStarted`, `WorkflowTaskCompleted`, `WorkflowExecutionCompleted`.
 
 :::info Event reference
 
-The [Event reference](/references/events) serves as a source of truth for all possible Events in the Workflow Execution's Event History and the data that is stored in them.
+The [Event reference](https://docs.temporal.io/references/events) serves as a source of truth for all possible Events in the Workflow Execution's Event History and the data that is stored in them.
 
 :::
 
@@ -364,7 +364,7 @@ You should expect to see the `TestReplayWorkflowHistoryFromFile` test fail.
 This is because the code we added creates new Events and alters the Event History sequence.
 
 To get this test to pass, we must get an updated Event History JSON file.
-[Start a new Workflow](/dev-guide/python/project-setup#start-workflow) and after it is complete [download the Event History as a JSON object](#retrieve-event-history).
+[Start a new Workflow](https://docs.temporal.io/dev-guide/python/project-setup#start-workflow) and after it is complete [download the Event History as a JSON object](#retrieve-event-history).
 
 :::info Double check Task Queue names
 
@@ -374,7 +374,7 @@ And, always make sure that all Workers listening to the same Task Queue are regi
 
 :::
 
-If you inspect the new Event History, you will see two new Events in response to the `asyncio.sleep()` API call which send the [StartTimer Command](/references/commands#starttimer) to the Server:
+If you inspect the new Event History, you will see two new Events in response to the `asyncio.sleep()` API call which send the [StartTimer Command](https://docs.temporal.io/references/commands#starttimer) to the Server:
 
 - `TimerStarted`
 - `TimerFired`
@@ -382,7 +382,7 @@ If you inspect the new Event History, you will see two new Events in response to
 However, it is also important to note that you don't see any Events related to logging.
 And if you were to remove the Sleep call from the code, there wouldn't be a compatibility issue with the previous code.
 This is to highlight that only certain code changes within Workflow code is non-deterministic.
-The basic thing to remember is that if the API call causes a [Command](/references/commands) to create Events in the Workflow History that takes a new path from the existing Event History then it is a non-deterministic change.
+The basic thing to remember is that if the API call causes a [Command](https://docs.temporal.io/references/commands) to create Events in the Workflow History that takes a new path from the existing Event History then it is a non-deterministic change.
 
 This becomes a critical aspect of Workflow development when there are running Workflows that have not yet completed and rely on earlier versions of the code.
 

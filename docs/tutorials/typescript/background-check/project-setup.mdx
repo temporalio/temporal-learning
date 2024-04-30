@@ -202,7 +202,7 @@ This command automatically starts the Temporal Web UI, creates a default Namespa
 
 The Temporal Web UI serves to [http://localhost:8233](http://localhost:8233/).
 
-For more command details and options, see the [CLI reference](/cli/server#start-dev)
+For more command details and options, see the [CLI reference](https://docs.temporal.io/cli/server#start-dev)
 
 #### Create a custom Namespace
 
@@ -218,7 +218,7 @@ Use the `temporal operator namespace create` command using the Temporal CLI to c
 temporal operator namespace create backgroundcheck_namespace
 ```
 
-For command details and options, see the [CLI reference](/cli/operator#create).
+For command details and options, see the [CLI reference](https://docs.temporal.io/cli/operator#create).
 
 ### Temporal Cloud
 
@@ -230,14 +230,14 @@ We recommend starting off with Temporal Cloud if you already have a production u
 
 In other words, Temporal Cloud is perfect if you are ready to run at scale and don’t want the overhead of managing your own self-hosted Cluster.
 
-To create a Namespace in Temporal Cloud, follow the instructions in [How to create a Namespace](/cloud/namespaces#create-a-namespace).
+To create a Namespace in Temporal Cloud, follow the instructions in [How to create a Namespace](https://docs.temporal.io/cloud/namespaces#create-a-namespace).
 
 :::info Safely store your certificate and private key
 
 Store certificates and private keys generated for your Namespace as files or environment variables in your project.
 You need access to your certificate and key to run your Workers and start Workflows.
 
-For more information on certificate requirements, see [How to manage certificates in Temporal Cloud](/cloud/certificates).
+For more information on certificate requirements, see [How to manage certificates in Temporal Cloud](https://docs.temporal.io/cloud/certificates).
 
 :::
 
@@ -245,7 +245,7 @@ For more information on certificate requirements, see [How to manage certificate
 
 We recommend using a self-hosted environment if you are starting something new and need to scale with production-level features, but don’t yet need or want to pay for Temporal Cloud.
 
-For example, running a self-hosted Cluster lets you try different databases, view Cluster metrics, use custom [Search Attributes](/visibility#search-attribute), and even play with the [Archival](/clusters#archival) feature.
+For example, running a self-hosted Cluster lets you try different databases, view Cluster metrics, use custom [Search Attributes](https://docs.temporal.io/visibility#search-attribute), and even play with the [Archival](https://docs.temporal.io/clusters#archival) feature.
 
 For the purposes of this guide, we show how to use a self-hosted environment that runs completely out of Docker.
 We acknowledge that it takes a fair amount of experience to elevate from a self-hosted environment in Docker to something that can run at an enterprise production scale.
@@ -417,7 +417,7 @@ In addition, you'll find configuration files for ESLint and Prettier.
 
 ### Boilerplate Workflow code {#workflow-code}
 
-In the Temporal TypeScript SDK programming model, a [Workflow Definition](/workflows#workflow-definition) is an exportable function.
+In the Temporal TypeScript SDK programming model, a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) is an exportable function.
 
 Open the `src/workflows.ts` file in your editor. You'll place your Workflow Definition in this file.
 
@@ -459,7 +459,7 @@ error.
 To return a value of the Workflow function, use `Promise<something>`. The
 Promise is used to make asynchronous calls and comes with guarantees.
 
-Workflow logic is constrained by [deterministic execution requirements](/workflows#deterministic-constraints).
+Workflow logic is constrained by [deterministic execution requirements](https://docs.temporal.io/workflows#deterministic-constraints).
 Therefore, each language is limited to the use of certain idiomatic techniques.
 However, each Temporal SDK provides a set of APIs that can be used inside your Workflow to interact with external (to the Workflow) application code.
 
@@ -474,8 +474,8 @@ If you **must** use a library that references a Node.js or DOM API and you are c
 
 In the TypeScript SDK, you can safely use non-deterministic methods and rely on the sandbox to replace non-deterministic code with deterministic versions. However side effects and access to external state must be done through Activities because Activity outputs are recorded in the Event History and can read deterministically by the Workflow.
 
-This limitation also means that Workflow code cannot directly import the [Activity Definition](/activities#activity-definition).
-[Activity Types](/activities#activity-type) can be imported, so they can be invoked in a type-safe manner.
+This limitation also means that Workflow code cannot directly import the [Activity Definition](https://docs.temporal.io/activities#activity-definition).
+[Activity Types](https://docs.temporal.io/activities#activity-type) can be imported, so they can be invoked in a type-safe manner.
 
 To make the Workflow runtime deterministic, functions like `Math.random()`, `Date`, and `setTimeout()` are replaced by deterministic versions.
 
@@ -876,13 +876,13 @@ temporal workflow start \
 - `--type`: This is the Workflow Type name.
   By default, this is the function name.
 - `--input`: This must be a valid JSON object that can be unmarshaled into the parameter(s) that the Workflow function accepts.
-  Read more about how the Temporal Platform handles your application data in the [Data conversion](/dataconversion) guide.
+  Read more about how the Temporal Platform handles your application data in the [Data conversion](https://docs.temporal.io/dataconversion) guide.
 - `--namespace`: This is the Namespace that you want to run your Temporal Application in.
-- `--workflow-id`: A [Workflow Id](/workflows#workflow-id) is a custom identifier provided by you.
+- `--workflow-id`: A [Workflow Id](https://docs.temporal.io/workflows#workflow-id) is a custom identifier provided by you.
   We highly recommend supplying your own Workflow Id with your own naming convention.
-  A [Workflow Id Reuse Policy](/workflows#workflow-id-reuse-policy) enables fine controls over whether Workflow Ids can be reused in the Platform within the Retention Period.
+  A [Workflow Id Reuse Policy](https://docs.temporal.io/workflows#workflow-id-reuse-policy) enables fine controls over whether Workflow Ids can be reused in the Platform within the Retention Period.
 
-For more details, see the [temporal workflow start](/cli/workflow#start) command API reference.
+For more details, see the [temporal workflow start](https://docs.temporal.io/cli/workflow#start) command API reference.
 
 After you start the Workflow, you can see it in the Temporal Platform.
 Use the Temporal CLI or the Temporal Web UI to monitor the Workflow's progress.
@@ -968,7 +968,7 @@ Make sure that the certificate path, private key path, Namespace, and address ar
 
 :::info Use environment variables
 
-Use [environment variables](/cli#environment-variables) as a way to quickly switch between a local dev server and Temporal Cloud, for example.
+Use [environment variables](https://docs.temporal.io/cli#environment-variables) as a way to quickly switch between a local dev server and Temporal Cloud, for example.
 
 You can customize the environment names to be anything you want.
 

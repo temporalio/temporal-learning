@@ -36,12 +36,12 @@ tags:
   - vscode-debugger-extension
 ---
 
-When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](/encyclopedia/temporal-sdks#replays) a Workflow Execution is a major aspect of that.
+When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](https://docs.temporal.io/encyclopedia/temporal-sdks#replays) a Workflow Execution is a major aspect of that.
 This chapter introduces the development patterns which enable that.
 
 :::note Develop for a Durable Execution
 
-This chapter of the Temporal TypeScript SDK developer's guide introduces best practices to developing deterministic Workflows that can be Replayed, enabling a [Durable Execution](/temporal#durable-execution).
+This chapter of the Temporal TypeScript SDK developer's guide introduces best practices to developing deterministic Workflows that can be Replayed, enabling a [Durable Execution](https://docs.temporal.io/temporal#durable-execution).
 
 By the end of this section you will know basic best practices for Workflow Definition development.
 
@@ -56,7 +56,7 @@ The information in this chapter is also available in the [Temporal 102 course](h
 :::
 
 <!--
-This chapter builds on the [Construct a new Temporal Application project](/dev-guide/typescript/project-setup) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
+This chapter builds on the [Construct a new Temporal Application project](https://docs.temporal.io/dev-guide/typescript/project-setup) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
 -->
 
 This chapter walks through the following sequence:
@@ -68,7 +68,7 @@ This chapter walks through the following sequence:
 
 ## Retrieve a Workflow Execution's Event History {#retrieve-event-history}
 
-There are a few ways to view and download a Workflow Execution's [Event History](/workflows#event-history).
+There are a few ways to view and download a Workflow Execution's [Event History](https://docs.temporal.io/workflows#event-history).
 We recommend starting off by using either the Temporal CLI or the Web UI to access it.
 
 ### Using the Temporal CLI
@@ -145,7 +145,7 @@ To replay a single Event History, use [worker.runReplayHistory](https://typescri
 When an Event History is replayed and non-determinism is detected (that is, the Workflow code is incompatible with the History), [DeterminismViolationError](https://typescript.temporal.io/api/classes/workflow.DeterminismViolationError) is thrown.
 If replay fails for any other reason, [ReplayError](https://typescript.temporal.io/api/classes/worker.ReplayError) is thrown.
 
-In the following example, a single Event History is loaded from a JSON file on disk (as obtained from the [Web UI](/web-ui) or the [Temporal CLI](/cli/workflow#show)):
+In the following example, a single Event History is loaded from a JSON file on disk (as obtained from the [Web UI](https://docs.temporal.io/web-ui) or the [Temporal CLI](https://docs.temporal.io/cli/workflow#show)):
 
 ```ts
 const filePath = "./history_file.json";
@@ -176,7 +176,7 @@ await Worker.runReplayHistory(
 To gain confidence that changes to a Workflow are safe to deploy, we recommend that you obtain Event Histories from the relevant Task Queue and replay them in bulk.
 You can do so by combining the [client.workflow.list()](https://typescript.temporal.io/api/classes/client.WorkflowClient#list) and [worker.runReplayHistories()](https://typescript.temporal.io/api/classes/worker.Worker#runreplayhistories) APIs.
 
-In the following example (which, as of server 1.18, requires [Advanced Visibility](/visibility#advanced-visibility) to be enabled), Event Histories are downloaded from the server and then replayed by passing in a client and a set of Workflows Executions.
+In the following example (which, as of server 1.18, requires [Advanced Visibility](https://docs.temporal.io/visibility#advanced-visibility) to be enabled), Event Histories are downloaded from the server and then replayed by passing in a client and a set of Workflows Executions.
 The [results](https://typescript.temporal.io/api/interfaces/worker.ReplayResult) returned by the async iterator contain information about the Workflow Execution and whether an error occurred during replay.
 
 ```ts
@@ -209,8 +209,8 @@ The Replay test executes the same steps as the SDK and verifies compatibility.
 
 Workflow code becomes non-deterministic primarily through two main avenues:
 
-1. **[Intrinsic non-deterministic logic](/dev-guide/go/durable-execution#intrinsic-non-deterministic-logic):** This occurs when Workflow state or branching logic within the Workflow gets determined by factors beyond the SDK's control.
-2. **[Non-deterministic code changes](/dev-guide/go/durable-execution#durability-through-replays):** When you change your Workflow code and deploy those changes while there are still active Workflow Executions relying on older code versions.
+1. **[Intrinsic non-deterministic logic](https://docs.temporal.io/dev-guide/go/durable-execution#intrinsic-non-deterministic-logic):** This occurs when Workflow state or branching logic within the Workflow gets determined by factors beyond the SDK's control.
+2. **[Non-deterministic code changes](https://docs.temporal.io/dev-guide/go/durable-execution#durability-through-replays):** When you change your Workflow code and deploy those changes while there are still active Workflow Executions relying on older code versions.
 
 ## Intrinsic non-deterministic logic {#intrinsic-non-deterministic-logic}
 
@@ -468,7 +468,7 @@ Result:
 ```
 
 The preceding output shows eleven Events in the Event History ordered in a particular sequence.
-All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](/workflows#command) coming from the Worker.
+All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](https://docs.temporal.io/workflows#command) coming from the Worker.
 
 Let's take a closer look:
 
@@ -476,14 +476,14 @@ Let's take a closer look:
 - `WorkflowTaskScheduled`: This Event indicates a Workflow Task is in the Task Queue.
 - `WorkflowTaskStarted`: This Event indicates that a Worker successfully polled the Task and started evaluating Workflow code.
 - `WorkflowTaskCompleted`: This Event indicates that the Worker suspended execution and made as much progress that it could.
-- `ActivityTaskScheduled`: This Event indicates that the ExecuteActivity API was called and the Worker sent the [`ScheduleActivityTask`](/references/commands#scheduleactivitytask) Command to the Server.
+- `ActivityTaskScheduled`: This Event indicates that the ExecuteActivity API was called and the Worker sent the [`ScheduleActivityTask`](https://docs.temporal.io/references/commands#scheduleactivitytask) Command to the Server.
 - `ActivityTaskStarted`: This Event indicates that the Worker successfully polled the Activity Task and started evaluating Activity code.
 - `ActivityTaskCompleted`: This Event indicates that the Worker completed evaluation of the Activity code and returned any results to the Server.
   In response, the Server schedules another Workflow Task to finish evaluating the Workflow code resulting in the remaining Events, `WorkflowTaskScheduled`.`WorkflowTaskStarted`, `WorkflowTaskCompleted`, `WorkflowExecutionCompleted`.
 
 :::info Event reference
 
-The [Event reference](/references/events) serves as a source of truth for all possible Events in the Workflow Execution's Event History and the data that is stored in them.
+The [Event reference](https://docs.temporal.io/references/events) serves as a source of truth for all possible Events in the Workflow Execution's Event History and the data that is stored in them.
 
 :::
 
@@ -530,7 +530,7 @@ This is because the code we added creates new Events and alters the Event Histor
 To get this test to pass, we must get an updated Event History JSON file.
 
 <!--
-[Start a new Workflow](/dev-guide/go/project-setup#start-workflow) and after it is complete [download the Event History as a JSON object](/dev-guide/go/durable-execution#retrieve-event-history).
+[Start a new Workflow](https://docs.temporal.io/dev-guide/go/project-setup#start-workflow) and after it is complete [download the Event History as a JSON object](https://docs.temporal.io/dev-guide/go/durable-execution#retrieve-event-history).
 -->
 
 :::info Double check Task Queue names
@@ -541,7 +541,7 @@ And, always make sure that all Workers listening to the same Task Queue are regi
 
 :::
 
-If you inspect the new Event History, you will see two new Events in response to the `sleep()` API call which send the [StartTimer Command](/references/commands#starttimer) to the Server:
+If you inspect the new Event History, you will see two new Events in response to the `sleep()` API call which send the [StartTimer Command](https://docs.temporal.io/references/commands#starttimer) to the Server:
 
 - `TimerStarted`
 - `TimerFired`
@@ -549,7 +549,7 @@ If you inspect the new Event History, you will see two new Events in response to
 However, it is also important to note that you don't see any Events related to logging.
 And if you were to remove the Sleep call from the code, there wouldn't be a compatibility issue with the previous code.
 This is to highlight that only certain code changes within Workflow code is non-deterministic.
-The basic thing to remember is that if the API call causes a [Command](/references/commands) to create Events in the Workflow History that takes a new path from the existing Event History then it is a non-deterministic change.
+The basic thing to remember is that if the API call causes a [Command](https://docs.temporal.io/references/commands) to create Events in the Workflow History that takes a new path from the existing Event History then it is a non-deterministic change.
 
 This becomes a critical aspect of Workflow development when there are running Workflows that have not yet completed and rely on earlier versions of the code.
 
