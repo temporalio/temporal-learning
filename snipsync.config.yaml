@@ -49,8 +49,16 @@ origins:
     repo: email-subscription-project-python
   - owner: temporalio
     repo: money-transfer-project-java
-    ref: worker-cloud-temp
-
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-ts
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-go
+    ref: cloud
 
 targets:
   - docs/tutorials

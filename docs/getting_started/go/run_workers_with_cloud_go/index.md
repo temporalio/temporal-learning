@@ -134,15 +134,6 @@ Open the `worker.go` file and update your import statements.
 Import the [crypto/tls](https://pkg.go.dev/crypto/tls) package.
 This is used to configure settings used when connecting to Temporal Cloud.
 <!--SNIPSTART money-transfer-project-template-go-worker-cloud-import-->
-[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud-worker-snip/worker/main.go)
-```go
-import (
-	"crypto/tls"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
-```
 <!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
@@ -154,46 +145,18 @@ To read the TLS certificate and key files, use the `os.Getenv()`.
 Add the following functions to your file:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-env-->
-[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud-worker-snip/worker/main.go)
-```go
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalln("Unable to load environment variables from file", err)
-	}
-```
 <!--SNIPEND-->
 
 
 Read the TLS certificate and key file paths from the environment variables and load the TLS certificate and key pair:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-key-pair-->
-[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud-worker-snip/worker/main.go)
-```go
-	clientKeyPath := os.Getenv("TEMPORAL_MTLS_TLS_KEY")
-	clientCertPath := os.Getenv("TEMPORAL_MTLS_TLS_CERT")
-	cert, err := tls.LoadX509KeyPair(clientCertPath, clientKeyPath)
-	if err != nil {
-		log.Fatalln("Unable to load cert and key pair.", err)
-	}
-```
 <!--SNIPEND-->
 
 
 Configure the Temporal Client with mTLS:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-options-->
-[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud-worker-snip/worker/main.go)
-```go
-	namespace := os.Getenv("TEMPORAL_NAMESPACE")
-	hostPort := os.Getenv("TEMPORAL_HOST_URL")
-	c, err := client.Dial(client.Options{
-		HostPort:  hostPort,
-		Namespace: namespace,
-		ConnectionOptions: client.ConnectionOptions{
-			TLS: &tls.Config{Certificates: []tls.Certificate{cert}},
-		},
-	})
-```
 <!--SNIPEND-->
 
 
