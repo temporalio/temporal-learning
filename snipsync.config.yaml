@@ -47,6 +47,9 @@ origins:
     repo: data-pipeline-project-python
   - owner: temporalio
     repo: email-subscription-project-python
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+    ref: cloud-worker-pr
 
 targets:
   - docs/tutorials
