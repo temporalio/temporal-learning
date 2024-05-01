@@ -134,10 +134,8 @@ Open the `worker.ts` file and update your import statements.
 Import the [NativeConnection](https://nodejs.temporal.io/api/classes/worker.NativeConnection) class.
 This is used to configure settings used when connecting to Temporal Cloud.
 
-```diff
-- import { Worker } from '@temporalio/worker';
-+ import { Worker, NativeConnection } from '@temporalio/worker';
-```
+<!--SNIPSTART money-transfer-project-template-ts-worker-nativeconnection-->
+<!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
 For more information, see [Security model](https://docs.temporal.io/cloud/security) in Temporal Cloud.
@@ -147,38 +145,24 @@ Next, you will make use of the built-in `fs/promises` module.
 To read the TLS certificate and key files, use the `fs/promises` module.
 Add the following import statement at the top of your file:
 
-```diff
-+ import fs from 'fs/promises';
-```
+<!--SNIPSTART money-transfer-project-template-ts-worker-promises-->
+<!--SNIPEND-->
 
 Next, update the configuration used to make a connection with the Worker.
 
 Add the [NativeConnection](https://nodejs.temporal.io/api/classes/worker.NativeConnection) and pass in the [TLS configuration](https://nodejs.temporal.io/api/interfaces/client.TLSConfig):
 
-```diff
-async function run() {
-+    const connection = await NativeConnection.connect({
-+      address: process.env.TEMPORAL_ADDRESS!,
-+      tls: {
-+        clientCertPair: {
-+          crt: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_CERT!),
-+          key: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_KEY!),
-+        },
-+      },
-+    });
-```
+<!--SNIPSTART money-transfer-project-template-ts-worker-connect-to-cloud-->
+<!--SNIPEND-->
 
 This code reads the TLS certificate and key files using the `fs/promises` module and uses them to configure the `NativeConnection` object.
 
 Next, update the Worker configuration to read the Namespace from the shared file.
 
-Open `shared.ts` and replace the following:
+Open `shared.ts` and add the following:
 
-
-```diff
--  export const namespace = 'default';
-+  export const namespace = process.env.TEMPORAL_NAMESPACE!,
-```
+<!--SNIPSTART money-transfer-project-template-ts-worker-namespace-->
+<!--SNIPEND-->
 
 This retrieves the Namespace from environment variable and passes it to the `Worker.create()` method.
 
