@@ -69,6 +69,24 @@ In this course, you'll go beyond the fundamentals, learning how to safely evolve
 
 -----
 
+## [Securing Temporal Applications](appdatasec/index.md)
+
+In this course, you'll implement Custom Data Conversion for your Temporal Workflows. 
+By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
+
+**Estimated time**: ⏱️ 2 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="appdatasec/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/python">Python</Link>&nbsp;
+
+-----
+
 ## [Introduction to Temporal Cloud](intro_to_temporal_cloud/index.md)
 
 In this course, you will learn the role of Temporal Cloud, how to log into and navigate its Web UI, and how to perform tasks that new Temporal Cloud users may do in preparation for using this service.

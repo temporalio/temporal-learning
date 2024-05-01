@@ -48,7 +48,7 @@ From the project root, use `./run-cli` to execute the [`bgc-company start`](cli-
 The main Workflow Execution is now viewable in the Temporal UI: [http://localhost:8080/](http://localhost:8080/).
 
 The very first thing the Background Check application does is send an email message to the Candidate.
-In this application we are using a single mailbox running on a single mail server running in one of the Docker containers.
+In this application you are using a single mailbox running on a single mail server running in one of the Docker containers.
 This means that the Company HR person, Candidate, and Researcher personas receive their email in this mailbox.
 Look at the "To" address to distinguish between personas in the mailbox.
 
