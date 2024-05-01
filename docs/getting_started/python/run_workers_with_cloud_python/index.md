@@ -134,10 +134,8 @@ Open the `run_worker.py` file and update your import statements.
 Import the [TLSConfig](https://python.temporal.io/temporalio.service.TLSConfig.html) class.
 This is used to configure settings used when connecting to Temporal Cloud.
 
-```diff
-- from temporalio.client import Client
-+ from temporalio.client import Client, TLSConfig
-```
+<!--SNIPSTART python-money-transfer-project-template-import-tls-->
+<!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
 For more information, see [Security model](https://docs.temporal.io/cloud/security) in Temporal Cloud.
@@ -147,9 +145,8 @@ Next, you will make use of the optional `os` module.
 To access environment variables for the managed Temporal Cloud environment, use the `os` module.
 Add the following import statement at the top of your file:
 
-```diff
-+ import os
-```
+<!--SNIPSTART python-money-transfer-project-template-import-os-->
+<!--SNIPEND-->
 
 You can use any library needed to access your environment variables that is supported in Python.
 
@@ -157,23 +154,8 @@ Next, update the configuration used to make a connection with the Worker Client.
 
 Remove the existing Client configuration and add the following code to connect to a Worker Client instance.
 
-```diff
-- client: Client = await Client.connect("localhost:7233", namespace="default")
-+ with open(os.getenv("TEMPORAL_MTLS_TLS_CERT"), "rb") as f:
-+     client_cert = f.read()
-+
-+ with open(os.getenv("TEMPORAL_MTLS_TLS_KEY"), "rb") as f:
-+     client_key = f.read()
-+
-+ client: Client = await Client.connect(
-+     os.getenv("TEMPORAL_HOST_URL"),
-+     namespace=os.getenv("TEMPORAL_NAMESPACE"),
-+     tls=TLSConfig(
-+         client_cert=client_cert,
-+         client_private_key=client_key,
-+     ),
-+ )
-```
+<!--SNIPSTART python-money-transfer-project-template-import-connect-to-cloud-->
+<!--SNIPEND-->
 
 This code reads the TLS certificate from environment variables and uses them to configure the `TLSConfig` object.
 It also retrieves the host URL and Namespace from environment variables and passes them to the `Client.connect()` method.
