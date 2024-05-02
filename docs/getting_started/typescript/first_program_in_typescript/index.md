@@ -94,6 +94,57 @@ The sample application in this tutorial models a money transfer between two acco
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow-->
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+```ts
+import { proxyActivities } from '@temporalio/workflow';
+import { ApplicationFailure } from '@temporalio/common';
+
+import type * as activities from './activities';
+import type { PaymentDetails } from './shared';
+
+export async function moneyTransfer(details: PaymentDetails): Promise<string> {
+  // Get the Activities for the Workflow and set up the Activity Options.
+  const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
+    // RetryPolicy specifies how to automatically handle retries if an Activity fails.
+    retry: {
+      initialInterval: '1 second',
+      maximumInterval: '1 minute',
+      backoffCoefficient: 2,
+      maximumAttempts: 500,
+      nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError'],
+    },
+    startToCloseTimeout: '1 minute',
+  });
+
+  // Execute the withdraw Activity
+  let withdrawResult: string;
+  try {
+    withdrawResult = await withdraw(details);
+  } catch (withdrawErr) {
+    throw new ApplicationFailure(`Withdrawal failed. Error: ${withdrawErr}`);
+  }
+
+  //Execute the deposit Activity
+  let depositResult: string;
+  try {
+    depositResult = await deposit(details);
+  } catch (depositErr) {
+    // The deposit failed; try to refund the money.
+    let refundResult;
+    try {
+      refundResult = await refund(details);
+      throw ApplicationFailure.create({
+        message: `Failed to deposit money into account ${details.targetAccount}. Money returned to ${details.sourceAccount}. Cause: ${depositErr}.`,
+      });
+    } catch (refundErr) {
+      throw ApplicationFailure.create({
+        message: `Failed to deposit money into account ${details.targetAccount}. Money could not be returned to ${details.sourceAccount}. Cause: ${refundErr}.`,
+      });
+    }
+  }
+  return `Transfer complete (transaction IDs: ${withdrawResult}, ${depositResult})`;
+}
+```
 <!--SNIPEND-->
 
 The `moneyTransfer` function takes in the details about the transaction, executes Activities to withdraw and deposit the money, and returns the results of the process. If there's a problem with the deposit, the function calls another Activity to put the money back in the original account, but still returns an error so you know the process failed.
@@ -101,6 +152,17 @@ The `moneyTransfer` function takes in the details about the transaction, execute
 In this case, the `moneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.ts`: 
 
 <!--SNIPSTART money-transfer-project-template-ts-shared-->
+[src/shared.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/shared.ts)
+```ts
+
+export type PaymentDetails = {
+  amount: number;
+  sourceAccount: string;
+  targetAccount: string;
+  referenceId: string;
+};
+
+```
 <!--SNIPEND-->
 
 It's a good practice to send a single, serializable data structure into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
@@ -112,6 +174,23 @@ The Workflow Definition calls the Activities `withdraw` and `deposit` to handle 
 The `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART money-transfer-project-template-ts-withdraw-activity-->
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+```ts
+import type { PaymentDetails } from './shared';
+import { BankingService } from './banking-client';
+
+export async function withdraw(details: PaymentDetails): Promise<string> {
+  console.log(
+    `Withdrawing $${details.amount} from account ${details.sourceAccount}.\n\n`
+  );
+  const bank1 = new BankingService('bank1.example.com');
+  return await bank1.withdraw(
+    details.sourceAccount,
+    details.amount,
+    details.referenceId
+  );
+}
+```
 <!--SNIPEND-->
 
 If the transfer succeeded, the `withdraw` function returns the confirmation. If it's unsuccessful, it returns the error from the banking service.
@@ -121,6 +200,26 @@ In this tutorial, the banking service simulates an external API call. You can in
 The `deposit` Activity function looks almost identical to the `withdraw` function:
 
 <!--SNIPSTART money-transfer-project-template-ts-deposit-activity-->
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+```ts
+export async function deposit(details: PaymentDetails): Promise<string> {
+  console.log(
+    `Depositing $${details.amount} into account ${details.targetAccount}.\n\n`
+  );
+  const bank2 = new BankingService('bank2.example.com');
+  // Uncomment lines 25-29 and comment lines 30-34 to simulate an unknown failure
+  // return await bank2.depositThatFails(
+  //   details.targetAccount,
+  //   details.amount,
+  //   details.referenceId
+  // );
+  return await bank2.deposit(
+    details.targetAccount,
+    details.amount,
+    details.referenceId
+  );
+}
+```
 <!--SNIPEND-->
 
 There are some commented lines in this Activity Definition that you'll use later in the tutorial to simulate an error in the Activity.
@@ -128,6 +227,20 @@ There are some commented lines in this Activity Definition that you'll use later
 If the `withdraw` Activity fails, there's nothing else to do, but if the `deposit` Activity fails, the money needs to go back to the original account, so there's a third Activity called `refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-ts-refund-activity-->
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+```ts
+export async function refund(details: PaymentDetails): Promise<string> {
+  console.log(
+    `Refunding $${details.amount} to account ${details.sourceAccount}.\n\n`
+  );
+  const bank1 = new BankingService('bank1.example.com');
+  return await bank1.deposit(
+    details.sourceAccount,
+    details.amount,
+    details.referenceId
+  );
+}
+```
 <!--SNIPEND-->
 
 This Activity function is almost identical to the `deposit` function, except that it uses the source account as the deposit destination. While you could reuse the existing `deposit` Activity to refund the money, using a separate Activity lets you add additional logic around the refund process, like logging. It also means that if someone introduces a bug in the `deposit` Activity, the `refund` won't be affected. You'll see this scenario shortly.
@@ -145,6 +258,22 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+```ts
+// ...
+  const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
+    // RetryPolicy specifies how to automatically handle retries if an Activity fails.
+    retry: {
+      initialInterval: '1 second',
+      maximumInterval: '1 minute',
+      backoffCoefficient: 2,
+      maximumAttempts: 500,
+      nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError'],
+    },
+    startToCloseTimeout: '1 minute',
+  });
+
+```
 <!--SNIPEND-->
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, there are two non-retryable errors: one for an invalid account number, and one for insufficient funds. If the Workflow encounters any error other than these, it'll retry the failed Activity indefinitely, but if it encounters one of these two errors, it will continue on with the Workflow. In the case of an error with the `deposit` Activity, the Workflow will attempt to put the money back.
@@ -176,6 +305,46 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 In this tutorial, the file `client.ts` contains a program that connects to the Temporal Server and starts the Workflow:
 
 <!--SNIPSTART money-transfer-project-template-ts-start-workflow-->
+[src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/client.ts)
+```ts
+import { Connection, WorkflowClient } from '@temporalio/client';
+import { moneyTransfer } from './workflows';
+import type { PaymentDetails } from './shared';
+
+import { namespace, taskQueueName } from './shared';
+
+async function run() {
+  const connection = await Connection.connect();
+  const client = new WorkflowClient({ connection, namespace });
+
+  const details: PaymentDetails = {
+    amount: 400,
+    sourceAccount: '85-150',
+    targetAccount: '43-812',
+    referenceId: '12345',
+  };
+
+  console.log(
+    `Starting transfer from account ${details.sourceAccount} to account ${details.targetAccount} for $${details.amount}`
+  );
+
+  const handle = await client.start(moneyTransfer, {
+    args: [details],
+    taskQueue: taskQueueName,
+    workflowId: 'pay-invoice-801',
+  });
+
+  console.log(
+    `Started Workflow ${handle.workflowId} with RunID ${handle.firstExecutionRunId}`
+  );
+  console.log(await handle.result());
+}
+
+run().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+```
 <!--SNIPEND-->
 
 :::note
@@ -257,6 +426,31 @@ After the Worker executes code, it returns the results back to the Temporal Serv
 In this project, the file `worker.ts` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-->
+[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/worker.ts)
+```ts
+import { Worker } from '@temporalio/worker';
+import * as activities from './activities';
+import { namespace, taskQueueName } from './shared';
+
+async function run() {
+  // Register Workflows and Activities with the Worker and connect to
+  // the Temporal server.
+  const worker = await Worker.create({
+    workflowsPath: require.resolve('./workflows'),
+    activities,
+    namespace,
+    taskQueue: taskQueueName,
+  });
+
+  // Start accepting tasks from the Task Queue.
+  await worker.run();
+}
+
+run().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+```
 <!--SNIPEND-->
 
 Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
@@ -415,6 +609,22 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflows.ts`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+```ts
+// ...
+  const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
+    // RetryPolicy specifies how to automatically handle retries if an Activity fails.
+    retry: {
+      initialInterval: '1 second',
+      maximumInterval: '1 minute',
+      backoffCoefficient: 2,
+      maximumAttempts: 500,
+      nonRetryableErrorTypes: ['InvalidAccountError', 'InsufficientFundsError'],
+    },
+    startToCloseTimeout: '1 minute',
+  });
+
+```
 <!--SNIPEND-->
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation:
