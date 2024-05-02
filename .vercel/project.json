@@ -1,0 +1,15 @@
+{
+  "projectId": "prj_L48GmPThbq6LyRd0cjpGiWZgGHXf",
+  "orgId": "team_10lcAgpRTHqjIiQzaQJ3JNUp",
+  "settings": {
+    "createdAt": 1655314257487,
+    "framework": "docusaurus-2",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": "yarn build",
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "18.x"
+  }
+}

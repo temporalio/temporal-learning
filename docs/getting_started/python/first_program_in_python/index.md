@@ -103,6 +103,69 @@ A Workflow Definition in Python uses the **`@workflow.defn`** decorator on the W
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART python-money-transfer-project-template-workflows-->
+[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/workflows.py)
+```py
+from datetime import timedelta
+
+from temporalio import workflow
+from temporalio.common import RetryPolicy
+from temporalio.exceptions import ActivityError
+
+with workflow.unsafe.imports_passed_through():
+    from activities import BankingActivities
+    from shared import PaymentDetails
+
+
+@workflow.defn
+class MoneyTransfer:
+    @workflow.run
+    async def run(self, payment_details: PaymentDetails) -> str:
+        retry_policy = RetryPolicy(
+            maximum_attempts=3,
+            maximum_interval=timedelta(seconds=2),
+            non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
+        )
+
+        # Withdraw money
+        withdraw_output = await workflow.execute_activity_method(
+            BankingActivities.withdraw,
+            payment_details,
+            start_to_close_timeout=timedelta(seconds=5),
+            retry_policy=retry_policy,
+        )
+
+        # Deposit money
+        try:
+            deposit_output = await workflow.execute_activity_method(
+                BankingActivities.deposit,
+                payment_details,
+                start_to_close_timeout=timedelta(seconds=5),
+                retry_policy=retry_policy,
+            )
+
+            result = f"Transfer complete (transaction IDs: {withdraw_output}, {deposit_output})"
+            return result
+        except ActivityError as deposit_err:
+            # Handle deposit error
+            workflow.logger.error(f"Deposit failed: {deposit_err}")
+            # Attempt to refund
+            try:
+                refund_output = await workflow.execute_activity_method(
+                    BankingActivities.refund,
+                    payment_details,
+                    start_to_close_timeout=timedelta(seconds=5),
+                    retry_policy=retry_policy,
+                )
+                workflow.logger.info(
+                    f"Refund successful. Confirmation ID: {refund_output}"
+                )
+                raise deposit_err
+            except ActivityError as refund_error:
+                workflow.logger.error(f"Refund failed: {refund_error}")
+                raise refund_error
+
+
+```
 <!--SNIPEND-->
 
 - The `MoneyTransferWorkflow` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
@@ -112,6 +175,16 @@ This is what the Workflow Definition looks like for this kind of process:
 This type is defined in the file `shared.py`:
 
 <!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
+[shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/shared.py)
+```py
+from dataclasses import dataclass
+// ...
+@dataclass
+class PaymentDetails:
+    source_account: str
+    target_account: str
+    amount: int
+```
 <!--SNIPEND-->
 
 :::tip
@@ -134,6 +207,25 @@ In the Temporal Python SDK, you define an Activity by decorating a function with
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART python-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/activities.py)
+```py
+// ...
+
+    @activity.defn
+    async def withdraw(self, data: PaymentDetails) -> str:
+        reference_id = f"{data.reference_id}-withdrawal"
+        try:
+            confirmation = await asyncio.to_thread(
+                self.bank.withdraw, data.source_account, data.amount, reference_id
+            )
+            return confirmation
+        except InvalidAccountError:
+            raise
+        except Exception:
+            activity.logger.exception("Withdrawal failed")
+            raise
+
+```
 <!--SNIPEND-->
 
 Second, if the transfer succeeded, the `withdraw()` function returns the confirmation.
@@ -141,6 +233,31 @@ Second, if the transfer succeeded, the `withdraw()` function returns the confirm
 Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 <!--SNIPSTART python-money-transfer-project-template-deposit-->
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/activities.py)
+```py
+    @activity.defn
+    async def deposit(self, data: PaymentDetails) -> str:
+        reference_id = f"{data.reference_id}-deposit"
+        try:
+            confirmation = await asyncio.to_thread(
+                self.bank.deposit, data.target_account, data.amount, reference_id
+            )
+            """
+            confirmation = await asyncio.to_thread(
+                self.bank.deposit_that_fails,
+                data.target_account,
+                data.amount,
+                reference_id,
+            )
+            """
+            return confirmation
+        except InvalidAccountError:
+            raise
+        except Exception:
+            activity.logger.exception("Deposit failed")
+            raise
+
+```
 <!--SNIPEND-->
 
 :::tip Why you use Activities
@@ -162,6 +279,15 @@ If an Activity fails, Temporal Workflows automatically retries the failed Activi
 At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 <!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
+[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/workflows.py)
+```py
+// ...
+        retry_policy = RetryPolicy(
+            maximum_attempts=3,
+            maximum_interval=timedelta(seconds=2),
+            non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
+        )
+```
 <!--SNIPEND-->
 
 
@@ -208,6 +334,11 @@ The Temporal Server is an essential part of the overall system, but requires add
 The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers.
 
 <!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["3"]}-->
+[shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/shared.py)
+```py
+// ...
+MONEY_TRANSFER_TASK_QUEUE_NAME = "TRANSFER_MONEY_TASK_QUEUE"
+```
 <!--SNIPEND-->
 
 :::note
@@ -275,6 +406,34 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 
 
 <!--SNIPSTART python-money-transfer-project-template-run-worker-->
+[run_worker.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/run_worker.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+from temporalio.worker import Worker
+
+from activities import BankingActivities
+from shared import MONEY_TRANSFER_TASK_QUEUE_NAME
+from workflows import MoneyTransfer
+
+
+async def main() -> None:
+    client: Client = await Client.connect("localhost:7233", namespace="default")
+    # Run the worker
+    activities = BankingActivities()
+    worker: Worker = Worker(
+        client,
+        task_queue=MONEY_TRANSFER_TASK_QUEUE_NAME,
+        workflows=[MoneyTransfer],
+        activities=[activities.withdraw, activities.deposit, activities.refund],
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
@@ -355,6 +514,31 @@ Let your Workflow continue to run but don't start the Worker yet.
 1. Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
 
 <!--SNIPSTART  python-money-transfer-project-template-deposit-->
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/activities.py)
+```py
+    @activity.defn
+    async def deposit(self, data: PaymentDetails) -> str:
+        reference_id = f"{data.reference_id}-deposit"
+        try:
+            confirmation = await asyncio.to_thread(
+                self.bank.deposit, data.target_account, data.amount, reference_id
+            )
+            """
+            confirmation = await asyncio.to_thread(
+                self.bank.deposit_that_fails,
+                data.target_account,
+                data.amount,
+                reference_id,
+            )
+            """
+            return confirmation
+        except InvalidAccountError:
+            raise
+        except Exception:
+            activity.logger.exception("Deposit failed")
+            raise
+
+```
 <!--SNIPEND-->
 
 2. Save your changes and switch to the terminal that was running your Worker.
@@ -408,6 +592,45 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART python-project-template-run-workflow-->
+[run_workflow.py](https://github.com/temporalio/money-transfer-project-template-python/blob/master/run_workflow.py)
+```py
+import asyncio
+import traceback
+
+from temporalio.client import Client, WorkflowFailureError
+
+from shared import MONEY_TRANSFER_TASK_QUEUE_NAME, PaymentDetails
+from workflows import MoneyTransfer
+
+
+async def main() -> None:
+    # Create client connected to server at the given address
+    client: Client = await Client.connect("localhost:7233")
+
+    data: PaymentDetails = PaymentDetails(
+        source_account="85-150",
+        target_account="43-812",
+        amount=250,
+        reference_id="12345",
+    )
+
+    try:
+        result = await client.execute_workflow(
+            MoneyTransfer.run,
+            data,
+            id="pay-invoice-701",
+            task_queue=MONEY_TRANSFER_TASK_QUEUE_NAME,
+        )
+
+        print(f"Result: {result}")
+
+    except WorkflowFailureError:
+        print("Got expected exception: ", traceback.format_exc())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
