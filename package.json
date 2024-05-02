@@ -6,7 +6,7 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "gen": "docusaurus build",
-    "build": "npm-run-all --serial",
+    "build": "npm-run-all --serial getsnips gen",
     "swizzle": "docusaurus swizzle",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
