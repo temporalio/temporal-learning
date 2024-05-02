@@ -15,7 +15,7 @@ We recommend Temporal CLI version 0.11.0 for our courses and tutorials.
 To install Temporal CLI, download the version for your architecture:
 
 - [Download Temporal CLI for Intel Macs](https://temporal.download/cli/archive/v0.11.0?platform=darwin&arch=amd64)
-- [Download Temporal CLI for Apple Silicon Macs](https://temporal.download/cli/archive/0.11.0?platform=darwin&arch=arm64)
+- [Download Temporal CLI for Apple Silicon Macs](https://temporal.download/cli/archive/v0.11.0?platform=darwin&arch=arm64)
 
 Once you've downloaded the file, extract the downloaded archive and add the `temporal` binary to your `PATH` by copying it to a directory like `/usr/local/bin`.
 
