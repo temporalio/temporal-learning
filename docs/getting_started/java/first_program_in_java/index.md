@@ -27,11 +27,18 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-In this tutorial, you run your first Temporal Application.
-It showcases how Temporal helps you recover from errors by simulating server failures and exploring ways to use Temporal to push through those obstacles.
+Temporal minimizes the pains you experience as a developer when building reliable applications.
+Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that ensuring reliability is a complex process.
+The Temporal Platform helps your code runs to completion no matter what.
 
-![](images/flow/flow1.png)
+Each language-specific Temporal SDK, in this case the [Java SDK](https://github.com/temporalio/sdk-java), provides a comprehensive solution for complexities in modern application development.
+Temporal's reliability primitives create durable execution of your code.
+They add seamless and fault-tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
 
+In this tutorial, you build, adjust, and run a [Temporal Application](https://docs.temporal.io/temporal#temporal-application) using the [Temporal Java SDK](https://github.com/temporalio/sdk-java).
+Follow along to discover how Temporal handles your code efficiently and reliably.
+
+## Setup
 
 ### ![](/img/icons/download.png) Tutorial prerequisites
 
@@ -39,7 +46,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal Applications using Java](/getting_started/java/dev_environment/index.md)
 - Ensure you have Git installed to clone the project.
-- Download the sample application
+- Download the sample application source code
 
 ### ![](/img/icons/download.png) Download the sample 
 
@@ -68,29 +75,16 @@ These steps enable you to download the code you'll use to work through this intr
    cd money-transfer-temporal-java
    ```
 
-## Why Temporal: Real-world deployment is prone to failure
-
-Temporal minimizes the pains you experience as a developer when building reliable applications.
-Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that ensuring reliability is a complex process.
-The Temporal Platform helps your code runs to completion no matter what.
-
-Each language-specific Temporal SDK, in this case the [Java SDK](https://github.com/temporalio/sdk-java), provides a comprehensive solution for complexities in modern application development.
-Temporal's reliability primitives create durable execution of your code.
-They add seamless and fault-tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
-
-![](images/flow/flow2.png)
-
-### ![](/img/icons/workflow.png) Tutorial scenario
-In this tutorial, you will build, adjust, and run a [Temporal Application](https://docs.temporal.io/temporal#temporal-application) using the [Temporal Java SDK](https://github.com/temporalio/sdk-java).
-Follow along to discover how Temporal handles your code efficiently and reliably.
-
+## ![](/img/icons/workflow.png) Scenario overview
+In this tutorial, you will run a [Temporal Application](https://docs.temporal.io/temporal#temporal-application) using the [Temporal Java SDK](https://github.com/temporalio/sdk-java).
 This project simulates a money transfer application.
 The application focuses on essential transactions like withdrawals, deposits, and refunds.
 This sample application withdraws money from one account and deposits it into another.
-A few things might go wrong with this process.
 
-* When a withdrawal fails, there's no need to attempt a deposit.
-* If the withdrawal succeeds but the deposit fails, the money must be restored to the original account as a compensation.
+A few things might go wrong with this process and require special handling:
+
+* If a withdrawal fails, you shouldn't attempt to deposit funds into the destination account.
+* If the withdrawal from the source account succeeds but the deposit to the destination account fails, the money should be restored to the original account as a compensation.
 
 This second transactional pattern uses recovery steps to ensure consistency across distributed micro-services.
 In this project, the compensation counteracts or "rolls back" any steps that have already been processed.
@@ -100,26 +94,20 @@ When failures happen, Temporal either recovers processes where they left off or 
 
 Now that you know how the application will work, it's time to understand some key Temporal Features.
 
-## Temporal features
+## Temporal components
 
 Each Temporal SDK provides pre-built components that allow you to move external failure-point logic out of your code.
 Temporal handles recovery by retrying these services on your behalf so your application can keep moving forward.
-This section introduces important elements that make up a Temporal application.
+This section introduces important elements that make up a Temporal application:
 
-![](images/flow/flow3.png)
-
-
-### ![](/img/icons/workflow.png) Workflows, Activities, and Workers
-
-A Temporal Application includes several key components that you use in all Temporal-based solutions:
-
-1. A [Workflow](https://docs.temporal.io/workflows) defines the overall flow of an application.
+*  A [Workflow](https://docs.temporal.io/workflows) defines the overall flow of an application.
    Write the Workflow using the language and SDK of your choice to best match your business needs. 
-1. An [Activity](https://docs.temporal.io/activities) is a method that performs a focused piece of business logic that can fail.
+* An [Activity](https://docs.temporal.io/activities) is a method that performs a focused piece of business logic that can fail.
    Each Activity handles just one point of possible failure where a checked exception might occur.
-1. A [Worker](https://docs.temporal.io/workers) runs your Workflow and Activity Tasks reliably and consistently.
+* A [Worker](https://docs.temporal.io/workers) runs your Workflow and Activity Tasks reliably and consistently.
 
 ### Workflows
+
 Temporal applications are built using an abstraction called [Workflows](https://docs.temporal.io/workflows).
 You develop Workflows by writing code in a general-purpose programming language such as Java.
 Each Workflow defines a sequence of steps.
@@ -201,7 +189,7 @@ To pick up Workflow Execution tasks, a Worker must listen to the same Task Queue
 
 Now that you've read about several key features, it's time to see them in action in a real application.
 
-## Build
+## Explore the sample code
 
 The sample code you downloaded contains the source code for an application that simulates the operations of a small bank.
 This sample emulates the transfer of money from one account to another.
@@ -209,8 +197,6 @@ This sample emulates the transfer of money from one account to another.
 The application uses two Activity methods, `withdraw` and `deposit`.
 These symbolize the movement of funds between accounts.
 They operate asynchronously, ensuring that the application can handle other tasks while waiting for the banking operations to complete.
-
-![](images/flow/flow4.png)
 
 The following diagram illustrates what happens when you start the Workflow:
 
@@ -265,7 +251,7 @@ The interface provides two Activity methods `withdraw()` and `deposit()` to hand
 The implementation of these methods are called the "Activity Definition".
 For example, the `withdraw` Activity uses the transfer details calls a service to process the withdrawal:
 
-<!--SNIPSTART money-transfer-java-activity-implementation {"selectedLines": ["5-13"]}-->
+<!--SNIPSTART money-transfer-java-activity-implementation {"selectedLines": ["6-13"]}-->
 <!--SNIPEND-->
 
 The `deposit` Activity method looks almost identical to the `withdraw` method.
@@ -335,7 +321,7 @@ It also helps bring down costs if you are charged by usage.
 
 You define your Retry Policy as a member variable in the `MoneyTransferWorkflowImpl` class:
 
-<!--SNIPSTART money-transfer-java-workflow-implementation {"selectedLines": ["14-20"]} -->
+<!--SNIPSTART money-transfer-java-workflow-implementation {"selectedLines": ["14-20"]}-->
 <!--SNIPEND-->
 
 ### Activity Policy
@@ -374,7 +360,7 @@ When setting up the Activity stub, these additional optional settings are passed
 
 ## Failed Activities
 
-When the `deposit` Activity encounters an unrecoverable error, this tutorial's Workflow will try to put the money back.
+When the `deposit` Activity encounters an unrecoverable error, this tutorial's Workflow tries to refund the money back to the originating account.
 
 :::caution This is a simplified example.
 
@@ -415,7 +401,7 @@ Here are the key points about this complex code:
   The tests will pass whether you've set the Boolean control values to true or false.
 :::
 
-## [](/img/icons/run.png) Start a Workflow
+## ![](/img/icons/run.png) Start a Workflow
 
 When you _start_ a Workflow Execution, you tell the Temporal Service, "Begin this Workflow and track its progress." 
 Workers process Workflow code piece by piece.
@@ -454,6 +440,7 @@ Initiating transfer of $45 from [Account 711713707] to [Account 221056126].
 
 [WorkflowID: money-transfer-workflow]
 [RunID: 37688cca-ffa2-48cf-809b-f18f5119bca3]
+[Transaction Reference: a0061bb5-a718-47cb]
 ```
 
 Once the new Workflow Execution is created and begins to run asynchronously, control returns to you on the command line.
@@ -472,7 +459,7 @@ The transfer app is a small Java program that builds a Workflow Execution.
 In a real deployments, you might invoke similar code when someone submits a form, presses a button, or visits a certain URL.
 Here is the code that performs this work:
 
-<!--SNIPSTART money-transfer-java-initiate-transfer {"selectedLines": ["31-70"], "highlightedLines": ["46", "63"]}-->
+<!--SNIPSTART money-transfer-java-initiate-transfer {"selectedLines": ["31-70"]}-->
 <!--SNIPEND-->
 
 This code builds a Temporal Client and uses it to create a new Workflow stub that points to the Workflow method to use.
@@ -490,13 +477,13 @@ Ending the application does not affect the progress of this new undertaking.
 
 :::
 
-## [](/img/icons/harbor-crane.png) View Workflow state
+## ![](/img/icons/harbor-crane.png) View Workflow state
 
 Temporal records every execution, its progress, and application state through Temporal's Web UI.
 This provides insights into errors and app performance.
 You're ready to explore one of Temporal's unique value propositions: application state visibility.
 
-Temporal's Web UI lets you visualize your Workflow Executions.
+Temporal's Web UI helps visualize your Workflow Executions.
 It enables you to inspect your Workflow Executions details as it runs.
 You use this interface to track the results of Activities and Workflows.
 It also helps you identify problems with your Workflow Execution.
@@ -516,11 +503,13 @@ It also helps you identify problems with your Workflow Execution.
 
    ![The details of the run.](images/workflow-status.png)
 
-1. You can see the inputs and results of the Workflow Execution by clicking the **Input and Results** section:
+1. You can see the inputs and results of the Workflow Execution by clicking the **Input and Results** section.
+   This sample Workflow does not produce output.
+   Only the input is relevant here.
 
    ![Input and results](images/workflow-input.png)
 
-## [](/img/icons/run.png) Start a Worker
+## ![](/img/icons/run.png) Start a Worker
 
 The Worker for this project is defined by the `MoneyTransferWorker` type.
 You run a Worker by issuing the following command in the terminal.
@@ -551,7 +540,7 @@ Depositing $45 into account 221056126.
 
 ### Worker Code
 
-Like the other application, your Worker app creates a stub to talk to the Temporal Service and wraps it into a Client.
+Like the transfer application, your Worker app creates a stub to talk to the Temporal Service and wraps it into a Client.
 In the Java SDK, a Worker Factory creates new Workers and assigns their Task Queue.
 You register the implementations for the tasks the Worker will manage, both Workflow and Activity types.
 Finally, you start the Factory to begin executing the Worker or Workers you have created.  
@@ -562,7 +551,7 @@ Finally, you start the Factory to begin executing the Worker or Workers you have
 When you start the Worker, it begins polling the Task Queue for Tasks to process.
 The Worker continues running, waiting for Tasks to execute.
 
-### [](/img/icons/harbor-crane.png) Use the Web UI to explore 
+### ![](/img/icons/harbor-crane.png) Use the Web UI to explore 
 
 Return to the [Temporal development service Web UI](http://127.0.0.1:8233).
 Now, there's one Worker registered.
@@ -603,7 +592,7 @@ Despite your best efforts, services and other items will fail.
 One of Temporal's most important features is its ability to maintain the state of a Workflow during a failure and continue on once that failure resolves.
 To demonstrate this, you will simulate failures for your Workflow and see how Temporal responds.
 
-## [](/img/icons/run.png) Recover from a server crash
+## ![](/img/icons/run.png) Recover from a server crash
 
 Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down.
 You can test this by stopping the local Temporal Cluster while a Workflow is running.
@@ -646,7 +635,7 @@ Try it out by following these steps:
 When you add a database to your Temporal Service you can recover from where you left off, even when a service goes offline.
 You pick up from where you left off when it comes back online again.
 
-## [](/img/icons/run.png) Recover from an Activity error
+## ![](/img/icons/run.png) Recover from an Activity error
 
 The `deposit` Activity enables you to cause the deposit to fail by passing `false` to the final parameter.
 
@@ -671,7 +660,7 @@ mvn compile exec:java -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" -D
 
 :::
 
-### [](/img/icons/run.png) Continue or restart a Workflow Execution
+### ![](/img/icons/run.png) Continue or restart a Workflow Execution
 
 Your Workflow Execution should still be waiting for a Worker.
 If not, create a new Workflow Execution.
@@ -680,7 +669,7 @@ If not, create a new Workflow Execution.
 mvn compile exec:java -Dexec.mainClass="moneytransferapp.TransferApp" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 ```
 
-This produces output like this:
+This command initiates a new transfer:
 
 ```
 Initiating transfer of $18 from [Account 728249840] to [Account 730350786].
@@ -722,7 +711,7 @@ Depositing $18 into account 728249840.
 The Worker completed the `withdraw` activity but errored (as you set) with `deposit`.
 In this log, the Activity ran out of time, stopped after 3 retries, and the Workflow moved onto the compensating activity.
 
-### [](/img/icons/harbor-crane.png) Review the failed activity with the Development Server WebUI
+### ![](/img/icons/harbor-crane.png) Review the failed activity with the Development Server WebUI
 
 Visit the [Temporal Web UI](http://localhost:8233) and click your Workflow Id to view the Workflow details.
 The Event History is longer this time and contains an ActivityTaskFailed event.
@@ -774,7 +763,7 @@ You can read more about [Retries](https://docs.temporal.io/retry-policies) in th
 Failing "sensibly" means that you can revive your failed Workflows by changing the services it relies on or re-establishing other ways that ensure Workflow success.
 Temporal makes it possible for you to rescussitate your failed Workflows and bring them back to life.
 
-## [](/img/icons/run.png) Revive a failed Workflow Execution
+## ![](/img/icons/run.png) Revive a failed Workflow Execution
 
 In this section, you'll fail a Workflow Execution and then revive it so it completes.
 
@@ -798,33 +787,14 @@ In this example, you'll change your retry and Activity Option policies so they d
    boolean refundShouldSucceed = false;
    ```
    
-1. Make these changes to your code so the exception is re-thrown.
-   Add a throw to the recovery clause.
-   Comment out the "Ended transaction" and flush line that follows, as they'll never be reached and won't compile properly.
+1. Quit your current worker. Compile and run it: 
 
-   ```java
-           } catch (Exception e) {
-            // A recovery mechanism can fail too. Handle any exception
-            System.out.printf("[%s] Deposit of $%d to account %s failed. Did not compensate withdrawal.\n",
-                transactionReferenceId, amountToTransfer, destinationAccountId);
-            System.out.flush();
-            throw e; // ADD THIS
-        }
-
-        // COMMENT OUT THESE. UNREACHABLE NOW.
-        // System.out.printf("[%s] Ended transaction in inconsistent state.\n",
-        //         transactionReferenceId);
-        // System.out.flush();
-```
-
-Quit your current worker. Compile and run it: 
-
-```command
-mvn clean install -DskipTests -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
+   ```command
+   mvn clean install -DskipTests -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
 mvn compile exec:java -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-```
+   ```
 
-The Worker gives the same feedback as usual, even though its policies are now quite different:
+The Worker gives the same feedback as usual, even though the policies compiled into it are now quite different:
 
 ```command
 Worker is running and actively polling the Task Queue.
@@ -837,7 +807,7 @@ Next, start a new Workflow Execution:
 mvn compile exec:java -Dexec.mainClass="moneytransferapp.TransferApp" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 ```
 
-It produces a Workflow Id and Run Id
+Its output includes the new Workflow Id and Run Id:
 
 ```
 MONEY TRANSFER PROJECT
@@ -848,7 +818,7 @@ Initiating transfer of $41 from [Account 537815694] to [Account 339551693].
 [RunID: ca1d3f6c-a5e5-4f77-9af6-d532c6c18b26]
 ```
 
-### [](/img/icons/harbor-crane.png) See the failure
+### ![](/img/icons/harbor-crane.png) Explore the failure
 
 Visit the [Web UI](http://127.0.0.1:8233) and give the Workflow Execution a little time so it can fail.
 
@@ -859,16 +829,11 @@ Make a note of the point in history where the Workflow first started its second 
 ![Recovery deposit failure](images/second-deposit-bug.png)
 
 After confirming the Workflow Execution failed, return to your code. 
-It's time to bring this Workflow back to life.\
+It's time to bring this Workflow back to life.
 
-### [](/image/icons/run.png) Prepare to complete the failed Workflow
+### ![](/img/icons/run.png) Prepare to complete the failed Workflow
 
-Restore your code by following these steps:
-
-1. Remove the `throw e;` line you added.
-1. Uncomment the lines after the clause.
-1. Change `refundShouldSucceed` back to true.
-
+Restore your code by changing `false` back to `true` for the `refundShouldSucceed ` variable.
 Your Worker code is now back to where it was before these changes.
 
 Quit the worker. Compile and run it.
@@ -878,8 +843,13 @@ mvn clean install -DskipTests -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/d
 mvn compile exec:java -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 ```
 
-### [](/img/icons/harbor-crane.png) Reset the failed Workflow Execution
-Back at the [Web UI](http://127.0.0.1:8233) click Reset at the top of the page.
+The output will be the same as always.
+
+### ![](/img/icons/harbor-crane.png) Reset the failed Workflow Execution
+Back at the [Web UI](http://127.0.0.1:8233) review your History.
+Find the point at which the second deposit began and note down its sequence number.
+
+Click Reset at the top of the page.
 Choose the initiation point closest to before where the bugged code was invoked, in this case the second deposit.
 The second deposit is the one that attempts to reverse the initial withdrawal.
 This returns the original account to its original state.
@@ -892,7 +862,7 @@ Select confirm.
 The Workflow Execution resets and schedules its next Task, which is picked up by the restored Worker you're running.
 The Workflow can now complete.
 
-### [](/img/icons/harbor-crane.png) Visit the completed Workflow Execution
+### ![](/img/icons/harbor-crane.png) Visit the completed Workflow Execution
 
 At the top of the page, follow the link to the reset Workflow Execution.
 
@@ -912,7 +882,7 @@ Congratulations. You have just recovered a Workflow Execution without losing the
 All the work previously performed was retained and you only moved forward from the point of failure.
 With Temporal, there are no limits to what you can accomplish.
 
-## [](/img/icons/check.png) Conclusion
+## ![](/img/icons/check.png) Conclusion
 
 You now know how to run a Temporal Workflow.
 You understand some of the value Temporal offers its adopters.
@@ -925,8 +895,6 @@ Keep in mind these advantages Temporal offers:
 2. Temporal **maintains the state** of your Workflow, even through server outages and errors.
 3. Temporal lets you **time out and retry Activity code** using options that exist outside your business logic.
 4. Temporal enables you to **perform "live debugging" of your business logic** _while_ the Workflow is running or after it's already failed'.
-
-![](images/flow/flow5.png)
 
 ### Further exploration
 
