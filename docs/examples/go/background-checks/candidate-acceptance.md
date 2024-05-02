@@ -8,7 +8,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-accept-workflow-definition-->
-[workflows/accept.go](https://github.com/temporalio/background-checks/blob/master/workflows/accept.go)
+[workflows/accept.go](https://github.com/temporalio/background-checks/blob/main/workflows/accept.go)
 ```go
 func Accept(ctx workflow.Context, input *AcceptWorkflowInput) (*AcceptWorkflowResult, error) {
 	err := emailCandidate(ctx, input)

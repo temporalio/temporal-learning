@@ -99,7 +99,7 @@ In the Temporal Go SDK, a Workflow Definition is an [exported function](https://
 Create the file `workflow.go` in the root of your project and add the following code to create a `GreetingWorkflow` function to define the Workflow:
 
 <!--SNIPSTART hello-world-project-template-go-workflow-->
-[workflow.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/workflow.go)
+[workflow.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/workflow.go)
 ```go
 package app
 
@@ -148,7 +148,7 @@ With the Temporal Go SDK, you define Activities similarly to how you define Work
 Create the file `activity.go` in the project root and add the following code to define a `ComposeGreeting` function:
 
 <!--SNIPSTART hello-world-project-template-go-activity-->
-[activity.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/activity.go)
+[activity.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/activity.go)
 ```go
 package app
 
@@ -199,7 +199,7 @@ Now create the file  `workflow_test.go` and add the following code to the file t
 
 
 <!--SNIPSTART hello-world-project-template-go-workflow-test-->
-[workflow_test.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/workflow_test.go)
+[workflow_test.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/workflow_test.go)
 ```go
 package app
 
@@ -262,7 +262,7 @@ You'll connect to the Temporal Cluster using a Temporal Client, which provides a
 Since you'll use the Task Queue name in multiple places in your project, create the file `shared.go` and define the Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-go-shared-->
-[shared.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/shared.go)
+[shared.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/shared.go)
 ```go
 package app
 
@@ -281,7 +281,7 @@ mkdir worker
 Then create the file `worker/main.go` and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
 
 <!--SNIPSTART hello-world-project-template-go-worker-->
-[worker/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/worker/main.go)
+[worker/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/worker/main.go)
 ```go
 package main
 
@@ -337,7 +337,7 @@ mkdir start
 Then create the file `start/main.go` and add the following code to the file to connect to the server and start the Workflow:
 
 <!--SNIPSTART hello-world-project-template-go-start-workflow-->
-[start/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/master/start/main.go)
+[start/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/start/main.go)
 ```go
 package main
 
