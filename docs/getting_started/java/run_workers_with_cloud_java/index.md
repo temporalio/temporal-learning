@@ -144,6 +144,21 @@ Open the `MoneyTransferWorker.java` file and update your code.
 This is used to configure settings used when connecting to Temporal Cloud.
 
 <!--SNIPSTART money-transfer-project-template-java-worker-import-->
+[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+```java
+import java.lang.System;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
+import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
+import io.temporal.serviceclient.SimpleSslContextBuilder;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
+import io.temporal.worker.Worker;
+import io.temporal.worker.WorkerFactory;
+import java.io.IOException;
+```
 <!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
@@ -153,6 +168,19 @@ To read the TLS certificate and key files, use the `System.getenv()`.
 Add the following code to your `main` method:
 
 <!--SNIPSTART money-transfer-project-template-java-worker-certs-->
+[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+```java
+        // Get the key and certificate from your environment or local machine
+        String clientCertFile = System.getenv("TEMPORAL_MTLS_TLS_CERT");
+        String clientCertPrivateKey = System.getenv("TEMPORAL_MTLS_TLS_KEY");
+
+        // Open the key and certificate as Input Streams
+        InputStream clientCertInputStream = new FileInputStream(clientCertFile);
+        InputStream clientKeyInputStream = new FileInputStream(clientCertPrivateKey);
+
+        // Generate the sslContext using the Client Cert and Key
+        SslContext sslContext = SimpleSslContextBuilder.forPKCS8(clientCertInputStream, clientKeyInputStream).build();
+```
 <!--SNIPEND-->
 
 This reads the TLS certificate and key file paths from the environment variables and loads the TLS certificate and key pair.
@@ -160,6 +188,19 @@ This reads the TLS certificate and key file paths from the environment variables
 Next, specify the host and port of your Temporal Cloud Namespace:
 
 <!--SNIPSTART money-transfer-project-template-java-worker-options-->
+[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+```java
+        // Specify the host and port of your Temporal Cloud Namespace
+        // Host and port format: namespace.unique_id.tmprl.cloud:port
+        String namespace = System.getenv("TEMPORAL_NAMESPACE");
+        String hostPort = System.getenv("TEMPORAL_HOST_URL");
+
+        // Specify the IP address, port, and SSL Context for the Service Stubs options
+        WorkflowServiceStubsOptions stubsOptions = WorkflowServiceStubsOptions.newBuilder()
+                .setSslContext(sslContext)
+                .setTarget(hostPort)
+                .build();
+```
 <!--SNIPEND-->
 
 This code reads the Namespace and host URL from environment variables.
@@ -167,6 +208,15 @@ This code reads the Namespace and host URL from environment variables.
 Next, specify your Workflow Client Options.
 
 <!--SNIPSTART money-transfer-project-template-java-worker-client-options-->
+[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+```java
+        // Specify the namespace in the Client options
+        WorkflowClientOptions options = WorkflowClientOptions.newBuilder()
+                .setNamespace(namespace)
+                .build();
+
+        WorkflowClient client = WorkflowClient.newInstance(service, options);
+```
 <!--SNIPEND-->
 
 Next, you will set the required environment variables.
