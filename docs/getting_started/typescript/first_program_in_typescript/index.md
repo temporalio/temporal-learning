@@ -94,7 +94,7 @@ The sample application in this tutorial models a money transfer between two acco
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 import { proxyActivities } from '@temporalio/workflow';
 import { ApplicationFailure } from '@temporalio/common';
@@ -258,7 +258,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 // ...
   const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
@@ -305,7 +305,7 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 In this tutorial, the file `client.ts` contains a program that connects to the Temporal Server and starts the Workflow:
 
 <!--SNIPSTART money-transfer-project-template-ts-start-workflow-->
-[src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/client.ts)
+[src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/client.ts)
 ```ts
 import { Connection, WorkflowClient } from '@temporalio/client';
 import { moneyTransfer } from './workflows';
@@ -609,7 +609,7 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflows.ts`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 // ...
   const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
