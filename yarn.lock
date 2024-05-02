@@ -2138,7 +2138,7 @@
     "@docusaurus/theme-search-algolia" "2.4.3"
     "@docusaurus/types" "2.4.3"
 
-"@docusaurus/react-loadable@5.5.2", "react-loadable@npm:@docusaurus/react-loadable@5.5.2":
+"@docusaurus/react-loadable@5.5.2":
   version "5.5.2"
   resolved "https://registry.npmjs.org/@docusaurus/react-loadable/-/react-loadable-5.5.2.tgz"
   integrity sha512-A3dYjdBGuy0IGT+wyLIGIKLRE+sAk1iNk0f1HjNDysO7u8lhL4N3VEm+FAubmJbAztn94F7MxBTPmnixbiyFdQ==
@@ -7867,6 +7867,14 @@ react-loadable-ssr-addon-v5-slorber@^1.0.1:
   dependencies:
     "@babel/runtime" "^7.10.3"
 
+"react-loadable@npm:@docusaurus/react-loadable@5.5.2":
+  version "5.5.2"
+  resolved "https://registry.npmjs.org/@docusaurus/react-loadable/-/react-loadable-5.5.2.tgz"
+  integrity sha512-A3dYjdBGuy0IGT+wyLIGIKLRE+sAk1iNk0f1HjNDysO7u8lhL4N3VEm+FAubmJbAztn94F7MxBTPmnixbiyFdQ==
+  dependencies:
+    "@types/react" "*"
+    prop-types "^15.6.2"
+
 react-player@^2.10.1:
   version "2.10.1"
   resolved "https://registry.npmjs.org/react-player/-/react-player-2.10.1.tgz"
@@ -8601,10 +8609,9 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-snipsync@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.npmjs.org/snipsync/-/snipsync-1.8.0.tgz"
-  integrity sha512-AkZSe8UGmf6ZZ84+1aWrE8RFyKR8pL/0Dp5ZT0vEOAdyncGzp4tw4YwsFFi73YUG8FCAkreynSHhOfewX+EjBQ==
+"snipsync@github:temporalio/snipsync#067d88e":
+  version "1.9.0"
+  resolved "https://codeload.github.com/temporalio/snipsync/tar.gz/067d88ed0839c20b0b2da96c65e0e23a5379d3ee"
   dependencies:
     "@octokit/rest" "^18.12.0"
     anzip "^0.2.0"
@@ -8618,6 +8625,7 @@ snipsync@^1.8.0:
     path "^0.12.7"
     readdirp "^3.4.0"
     rimraf "^3.0.2"
+    yauzl "^3.1.3"
 
 sockjs@^0.3.24:
   version "0.3.24"
@@ -9802,6 +9810,14 @@ yauzl@^2.10.0:
   dependencies:
     buffer-crc32 "~0.2.3"
     fd-slicer "~1.1.0"
+
+yauzl@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-3.1.3.tgz#f61c17ad1a09403bc7adb01dfb302a9e74bf4a50"
+  integrity sha512-JCCdmlJJWv7L0q/KylOekyRaUrdEoUxWkWVcgorosTROCFWiS9p2NNPE9Yb91ak7b1N5SxAZEliWpspbZccivw==
+  dependencies:
+    buffer-crc32 "~0.2.3"
+    pend "~1.2.0"
 
 yocto-queue@^0.1.0:
   version "0.1.0"
