@@ -8,7 +8,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-motor-vehicle-workflow-definition-->
-[workflows/motor_vehicle_incident_search.go](https://github.com/temporalio/background-checks/blob/main/workflows/motor_vehicle_incident_search.go)
+[workflows/motor_vehicle_incident_search.go](https://github.com/temporalio/background-checks/blob/master/workflows/motor_vehicle_incident_search.go)
 ```go
 func MotorVehicleIncidentSearch(ctx workflow.Context, input *MotorVehicleIncidentSearchWorkflowInput) (*MotorVehicleIncidentSearchWorkflowResult, error) {
 	var result MotorVehicleIncidentSearchWorkflowResult

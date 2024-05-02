@@ -49,7 +49,7 @@ The Workflow will be responsible for executing the Activities, or steps, in your
 Create a new file called `your_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-your-workflow-python-->
-[your_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/your_workflow.py)
+[your_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/your_workflow.py)
 ```py
 from datetime import timedelta
 from typing import Any, List
@@ -107,7 +107,7 @@ The `post_ids()` function gets the top 10 Temporal Community posts while, `top_p
 Create a new file called `activities.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-activity-python-->
-[activities.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/activities.py)
+[activities.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/activities.py)
 ```py
 from dataclasses import dataclass
 from typing import Any, List
@@ -192,7 +192,7 @@ The Worker component plays a crucial role in your data pipeline by hosting and e
 To enable the execution of your Workflows and Activities, you need to set up a Worker. Start by creating a new file called `run_worker.py` and add the following code. This code will define the Worker's behavior, allowing it to host and execute the Workflows and/or Activities associated with your application.
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
-[run_worker.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/run_worker.py)
+[run_worker.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/run_worker.py)
 ```py
 import asyncio
 
@@ -243,7 +243,7 @@ The Workflow is executed by the Temporal Client, which is connected to an instan
 Create a new file called `run_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
-[run_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/run_workflow.py)
+[run_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/run_workflow.py)
 ```py
 import asyncio
 
@@ -342,7 +342,7 @@ For this example, you'll schedule the Workflow to run every 10 hours.
 Create a new file called `schedule_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
-[schedule_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/schedule_workflow.py)
+[schedule_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/schedule_workflow.py)
 ```py
 import asyncio
 from datetime import timedelta
@@ -420,7 +420,7 @@ Now that you've scheduled your Workflow, let's add the ability to delete the Sch
 Create a new file called `delete_schedule.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-delete-schedule-python-->
-[delete_schedule.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/delete_schedule.py)
+[delete_schedule.py](https://github.com/temporalio/data-pipeline-project-python/blob/master/delete_schedule.py)
 ```py
 import asyncio
 

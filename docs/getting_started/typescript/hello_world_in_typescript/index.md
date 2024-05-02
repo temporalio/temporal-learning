@@ -161,7 +161,7 @@ Below, there are two language tabs (TypeScript and JavaScript). TypeScript is se
 Next, add the following TypeScript code to define the Workflow:
 
 <!--SNIPSTART typescript-hello-workflow-->
-[hello-world/src/workflows.ts](https://github.com/temporalio/samples-typescript/blob/main/hello-world/src/workflows.ts)
+[hello-world/src/workflows.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/workflows.ts)
 ```ts
 import { proxyActivities } from '@temporalio/workflow';
 // Only import the activity types
@@ -204,7 +204,7 @@ Create the file `activities.ts` in the `src` directory:
 Add the following code to define a `greet` function:
 
 <!--SNIPSTART typescript-hello-activity-->
-[hello-world/src/activities.ts](https://github.com/temporalio/samples-typescript/blob/main/hello-world/src/activities.ts)
+[hello-world/src/activities.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/activities.ts)
 ```ts
 export async function greet(name: string): Promise<string> {
   return `Hello, ${name}!`;
@@ -221,7 +221,7 @@ A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow an
 Create a file called `worker.ts` and add the following code to define the Worker:
 
 <!--SNIPSTART typescript-hello-worker-->
-[hello-world/src/worker.ts](https://github.com/temporalio/samples-typescript/blob/main/hello-world/src/worker.ts)
+[hello-world/src/worker.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/worker.ts)
 ```ts
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
@@ -345,7 +345,7 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Open a new tab in your terminal, create a `client.ts` file in the `src` directory, and add the following code to your file to create a client that will kick off your Workflow Execution:
 
 <!--SNIPSTART typescript-hello-client-->
-[hello-world/src/client.ts](https://github.com/temporalio/samples-typescript/blob/main/hello-world/src/client.ts)
+[hello-world/src/client.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/client.ts)
 ```ts
 import { Connection, Client } from '@temporalio/client';
 import { example } from './workflows';
@@ -474,7 +474,7 @@ your Worker, Workflow, and the Activities.
 Create the file `workflows.test.ts` and add the following code to the file to define the Workflow test:
 
 <!--SNIPSTART hello-world-project-template-ts-workflow-test-->
-[hello-world/src/mocha/workflows.test.ts](https://github.com/temporalio/samples-typescript/blob/main/hello-world/src/mocha/workflows.test.ts)
+[hello-world/src/mocha/workflows.test.ts](https://github.com/temporalio/samples-typescript/blob/master/hello-world/src/mocha/workflows.test.ts)
 ```ts
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { before, describe, it } from 'mocha';

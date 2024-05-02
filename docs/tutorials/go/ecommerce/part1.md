@@ -96,7 +96,7 @@ A Temporal _Worker_ listens for events on a queue and has a list of registered W
 Below is the largely-boilerplate `worker/main.go` file:
 
 <!--SNIPSTART temporal-ecommerce-worker-->
-[worker/main.go](https://github.com/temporalio/temporal-ecommerce/blob/main/worker/main.go)
+[worker/main.go](https://github.com/temporalio/temporal-ecommerce/blob/master/worker/main.go)
 ```go
 package main
 
@@ -156,7 +156,7 @@ func main() {
 In order to see this shopping cart Workflow in action, you can create a _starter_ that sends queries and signals to modify the shopping cart.
 
 <!--SNIPSTART temporal-ecommerce-starter-->
-[start/main.go](https://github.com/temporalio/temporal-ecommerce/blob/main/start/main.go)
+[start/main.go](https://github.com/temporalio/temporal-ecommerce/blob/master/start/main.go)
 ```go
 package main
 
@@ -261,7 +261,7 @@ All the `AddToCart()` and `RemoveFromCart()` functions need to do is modify the 
 Temporal is responsible for persisting and distributing `state`.
 
 <!--SNIPSTART temporal-ecommerce-add-and-remove-->
-[workflow.go](https://github.com/temporalio/temporal-ecommerce/blob/main/workflow.go)
+[workflow.go](https://github.com/temporalio/temporal-ecommerce/blob/master/workflow.go)
 ```go
 func (state *CartState) AddToCart(item CartItem) {
 	for i := range state.Items {

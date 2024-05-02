@@ -131,7 +131,7 @@ This is what the Workflow Definition looks like for this process:
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-workflow-->
-[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Workflow.cs)
+[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Workflow.cs)
 ```cs
 namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
 using Temporalio.MoneyTransferProject.BankingService.Exceptions;
@@ -211,7 +211,7 @@ public class MoneyTransferWorkflow
 This type is defined in the file `PaymentDetails.cs`:
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
-[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/PaymentDetails.cs)
+[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/PaymentDetails.cs)
 ```cs
 namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
 public record PaymentDetails(
@@ -253,7 +253,7 @@ First, the `WithdrawAsync()` Activity takes the details about the transfer and c
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-withdraw-activity-->
-[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Activities.cs)
 ```cs
 namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
 using Temporalio.Activities;
@@ -286,7 +286,7 @@ Lastly, the `DepositAsync()` Activity method looks almost identical to the `With
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
-[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Activities.cs)
 ```cs
     [Activity]
     public static async Task<string> DepositAsync(PaymentDetails details)
@@ -342,7 +342,7 @@ You'll see a **Retry Policy** defined that looks like this:
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-workflow {"selectedLines": ["13-20"]} -->
-[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Workflow.cs)
+[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Workflow.cs)
 ```cs
 // ...
         // Retry policy
@@ -416,7 +416,7 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
-[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/PaymentDetails.cs)
+[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/PaymentDetails.cs)
 ```cs
 namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
 public record PaymentDetails(
@@ -525,7 +525,7 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-worker-->
-[MoneyTransferWorker/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Program.cs)
+[MoneyTransferWorker/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Program.cs)
 ```cs
 // This file is designated to run the worker
 using Temporalio.Client;
@@ -663,7 +663,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
-[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferWorker/Activities.cs)
 ```cs
     [Activity]
     public static async Task<string> DepositAsync(PaymentDetails details)
@@ -741,7 +741,7 @@ In `Workflow.cs`, you can see that a **`StartToCloseTimeout`** is specified for 
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-start-workflow-->
-[MoneyTransferClient/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferClient/Program.cs)
+[MoneyTransferClient/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/master/MoneyTransferClient/Program.cs)
 ```cs
 // This file is designated to run the workflow
 using Temporalio.MoneyTransferProject.MoneyTransferWorker;

@@ -96,7 +96,7 @@ The sample application in this tutorial models a money transfer between two acco
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-go-workflow-->
-[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/workflow.go)
+[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/workflow.go)
 ```go
 func MoneyTransfer(ctx workflow.Context, input PaymentDetails) (string, error) {
 
@@ -163,7 +163,7 @@ The `MoneyTransfer` function takes in the details about the transaction, execute
 In this case, the `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.go`: 
 
 <!--SNIPSTART money-transfer-project-template-go-transferdetails-->
-[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/main/shared.go)
+[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/shared.go)
 ```go
 type PaymentDetails struct {
 	SourceAccount string
@@ -184,7 +184,7 @@ The Workflow Definition calls the Activities `Withdraw` and `Deposit` to handle 
 The `Withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-withdraw-->
-[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/activity.go)
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
 ```go
 func Withdraw(ctx context.Context, data PaymentDetails) (string, error) {
 	log.Printf("Withdrawing $%d from account %s.\n\n",
@@ -208,7 +208,7 @@ In this tutorial, the banking service simulates an external API call. You can in
 The `Deposit` Activity function looks almost identical to the `Withdraw` function:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-deposit-->
-[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/activity.go)
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
 ```go
 func Deposit(ctx context.Context, data PaymentDetails) (string, error) {
 	log.Printf("Depositing $%d into account %s.\n\n",
@@ -232,7 +232,7 @@ There's a commented line in this Activity definition that you'll use later in th
 If the `Withdraw` Activity fails, there's nothing else to do, but if the `Deposit` Activity fails, the money needs to go back to the original account, so there's a third Activity called `Refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-refund-->
-[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/activity.go)
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
 ```go
 func Refund(ctx context.Context, data PaymentDetails) (string, error) {
 	log.Printf("Refunding $%v back into account %v.\n\n",
@@ -300,7 +300,7 @@ To start a Workflow Execution, you connect to the Temporal Cluster, specify the 
 The Task Queue is where Temporal Workers look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers. To ensure your Task Queue names are consistent, place the Task Queue name in a variable you can share across your project. In this project, you'll find the Task Queue name defined in a shared location. In this application you'll find the Task Queue defined in the `shared.go` file:
 
 <!--SNIPSTART money-transfer-project-template-go-shared-task-queue-->
-[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/main/shared.go)
+[shared.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/shared.go)
 ```go
 const MoneyTransferTaskQueueName = "TRANSFER_MONEY_TASK_QUEUE"
 
@@ -310,7 +310,7 @@ const MoneyTransferTaskQueueName = "TRANSFER_MONEY_TASK_QUEUE"
 In this tutorial, the file `start/main.go` contains a program that connects to the Temporal Server and starts the Workflow:
 
 <!--SNIPSTART money-transfer-project-template-go-start-workflow-->
-[start/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/main/start/main.go)
+[start/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/start/main.go)
 ```go
 func main() {
 	// Create the client object just once per process
@@ -436,7 +436,7 @@ After the Worker executes code, it returns the results back to the Temporal Serv
 In this project, the file `worker/main.go` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
 
 <!--SNIPSTART money-transfer-project-template-go-worker-->
-[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/main/worker/main.go)
+[worker/main.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/worker/main.go)
 ```go
 func main() {
 
@@ -550,7 +550,7 @@ To test this out and see how Temporal responds, you'll simulate a bug in the `De
 Open the `activity.go` file and switch out the comments on the `return` statements so that the `Deposit()` function returns an error:
 
 <!--SNIPSTART money-transfer-project-template-go-activity-deposit-->
-[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/activity.go)
+[activity.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/activity.go)
 ```go
 func Deposit(ctx context.Context, data PaymentDetails) (string, error) {
 	log.Printf("Depositing $%d into account %s.\n\n",
@@ -616,7 +616,7 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflow.go`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART money-transfer-project-template-go-workflow {"selectedLines": ["3-20"]}-->
-[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/cloud/workflow.go)
+[workflow.go](https://github.com/temporalio/money-transfer-project-template-go/blob/master/workflow.go)
 ```go
 // ...
 	// RetryPolicy specifies how to automatically handle retries if an Activity fails.

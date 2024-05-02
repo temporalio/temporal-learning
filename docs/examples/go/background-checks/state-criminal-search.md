@@ -8,7 +8,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-state-criminal-workflow-definition-->
-[workflows/state_criminal_search.go](https://github.com/temporalio/background-checks/blob/main/workflows/state_criminal_search.go)
+[workflows/state_criminal_search.go](https://github.com/temporalio/background-checks/blob/master/workflows/state_criminal_search.go)
 ```go
 
 // StateCriminalSearch is a Workflow Definition that calls for the execution an Activity for

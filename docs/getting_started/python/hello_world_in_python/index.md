@@ -136,7 +136,7 @@ You then use the `@workflow.run` decorator to specify the method that the Workfl
 Create the file `workflows.py` in the root of your project and add the following code to create a `SayHello` class to define the Workflow:
 
 <!--SNIPSTART python-project-template-workflows -->
-[workflows.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/workflows.py)
+[workflows.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/workflows.py)
 ```py
 from datetime import timedelta
 from temporalio import workflow
@@ -190,7 +190,7 @@ In the Temporal Python SDK, you define an Activity by decorating a function with
 Create a new file called `activities.py` and add the following code to define a `say_hello` function to define the Activity:
 
 <!--SNIPSTART python-project-template-activities -->
-[activities.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/activities.py)
+[activities.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/activities.py)
 ```py
 from temporalio import activity
 
@@ -233,7 +233,7 @@ touch tests/test_run_workflow.py
 ```
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-28"]} -->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
+[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/test_run_worker.py)
 ```py
 import uuid
 
@@ -283,9 +283,9 @@ This code tests the Workflow and invokes the actual `say_hello` Activity. Howeve
 Add the following code to create a test that uses a mocked `say_hello` Activity:
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-51"]}-->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
+[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/tests/test_run_worker.py)
 ```py
-# ...
+// ...
 
 
 @activity.defn(name="say_hello")
@@ -359,7 +359,7 @@ In this tutorial you'll create a small standalone Worker program so you can see 
 Create the file `run_worker.py` in the root of your project and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
 
 <!--SNIPSTART python-project-template-run-worker-->
-[run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/run_worker.py)
+[run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_worker.py)
 ```py
 import asyncio
 
@@ -399,7 +399,7 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Create the file `run_workflow.py` and add the following to connect to the server and start the Workflow:
 
 <!--SNIPSTART python-project-template-run-workflow-hello-world-->
-[run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/run_workflow.py)
+[run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/master/run_workflow.py)
 ```py
 import asyncio
 

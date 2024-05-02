@@ -51,7 +51,7 @@ You'll create an `EmailDetails` struct with the following fields:
 Add the following code to the `subscribe.go` file to define the struct, as well as the Task Queue name and the host and port your web API will use:
 
 <!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["1-11"]}-->
-[subscribe.go](https://github.com/temporalio/email-subscription-project-go/blob/main/subscribe.go)
+[subscribe.go](https://github.com/temporalio/email-subscription-project-go/blob/master/subscribe.go)
 ```go
 package subscribeemails
 
@@ -76,7 +76,7 @@ Use the `workflow.go` file to write deterministic logic inside your Workflow Def
 Add the following code to define the Workflow:
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "24-29", "53-92"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
+[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/master/workflow.go)
 ```go
 package subscribeemails
 
@@ -163,7 +163,7 @@ An [Activity](https://docs.temporal.io/activities) is a normal function or metho
 Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
 <!--SNIPSTART subscription-workflow-go-activities-->
-[activities.go](https://github.com/temporalio/email-subscription-project-go/blob/main/activities.go)
+[activities.go](https://github.com/temporalio/email-subscription-project-go/blob/master/activities.go)
 ```go
 package subscribeemails
 
@@ -193,7 +193,7 @@ Temporal Workflows and Activities are executed by [Workers](https://docs.tempora
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
 <!--SNIPSTART subscription-workflow-go-worker-->
-[worker/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/worker/main.go)
+[worker/main.go](https://github.com/temporalio/email-subscription-project-go/blob/master/worker/main.go)
 ```go
 package main
 
@@ -242,7 +242,7 @@ Create a `gateway` folder with the file `main.go`.
 Establish your JSON request and response structs, set the endpoint handlers, and connect to the Temporal Client.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["1-25", "197-215"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
+[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/master/gateway/main.go)
 ```go
 package main
 
@@ -306,7 +306,7 @@ Now that the connection to the Temporal Server is open, define your first endpoi
 Create a `subscribeHandler()` function in the same file so users can subscribe to the emails.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["26-96"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
+[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/master/gateway/main.go)
 ```go
 // ...
 // create subscribe handler, which collects the email in the index handler form
@@ -403,7 +403,7 @@ To allow users to retrieve information about their subscription details, add a n
 Open the `workflow.go` file and add a Query handler to the top of the Workflow Definition, right after the logging statement::
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["15-24"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
+[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/master/workflow.go)
 ```go
 // ...
 
@@ -429,7 +429,7 @@ Create a function called `showDetailsHandler()` in which a user can get informat
 Make sure to include error handlers to ensure proper "GET" requests and responses.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["153-195"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
+[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/master/gateway/main.go)
 ```go
 // ...
 // create part of the Query handler that returns information at localhost:4000/details
@@ -489,7 +489,7 @@ Users will need to unsubscribe from the email list at some point. To gracefully 
 Create a new `defer` block within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution:
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["31-52"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
+[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/master/workflow.go)
 ```go
 // ...
 	defer func() {
@@ -522,7 +522,7 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["97-152"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
+[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/master/gateway/main.go)
 ```go
 // ...
 // create unsubscribe handler, accessed at localhost:4000/unsubscribe
@@ -606,7 +606,7 @@ To set up the test environment, create a new file called `subscription_test.go`.
 Create a test function called `Test_CanceledSubscriptionWorkflow()`.
 
 <!--SNIPSTART subscription-workflow-go-subscribe-test-->
-[subscription_test.go](https://github.com/temporalio/email-subscription-project-go/blob/main/subscription_test.go)
+[subscription_test.go](https://github.com/temporalio/email-subscription-project-go/blob/master/subscription_test.go)
 ```go
 package subscribeemails
 

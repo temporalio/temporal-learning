@@ -9,7 +9,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-federal-criminal-workflow-definition-->
-[workflows/federal_criminal_search.go](https://github.com/temporalio/background-checks/blob/main/workflows/federal_criminal_search.go)
+[workflows/federal_criminal_search.go](https://github.com/temporalio/background-checks/blob/master/workflows/federal_criminal_search.go)
 ```go
 func FederalCriminalSearch(ctx workflow.Context, input *FederalCriminalSearchWorkflowInput) (*FederalCriminalSearchWorkflowResult, error) {
 	var result activities.FederalCriminalSearchResult

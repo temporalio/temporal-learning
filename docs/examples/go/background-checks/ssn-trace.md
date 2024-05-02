@@ -8,7 +8,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <!--SNIPSTART background-checks-ssn-trace-workflow-definition-->
-[workflows/ssn_trace.go](https://github.com/temporalio/background-checks/blob/main/workflows/ssn_trace.go)
+[workflows/ssn_trace.go](https://github.com/temporalio/background-checks/blob/master/workflows/ssn_trace.go)
 ```go
 
 // SSNTrace is a Workflow Definition that calls for the execution of a single Activity.

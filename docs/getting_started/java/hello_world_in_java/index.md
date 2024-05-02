@@ -166,7 +166,7 @@ BUILD SUCCESSFUL in 19s
 Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and replace the current contents of the `dependencies` block with the following: 
 
 <!--SNIPSTART hello-world-project-template-java-gradle-dependencies-->
-[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/build.gradle)
+[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/build.gradle)
 ```gradle
 dependencies {
     implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'
@@ -261,7 +261,7 @@ Your output will be similar to this:
 Next you will need to ensure that the Java version Maven is compiling against supports building Temporal Applications. Temporal requires a minimum version of Java 1.8. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with `1.8`.
 
 <!--SNIPSTART hello-world-project-template-java-maven-version-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/pom.xml)
 ```xml
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -274,7 +274,7 @@ Next you will need to ensure that the Java version Maven is compiling against su
 Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` replace the generated `<dependencies>` section in the file with the following:
 
 <!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/pom.xml)
 ```xml
   <dependencies>
 
@@ -391,7 +391,7 @@ In the Temporal Java SDK, a Workflow Definition is made of two parts:
 Create `HelloWorldWorkflow.java` in the source code location of your project at `app/src/main/java/helloworldapp/` and add the following code to create a `HelloWorldWorkflow` interface that defines the expected functionality of your workflow:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-interface-->
-[app/src/main/java/helloworldapp/HelloWorldWorkflow.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldWorkflow.java)
+[app/src/main/java/helloworldapp/HelloWorldWorkflow.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorkflow.java)
 ```java
 package helloworldapp;
 
@@ -416,7 +416,7 @@ The `HelloWorldWorkflow` interface is annotated with `@WorkflowInterface`, signi
 Next, create `HelloWorldWorkflowImpl.java` and add the following code to implement the Workflow and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-->
-[app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java)
+[app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorkflowImpl.java)
 ```java
 package helloworldapp;
 
@@ -482,7 +482,7 @@ With the Temporal Java SDK, you define Activities similarly to how you define Wo
 Create the file `HelloWorldActivities.java` in `app/src/main/java/helloworldapp/` and add the following code to define the `HelloWorldActivities` interface:
 
 <!--SNIPSTART hello-world-project-template-java-activity-interface-->
-[app/src/main/java/helloworldapp/HelloWorldActivities.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldActivities.java)
+[app/src/main/java/helloworldapp/HelloWorldActivities.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldActivities.java)
 ```java
 package helloworldapp;
 
@@ -503,7 +503,7 @@ The `HelloWorldActivities` interface is annotated with `@ActivityInterface`, sig
 Next, create `HelloWorldActivitiesImpl.java` in `app/src/main/java/helloworldapp/` and add the following code to implement the Activity and define its methods:
 
 <!--SNIPSTART hello-world-project-template-java-activity-->
-[app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java)
+[app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldActivitiesImpl.java)
 ```java
 package helloworldapp;
 
@@ -539,7 +539,7 @@ rm -f app/src/test/java/helloworldapp/AppTest.java
 Create a new file called `HelloWorldWorkflowTest.java` that contains the following code:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-test-->
-[app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java)
+[app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/test/java/helloworldapp/HelloWorldWorkflowTest.java)
 ```java
 package helloworldapp;
 
@@ -684,7 +684,7 @@ You'll connect to the Temporal Cluster using a Temporal Client, which provides a
 Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp`and define the Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-java-shared-constants-->
-[app/src/main/java/helloworldapp/Shared.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/Shared.java)
+[app/src/main/java/helloworldapp/Shared.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/Shared.java)
 ```java
 package helloworldapp;
 
@@ -702,7 +702,7 @@ Now you'll create the Worker process. In this tutorial you'll create a small sta
 Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register 1the:
 
 <!--SNIPSTART hello-world-project-template-java-worker-->
-[app/src/main/java/helloworldapp/HelloWorldWorker.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldWorker.java)
+[app/src/main/java/helloworldapp/HelloWorldWorker.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/HelloWorldWorker.java)
 ```java
 package helloworldapp;
 
@@ -788,7 +788,7 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 Create `InitiateHelloWorld.java` in `app/src/main/java/helloworldapp/` and add the following code to the file to connect to the server and start the Workflow:
 
 <!--SNIPSTART hello-world-project-template-java-workflow-initiator-->
-[app/src/main/java/helloworldapp/InitiateHelloWorld.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/InitiateHelloWorld.java)
+[app/src/main/java/helloworldapp/InitiateHelloWorld.java](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/src/main/java/helloworldapp/InitiateHelloWorld.java)
 ```java
 package helloworldapp;
 
@@ -867,7 +867,7 @@ To run your Temporal Application, you need to start the Workflow and the Worker.
 First, open the file `app/build.gradle` and add the following commands to the end of the file in order to define tasks for Gradle to execute your Worker and Client application:
 
 <!--SNIPSTART hello-world-project-template-java-gradle-tasks-->
-[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/build.gradle)
+[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/master/app/build.gradle)
 ```gradle
 task sayHello(type: JavaExec) {
     mainClass = 'helloworldapp.InitiateHelloWorld'
