@@ -31,12 +31,12 @@ composer require temporal/sdk
 See the [RoadRunner README file](https://github.com/roadrunner-server/roadrunner) for installation instructions.
 
 
-Next, you'll configure a local Temporal cluster for development.
+Next, you'll configure a local Temporal Service for development.
 
-## Set up a local Temporal development cluster with Temporal CLI
+## Set up a local Temporal Service for development with Temporal CLI
 
-import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
+import TemporalService from '@site/docs/getting_started/_temporal_service.md'
 
-<Cluster />
+<TemporalService />
 
 Once you have everything installed, you're ready to build apps with Temporal on your local machine.
