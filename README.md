@@ -176,7 +176,7 @@ Once you have everything in place, it's a good idea to run a full build.
 Use the following command:
 
 ```
-$ yarn build
+$ yarn build_all
 ```
 
 This will pull down the snippets and generate the site, creating or populating the `build/` directory.
@@ -292,7 +292,7 @@ Once you have migrated the changes into the `DocItem/Content` component, delete 
 Before committing code, build the site one more time to ensure all internal links are correct and everything compiles:
 
 ```
-$ yarn build
+$ yarn build_all
 ```
 
 Test everything with the local server:
