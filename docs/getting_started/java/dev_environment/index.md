@@ -23,7 +23,7 @@ You'll use these with a Temporal Cluster--a group of services that provides the 
 
 ## Install the Java JDK
 
-If you haven't done so already, install a JDK. Either download a copy directly from [Oracle](https://www.oracle.com/java/technologies/downloads) or select an [OpenJDK distribution](https://adoptium.net/marketplace/?os=any&arch=any&package=jdk) from your preferred vendor. 
+If you haven't done so already, install a JDK. Either download a copy directly from [Oracle](https://www.oracle.com/java/technologies/downloads) or select an [OpenJDK distribution](https://adoptium.net/marketplace/?os=any&arch=any&package=jdk) from your preferred vendor.
 
 Check the version of your current JDK installation by executing `java --version` at a command prompt. We developed and tested these Java tutorials with Java 21, but they should work with JDKs version 8 or higher.
 
@@ -35,20 +35,20 @@ Follow these steps to configure Maven or Gradle for Temporal.
 
 <Tabs groupId="build-tool" queryString>
   <TabItem value="maven" label="Maven">
-  
+
 ### Configure Maven
 
-To install [Apache Maven](https://maven.apache.org/), [download a copy](https://maven.apache.org/download.cgi) and follow the [instructions](https://maven.apache.org/install.html) at Apache.org. 
+To install [Apache Maven](https://maven.apache.org/), [download a copy](https://maven.apache.org/download.cgi) and follow the [instructions](https://maven.apache.org/install.html) at Apache.org.
 
 Add the following dependencies to your Maven Project Object Model (POM) configuration file (`pom.xml`) to compile, build, test, and run a Temporal Application in Java.
 
 ```xml
   <dependencies>
-    <!-- 
-      Temporal dependencies needed to compile, build, 
+    <!--
+      Temporal dependencies needed to compile, build,
       test, and run Temporal's Java SDK
     -->
-    
+
     <!--
       SDK
     -->
@@ -66,7 +66,7 @@ Add the following dependencies to your Maven Project Object Model (POM) configur
       <artifactId>temporal-testing</artifactId>
       <version>1.22.4</version>
       <scope>test</scope>
-    </dependency>  
+    </dependency>
   </dependencies>
 ```
 
@@ -81,19 +81,20 @@ Add the following lines to `build.gradle`, your Gradle configuration file. This 
 
 
 ```groovy
-implementation 'io.temporal:temporal-sdk:1.22.4' 
+implementation 'io.temporal:temporal-sdk:1.22.4'
 testImplementation 'io.temporal:temporal-testing:1.22.4'
 ```
 
   </TabItem>
 </Tabs>
 
-Now that you have a JDK and a Java build automation tool, you'll configure a local Temporal Cluster for development.
+Next, you'll configure a local Temporal Service for development.
 
-## Set up a local Temporal development Cluster with Temporal CLI
+## Set up a local Temporal Service for development with Temporal CLI
 
-import Cluster  from '@site/docs/getting_started/_temporal_cluster.md'
 
-<Cluster />
+import TemporalService from '@site/docs/getting_started/_temporal_service.md'
+
+<TemporalService />
 
 With your tooling installed, you're now ready to build Temporal apps on your local machine.

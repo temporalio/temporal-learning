@@ -15,7 +15,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-**Estimated time**: ⏱️ 4 hours, self-paced.
+**Estimated time**: ⏱️ 1.5 hours, self-paced.
 
 **Cost**: Free
 

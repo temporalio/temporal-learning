@@ -22,8 +22,6 @@ origins:
   - owner: temporalio
     repo: subscription-workflow-project-template-php
   - owner: temporalio
-    repo: temporal
-  - owner: temporalio
     repo: samples-php
   - owner: temporalio
     repo: hello-world-project-template-python
@@ -31,12 +29,6 @@ origins:
     repo: samples-typescript
   # Some samples were left in the SDK code itself because it has better testing
   # capabilities than the samples repo
-  - owner: temporalio
-    repo: sdk-typescript
-  - owner: temporalio
-    repo: samples-go
-  - owner: temporalio
-    repo: samples-java
   - owner: temporalio
     repo: temporal-ecommerce
   - owner: temporalio

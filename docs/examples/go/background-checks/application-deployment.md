@@ -2,7 +2,7 @@
 id: application-deployment
 sidebar_position: 12
 keywords: [go, golang, temporal, sdk, tutorial]
-title: How do we deploy the Background Check application?
+title: How do you deploy the Background Check application?
 description: The application and anything the application needs for the demo is deployed using Docker Compose.
 tags: [Go, SDK]
 image: /img/temporal-logo-twitter-card.png
@@ -15,13 +15,13 @@ The following Docker Images are spun up into a Container stack using [Docker Com
 - Temporal Server: Services that facilitate the Temporal Event Loop. The Temporal Server is one half of what makes up a Temporal Cluster.
 - PostgreSQL: Database to persist the state of each Workflow Execution. The Database is the other half of what makes up a Temporal Cluster.
 - Temporal Web UI: Browser-based UI that provides Visibility tooling.
-- Grafana: So we can show Dashboards from the metrics.
-- Prometheus: So we can ingest metrics.
+- Grafana: Show Dashboards from the metrics.
+- Prometheus: Ingest metrics.
 - Mailhog: SMTP server and a browser based inbox. So users can experience receiving emails as part of the demonstration.
-- Third party API: Provides the HTTP API endpoints that our will provide data for some of the Searches in the Background Check.
+- Third party API: Provides the HTTP API endpoints that provide data for some of the Searches in the Background Check.
 - App UI: Browser-based UI used to simulate parts of the application demonstration.
 - App API: HTTP endpoints that provide access to a Temporal Client which is used to interact with the application.
-- App Temporal Worker: Worker Process that executes our application code.
+- App Temporal Worker: Worker Process that initiates the execution of application code.
 - App CLI tools: Process listening for commands that call the application APIs.
 - Dataconverter: Process that runs the Data Converter encryption command.
 

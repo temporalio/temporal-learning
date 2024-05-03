@@ -6,7 +6,7 @@ This website uses [Docusaurus v2](https://docusaurus.io/), a modern static websi
 
 Follow this guide for steps on contributing to this site.
 
-# Get Started
+## Get Started
 
 Clone the repository to download the files to your local machine.
 
@@ -58,7 +58,7 @@ $ yarn start
 This command starts a local development server and opens up a browser window. Most changes appear without having to restart the server.
 
 
-# Create or work with content
+## Create or work with content
 
 Most of your work will happen in the `docs` folder. This is where the Markdown files for tutorials and courses live.
 
@@ -109,7 +109,7 @@ First, add the repository to the `snipsync.config.yaml` file under the `origins`
 
 Save the file.
 
-Within your code repository, you'll add markers to your file around the code you want to pull into your content. 
+Within your code repository, you'll add markers to your file around the code you want to pull into your content.
 - You'll use `@@@SNIPSTART some-unique-name-for-the-part` to denote the start of a snippet.
 - You'll use `@@@SNIPEND` to denote the end of a snippet.
 
@@ -169,8 +169,6 @@ $ yarn getsnips
 
 Remember that this pulls in snippets for all files in the site, which means multiple files will be changed.
 
-Clear snippets before committing with `yarn clearsnips`.
-
 ## Build the site
 
 Once you have everything in place, it's a good idea to run a full build.
@@ -178,10 +176,10 @@ Once you have everything in place, it's a good idea to run a full build.
 Use the following command:
 
 ```
-$ yarn build
+$ yarn build_all
 ```
 
-This will pull down the snippets and generate the site, creating or populating the `build/` directory. 
+This will pull down the snippets and generate the site, creating or populating the `build/` directory.
 
 Use the following command to run a web server to view the `build/` directory's output:
 
@@ -195,13 +193,11 @@ Once you've verified that things build correctly, run the following command to r
 $ yarn clearsnips
 ```
 
-Do not check in files with snippets embedded.
-
-# Other tasks
+## Other tasks
 
 There are some other tasks you may need to perform when working with this repository.
 
-## Use Vale to check for style issues.
+### Use Vale to check for style issues.
 
 Review your content with Vale to look for style compliance, including capitalization, passive voice, and other word usage issues, as well as some structural things.
 
@@ -227,7 +223,7 @@ vale docs/
 
 Vim and Visual Studio Code can check documents as you write, as long as you've installed Vale on your system.
 
-## Check for broken links
+### Check for broken links
 
 Docusaurus can scan for internal links, but you should use Lychee to scan links to external documents.
 
@@ -256,7 +252,7 @@ yarn scan
 
 This should catch most of the issues.
 
-## Update course pages
+### Update course pages
 
 Course content comes from an external LMS. Don't edit the course pages directly.
 
@@ -269,8 +265,8 @@ In order to run the next command, you will need to get an API token from the LMS
 5. Run `export LMS_API_TOKEN='APITOKENHERE'` (replacing `APITOKENHERE` with the value copied
    during the previous step)
 
-In the same terminal where you set this variable, run the following command to generate 
-the course pages from the LMS: 
+In the same terminal where you set this variable, run the following command to generate
+the course pages from the LMS:
 
 ```command
 node get_course_pages_from_lms.js
@@ -278,7 +274,7 @@ node get_course_pages_from_lms.js
 
 This script generates new pages with new datestamps, which means Git will see them as updates. Don't check in unncessary changes. Use `git checkout [file]` to unstage a changed file and revert it.
 
-## Explore and maintain theme customizations
+### Explore and maintain theme customizations
 
 The default Docusaurus theme doesn't display author and date info at the top of the article. We extracted the `DocItem/Content` component and placed these items into the header.
 
@@ -291,12 +287,12 @@ Do a `diff` on  the relevant bits and test. Some of the content you need is in t
 
 Once you have migrated the changes into the `DocItem/Content` component, delete the `DocItem/Footer` node you swizzled, as you only needed it for the code it contained..
 
-# Commit changes and make a pull request
+## Commit changes and make a pull request
 
 Before committing code, build the site one more time to ensure all internal links are correct and everything compiles:
 
 ```
-$ yarn build
+$ yarn build_all
 ```
 
 Test everything with the local server:
@@ -305,24 +301,13 @@ Test everything with the local server:
 $ yarn serve
 ```
 
-
-Remove snippets:
-
-```
-$ yarn clearsnips
-```
-
 Review your work for style and tone using the style guide in `STYLE.md`.
 
 Then make your commits to a new branch, adding only the files relevant to the work you're doing:
 
 - Use `git status` to see what you're about to stage.
-- Use `git add` and add only the files you intended to change. 
+- Use `git add` and add only the files you intended to change.
 
 Push your changes to GitHub and verify the preview before making a PR.
 
 Once the build succeeds, make a PR and ask for review.
-
-
-
-
