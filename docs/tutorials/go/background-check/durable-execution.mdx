@@ -151,6 +151,22 @@ Run the tests in the test directory (`go test`).
 If the Workflow Definition and the Event History are incompatible then the test fails.
 
 <!--SNIPSTART durability-chapter-replay-test-->
+[docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
+```go
+
+// TestReplayWorkflowHistoryFromFile tests for Event History compatibility.
+func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {
+	// Create a new Replayer
+	replayer := worker.NewWorkflowReplayer()
+	// Register the Workflow with the Replayer
+	replayer.RegisterWorkflow(workflows.BackgroundCheck)
+	// Compare the current Workflow code against the existing Event History
+	// This call fails unless updated to use 'backgroundcheck_workflow_event_history_with_timer.json'
+	err := replayer.ReplayWorkflowHistoryFromJSONFile(nil, "backgroundcheck_workflow_event_history.json")
+	s.NoError(err)
+}
+
+```
 <!--SNIPEND-->
 
 ### Why add a Replay test? {#why-replay-test}
@@ -196,6 +212,45 @@ The following are some common operations that **can't** be done inside of a Work
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
 <!--SNIPSTART durability-chapter-non-deterministic-workflow-->
+[docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go)
+```go
+// CAUTION! Do not use this code!
+package workflows
+
+import (
+	"math/rand"
+	"time"
+
+	"go.temporal.io/sdk/workflow"
+
+	"background-check-tutorialchapters/durability/activities"
+)
+
+// BackgroundCheckNonDeterministic is an anti-pattern Workflow Definition
+func BackgroundCheckNonDeterministic(ctx workflow.Context, param string) (string, error) {
+	activityOptions := workflow.ActivityOptions{
+		StartToCloseTimeout: 10 * time.Second,
+	}
+	ctx = workflow.WithActivityOptions(ctx, activityOptions)
+	var ssnTraceResult string
+	// highlight-start
+	// CAUTION, the following code is an anti-pattern showing what NOT to do
+	num := rand.Intn(100)
+	if num > 50 {
+		err := workflow.Sleep(ctx, 10*time.Second)
+		if err != nil {
+			return "", err
+		}
+	}
+	// highlight-end
+	err := workflow.ExecuteActivity(ctx, activities.SSNTraceActivity, param).Get(ctx, &ssnTraceResult)
+	if err != nil {
+		return "", err
+	}
+	return ssnTraceResult, nil
+}
+
+```
 <!--SNIPEND-->
 
 If you run the BackgroundCheckNonDeterministic Workflow enough times, eventually you will see a Workflow Task failure.
@@ -347,6 +402,46 @@ The Temporal SDK offers both a `workflow.StartTimer()` API, and a `workflow.Slee
 Use the `workflow.GetLogger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
 <!--SNIPSTART durability-chapter-workflow-->
+[docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go)
+```go
+package workflows
+
+import (
+	"time"
+
+	"go.temporal.io/sdk/workflow"
+
+	"background-check-tutorialchapters/durability/activities"
+)
+
+// BackgroundCheck is your custom Workflow Definition.
+func BackgroundCheck(ctx workflow.Context, param string) (string, error) {
+	// highlight-start
+	// Sleep for 1 minute
+	workflow.GetLogger(ctx).Info("Sleeping for 1 minute...")
+	err := workflow.Sleep(ctx, 60*time.Second)
+	if err != nil {
+		return "", err
+	}
+	workflow.GetLogger(ctx).Info("Finished sleeping")
+	// highlight-end
+	// Define the Activity Execution options
+	// StartToCloseTimeout or ScheduleToCloseTimeout must be set
+	activityOptions := workflow.ActivityOptions{
+		StartToCloseTimeout: 10 * time.Second,
+	}
+	ctx = workflow.WithActivityOptions(ctx, activityOptions)
+	// Execute the Activity synchronously (wait for the result before proceeding)
+	var ssnTraceResult string
+	err = workflow.ExecuteActivity(ctx, activities.SSNTraceActivity, param).Get(ctx, &ssnTraceResult)
+	if err != nil {
+		return "", err
+	}
+	// Make the results of the Workflow available
+	return ssnTraceResult, nil
+}
+
+```
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
