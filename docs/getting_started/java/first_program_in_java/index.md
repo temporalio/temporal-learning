@@ -85,7 +85,7 @@ Here's a high-level illustration of what's happening:
 The Workflow function is the application entry point. This is what our money transfer Workflow looks like:
 
 <!--SNIPSTART money-transfer-project-template-java-workflow-implementation-->
-[src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/master/src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java)
+[src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java)
 ```java
 public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
     private static final String WITHDRAW = "Withdraw";
@@ -128,7 +128,7 @@ When you "start" a Workflow you are basically telling the Temporal server, "trac
 There are two ways to start a Workflow with Temporal, either via the SDK or via the [CLI](https://docs.temporal.io/tctl). For this tutorial we used the SDK to start the Workflow, which is how most Workflows get started in a live environment. The call to the Temporal server can be done [synchronously or asynchronously](https://docs.temporal.io/java/workflows). Here we do it asynchronously, so you will see the program run, tell you the transaction is processing, and exit.
 
 <!--SNIPSTART money-transfer-project-template-java-workflow-initiator-->
-[src/main/java/moneytransferapp/InitiateMoneyTransfer.java](https://github.com/temporalio/money-transfer-project-template-java/blob/master/src/main/java/moneytransferapp/InitiateMoneyTransfer.java)
+[src/main/java/moneytransferapp/InitiateMoneyTransfer.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/InitiateMoneyTransfer.java)
 ```java
 public class InitiateMoneyTransfer {
 
@@ -207,7 +207,7 @@ It's time to start the Worker. A Worker is responsible for executing pieces of W
 After The Worker executes code, it returns the results back to the Temporal server. Note that the Worker listens to the same Task Queue that the Workflow and Activity tasks are sent to. This is called "Task routing", and is a built-in mechanism for load balancing.
 
 <!--SNIPSTART money-transfer-project-template-java-worker-->
-[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-template-java/blob/master/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/MoneyTransferWorker.java)
 ```java
 public class MoneyTransferWorker {
 
@@ -234,7 +234,7 @@ public class MoneyTransferWorker {
 Task Queues are defined by a simple string name.
 
 <!--SNIPSTART money-transfer-project-template-java-shared-constants-->
-[src/main/java/moneytransferapp/Shared.java](https://github.com/temporalio/money-transfer-project-template-java/blob/master/src/main/java/moneytransferapp/Shared.java)
+[src/main/java/moneytransferapp/Shared.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/Shared.java)
 ```java
 public interface Shared {
 
@@ -285,7 +285,7 @@ Visit the UI. Your Workflow is still listed.
 Next let's simulate a bug in one of the Activity functions. Inside your project, open the `AccountActivityImpl.java` file and uncomment the line that throws an Exception in the `deposit()` method.
 
 <!--SNIPSTART money-transfer-project-template-java-activity-implementation-->
-[src/main/java/moneytransferapp/AccountActivityImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/master/src/main/java/moneytransferapp/AccountActivityImpl.java)
+[src/main/java/moneytransferapp/AccountActivityImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/AccountActivityImpl.java)
 ```java
 public class AccountActivityImpl implements AccountActivity {
 

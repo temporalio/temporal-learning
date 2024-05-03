@@ -39,6 +39,18 @@ origins:
     repo: data-pipeline-project-python
   - owner: temporalio
     repo: email-subscription-project-python
+  - owner: temporalio
+    repo: money-transfer-project-java
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-ts
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-go
+    ref: cloud
 
 targets:
   - docs/tutorials

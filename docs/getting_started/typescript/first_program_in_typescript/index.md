@@ -94,7 +94,7 @@ The sample application in this tutorial models a money transfer between two acco
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 import { proxyActivities } from '@temporalio/workflow';
 import { ApplicationFailure } from '@temporalio/common';
@@ -152,7 +152,7 @@ The `moneyTransfer` function takes in the details about the transaction, execute
 In this case, the `moneyTransfer` function accepts an `input` variable of the type `PaymentDetails`, which is a data structure that holds the details the Workflow uses to perform the money transfer. This type is defined in the file `shared.ts`: 
 
 <!--SNIPSTART money-transfer-project-template-ts-shared-->
-[src/shared.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/shared.ts)
+[src/shared.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/shared.ts)
 ```ts
 
 export type PaymentDetails = {
@@ -174,7 +174,7 @@ The Workflow Definition calls the Activities `withdraw` and `deposit` to handle 
 The `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART money-transfer-project-template-ts-withdraw-activity-->
-[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/activities.ts)
 ```ts
 import type { PaymentDetails } from './shared';
 import { BankingService } from './banking-client';
@@ -200,7 +200,7 @@ In this tutorial, the banking service simulates an external API call. You can in
 The `deposit` Activity function looks almost identical to the `withdraw` function:
 
 <!--SNIPSTART money-transfer-project-template-ts-deposit-activity-->
-[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/activities.ts)
 ```ts
 export async function deposit(details: PaymentDetails): Promise<string> {
   console.log(
@@ -227,7 +227,7 @@ There are some commented lines in this Activity Definition that you'll use later
 If the `withdraw` Activity fails, there's nothing else to do, but if the `deposit` Activity fails, the money needs to go back to the original account, so there's a third Activity called `refund` that does exactly that:
 
 <!--SNIPSTART money-transfer-project-template-ts-refund-activity-->
-[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/activities.ts)
+[src/activities.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/activities.ts)
 ```ts
 export async function refund(details: PaymentDetails): Promise<string> {
   console.log(
@@ -258,7 +258,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 Temporal Workflows automatically retry Activities that fail by default, but you can customize how those retries happen. At the top of the `moneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 // ...
   const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
@@ -305,7 +305,7 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 In this tutorial, the file `client.ts` contains a program that connects to the Temporal Server and starts the Workflow:
 
 <!--SNIPSTART money-transfer-project-template-ts-start-workflow-->
-[src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/client.ts)
+[src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/client.ts)
 ```ts
 import { Connection, WorkflowClient } from '@temporalio/client';
 import { moneyTransfer } from './workflows';
@@ -426,7 +426,7 @@ After the Worker executes code, it returns the results back to the Temporal Serv
 In this project, the file `worker.ts` contains the code for the Worker. Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-->
-[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/worker.ts)
+[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/worker.ts)
 ```ts
 import { Worker } from '@temporalio/worker';
 import * as activities from './activities';
@@ -609,7 +609,7 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflows.ts`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART money-transfer-project-template-ts-workflow {"selectedLines": ["9-20"]}-->
-[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/master/src/workflows.ts)
+[src/workflows.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/workflows.ts)
 ```ts
 // ...
   const { withdraw, deposit, refund } = proxyActivities<typeof activities>({
