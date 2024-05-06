@@ -47,26 +47,6 @@ origins:
     repo: data-pipeline-project-python
   - owner: temporalio
     repo: email-subscription-project-python
-  - files: 
-      pattern: './docs/tutorials/go/background-check/code/**/*.go'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
-  - files: 
-      pattern: './docs/tutorials/python/background-check/code/**/*.py'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
-  - files: 
-      pattern: './docs/tutorials/typescript/background-check/code/**/*.ts'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
-  - files: 
-      pattern: './docs/tutorials/java/background-check/code/**/*.java'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
 
 targets:
   - docs/tutorials
