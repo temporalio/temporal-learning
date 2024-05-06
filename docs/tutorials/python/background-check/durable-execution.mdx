@@ -178,25 +178,8 @@ Register the Workflow Definition and then specify an existing Event History to c
 Run the tests in the test directory (pytest).
 If the Workflow Definition and the Event History are incompatible, then the test fails.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/python/backgroundcheck_replay/tests/replay_dacx_test.py">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```python
-
-
-
-
-
-@pytest.mark.asyncio
-async def test_replay_workflow_history_from_file():
-    async with await WorkflowEnvironment.start_time_skipping():
-        with open("tests/backgroundcheck_workflow_history.json", "r") as f:
-            history_json = json.load(f)
-```
+<!--SNIPSTART test_replay_workflow_history_from_file-->
+<!--SNIPEND-->
 
 [WorkflowEnvironment](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html) is a class in the Temporal Python SDK that provides a testing suite for running Workflows and Activity code.
 [start_time_skipping()](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html#start_time_skipping) is a method that allows you to skip time in a Workflow Execution.
@@ -325,37 +308,8 @@ The Temporal Python SDK offers deterministic implementations to the following AP
 
 Use the `workflow.logger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/python/backgroundcheck_replay/backgroundcheck_dacx.py">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```python
-
-import asyncio
-from datetime import timedelta
-
-from temporalio import workflow
-
-with workflow.unsafe.imports_passed_through():
-    from ssntraceactivity import ssn_trace_activity
-
-@workflow.defn()
-class BackgroundCheck:
-    @workflow.run
-    async def run(self, ssn: str) -> str:
-        random_number = workflow.random().randint(1, 100)
-        if random_number < 50:
-            await asyncio.sleep(60)
-            workflow.logger.info("Sleeping for 60 seconds")
-        return await workflow.execute_activity(
-            ssn_trace_activity,
-            ssn,
-            schedule_to_close_timeout=timedelta(seconds=5),
-        )
-```
+<!--SNIPSTART python_backgroundcheck_dacx {"selectedLines": ["1-7", "23-35"]}-->
+<!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
 

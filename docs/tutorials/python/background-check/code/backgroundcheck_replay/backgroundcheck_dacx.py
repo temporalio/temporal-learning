@@ -1,3 +1,4 @@
+# @@@SNIPSTART python_backgroundcheck_dacx
 import asyncio
 from datetime import timedelta
 
@@ -19,6 +20,7 @@ The Temporal Python SDK offers deterministic implementations to the following AP
 
 Use the `workflow.logger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 dacx"""
+
 @workflow.defn()
 class BackgroundCheck:
     @workflow.run
@@ -32,6 +34,8 @@ class BackgroundCheck:
             ssn,
             schedule_to_close_timeout=timedelta(seconds=5),
         )
+# @@@SNIPEND
+
 """dacx
 After updating your Workflow code to include the logging and Timer, run your tests again.
 You should expect to see the `TestReplayWorkflowHistoryFromFile` test fail.

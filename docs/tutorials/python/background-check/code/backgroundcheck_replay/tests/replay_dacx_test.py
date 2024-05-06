@@ -46,7 +46,7 @@ Run the tests in the test directory (pytest).
 If the Workflow Definition and the Event History are incompatible, then the test fails.
 dacx"""
 
-
+# @@@SNIPSTART python_test_replay_workflow_history_from_file
 @pytest.mark.asyncio
 async def test_replay_workflow_history_from_file():
     async with await WorkflowEnvironment.start_time_skipping():
@@ -55,7 +55,7 @@ async def test_replay_workflow_history_from_file():
             await Replayer(workflows=[BackgroundCheck]).replay_workflow(
                 WorkflowHistory.from_json("backgroundcheck_workflow", history_json)
             )
-
+# @@@SNIPEND
 
 """dacx
 [WorkflowEnvironment](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html) is a class in the Temporal Python SDK that provides a testing suite for running Workflows and Activity code.
