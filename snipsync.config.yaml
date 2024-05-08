@@ -51,6 +51,12 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
     ref: cloud
+  # Background Check tutorial code in the learn repo
+  - files: 
+      pattern: './docs/tutorials/go/background-check/code/**/*.go'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
+      ref: 'main'
 
 targets:
   - docs/tutorials
@@ -60,4 +66,4 @@ targets:
 features:
   enable_source_link: true
   enable_code_block: true
-  allowed_target_extensions: [.md]
+  allowed_target_extensions: [.md, .mdx]
