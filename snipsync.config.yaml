@@ -39,12 +39,24 @@ origins:
     repo: data-pipeline-project-python
   - owner: temporalio
     repo: email-subscription-project-python
+  - owner: temporalio
+    repo: money-transfer-project-java
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-ts
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-go
+    ref: cloud
+  # Background Check tutorial code in the learn repo
   - files: 
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'
-  
 
 targets:
   - docs/tutorials

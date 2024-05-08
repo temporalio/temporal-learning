@@ -29,9 +29,16 @@ Download and run a small application and explore how Temporal executes Workflows
 
 **Estimated time**: ⏱️ ~20 minutes
 
-Write a program from the ground up with tests. 
+Write a program from the ground up with tests.
 
 ----
+
+## [Run Workers with Temporal Cloud](run_workers_with_cloud_java/index.md)
+
+**Estimated time**: ⏱️ ~10 minutes
+
+Update your Worker code to connect to Temporal Cloud and run your Workflows.
+
 
 ## [Take Temporal 101 with Java](/courses/temporal_101/java.md)
 
