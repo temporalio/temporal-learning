@@ -213,7 +213,13 @@ const config = {
           routeBasePath: '/', // Serve the docs at the site's root
           sidebarPath: require.resolve('./sidebars.js'),
           /*editUrl: "https://github.com/temporalio/temporal-learning/blob/main", */
-          exclude: ["**/code/**/*.md"],
+          exclude: [
+            '**/_*.{js,jsx,ts,tsx,md,mdx}',  // Exclude files starting with an underscore
+            '**/_*/**',                      // Exclude directories starting with an underscore
+            '**/*.test.{js,jsx,ts,tsx}',     // Exclude test files
+            '**/__tests__/**',               // Exclude test directories
+            '**/code/**/*.md'                // Exclude Markdown docs in code folders.
+          ],
           showLastUpdateAuthor: false,
           /**
            * Whether to display the last date the doc was updated.
