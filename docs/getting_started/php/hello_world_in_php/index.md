@@ -76,7 +76,7 @@ In the following snippet,  `WorkflowClientInterface` is the entry point to get a
 Here we create an instance of `GreetingWorkflowInterface` with execution timeout of 1 minute. Then we print some information and start the workflow.
 
 <!--SNIPSTART php-hello-client {"enable_source_link": true}-->
-[app/src/SimpleActivity/ExecuteCommand.php](https://github.com/temporalio/samples-php/blob/main/app/src/SimpleActivity/ExecuteCommand.php)
+[app/src/SimpleActivity/ExecuteCommand.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/ExecuteCommand.php)
 ```php
 class ExecuteCommand extends Command
 {
@@ -121,7 +121,7 @@ With the PHP SDK, you define an interface and an implementation.
 First, let's take a look at the workflow interface:
 
 <!--SNIPSTART php-hello-workflow-interface {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingWorkflowInterface.php](https://github.com/temporalio/samples-php/blob/main/app/src/SimpleActivity/GreetingWorkflowInterface.php)
+[app/src/SimpleActivity/GreetingWorkflowInterface.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingWorkflowInterface.php)
 ```php
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
@@ -147,7 +147,7 @@ The first one marks the class/interface, the second one marks the method in the 
 In our case the workflow is the method that accepts string `$name`.  To see what it actually does, look at the implementation in the class `GreetingWorkflow`:
 
 <!--SNIPSTART php-hello-workflow {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingWorkflow.php](https://github.com/temporalio/samples-php/blob/main/app/src/SimpleActivity/GreetingWorkflow.php)
+[app/src/SimpleActivity/GreetingWorkflow.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingWorkflow.php)
 ```php
 class GreetingWorkflow implements GreetingWorkflowInterface
 {
@@ -192,7 +192,7 @@ To instantiate an instance of the activity we use a static helper `Workflow::new
 And at last we arrive at the activity code. Consider it as a particular task in the business logic. As you have noticed we again use an interface to instantiate an object:
 
 <!--SNIPSTART php-hello-activity-interface {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingActivityInterface.php](https://github.com/temporalio/samples-php/blob/main/app/src/SimpleActivity/GreetingActivityInterface.php)
+[app/src/SimpleActivity/GreetingActivityInterface.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingActivityInterface.php)
 ```php
 use Temporal\Activity\ActivityInterface;
 use Temporal\Activity\ActivityMethod;
@@ -216,7 +216,7 @@ Our activity consists of one method, which accepts two string arguments.
 The implementation of this interface is a very straight forward - just compose a new string of provided arguments:
 
 <!--SNIPSTART php-hello-activity {"enable_source_link": true}-->
-[app/src/SimpleActivity/GreetingActivity.php](https://github.com/temporalio/samples-php/blob/main/app/src/SimpleActivity/GreetingActivity.php)
+[app/src/SimpleActivity/GreetingActivity.php](https://github.com/temporalio/samples-php/blob/master/app/src/SimpleActivity/GreetingActivity.php)
 ```php
 class GreetingActivity implements GreetingActivityInterface
 {
