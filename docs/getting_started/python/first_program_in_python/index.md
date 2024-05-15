@@ -103,7 +103,7 @@ A Workflow Definition in Python uses the **`@workflow.defn`** decorator on the W
 This is what the Workflow Definition looks like for this kind of process:
 
 <!--SNIPSTART python-money-transfer-project-template-workflows-->
-[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/workflows.py)
+[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
 ```py
 from datetime import timedelta
 
@@ -207,7 +207,7 @@ In the Temporal Python SDK, you define an Activity by decorating a function with
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
 <!--SNIPSTART python-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/activities.py)
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
 ```py
 # ...
 
@@ -233,7 +233,7 @@ Second, if the transfer succeeded, the `withdraw()` function returns the confirm
 Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 <!--SNIPSTART python-money-transfer-project-template-deposit-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/activities.py)
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
 ```py
     @activity.defn
     async def deposit(self, data: PaymentDetails) -> str:
@@ -279,7 +279,7 @@ If an Activity fails, Temporal Workflows automatically retries the failed Activi
 At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
 <!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
-[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/workflows.py)
+[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
 ```py
 # ...
         retry_policy = RetryPolicy(
@@ -514,7 +514,7 @@ Let your Workflow continue to run but don't start the Worker yet.
 1. Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
 
 <!--SNIPSTART  python-money-transfer-project-template-deposit-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/activities.py)
+[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
 ```py
     @activity.defn
     async def deposit(self, data: PaymentDetails) -> str:
@@ -592,7 +592,7 @@ Traditionally, you're forced to implement timeout and retry logic within the ser
 In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
 
 <!--SNIPSTART python-project-template-run-workflow-->
-[run_workflow.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/run_workflow.py)
+[run_workflow.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/run_workflow.py)
 ```py
 import asyncio
 import traceback
