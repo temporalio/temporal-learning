@@ -1,6 +1,6 @@
 ---
 title: "Interacting with Workflows with TypeScript"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Interacting with Workflows with TypeScript"
 draft: false
 tags: [courses, TypeScript]

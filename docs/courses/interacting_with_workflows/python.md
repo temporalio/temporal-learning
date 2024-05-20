@@ -1,6 +1,6 @@
 ---
 title: "Interacting with Workflows with Python"
-sidebar_position: 4
+sidebar_position: 3
 sidebar_label: "Interacting with Workflows with Python"
 draft: false
 tags: [courses, Python]

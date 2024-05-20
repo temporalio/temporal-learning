@@ -99,8 +99,8 @@ In this course, you'll expand your ability to write dynamic Workflows by learnin
 
 <Link className="button button--primary" to="interacting_with_workflows/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
 
 -----
 
