@@ -9,7 +9,7 @@ description: "In this course, you'll expand your ability to write dynamic Workfl
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2024-05-09
+  date: 2024-05-20
 image: /img/temporal-logo-twitter-card.png
 ---
 
