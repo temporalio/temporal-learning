@@ -17,7 +17,7 @@ image: /img/temporal-logo-twitter-card.png
 
 **Estimated time**: ~⏱️ 3 hours, self-paced.
 
-**Cost**: Free
+**Cost**: Free 
 
 ## Description
 
@@ -34,6 +34,6 @@ When you've completed the course, you'll be able to:
 
 To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Java SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
 
-Since code used in examples and exercises are written in Go, you must also have at least basic proficiency with the Java programming language.
+Since code used in examples and exercises are written in Java, you must also have at least basic proficiency with the Java programming language.
 
 <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:215">Go to Course</a> 
