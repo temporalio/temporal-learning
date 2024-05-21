@@ -135,6 +135,10 @@ Import the [TLSConfig](https://python.temporal.io/temporalio.service.TLSConfig.h
 This is used to configure settings used when connecting to Temporal Cloud.
 
 <!--SNIPSTART python-money-transfer-project-template-import-tls-->
+[run_worker.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/run_worker.py)
+```py
+from temporalio.client import Client, TLSConfig
+```
 <!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
@@ -146,6 +150,10 @@ To access environment variables for the managed Temporal Cloud environment, use 
 Add the following import statement at the top of your file:
 
 <!--SNIPSTART python-money-transfer-project-template-import-os-->
+[run_worker.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/run_worker.py)
+```py
+import os
+```
 <!--SNIPEND-->
 
 You can use any library needed to access your environment variables that is supported in Python.
@@ -155,6 +163,23 @@ Next, update the configuration used to make a connection with the Worker Client.
 Remove the existing Client configuration and add the following code to connect to a Worker Client instance.
 
 <!--SNIPSTART python-money-transfer-project-template-import-connect-to-cloud-->
+[run_worker.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/run_worker.py)
+```py
+    with open(os.getenv("TEMPORAL_MTLS_TLS_CERT"), "rb") as f:
+        client_cert = f.read()
+
+    with open(os.getenv("TEMPORAL_MTLS_TLS_KEY"), "rb") as f:
+        client_key = f.read()
+
+    client: Client = await Client.connect(
+        os.getenv("TEMPORAL_HOST_URL"),
+        namespace=os.getenv("TEMPORAL_NAMESPACE"),
+        tls=TLSConfig(
+            client_cert=client_cert,
+            client_private_key=client_key,
+        ),
+    )
+```
 <!--SNIPEND-->
 
 This code reads the TLS certificate from environment variables and uses them to configure the `TLSConfig` object.

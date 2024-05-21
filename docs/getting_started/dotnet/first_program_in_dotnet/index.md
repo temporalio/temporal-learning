@@ -131,6 +131,74 @@ This is what the Workflow Definition looks like for this process:
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-workflow-->
+[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Workflow.cs)
+```cs
+namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
+using Temporalio.MoneyTransferProject.BankingService.Exceptions;
+using Temporalio.Workflows;
+using Temporalio.Common;
+using Temporalio.Exceptions;
+
+[Workflow]
+public class MoneyTransferWorkflow
+{
+    [WorkflowRun]
+    public async Task<string> RunAsync(PaymentDetails details)
+    {
+        // Retry policy
+        var retryPolicy = new RetryPolicy
+        {
+            InitialInterval = TimeSpan.FromSeconds(1),
+            MaximumInterval = TimeSpan.FromSeconds(100),
+            BackoffCoefficient = 2,
+            MaximumAttempts = 500,
+            NonRetryableErrorTypes = new[] { "InvalidAccountException", "InsufficientFundsException" }
+        };
+
+        string withdrawResult;
+        try
+        {
+            withdrawResult = await Workflow.ExecuteActivityAsync(
+                () => BankingActivities.WithdrawAsync(details),
+                new ActivityOptions { StartToCloseTimeout = TimeSpan.FromMinutes(5), RetryPolicy = retryPolicy }
+            );
+        }
+        catch (ApplicationFailureException ex) when (ex.ErrorType == "InsufficientFundsException")
+        {
+            throw new ApplicationFailureException("Withdrawal failed due to insufficient funds.", ex);
+        }
+
+        string depositResult;
+        try
+        {
+            depositResult = await Workflow.ExecuteActivityAsync(
+                () => BankingActivities.DepositAsync(details),
+                new ActivityOptions { StartToCloseTimeout = TimeSpan.FromMinutes(5), RetryPolicy = retryPolicy }
+            );
+            // If everything succeeds, return transfer complete
+            return $"Transfer complete (transaction IDs: {withdrawResult}, {depositResult})";
+        }
+        catch (ApplicationFailureException depositEx)
+        {
+            try
+            {
+                // if the deposit fails, attempt to refund the withdrawal
+                string refundResult = await Workflow.ExecuteActivityAsync(
+                    () => BankingActivities.RefundAsync(details),
+                    new ActivityOptions { StartToCloseTimeout = TimeSpan.FromMinutes(5), RetryPolicy = retryPolicy }
+                );
+                // If refund is successful, but deposit failed
+                throw new ApplicationFailureException($"Failed to deposit money into account {details.TargetAccount}. Money returned to {details.SourceAccount}. Cause: {depositEx.Message}", depositEx);
+            }
+            catch (ApplicationFailureException refundEx)
+            {
+                // If both deposit and refund fail
+                throw new ApplicationFailureException($"Failed to deposit money into account {details.TargetAccount}. Money could not be returned to {details.SourceAccount}. Cause: {refundEx.Message}", refundEx);
+            }
+        }
+    }
+}
+```
 <!--SNIPEND-->
 
 - The **`[WorkflowRun]`** attribute is placed on the `RunAsync` method within the `MoneyTransferWorkflow` class.
@@ -143,6 +211,16 @@ This is what the Workflow Definition looks like for this process:
 This type is defined in the file `PaymentDetails.cs`:
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
+[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/PaymentDetails.cs)
+```cs
+namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
+public record PaymentDetails(
+    string SourceAccount,
+    string TargetAccount,
+    int Amount,
+    string ReferenceId);
+
+```
 <!--SNIPEND-->
 
 
@@ -175,6 +253,29 @@ First, the `WithdrawAsync()` Activity takes the details about the transfer and c
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-withdraw-activity-->
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+```cs
+namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
+using Temporalio.Activities;
+using Temporalio.Exceptions;
+
+public class BankingActivities
+{
+    [Activity]
+    public static async Task<string> WithdrawAsync(PaymentDetails details)
+    {
+        var bankService = new BankingService("bank1.example.com");
+        Console.WriteLine($"Withdrawing ${details.Amount} from account {details.SourceAccount}.");
+        try
+        {
+            return await bankService.WithdrawAsync(details.SourceAccount, details.Amount, details.ReferenceId).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationFailureException("Withdrawal failed", ex);
+        }
+    }
+```
 <!--SNIPEND-->
 
 
@@ -185,6 +286,29 @@ Lastly, the `DepositAsync()` Activity method looks almost identical to the `With
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+```cs
+    [Activity]
+    public static async Task<string> DepositAsync(PaymentDetails details)
+    {
+        var bankService = new BankingService("bank2.example.com");
+        Console.WriteLine($"Depositing ${details.Amount} into account {details.TargetAccount}.");
+
+        // Uncomment below and comment out the try-catch block below to simulate unknown failure
+        /*
+        return await bankService.DepositThatFailsAsync(details.TargetAccount, details.Amount, details.ReferenceId);
+        */
+
+        try
+        {
+            return await bankService.DepositAsync(details.TargetAccount, details.Amount, details.ReferenceId);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationFailureException("Deposit failed", ex);
+        }
+    }
+```
 <!--SNIPEND-->
 
 
@@ -218,6 +342,18 @@ You'll see a **Retry Policy** defined that looks like this:
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-workflow {"selectedLines": ["13-20"]} -->
+[MoneyTransferWorker/Workflow.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Workflow.cs)
+```cs
+// ...
+        // Retry policy
+        var retryPolicy = new RetryPolicy
+        {
+            InitialInterval = TimeSpan.FromSeconds(1),
+            MaximumInterval = TimeSpan.FromSeconds(100),
+            BackoffCoefficient = 2,
+            MaximumAttempts = 500,
+            NonRetryableErrorTypes = new[] { "InvalidAccountException", "InsufficientFundsException" }
+```
 <!--SNIPEND-->
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
@@ -280,6 +416,16 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-shared-->
+[MoneyTransferWorker/PaymentDetails.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/PaymentDetails.cs)
+```cs
+namespace Temporalio.MoneyTransferProject.MoneyTransferWorker;
+public record PaymentDetails(
+    string SourceAccount,
+    string TargetAccount,
+    int Amount,
+    string ReferenceId);
+
+```
 <!--SNIPEND-->
 
 
@@ -379,6 +525,47 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-worker-->
+[MoneyTransferWorker/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Program.cs)
+```cs
+// This file is designated to run the worker
+using Temporalio.Client;
+using Temporalio.Worker;
+using Temporalio.MoneyTransferProject.MoneyTransferWorker;
+
+// Create a client to connect to localhost on "default" namespace
+var client = await TemporalClient.ConnectAsync(new("localhost:7233"));
+
+// Cancellation token to shutdown worker on ctrl+c
+using var tokenSource = new CancellationTokenSource();
+Console.CancelKeyPress += (_, eventArgs) =>
+{
+    tokenSource.Cancel();
+    eventArgs.Cancel = true;
+};
+
+// Create an instance of the activities since we have instance activities.
+// If we had all static activities, we could just reference those directly.
+var activities = new BankingActivities();
+
+// Create a worker with the activity and workflow registered
+using var worker = new TemporalWorker(
+    client, // client
+    new TemporalWorkerOptions(taskQueue: "MONEY_TRANSFER_TASK_QUEUE")
+        .AddAllActivities(activities) // Register activities
+        .AddWorkflow<MoneyTransferWorkflow>() // Register workflow
+);
+
+// Run the worker until it's cancelled
+Console.WriteLine("Running worker...");
+try
+{
+    await worker.ExecuteAsync(tokenSource.Token);
+}
+catch (OperationCanceledException)
+{
+    Console.WriteLine("Worker cancelled");
+}
+```
 <!--SNIPEND-->
 
 
@@ -476,6 +663,29 @@ Let your Workflow continue to run but don't start the Worker yet.
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-deposit-activity-->
+[MoneyTransferWorker/Activities.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferWorker/Activities.cs)
+```cs
+    [Activity]
+    public static async Task<string> DepositAsync(PaymentDetails details)
+    {
+        var bankService = new BankingService("bank2.example.com");
+        Console.WriteLine($"Depositing ${details.Amount} into account {details.TargetAccount}.");
+
+        // Uncomment below and comment out the try-catch block below to simulate unknown failure
+        /*
+        return await bankService.DepositThatFailsAsync(details.TargetAccount, details.Amount, details.ReferenceId);
+        */
+
+        try
+        {
+            return await bankService.DepositAsync(details.TargetAccount, details.Amount, details.ReferenceId);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationFailureException("Deposit failed", ex);
+        }
+    }
+```
 <!--SNIPEND-->
 
 
@@ -531,6 +741,45 @@ In `Workflow.cs`, you can see that a **`StartToCloseTimeout`** is specified for 
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-start-workflow-->
+[MoneyTransferClient/Program.cs](https://github.com/temporalio/money-transfer-project-template-dotnet/blob/main/MoneyTransferClient/Program.cs)
+```cs
+// This file is designated to run the workflow
+using Temporalio.MoneyTransferProject.MoneyTransferWorker;
+using Temporalio.Client;
+
+// Connect to the Temporal server
+var client = await TemporalClient.ConnectAsync(new("localhost:7233") { Namespace = "default" });
+
+// Define payment details
+var details = new PaymentDetails(
+    SourceAccount: "85-150",
+    TargetAccount: "43-812",
+    Amount: 400,
+    ReferenceId: "12345"
+);
+
+Console.WriteLine($"Starting transfer from account {details.SourceAccount} to account {details.TargetAccount} for ${details.Amount}");
+
+var workflowId = $"pay-invoice-{Guid.NewGuid()}";
+
+try
+{
+    // Start the workflow
+    var handle = await client.StartWorkflowAsync(
+        (MoneyTransferWorkflow wf) => wf.RunAsync(details),
+        new(id: workflowId, taskQueue: "MONEY_TRANSFER_TASK_QUEUE"));
+
+    Console.WriteLine($"Started Workflow {workflowId}");
+
+    // Await the result of the workflow
+    var result = await handle.GetResultAsync();
+    Console.WriteLine($"Workflow result: {result}");
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"Workflow execution failed: {ex.Message}");
+}
+```
 <!--SNIPEND-->
 
 

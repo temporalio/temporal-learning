@@ -49,6 +49,33 @@ The Workflow will be responsible for executing the Activities, or steps, in your
 Create a new file called `your_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-your-workflow-python-->
+[your_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/your_workflow.py)
+```py
+from datetime import timedelta
+from typing import Any, List
+
+from temporalio import workflow
+
+with workflow.unsafe.imports_passed_through():
+    from activities import TemporalCommunityPost, post_ids, top_posts
+
+
+@workflow.defn
+class TemporalCommunityWorkflow:
+    @workflow.run
+    async def run(self) -> List[TemporalCommunityPost]:
+        news_ids = await workflow.execute_activity(
+            post_ids,
+            start_to_close_timeout=timedelta(seconds=15),
+        )
+        return await workflow.execute_activity(
+            top_posts,
+            news_ids,
+            start_to_close_timeout=timedelta(seconds=15),
+        )
+
+
+```
 <!--SNIPEND-->
 
 The `TemporalCommunityWorkflow` class is decorated with the `@workflow.defn` which must be set on any registered Workflow class.
@@ -80,6 +107,58 @@ The `post_ids()` function gets the top 10 Temporal Community posts while, `top_p
 Create a new file called `activities.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-activity-python-->
+[activities.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/activities.py)
+```py
+from dataclasses import dataclass
+from typing import Any, List
+
+import aiohttp
+from temporalio import activity
+
+TASK_QUEUE_NAME = "temporal-community-task-queue"
+
+
+@dataclass
+class TemporalCommunityPost:
+    title: str
+    url: str
+    views: int
+
+
+@activity.defn
+async def post_ids() -> List[str]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://community.temporal.io/latest.json") as response:
+            if not 200 <= int(response.status) < 300:
+                raise RuntimeError(f"Status: {response.status}")
+            post_ids = await response.json()
+
+    return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
+
+
+@activity.defn
+async def top_posts(post_ids: List[str]) -> List[TemporalCommunityPost]:
+    results: List[TemporalCommunityPost] = []
+    async with aiohttp.ClientSession() as session:
+        for item_id in post_ids:
+            async with session.get(
+                f"https://community.temporal.io/t/{item_id}.json"
+            ) as response:
+                if response.status < 200 or response.status >= 300:
+                    raise RuntimeError(f"Status: {response.status}")
+                item = await response.json()
+                slug = item["slug"]
+                url = f"https://community.temporal.io/t/{slug}/{item_id}"
+                community_post = TemporalCommunityPost(
+                    title=item["title"], url=url, views=item["views"]
+                )
+                results.append(community_post)
+    results.sort(key=lambda x: x.views, reverse=True)
+    top_ten = results[:10]
+    return top_ten
+
+
+```
 <!--SNIPEND-->
 
 :::note
@@ -113,6 +192,31 @@ The Worker component plays a crucial role in your data pipeline by hosting and e
 To enable the execution of your Workflows and Activities, you need to set up a Worker. Start by creating a new file called `run_worker.py` and add the following code. This code will define the Worker's behavior, allowing it to host and execute the Workflows and/or Activities associated with your application.
 
 <!--SNIPSTART data-pipeline-run-worker-python-->
+[run_worker.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/run_worker.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+from temporalio.worker import Worker
+
+from activities import TASK_QUEUE_NAME, post_ids, top_posts
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    worker = Worker(
+        client,
+        task_queue=TASK_QUEUE_NAME,
+        workflows=[TemporalCommunityWorkflow],
+        activities=[top_posts, post_ids],
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 To run a Worker, you create an instance of the same Client that's used to start the Workflow.
@@ -139,6 +243,35 @@ The Workflow is executed by the Temporal Client, which is connected to an instan
 Create a new file called `run_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-run-workflow-python-->
+[run_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/run_workflow.py)
+```py
+import asyncio
+
+import pandas as pd
+from temporalio.client import Client
+
+from activities import TASK_QUEUE_NAME
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    stories = await client.execute_workflow(
+        TemporalCommunityWorkflow.run,
+        id="temporal-community-workflow",
+        task_queue=TASK_QUEUE_NAME,
+    )
+    df = pd.DataFrame(stories)
+    df.columns = ["Title", "URL", "Views"]
+    print("Top 10 stories on Temporal Community:")
+    print(df)
+    return df
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 The `Client.connect()` connects to an instance of the Temporal Client. Since it's running locally, it's connected to `localhost:7233`.
@@ -209,6 +342,44 @@ For this example, you'll schedule the Workflow to run every 10 hours.
 Create a new file called `schedule_workflow.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-schedule-workflow-python-->
+[schedule_workflow.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/schedule_workflow.py)
+```py
+import asyncio
+from datetime import timedelta
+
+from temporalio.client import (
+    Client,
+    Schedule,
+    ScheduleActionStartWorkflow,
+    ScheduleIntervalSpec,
+    ScheduleSpec,
+    ScheduleState,
+)
+
+from activities import TASK_QUEUE_NAME
+from your_workflow import TemporalCommunityWorkflow
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    await client.create_schedule(
+        "top-stories-every-10-hours",
+        Schedule(
+            action=ScheduleActionStartWorkflow(
+                TemporalCommunityWorkflow.run,
+                id="temporal-community-workflow",
+                task_queue=TASK_QUEUE_NAME,
+            ),
+            spec=ScheduleSpec(
+                intervals=[ScheduleIntervalSpec(every=timedelta(hours=10))]
+            ),
+        ),
+    )
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 
 Set the `create_schedule()` function on the Client and pass a unique identifier for the Schedule. You can use the unique identifier as a business process identifier, for example `temporal-community-workflow`. It is crucial for each Schedule to have a unique identifier to avoid conflicts and ensure clear identification. The unique identifier ensures unambiguous identification and distinguishes one Schedule from another, avoiding potential errors.
@@ -249,6 +420,26 @@ Now that you've scheduled your Workflow, let's add the ability to delete the Sch
 Create a new file called `delete_schedule.py` and add the following code:
 
 <!--SNIPSTART data-pipeline-delete-schedule-python-->
+[delete_schedule.py](https://github.com/temporalio/data-pipeline-project-python/blob/main/delete_schedule.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+
+
+async def main():
+    client = await Client.connect("localhost:7233")
+    handle = client.get_schedule_handle(
+        "top-stories-every-10-hours",
+    )
+
+    await handle.delete()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
 <!--SNIPEND-->
 
 Run the following command to delete the Schedule.
