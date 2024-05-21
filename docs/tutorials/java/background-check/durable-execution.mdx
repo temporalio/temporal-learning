@@ -221,6 +221,49 @@ The following are some common operations that **can't** be done inside of a Work
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
 <!--SNIPSTART java-durability-chapter-non-deterministic-workflow-implementation-->
+[docs/tutorials/java/background-check/code/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayNonDeterministicWorkflowImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayNonDeterministicWorkflowImpl.java)
+```java
+package backgroundcheckreplay;
+
+import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
+import org.slf4j.Logger;
+
+import java.time.Duration;
+import java.util.Random;
+
+public class BackgroundCheckReplayNonDeterministicWorkflowImpl implements BackgroundCheckReplayNonDeterministicWorkflow {
+
+  // Define the Activity Execution options
+  // StartToCloseTimeout or ScheduleToCloseTimeout must be set
+  ActivityOptions options = ActivityOptions.newBuilder()
+          .setStartToCloseTimeout(Duration.ofSeconds(5))
+          .build();
+
+  // Create an client stub to activities that implement the given interface
+  private final BackgroundCheckReplayActivities activities =
+      Workflow.newActivityStub(BackgroundCheckReplayActivities.class, options);
+
+  @Override
+  public String backgroundCheck(String socialSecurityNumber) {
+
+    // highlight-start
+    // CAUTION, the following code is an anti-pattern showing what NOT to do
+    Random random = new Random();
+    if(random.nextInt(101)>= 50){
+      Workflow.sleep(Duration.ofSeconds(60));
+    }
+    //highlight-end
+
+    // Execute the Activity synchronously (wait for the result before proceeding)
+    String ssnTraceResult = activities.ssnTraceActivity(socialSecurityNumber);
+
+    // Make the results of the Workflow available
+    return ssnTraceResult;
+  }
+
+}
+```
 <!--SNIPEND-->
 
 ## Non-deterministic code changes {#durability-through-replays}
@@ -303,6 +346,50 @@ The Temporal SDK offers both a `Workflow.newTimer()` API, and a `Workflow.sleep(
 Use the `Workflow.getLogger` API to log from Workflows to suppress repeated logs from the Replay of the Workflow code.
 
 <!--SNIPSTART java-durability-chapter-workflow-->
+[docs/tutorials/java/background-check/code/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowImpl.java)
+```java
+package backgroundcheckreplay;
+
+import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
+import org.slf4j.Logger;
+
+import java.time.Duration;
+
+public class BackgroundCheckReplayWorkflowImpl implements BackgroundCheckReplayWorkflow {
+
+  public static final Logger logger = Workflow.getLogger(BackgroundCheckReplayWorkflowImpl.class);
+
+  // Define the Activity Execution options
+  // StartToCloseTimeout or ScheduleToCloseTimeout must be set
+  ActivityOptions options = ActivityOptions.newBuilder()
+          .setStartToCloseTimeout(Duration.ofSeconds(5))
+          .build();
+
+  // Create an client stub to activities that implement the given interface
+  private final BackgroundCheckReplayActivities activities =
+      Workflow.newActivityStub(BackgroundCheckReplayActivities.class, options);
+
+  @Override
+  public String backgroundCheck(String socialSecurityNumber) {
+
+    // highlight-start
+    // Sleep for 1 minute
+    logger.info("Sleeping for 1 minute...");
+    Workflow.sleep(Duration.ofSeconds(60));
+    logger.info("Finished sleeping");
+    //highlight-end
+
+    // Execute the Activity synchronously (wait for the result before proceeding)
+    String ssnTraceResult = activities.ssnTraceActivity(socialSecurityNumber);
+
+    // Make the results of the Workflow available
+    return ssnTraceResult;
+  }
+
+}
+
+```
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
@@ -361,14 +448,7 @@ decided to delete it. Once you have deployed your change, you would go to
 the currently blocked Workflow in the Web-UI and select **Reset** from the dropdown
 in the top right.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Select the Workflow Reset Option</p>
-  </div>
-  <div class="tdiiw" height="1036">
-    <img class="img_ev3q" src="/img/java/select-reset-web-ui.png" alt="Select the Workflow Reset Option" />
-  </div>
-</div>
+![Select the Workflow Reset Option](./images/select-reset-web-ui.png)
 
 Next you'll see a list of available points where the Workflow can be reset to.
 The only valid option would be to reset the Worklfow to the first `WorkflowTaskCompleted`
@@ -377,45 +457,20 @@ always include a reason why you are resetting this event. The reason will be
 persisted in the Event History and may be useful to others who inspect why the
 Workflow was reset.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Workflow Reset Points</p>
-  </div>
-  <div class="tdiiw" height="938">
-    <img class="img_ev3q" src="/img/java/select-event-reset-web-ui.png" alt="Workflow Reset Points" />
-  </div>
-</div>
+![Workflow Reset Points](./images/select-event-reset-web-ui.png)
 
 Once you've reset the Workflow you'll notice that the Workflow terminated and
 the Web UI provided a link to a new Workflow execution. The Event History up until
 the point you chose was copied over and executed.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Workflow Terminated and Reset</p>
-  </div>
-  <div class="tdiiw" height="1250">
-    <img class="img_ev3q" src="/img/java/event-terminated-and-reset.png" alt="Workflow Terminated and Reset" />
-  </div>
-</div>
+![Workflow Terminated and Reset](./images/event-terminated-and-reset.png)
 
 After the Timer has fired the Workflow should execute to completion without any
 more errors. If you scroll down in the Web UI you'll see the new Event History,
 including the `WorkflowTaskFailed` event that was used as the reset point, along
 with the reason you reset the workflow.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">New Event History Success with Reset</p>
-  </div>
-  <div class="tdiiw" height="1716">
-    <img
-      class="img_ev3q"
-      src="/img/java/new-event-history-success-with-reset.png"
-      alt="New Event History Success with Reset"
-    />
-  </div>
-</div>
+![New Event History Success with Reset](./images/new-event-history-success-with-reset.png)
 
 ### Resetting via the Temporal CLI
 
@@ -441,18 +496,7 @@ io.temporal.worker.NonDeterministicException: Failure handling event 5 of type '
 
 And you will see information about the failure in the Web UI as well.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Web UI view of a non-determinism error</p>
-  </div>
-  <div class="tdiiw" height="622">
-    <img
-      class="img_ev3q"
-      src="/img/java/non-deterministic-workflow-task-failure-java.png"
-      alt="Web UI view of a non-determinism error"
-    />
-  </div>
-</div>
+![Web UI view of a non-determinism error](./images/non-deterministic-workflow-task-failure-java.png)
 
 To inspect the Workflow Task failure using the Temporal CLI, you can use the `long` value for the `--fields` command option with the `temporal workflow show` command.
 
