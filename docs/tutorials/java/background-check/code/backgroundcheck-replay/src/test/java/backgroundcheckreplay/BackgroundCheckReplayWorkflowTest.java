@@ -1,4 +1,3 @@
-/* dacx */
 package backgroundcheckreplay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,14 +53,7 @@ public class BackgroundCheckReplayWorkflowTest {
   
   }
 
-  /*
-  Add the Replay test to the set of application tests.
-  The Replayer is available from the `io.temporal.testing` package in the SDK.
-  Register the Workflow Definition and then specify an existing Event History to compare to.
-
-  Run the tests in the test directory (`mvn test` or `./gradlew test`).
-  If the Workflow Definition and the Event History are incompatible then the test fails.
-  */  
+  // @@@SNIPSTART java-durability-chapter-replay-test
 
   @Test
   public void testSuccessfulReplayFromFile(TestWorkflowEnvironment testEnv, Worker worker,
@@ -75,14 +67,4 @@ public class BackgroundCheckReplayWorkflowTest {
   }
 }
 
-/* @dacx
-id: add-replay-test-to-background-check-workflow
-title: Add a Replay test
-description: Define the code needed to run a Worker Process in Go.
-label: Add Replay test
-lines: 66-75
-tags:
-- testing
-- replay test
-- replayer
-@dacx */
+// @@@SNIPEND

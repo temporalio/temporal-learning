@@ -1,4 +1,3 @@
-/* dacx */
 package backgroundcheckreplay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

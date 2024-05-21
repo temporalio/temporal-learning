@@ -50,7 +50,7 @@ Python 3.10.9
 
 ## Install the Temporal Python SDK
 
-You should install the Temporal Python SDK in your project using a virtual environment. 
+You should install the Temporal Python SDK in your project using a virtual environment.
 
 Create a directory for your Temporal project:
 
@@ -115,13 +115,13 @@ You'll see an output similar to the following:
 Successfully installed temporalio-x.y
 ```
 
-Next, you'll configure a local Temporal cluster for development.
+Next, you'll configure a local Temporal Service for development.
 
-## Set up a local Temporal development cluster with Temporal CLI
+## Set up a local Temporal Service for development with Temporal CLI
 
-import Cluster from '@site/docs/getting_started/_temporal_cluster.md'
+import TemporalService from '@site/docs/getting_started/_temporal_service.md'
 
-<Cluster />
+<TemporalService />
 
 Once you have everything installed, you're ready to build Temporal Applications with Python on your local machine.
 

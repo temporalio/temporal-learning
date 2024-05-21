@@ -1,11 +1,6 @@
-/* dacx */
 package backgroundcheckreplay;
 
 import io.temporal.activity.ActivityInterface;
-
-/*
-The `BackgroundCheckActivity` interface below is an example of a the first part defining an Activity
-*/
 
 // Activity Interfaces must be annotated with @ActivityInterface
 @ActivityInterface

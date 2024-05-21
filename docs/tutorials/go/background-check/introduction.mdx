@@ -1,0 +1,171 @@
+---
+id: introduction
+title: Introduction to the Temporal Go SDK Background Check tutorial
+sidebar_label: Introduction
+sidebar_position: 1
+description: Learn more about the Temporal Go SDK Background Check tutorial.
+toc_max_heading_level: 4
+keywords:
+- dev guide
+- go
+- temporal sdk
+tags:
+- dev-guide
+- go
+- temporal-sdk
+---
+
+Welcome to the Temporal Go SDK Background Check tutorial.
+
+## Why Temporal?
+
+**Why should you use Temporal to build applications?**
+
+If you are reading this, chances are you already have some notion of why you want to use Temporal.
+However, if you are still unsure, there are three major reasons why Temporal might be right for you.
+
+1. **Reliabile execution.**
+  With Temporal, you can rely on your application to work.
+  The design of the system ensures that, once started, an application's main function executes to completion, whether that takes minutes, hours, days, weeks, or even years.
+  Temporal calls this "Durable Execution".
+
+2. **Code structure.**
+  Temporal's programming model offers developers a way to express their business logic into coherent "Workflows" that are much easier to develop than distributed code bases.
+
+3. **State visibility.**
+  The Temporal system provides out-of-the-box tooling that enables developers to see the state of their applications whenever they need to.
+
+## Audience
+
+**Who is this tutorial for?**
+
+This tutorial is for any developer who wants to learn how to develop Temporal Applications.
+This tutorial assumes that you have some experience with the Go programming language.
+And it assumes that you, the developer, are ready to build an application to learn Temporal.
+
+However, with that said, Temporal enables developers to build a wide range of applications that serve a variety of use cases. Thus, we recommend that developers are equipped with some of the following Go programming skills and experiences to develop production-level Temporal Applications and to generally succeed with the Temporal Go SDK.**
+
+:::tip Recommended
+
+**Core fundamentals:**
+
+- Go syntax and structure
+- Variables, Types, and Structures
+- Control flow: loops, conditionals
+- Slices and Maps
+- Basic I/O operations
+
+**Go-specific principles:**
+
+- Understanding Goroutines and Channels
+- Error handling in Go
+- Go Modules and Dependency Management
+- Pointers in Go
+- Structs, Interfaces, and Embedding
+- Go Testing and Benchmarking
+
+:::
+
+:::info Nice to have
+
+**Tools**
+
+We recommend that developers have a beginner to moderate level of experience using a Go IDE, or a preferred editor with Go extensions, such as Visual Studio Code with Go extension.
+
+**Testing**
+
+We recommend that developers have some experience with Go's built-in testing framework.
+
+**Code base version control**
+
+We recommend that developers have some experience using a version control system, such as Git.
+
+**Dependency management**
+
+Being familiar with Go modules for dependency management can be beneficial.
+
+**Listing and sorting**
+
+Understanding SQL-like syntax and CRUD operational concepts can help utilize Temporal’s Visibility tools.
+
+**Security**
+
+We recommend having some understanding and experience with TLS, security certificates, and private keys for onboarding with Temporal Cloud or setting up a Self-Hosted Cluster.
+
+**Privacy**
+
+We advise having an understanding and experience with PII and sensitive information encryption for applications that handle user data.
+
+:::
+
+:::caution Complex and large-scale use cases
+
+**Large scale use cases**
+
+For intricate and vast use cases, having some experience with the following could be helpful:
+
+- Deeper Go runtime understanding, including:
+  - Go's memory model
+  - Go garbage collection
+- Design Patterns applicable to Go, such as Singletons or Factories.
+- Distributed system architectures:
+  - Event-driven architectures and how events drive processes in the context of Workflows.
+- The distinctions between stateful vs. stateless processes.
+- Implications of service scalability on performance and reliability.
+- Ensuring fault tolerance and understanding supervisor systems for progress checks and resumptions.
+
+:::
+
+## Competencies
+
+**What does this tutorial cover?**
+
+This tutorial contextualizes the concepts, features, and tools that developers encounter on their journey through Temporal Application development.
+
+It provides focused learning through a specific use-case and relies on a set of sample applications specifically tailored to meet the needs of each chapter.
+Each application is meant to capture the iterative steps, showcasing best practices, and teach core concepts.
+
+Essentially, you will iterate on the application in each chapter, learning new things as you go.
+
+**What will you learn while you build the application?**
+
+By building the application, you will attempt to adopt the following competencies, where each competency is supported by a set of learning objectives:
+
+- **Construct a new Temporal Application project.**
+  - **Describe the tools available and recommended to develop Workflows.**
+  - **Describe the code that actually constitutes a Temporal application.**
+  - **Implement an appropriate testing framework.**
+- **How to develop applications for Durable Execution.**
+  - **Identify SDK API calls that map to Events.**
+  - **Recognize non-deterministic Workflow code.**
+  - **Explain how Workflow code execution progresses.**
+
+<!-- TODO
+- **How to patch (version) Temporal Application code.**
+- **How to gracefully handle application level errors from Activity Executions.**
+- **How to cancel an in progress Workflow Execution.**
+- **How to pass messages to and get data from from Workflow Executions.**
+- **How to develop applications for throughput and distributed process states.**
+-->
+
+There is more to learn beyond these competencies. But, once you have become comfortable with these, then you should be able to build Temporal Applications for most use cases.
+
+## Not covered
+
+**What is not covered in this tutorial?**
+
+This tutorial does not cover production level aspects of the application and its deployment.
+
+- Data encryption: While a Background Check application is a good example of an application that handles personal identifiable information (PII) this tutorial does not cover that topic.
+- Metrics: Emitting and monitoring metrics is typically an essential aspect of production level deployments. This tutorial does not cover that topic.
+- Performance tuning: Improving the speed at which a Temporal Worker (your bundled application code) is capable of executing the next step in your application becomes essential for scaled out usage. This tutorial does not cover that topic.
+
+## Feedback
+
+**Where can I get help or provide feedback?**
+
+There are multiple places you can go to engage with Temporal maintainers and the Temporal community to get help or provide feedback.
+
+- _#go-sdk_ channel in [Slack](https://t.mp/slack)
+- [Community Forum](https://community.temporal.io/tag/go-sdk)
+- [Go SDK repository](https://github.com/temporalio/sdk-go/)

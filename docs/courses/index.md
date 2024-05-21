@@ -30,8 +30,8 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 <Link className="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -47,8 +47,8 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -64,8 +64,26 @@ In this course, you'll go beyond the fundamentals, learning how to safely evolve
 
 <Link className="button button--primary" to="versioning/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="versioning/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="versioning/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="versioning/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="versioning/typescript">TypeScript</Link>&nbsp;
+
+-----
+
+## [Securing Application Data](appdatasec/index.md)
+
+In this course, you'll implement Custom Data Conversion for your Temporal Workflows.
+By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
+
+**Estimated time**: ⏱️ 2 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="appdatasec/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="appdatasec/python">Python</Link>&nbsp;
 
 -----
 

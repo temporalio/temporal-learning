@@ -1,4 +1,3 @@
-/* dacx */
 package backgroundcheckreplay;
 
 import io.temporal.workflow.WorkflowInterface;

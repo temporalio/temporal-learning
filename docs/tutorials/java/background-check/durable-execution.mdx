@@ -163,13 +163,10 @@ From the Workflow details page you can copy the Event History from the JSON tab 
 
 ## Add a Replay test {#add-replay-test}
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/test/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowTest.java">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
+Add the Replay test to the set of application tests.
 
+<!--SNIPSTART java-durability-chapter-replay-test-->
+[docs/tutorials/java/background-check/code/backgroundcheck-replay/src/test/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowTest.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck-replay/src/test/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowTest.java)
 ```java
 
   @Test
@@ -182,7 +179,10 @@ From the Workflow details page you can copy the Event History from the JSON tab 
         BackgroundCheckReplayWorkflowImpl.class));
 
   }
+}
+
 ```
+<!--SNIPEND-->
 
 ### Why add a Replay test? {#why-replay-test}
 
@@ -220,56 +220,8 @@ The following are some common operations that **can't** be done inside of a Work
 
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayNonDeterministicWorkflowImpl.java">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```java
-
-import io.temporal.activity.ActivityOptions;
-import io.temporal.workflow.Workflow;
-import org.slf4j.Logger;
-
-import java.time.Duration;
-import java.util.Random;
-
-
-
-public class BackgroundCheckReplayNonDeterministicWorkflowImpl implements BackgroundCheckReplayNonDeterministicWorkflow {
-
-  // Define the Activity Execution options
-  // StartToCloseTimeout or ScheduleToCloseTimeout must be set
-  ActivityOptions options = ActivityOptions.newBuilder()
-          .setStartToCloseTimeout(Duration.ofSeconds(5))
-          .build();
-
-  // Create an client stub to activities that implement the given interface
-  private final BackgroundCheckReplayActivities activities =
-      Workflow.newActivityStub(BackgroundCheckReplayActivities.class, options);
-
-  @Override
-  public String backgroundCheck(String socialSecurityNumber) {
-
-    // highlight-start
-    // CAUTION, the following code is an anti-pattern showing what NOT to do
-    Random random = new Random();
-    if(random.nextInt(101)>= 50){
-      Workflow.sleep(Duration.ofSeconds(60));
-    }
-    //highlight-end
-
-    // Execute the Activity synchronously (wait for the result before proceeding)
-    String ssnTraceResult = activities.ssnTraceActivity(socialSecurityNumber);
-
-    // Make the results of the Workflow available
-    return ssnTraceResult;
-  }
-
-}
-```
+<!--SNIPSTART java-durability-chapter-non-deterministic-workflow-implementation-->
+<!--SNIPEND-->
 
 ## Non-deterministic code changes {#durability-through-replays}
 
@@ -350,57 +302,8 @@ The Temporal SDK offers both a `Workflow.newTimer()` API, and a `Workflow.sleep(
 
 Use the `Workflow.getLogger` API to log from Workflows to suppress repeated logs from the Replay of the Workflow code.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowImpl.java">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```java
-
-package backgroundcheckreplay;
-
-import io.temporal.activity.ActivityOptions;
-import io.temporal.workflow.Workflow;
-import org.slf4j.Logger;
-
-import java.time.Duration;
-
-
-public class BackgroundCheckReplayWorkflowImpl implements BackgroundCheckReplayWorkflow {
-
-  public static final Logger logger = Workflow.getLogger(BackgroundCheckReplayWorkflowImpl.class);
-
-  // Define the Activity Execution options
-  // StartToCloseTimeout or ScheduleToCloseTimeout must be set
-  ActivityOptions options = ActivityOptions.newBuilder()
-          .setStartToCloseTimeout(Duration.ofSeconds(5))
-          .build();
-
-  // Create an client stub to activities that implement the given interface
-  private final BackgroundCheckReplayActivities activities =
-      Workflow.newActivityStub(BackgroundCheckReplayActivities.class, options);
-
-  @Override
-  public String backgroundCheck(String socialSecurityNumber) {
-
-    // highlight-start
-    // Sleep for 1 minute
-    logger.info("Sleeping for 1 minute...");
-    Workflow.sleep(Duration.ofSeconds(60));
-    logger.info("Finished sleeping");
-    //highlight-end
-
-    // Execute the Activity synchronously (wait for the result before proceeding)
-    String ssnTraceResult = activities.ssnTraceActivity(socialSecurityNumber);
-
-    // Make the results of the Workflow available
-    return ssnTraceResult;
-  }
-
-}
-```
+<!--SNIPSTART java-durability-chapter-workflow-->
+<!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
 

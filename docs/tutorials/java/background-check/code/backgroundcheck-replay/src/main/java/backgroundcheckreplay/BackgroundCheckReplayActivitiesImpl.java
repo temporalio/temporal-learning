@@ -1,4 +1,3 @@
-/* dacx */
 package backgroundcheckreplay;
 
 public class BackgroundCheckReplayActivitiesImpl implements BackgroundCheckReplayActivities{

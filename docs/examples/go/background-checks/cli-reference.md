@@ -6,7 +6,7 @@ title: Background Checks CLI reference
 image: /img/temporal-logo-twitter-card.png
 ---
 
-For this Learning Path, we use three distinct CLIs to represent the user interfaces (UI) that each user type would interact with.
+For this Learning Path, you use three distinct CLIs to represent the user interfaces (UI) that each user type would interact with.
 
 - [Company CLI](#bgc-company)
 - [Candidate CLI](#bgc-candidate)
