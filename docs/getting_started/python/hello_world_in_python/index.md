@@ -272,7 +272,7 @@ The test function `test_execute_workflow` creates a `WorkflowEnvironment` so it 
 
 :::note
 
-The `start_time_skipping()` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local()` option instead, which uses a full local insTance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs.
+The `start_time_skipping()` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local()` option instead, which uses a full local instance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs.
 
 The `start_time_skipping()` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial.
 
