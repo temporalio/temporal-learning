@@ -367,28 +367,26 @@ In the Temporal Java SDK programming model, a [Workflow Definition](https://docs
 
 #### Boilerplate Workflow Interface {#workflow-code}
 
-
-
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/main/java/backgroundcheckreplay/BackgroundCheckReplayNonDeterministicWorkflow.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-workflow-interface-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflow.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflow.java)
 ```java
+package backgroundcheckboilerplate;
 
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 
-
-// BackgroundCheckReplayWorkflowNonDeterministic is an anti-pattern Workflow Definition
+// Workflow Interfaces must be annotated with @WorkflowInterface
 @WorkflowInterface
-public interface BackgroundCheckReplayNonDeterministicWorkflow {
+public interface BackgroundCheckBoilerplateWorkflow {
 
   // The Workflow Method within the interface must be annotated with @WorkflowMethod
   @WorkflowMethod
   public String backgroundCheck(String socialSecurityNumber);
 
 }
+
 ```
-
-
+<!--SNIPEND-->
 
 To designate an interface as a Workflow, annotate the interface declaration
 with `@WorkflowInterface`. Then designate a method within the interface
@@ -401,15 +399,15 @@ There can only be one Workflow Method per Workflow Definition.
 
 Now that you've defined your Workflow Interface you can define its implementation.
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-workflow-implementation-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java)
 ```java
+package backgroundcheckboilerplate;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.workflow.Workflow;
 
 import java.time.Duration;
-
 
 public class BackgroundCheckBoilerplateWorkflowImpl implements BackgroundCheckBoilerplateWorkflow {
 
@@ -431,8 +429,7 @@ public class BackgroundCheckBoilerplateWorkflowImpl implements BackgroundCheckBo
 
 }
 ```
-
-
+<!--SNIPEND-->
 
 You define your Workflow Implementation by defining a class that `implements` the
 Workflow Interface.
@@ -468,12 +465,12 @@ In the Temporal Java SDK programming model, an Activity is defined as an interfa
 
 The `BackgroundCheckActivity` interface below is an example of a the first part defining an Activity
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-activities-interface-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java)
 ```java
+package backgroundcheckboilerplate;
 
 import io.temporal.activity.ActivityInterface;
-
 
 // Activity Interfaces must be annotated with @ActivityInterface
 @ActivityInterface
@@ -485,8 +482,7 @@ public interface BackgroundCheckBoilerplateActivities {
 
 }
 ```
-
-
+<!--SNIPEND-->
 
 To designate an interface as a Activity, annotate the interface declaration
 with `@ActivityInterface`. Then designate a method within the interface
@@ -499,10 +495,10 @@ Activity. There can multiple Activity Methods per Activity Definition.
 
 Now that you've defined your Activity Interface you can define its implementation.
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-activity-implementation-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java)
 ```java
-
+package backgroundcheckboilerplate;
 
 public class BackgroundCheckBoilerplateActivitiesImpl implements BackgroundCheckBoilerplateActivities{
 
@@ -519,8 +515,7 @@ public class BackgroundCheckBoilerplateActivitiesImpl implements BackgroundCheck
 
 }
 ```
-
-
+<!--SNIPEND-->
 
 You define your Activity Implementation by defining a class that `implements` the
 Activity Interface.
@@ -550,7 +545,6 @@ no progress unless at least one Worker is running.
 
 #### Run a dev server Worker {#dev-server-worker}
 
-
 To run a Worker Process with a local development server, define the following steps in code:
 - Generate the gRPC stubs necessary to configure a connection to a Temporal Cluster running on localhost using the 'default' namespace
 - Initialize a Temporal Client (`WorkflowClient`), passing in the gRPC stubs.
@@ -561,19 +555,17 @@ To run a Worker Process with a local development server, define the following st
 
 Temporal recommends keeping Worker code separate from Workflow and Activity code.
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/main/java/backgroundcheckreplay/workers/DevServerWorker.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-dev-service-worker-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/DevServerWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/DevServerWorker.java)
 ```java
+package backgroundcheckboilerplate.workers;
 
-import backgroundcheckreplay.BackgroundCheckReplayActivitiesImpl;
-import backgroundcheckreplay.BackgroundCheckReplayWorkflowImpl;
-import backgroundcheckreplay.BackgroundCheckReplayNonDeterministicWorkflowImpl;
+import backgroundcheckboilerplate.BackgroundCheckBoilerplateActivitiesImpl;
+import backgroundcheckboilerplate.BackgroundCheckBoilerplateWorkflowImpl;
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-
-
 public class DevServerWorker {
   public static void main(String[] args) {
 
@@ -587,19 +579,20 @@ public class DevServerWorker {
     WorkerFactory factory = WorkerFactory.newInstance(client);
 
     // Create a new Worker
-    Worker worker = factory.newWorker("backgroundcheck-replay-task-queue-local");
+    Worker worker = factory.newWorker("backgroundcheck-tasks");
 
     // Register the Workflow by passing in the class to the worker
-    worker.registerWorkflowImplementationTypes(BackgroundCheckReplayWorkflowImpl.class);
-    worker.registerWorkflowImplementationTypes(BackgroundCheckReplayNonDeterministicWorkflowImpl.class);
+    worker.registerWorkflowImplementationTypes(BackgroundCheckBoilerplateWorkflowImpl.class);
 
     // Register the Activities by passing in an Activities object used for execution
-    worker.registerActivitiesImplementations(new BackgroundCheckReplayActivitiesImpl());
+    worker.registerActivitiesImplementations(new BackgroundCheckBoilerplateActivitiesImpl());
 
     // Start the Worker
     factory.start();
+  }
+}
 ```
-
+<!--SNIPEND-->
 
 #### Run a Temporal Cloud Worker {#cloud-worker}
 
@@ -610,10 +603,9 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 - Temporal Cloud Address
 - Certificate and private key associated with the Namespace
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-boilerplate-cloud-worker-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java)
 ```java
-
 package backgroundcheckboilerplate.workers;
 
 import java.io.FileInputStream;
@@ -630,7 +622,6 @@ import java.lang.System;
 import backgroundcheckboilerplate.BackgroundCheckBoilerplateActivitiesImpl;
 import backgroundcheckboilerplate.BackgroundCheckBoilerplateWorkflowImpl;
 import java.io.IOException;
-
 
 public class CloudWorker {
   public static void main(String[] args) throws IOException{
@@ -686,8 +677,7 @@ public class CloudWorker {
   }
 }
 ```
-
-
+<!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
  You'll use:
@@ -772,20 +762,19 @@ Copy the IP address part.
 Set IP address and port in the Service Stubs Options and the Namespace in the 
 Temporal Client options.
 
-<div class="copycode-notice-container"><a href="https://github.com/temporalio/documentation/blob/main/sample-apps/java/backgroundcheck-replay/src/main/java/backgroundcheckreplay/workers/SelfHostedWorker.java">View the source code</a> in the context of the rest of the application code.</div>
-
+<!--SNIPSTART java-project-setup-chapter-self-hosted-worker-->
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/SelfHostedWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/SelfHostedWorker.java)
 ```java
+package backgroundcheckboilerplate.workers;
 
-import backgroundcheckreplay.BackgroundCheckReplayActivitiesImpl;
-import backgroundcheckreplay.BackgroundCheckReplayWorkflowImpl;
-import backgroundcheckreplay.BackgroundCheckReplayNonDeterministicWorkflowImpl;
+import backgroundcheckboilerplate.BackgroundCheckBoilerplateActivitiesImpl;
+import backgroundcheckboilerplate.BackgroundCheckBoilerplateWorkflowImpl;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-
 
 public class SelfHostedWorker {
   public static void main(String[] args) {
@@ -813,16 +802,18 @@ public class SelfHostedWorker {
     Worker worker = factory.newWorker("backgroundcheck-tasks");
 
     // Register the Workflow by passing in the class to the worker
-    worker.registerWorkflowImplementationTypes(BackgroundCheckReplayWorkflowImpl.class);
+    worker.registerWorkflowImplementationTypes(BackgroundCheckBoilerplateWorkflowImpl.class);
 
     // Register the Activities by passing in an Activities object used for execution
-    worker.registerActivitiesImplementations(new BackgroundCheckReplayActivitiesImpl());
+    worker.registerActivitiesImplementations(new BackgroundCheckBoilerplateActivitiesImpl());
 
     // Start the Worker
     factory.start();
   }
-```
+}
 
+```
+<!--SNIPEND-->
 
 Add a Docker file to the root of your Background Check application project.
 
@@ -910,7 +901,7 @@ When you visit for the first time, the Web UI directs you to [http://localhost:8
 
 Use the Namespace dropdown to select the project Namespace you created earlier.
 
-<div class="tdiw"><div class="tditw"><p class="tdit">Web UI Namespace selection</p></div><div class="tdiiw" height="1402"><img class="img_ev3q" src="/img/web-ui-namespace-selection.png" alt="Web UI Namespace selection" /></div></div>
+![Web UI Namespace selection](./images/web-ui-namespace-selection.png)
 
 You should now be at [http://localhost:8233/namespaces/backgroundcheck_namespace/workflows](http://localhost:8233/namespaces/backgroundcheck_namespace/workflows).
 
@@ -981,7 +972,7 @@ The URL will look something like the following:
 https://cloud.temporal.io/namespaces/<namespace>.<account-id>/workflows
 ```
 
-<div class="tdiw"><div class="tditw"><p class="tdit">View Workflows in the Cloud UI</p></div><div class="tdiiw" height="578"><img class="img_ev3q" src="/img/cloud-view-workflows.png" alt="View Workflows in the Cloud UI" /></div></div>
+![View Workflows in the Cloud UI](./images/cloud-view-workflows.png)
 
 ### Self-hosted
 
@@ -1119,8 +1110,6 @@ public class BackgroundCheckBoilerplateActivitiesTest {
 }
 ```
 
-
-
 Temporal provides the `TestActivityExtension` class to simplify the creation of 
 the test environment. Using this extension you provide your Activity 
 to register with a Worker created by the testing framework to be used during testing. 
@@ -1133,7 +1122,6 @@ as defined by JUnit.
 You annotate the method with @Test and test the results of the Activity via assertions.
 
 ### Testing Workflows {#test-framework-details}
-
 
 Temporal provides the `TestWorkflowEnvironment` and `TestWorkflowExtension` classes
 to allow for testing Workflows. There are two ways to test Workflows; the first

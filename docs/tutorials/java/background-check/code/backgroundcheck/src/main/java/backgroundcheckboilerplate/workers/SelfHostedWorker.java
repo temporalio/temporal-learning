@@ -1,4 +1,4 @@
-/* dacx */
+// @@@SNIPSTART java-project-setup-chapter-self-hosted-worker
 package backgroundcheckboilerplate.workers;
 
 import backgroundcheckboilerplate.BackgroundCheckBoilerplateActivitiesImpl;
@@ -9,11 +9,6 @@ import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-
-/*
-Set IP address and port in the Service Stubs Options and the Namespace in the 
-Temporal Client options.
-*/
 
 public class SelfHostedWorker {
   public static void main(String[] args) {
@@ -51,14 +46,4 @@ public class SelfHostedWorker {
   }
 }
 
-/* @dacx
-id: backgroundcheck-boilerplate-self-hosted-worker
-title: Customize Client options
-description: Configure the Temporal Client with the specific IP Address of the Temporal Server on your network.
-label: Self-hosted Client options
-lines: 4-52
-tags:
-- worker
-- developer guide
-- temporal client
-@dacx */
+// @@@SNIPEND

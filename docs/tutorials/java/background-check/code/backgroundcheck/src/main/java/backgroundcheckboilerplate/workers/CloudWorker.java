@@ -1,4 +1,4 @@
-/* dacx */
+// @@@SNIPSTART java-project-setup-chapter-boilerplate-cloud-worker
 package backgroundcheckboilerplate.workers;
 
 import java.io.FileInputStream;
@@ -15,14 +15,6 @@ import java.lang.System;
 import backgroundcheckboilerplate.BackgroundCheckBoilerplateActivitiesImpl;
 import backgroundcheckboilerplate.BackgroundCheckBoilerplateWorkflowImpl;
 import java.io.IOException;
-
-/*
-A Temporal Cloud Worker requires that you specify the following in the Client connection options:
-
-- Temporal Cloud Namespace
-- Temporal Cloud Address
-- Certificate and private key associated with the Namespace
-*/
 
 public class CloudWorker {
   public static void main(String[] args) throws IOException{
@@ -77,45 +69,4 @@ public class CloudWorker {
     factory.start();
   }
 }
-
-/*
-To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
- You'll use:
- 
- - The [Temporal Cloud Namespace Id](https://docs.temporal.io/cloud/namespaces#temporal-cloud-namespace-id).
- - The [Namespace's gRPC endpoint](https://docs.temporal.io/cloud/namespaces#temporal-cloud-grpc-endpoint).
- The endpoint uses this format `(namespace.unique_id.tmprl.cloud:port)`.
- - [Paths to the SSL certificate (.pem) and private key (.key)](https://docs.temporal.io/cloud/saml#integrate-saml-with-your-temporal-cloud-account) registered to your Namespace and stored on your Worker's file system.
- 
- Copy the Namespace Id and the gRPC endpoint from the Namespace detail Web page on [Temporal Cloud Namespaces](https://cloud.temporal.io/namespaces). Click on a Namespace name to open the Namespace details.
- 
- For information about managing and generating client certificates for Temporal Cloud, see [How to manage certificates in Temporal Cloud](https://docs.temporal.io/cloud/certificates#issue-certificates).
- 
- For information about configuring TLS to secure inter- and intra-network communication for a Temporal Cluster, see [Temporal Customization Samples](https://github.com/temporalio/samples-server).
- 
- ![Copy your gRPC endpoint from the UI](/img/copy-grpc-endpoint.png)
-*/
-
-/* @dacx
-id: backgroundcheck-boilerplate-cloud-worker
-title: Run a Temporal Cloud Worker
-description: Provide your Namespace, Address, and certificate key pair to connect to Temporal Cloud.
-label: Cloud Worker
-lines: 2-79
-tags:
-- worker
-- temporal cloud
-- developer guide
-- temporal client
-@dacx */
-
-/* @dacx
-id: backgroundcheck-boilerplate-cloud-worker-details
-title: Cloud Worker details
-description: When specifying the Temporal Cloud Namespace, make sure to append the Account Id as it appears in the url of the Cloud UI.
-label: Cloud Worker details
-lines: 81-95
-tags:
-- worker
-- cloud certificate
-@dacx */
+// @@@SNIPEND
