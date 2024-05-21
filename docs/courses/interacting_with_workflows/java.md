@@ -21,18 +21,25 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-In this course, you'll implement Custom Data Conversion for your Temporal Workflows, including the use of Encryption Codecs. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
+**Estimated time**: ~⏱️ 3 hours, self-paced.
+
+**Cost**: Free
+
+## Description
+
+In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
 
 When you've completed the course, you'll be able to:
 
-* Apply an appropriate authentication and encryption strategy
-* Implement a Custom Data Converter
-* Deploy and Integrate a Codec Server with a Temporal Cluster
+* Integrate Signals and Queries with Workflows
+* Develop Custom Search Attributes to identify specific Workflow Executions
+* Evaluate methods to stop Workflow Executions
+* Develop Activities asynchronously
 
 ### Prerequisites:
 
 To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Java SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
 
-Since code used in examples and exercises are written in Java, you must also have at least basic proficiency with the Java programming language.
+Since code used in examples and exercises are written in Go, you must also have at least basic proficiency with the Java programming language.
 
 <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:215">Go to Course</a> 
