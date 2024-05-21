@@ -21,12 +21,6 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-**Estimated time**: ~⏱️ 3 hours, self-paced.
-
-**Cost**: Free
-
-## Description
-
 In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
 
 When you've completed the course, you'll be able to:
