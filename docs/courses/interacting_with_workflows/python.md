@@ -21,13 +21,18 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Python SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
+In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
 
-Since code used in examples and exercises are written in Python, you must also have at least basic proficiency with the Python programming language.
+When you've completed the course, you'll be able to:
+
+* Integrate Signals and Queries with Workflows
+* Develop Custom Search Attributes to identify specific Workflow Executions
+* Evaluate methods to stop Workflow Executions
+* Develop Activities asynchronously
 
 ### Prerequisites:
 
-To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Python SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101, which covers these topics, before starting this course.
+To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Go SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
 
 Since code used in examples and exercises are written in Python, you must also have at least basic proficiency with the Python programming language.
 

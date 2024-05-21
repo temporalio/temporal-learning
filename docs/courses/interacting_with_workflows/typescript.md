@@ -32,7 +32,7 @@ When you've completed the course, you'll be able to:
 
 ### Prerequisites:
 
-To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the TypeScript SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
+To be successful in this course, you should have an understanding of the fundamental concepts, tools, and techniques used to develop and execute basic Temporal applications with the Go SDK. This includes the ability to develop and execute Temporal Workflows and Activities, navigate the Web UI, configure and run a Worker, as well as an understanding of the high-level interactions between the Temporal Application and Temporal Cluster during Workflow Execution. We strongly recommend that you complete Temporal 101 and 102, which cover these topics, before starting this course.
 
 Since code used in examples and exercises are written in TypeScript, you must also have at least basic proficiency with the TypeScript programming language.
 
