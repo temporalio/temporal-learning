@@ -5,6 +5,7 @@ origins:
     repo: money-transfer-project-template-python
   - owner: temporalio
     repo: money-transfer-project-template-java
+    ref: 4e1ca12d8d1c058c67d810efe8dcf68f7b318208
   - owner: temporalio
     repo: hello-world-project-template-java
   - owner: temporalio
