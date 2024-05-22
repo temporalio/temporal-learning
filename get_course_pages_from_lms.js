@@ -91,12 +91,24 @@ const courseData = [
     keywords: "[Temporal, application development, security, converters, deployment, best practices, codecs, compression, encryption, encoding, decoding, serialization, key rotation]",
     metaDescription: "In this course, you'll implement Custom Data Conversion for your Temporal Workflows. By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data."
   },
-  {code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
+  {
+    code: `intro2cld`, main: true, language: "Temporal Cloud", banner: "", filename: "intro_to_temporal_cloud/index.md", index: 3,
     keywords: '[Temporal Cloud, Web UI, Temporal Platform, Namespaces, user management, roles and permissions, custom Search Attribute, third-party observability tool, account-level usage, Namespace-level usage, evaluating Temporal Cloud]',
     metaDescription: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
-  }
+  },
+  {
+    code: `interactwf_ts`, main: true, language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "interacting_with_workflows/typescript.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+  },  
+  {
+    code: `interactwf_go`, main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "interacting_with_workflows/go.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+  },
+  {
+    code: `interactwf_java`, main: true, language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "interacting_with_workflows/java.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+  },
+  {
+    code: `interactwf_python`, main: true, language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "interacting_with_workflows/python.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+  },
 ]
-
 
 const options = {
   hostname: 'temporal.talentlms.com',

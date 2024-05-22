@@ -87,6 +87,23 @@ By implementing Custom Data Converters and a Codec Server, you can expand this b
 
 -----
 
+## [Interacting with Workflows](interacting_with_workflows/index.md)
+
+In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+
+**Estimated time**: ⏱️ 3 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="interacting_with_workflows/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
+
+-----
+
 ## [Introduction to Temporal Cloud](intro_to_temporal_cloud/index.md)
 
 In this course, you will learn the role of Temporal Cloud, how to log into and navigate its Web UI, and how to perform tasks that new Temporal Cloud users may do in preparation for using this service.
