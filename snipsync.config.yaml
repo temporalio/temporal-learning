@@ -1,57 +1,57 @@
 origins:
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-dotnet
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-python
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-java
-  # - owner: temporalio
-  #   repo: hello-world-project-template-java
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-ts
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-go
-  # - owner: temporalio
-  #   repo: hello-world-project-template-go
-  # - owner: temporalio
-  #   repo: subscription-workflow-project-template-go
-  # - owner: temporalio
-  #   repo: subscription-workflow-project-template-java
-  # - owner: temporalio
-  #   repo: subscription-workflow-project-template-typescript
-  # - owner: temporalio
-  #   repo: subscription-workflow-project-template-php
-  # - owner: temporalio
-  #   repo: samples-php
-  #   ref: master
-  # - owner: temporalio
-  #   repo: hello-world-project-template-python
-  # - owner: temporalio
-  #   repo: samples-typescript
-  # # Some samples were left in the SDK code itself because it has better testing
-  # # capabilities than the samples repo
-  # - owner: temporalio
-  #   repo: temporal-ecommerce
-  # - owner: temporalio
-  #   repo: background-checks
-  # - owner: temporalio
-  #   repo: email-subscription-project-go
-  # - owner: temporalio
-  #   repo: data-pipeline-project-python
-  # - owner: temporalio
-  #   repo: email-subscription-project-python
-  # - owner: temporalio
-  #   repo: money-transfer-project-java
-  #   ref: cloud
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-python
-  #   ref: cloud
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-ts
-  #   ref: cloud
-  # - owner: temporalio
-  #   repo: money-transfer-project-template-go
-  #   ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-dotnet
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+  - owner: temporalio
+    repo: money-transfer-project-template-java
+  - owner: temporalio
+    repo: hello-world-project-template-java
+  - owner: temporalio
+    repo: money-transfer-project-template-ts
+  - owner: temporalio
+    repo: money-transfer-project-template-go
+  - owner: temporalio
+    repo: hello-world-project-template-go
+  - owner: temporalio
+    repo: subscription-workflow-project-template-go
+  - owner: temporalio
+    repo: subscription-workflow-project-template-java
+  - owner: temporalio
+    repo: subscription-workflow-project-template-typescript
+  - owner: temporalio
+    repo: subscription-workflow-project-template-php
+  - owner: temporalio
+    repo: samples-php
+    ref: master
+  - owner: temporalio
+    repo: hello-world-project-template-python
+  - owner: temporalio
+    repo: samples-typescript
+  # Some samples were left in the SDK code itself because it has better testing
+  # capabilities than the samples repo
+  - owner: temporalio
+    repo: temporal-ecommerce
+  - owner: temporalio
+    repo: background-checks
+  - owner: temporalio
+    repo: email-subscription-project-go
+  - owner: temporalio
+    repo: data-pipeline-project-python
+  - owner: temporalio
+    repo: email-subscription-project-python
+  - owner: temporalio
+    repo: money-transfer-project-java
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-python
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-ts
+    ref: cloud
+  - owner: temporalio
+    repo: money-transfer-project-template-go
+    ref: cloud
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
@@ -69,7 +69,7 @@ origins:
       repo: 'temporal-learning'
       ref: 'main'
   - files:
-      pattern: './docs/tutorials/tyescript/background-check/code/**/*.ts'
+      pattern: './docs/tutorials/typescript/background-check/code/**/*.ts'
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'
