@@ -1,3 +1,4 @@
+// @@@SNIPSTART java-durability-chapter-replay-test
 package backgroundcheckreplay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,8 +53,6 @@ public class BackgroundCheckReplayWorkflowTest {
     assertEquals("pass", pass_output);
   
   }
-
-  // @@@SNIPSTART java-durability-chapter-replay-test
 
   @Test
   public void testSuccessfulReplayFromFile(TestWorkflowEnvironment testEnv, Worker worker,

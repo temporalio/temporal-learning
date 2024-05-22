@@ -64,7 +64,7 @@ origins:
       repo: 'temporal-learning'
       ref: 'main'
   - files:
-      pattern: './docs/tutorials/python/background-check/code/**/*.python'
+      pattern: './docs/tutorials/python/background-check/code/**/*.py'
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'

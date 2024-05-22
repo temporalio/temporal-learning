@@ -133,42 +133,20 @@ A Workflow Execution's Event History is also available in the Web UI.
 
 Navigate to the Workflows page in the UI and select the Workflow Execution.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Select a Workflow Execution from the Workflows page</p>
-  </div>
-  <div class="tdiiw" height="1058">
-    <img
-      class="img_ev3q"
-      src="/img/java/select-workflow-execution-in-ui.png"
-      alt="Select a Workflow Execution from the Workflows page"
-    />
-  </div>
-</div>
+![Select a Workflow Execution from the Workflows page](./images/select-workflow-execution-in-ui.png)
 
 From the Workflow details page you can copy the Event History from the JSON tab and paste it into the `backgroundcheck_workflow_history.json` file.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Copy Event History JSON object from the Web UI</p>
-  </div>
-  <div class="tdiiw" height="1178">
-    <img
-      class="img_ev3q"
-      src="/img/java/copy-events-from-workflow-details-page.png"
-      alt="Copy Event History JSON object from the Web UI"
-    />
-  </div>
-</div>
+![Copy Event History JSON object from the Web UI](./images/copy-events-from-workflow-details-page.png)
 
 ## Add a Replay test {#add-replay-test}
 
 Add the Replay test to the set of application tests.
 
-<!--SNIPSTART java-durability-chapter-replay-test-->
+<!--SNIPSTART java-durability-chapter-replay-test {"selectedLines":["56-65"]}-->
 [docs/tutorials/java/background-check/code/backgroundcheck-replay/src/test/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowTest.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck-replay/src/test/java/backgroundcheckreplay/BackgroundCheckReplayWorkflowTest.java)
 ```java
-
+// ...
   @Test
   public void testSuccessfulReplayFromFile(TestWorkflowEnvironment testEnv, Worker worker,
       BackgroundCheckReplayWorkflow workflow) throws Exception {
@@ -179,8 +157,6 @@ Add the Replay test to the set of application tests.
         BackgroundCheckReplayWorkflowImpl.class));
 
   }
-}
-
 ```
 <!--SNIPEND-->
 

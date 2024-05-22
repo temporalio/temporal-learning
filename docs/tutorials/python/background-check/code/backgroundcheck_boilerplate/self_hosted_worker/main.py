@@ -1,3 +1,4 @@
+# @@@SNIPSTART python-project-setup-chapter-backgroundcheck-self-hosted-worker
 import asyncio
 
 from temporalio.client import Client
@@ -5,11 +6,6 @@ from temporalio.worker import Worker
 
 from activities.ssntraceactivity_dacx import ssn_trace_activity
 from workflows.backgroundcheck_dacx import BackgroundCheck
-
-"""dacx
-Set IP address, port, and Namespace in the Temporal Client options.
-dacx"""
-
 
 async def main():
     client = await Client.connect(
@@ -28,14 +24,4 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-""" @dacx
-id: backgroundcheck-boilerplate-self-hosted-worker
-title: Customize Client options
-description: Configure the Temporal Client with the specific IP Address of the Temporal Server on your network.
-label: Self-hosted Client options
-lines: 1-29
-tags:
-- worker
-- self-hosted
-- developer guide
-@dacx """
+# @@@SNIPEND

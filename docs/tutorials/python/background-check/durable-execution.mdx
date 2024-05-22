@@ -8,7 +8,6 @@ slug: /dev-guide/python/durable-execution
 toc_max_heading_level: 4
 keywords:
   - determinism
-  - developer-guide-doc-type
   - durable execution
   - event history
   - introduction-doc-type
@@ -25,7 +24,6 @@ keywords:
   - workflow testing
 tags:
   - determinism
-  - developer-guide-doc-type
   - durable-execution
   - event-history
   - go-sdk
@@ -141,33 +139,11 @@ A Workflow Execution's Event History is also available in the Web UI.
 
 Navigate to the Workflows page in the UI and select the Workflow Execution.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Select a Workflow Execution from the Workflows page</p>
-  </div>
-  <div class="tdiiw" height="870">
-    <img
-      class="img_ev3q"
-      src="/img/select-workflow-execution-in-ui.png"
-      alt="Select a Workflow Execution from the Workflows page"
-    />
-  </div>
-</div>
+![Select a Workflow Execution from the Workflows page](./images/select-workflow-execution-in-ui.png)
 
 From the Workflow details page you can copy the Event History from the JSON tab and paste it into the `backgroundcheck_workflow_history.json` file.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Copy Event History JSON object from the Web UI</p>
-  </div>
-  <div class="tdiiw" height="768">
-    <img
-      class="img_ev3q"
-      src="/img/copy-events-from-workflow-details-page.png"
-      alt="Copy Event History JSON object from the Web UI"
-    />
-  </div>
-</div>
+![Copy Event History JSON object from the Web UI](./images/copy-events-from-workflow-details-page.png)
 
 ## Add a Replay test {#add-replay-test}
 
@@ -178,7 +154,18 @@ Register the Workflow Definition and then specify an existing Event History to c
 Run the tests in the test directory (pytest).
 If the Workflow Definition and the Event History are incompatible, then the test fails.
 
-<!--SNIPSTART test_replay_workflow_history_from_file-->
+<!--SNIPSTART python-durability-chapter-replay-from-file-test-->
+[docs/tutorials/python/background-check/code/backgroundcheck_replay/tests/replay_dacx_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_replay/tests/replay_dacx_test.py)
+```py
+@pytest.mark.asyncio
+async def test_replay_workflow_history_from_file():
+    async with await WorkflowEnvironment.start_time_skipping():
+        with open("tests/backgroundcheck_workflow_history.json", "r") as f:
+            history_json = json.load(f)
+            await Replayer(workflows=[BackgroundCheck]).replay_workflow(
+                WorkflowHistory.from_json("backgroundcheck_workflow", history_json)
+            )
+```
 <!--SNIPEND-->
 
 [WorkflowEnvironment](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html) is a class in the Temporal Python SDK that provides a testing suite for running Workflows and Activity code.
@@ -237,7 +224,7 @@ Other common ways to introduce non-deterministic issues into a Workflow:
 
 The most important thing to take away from the section is to make sure you have an application versioning plan whenever you are developing and maintaining a Temporal Application that will eventually deploy to a production environment.
 
-Versioning APIs and versioning strategies are covered in other parts of the developer's guide, this chapter sets the stage to understand why and how to approach those strategies.
+Versioning APIs and versioning strategies are covered in other parts of the tutorial, this chapter sets the stage to understand why and how to approach those strategies.
 
 <!--TODO ^ update with links to those places -->
 
@@ -308,7 +295,31 @@ The Temporal Python SDK offers deterministic implementations to the following AP
 
 Use the `workflow.logger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
-<!--SNIPSTART python_backgroundcheck_dacx {"selectedLines": ["1-7", "23-35"]}-->
+<!--SNIPSTART python-durability-chapter-backgroundcheck-workflow-->
+[docs/tutorials/python/background-check/code/backgroundcheck_replay/backgroundcheck_dacx.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_replay/backgroundcheck_dacx.py)
+```py
+import asyncio
+from datetime import timedelta
+
+from temporalio import workflow
+
+with workflow.unsafe.imports_passed_through():
+    from ssntraceactivity import ssn_trace_activity
+
+@workflow.defn()
+class BackgroundCheck:
+    @workflow.run
+    async def run(self, ssn: str) -> str:
+        random_number = workflow.random().randint(1, 100)
+        if random_number < 50:
+            await asyncio.sleep(60)
+            workflow.logger.info("Sleeping for 60 seconds")
+        return await workflow.execute_activity(
+            ssn_trace_activity,
+            ssn,
+            schedule_to_close_timeout=timedelta(seconds=5),
+        )
+```
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
