@@ -84,38 +84,117 @@ Here's a high-level illustration of what's happening:
 
 The Workflow function is the application entry point. This is what our money transfer Workflow looks like:
 
-<!--SNIPSTART money-transfer-project-template-java-workflow-implementation-->
-[src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/MoneyTransferWorkflowImpl.java)
+<!--SNIPSTART money-transfer-java-workflow-implementation-->
+[src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java)
 ```java
+package moneytransferapp;
+
+import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
+import io.temporal.common.RetryOptions;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
     private static final String WITHDRAW = "Withdraw";
+
     // RetryOptions specify how to automatically handle retries when Activities fail.
     private final RetryOptions retryoptions = RetryOptions.newBuilder()
-            .setInitialInterval(Duration.ofSeconds(1))
-            .setMaximumInterval(Duration.ofSeconds(100))
-            .setBackoffCoefficient(2)
-            .setMaximumAttempts(500)
-            .build();
+        .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
+        .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
+        .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc.
+        .setMaximumAttempts(5) // Fail after 5 attempts
+        .build();
+
+    // ActivityOptions specify the limits on how long an Activity can execute before
+    // being interrupted by the Orchestration service.
     private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
-            // Timeout options specify when to automatically timeout Activities if the process is taking too long.
-            .setStartToCloseTimeout(Duration.ofSeconds(5))
-            // Optionally provide customized RetryOptions.
-            // Temporal retries failures by default, this is simply an example.
-            .setRetryOptions(retryoptions)
-            .build();
-    // ActivityStubs enable calls to methods as if the Activity object is local, but actually perform an RPC.
-    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>(){{
+        .setRetryOptions(retryoptions) // defined above
+        .setStartToCloseTimeout(Duration.ofSeconds(2)) // Max execution time for single Activity
+        .setScheduleToCloseTimeout(Duration.ofSeconds(5)) // Entire duration from scheduling to completion,
+                                                          // including queue time.
+        .build();
+
+    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
+        // A heartbeat time-out is a proof-of life indicator that an activity is still working.
+        // This option says to wait for 5 seconds to hear a heartbeat. If one is not heard,
+        // the Activity fails.
         put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
     }};
-    private final AccountActivity account = Workflow.newActivityStub(AccountActivity.class, defaultActivityOptions, perActivityMethodOptions);
+
+    // ActivityStubs enable calls to methods as if the Activity object is local,
+    // but actually perform an RPC invocation.
+    private final AccountActivity accountActivityStub = Workflow.newActivityStub(AccountActivity.class, defaultActivityOptions, perActivityMethodOptions);
 
     // The transfer method is the entry point to the Workflow.
-    // Activity method executions can be orchestrated here or from within other Activity methods.
+    // Activity method executions can be orchestrated here or from within
+    // other Activity methods.
     @Override
-    public void transfer(String fromAccountId, String toAccountId, String referenceId, double amount) {
+    public void transfer(TransactionDetails transaction) {
+        String sourceAccountId = transaction.getSourceAccountId();
+        String destinationAccountId = transaction.getDestinationAccountId();
+        String transactionReferenceId = transaction.getTransactionReferenceId();
+        int amountToTransfer = transaction.getAmountToTransfer();
 
-        account.withdraw(fromAccountId, referenceId, amount);
-        account.deposit(toAccountId, referenceId, amount);
+        try {
+            accountActivityStub.withdraw(sourceAccountId, transactionReferenceId, amountToTransfer);
+        } catch (Exception e) {
+            // If the withdrawal fails, for any exception
+            System.out.printf("[%s] Withdrawal of $%d from account %s failed",
+                transactionReferenceId, amountToTransfer, sourceAccountId);
+            System.out.flush();
+
+            // Transaction ends here
+            return;
+        }
+
+        // Change this from true to false to force the deposit to fail
+        boolean transferShouldSucceed = true;
+
+        try {
+            accountActivityStub.deposit(destinationAccountId, transactionReferenceId, amountToTransfer, transferShouldSucceed);
+
+            // Successful. Transaction ends here
+            System.out.printf("[%s] Transaction succeeded.\n", transactionReferenceId);
+            System.out.flush();
+            return;
+        } catch (Exception e) {
+            // If the deposit fails, for any exception
+            System.out.printf("[%s] Deposit of $%d to account %s failed.\n",
+                transactionReferenceId, amountToTransfer, destinationAccountId);
+            System.out.flush();
+        }
+
+        // Continue by reversing transaction
+
+        // Change this from true to false to force the recovery compensation to fail
+        boolean refundShouldSucceed = true;
+
+        try {
+            // Refund the withdrawal
+            System.out.printf("[%s] Refunding $%d to account %s.\n",
+                transactionReferenceId, amountToTransfer, destinationAccountId);
+            System.out.flush();
+            accountActivityStub.deposit(sourceAccountId, transactionReferenceId, amountToTransfer, refundShouldSucceed);
+
+            // Recovery successful. Transaction ends here
+            System.out.printf("[%s] Refund to originating account was successful.\n",
+                transactionReferenceId);
+            System.out.printf("[%s] Transaction is complete. No transfer made.\n",
+                transactionReferenceId);
+            return;
+        } catch (Exception e) {
+            // A recovery mechanism can fail too. Handle any exception
+            System.out.printf("[%s] Deposit of $%d to account %s failed. Did not compensate withdrawal.\n",
+                transactionReferenceId, amountToTransfer, destinationAccountId);
+            System.out.printf("[%s] Workflow failed.", transactionReferenceId);
+            System.out.flush();
+
+            // Rethrowing the exception causes a Workflow Task failure
+            throw(e);
+        }
     }
 }
 ```
@@ -127,32 +206,77 @@ When you "start" a Workflow you are basically telling the Temporal server, "trac
 
 There are two ways to start a Workflow with Temporal, either via the SDK or via the [CLI](https://docs.temporal.io/tctl). For this tutorial we used the SDK to start the Workflow, which is how most Workflows get started in a live environment. The call to the Temporal server can be done [synchronously or asynchronously](https://docs.temporal.io/java/workflows). Here we do it asynchronously, so you will see the program run, tell you the transaction is processing, and exit.
 
-<!--SNIPSTART money-transfer-project-template-java-workflow-initiator-->
-[src/main/java/moneytransferapp/InitiateMoneyTransfer.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/InitiateMoneyTransfer.java)
+<!--SNIPSTART money-transfer-java-initiate-transfer-->
+[src/main/java/moneytransfer/TransferApp.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransfer/TransferApp.java)
 ```java
-public class InitiateMoneyTransfer {
+package moneytransferapp;
+
+import io.temporal.api.common.v1.WorkflowExecution;
+import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowOptions;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class TransferApp {
+    private static final SecureRandom random;
+
+    static {
+        // Seed the random number generator with nano date
+        random = new SecureRandom();
+        random.setSeed(Instant.now().getNano());
+    }
+
+    public static String randomAccountIdentifier() {
+        return IntStream.range(0, 9)
+                .mapToObj(i -> String.valueOf(random.nextInt(10)))
+                .collect(Collectors.joining());
+    }
 
     public static void main(String[] args) throws Exception {
 
-        // WorkflowServiceStubs is a gRPC stubs wrapper that talks to the local Docker instance of the Temporal server.
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        // In the Java SDK, a stub represents an element that participates in
+        // Temporal orchestration and communicates using gRPC.
+
+        // A WorkflowServiceStubs communicates with the Temporal front-end service.
+        WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newLocalServiceStubs();
+
+        // A WorkflowClient wraps the stub.
+        // It can be used to start, signal, query, cancel, and terminate Workflows.
+        WorkflowClient client = WorkflowClient.newInstance(serviceStub);
+
+        // Workflow options configure  Workflow stubs.
+        // A WorkflowId prevents duplicate instances, which are removed.
         WorkflowOptions options = WorkflowOptions.newBuilder()
                 .setTaskQueue(Shared.MONEY_TRANSFER_TASK_QUEUE)
-                // A WorkflowId prevents this it from having duplicate instances, remove it to duplicate.
                 .setWorkflowId("money-transfer-workflow")
                 .build();
-        // WorkflowClient can be used to start, signal, query, cancel, and terminate Workflows.
-        WorkflowClient client = WorkflowClient.newInstance(service);
-        // WorkflowStubs enable calls to methods as if the Workflow object is local, but actually perform an RPC.
+
+        // WorkflowStubs enable calls to methods as if the Workflow object is local
+        // but actually perform a gRPC call to the Temporal Service.
         MoneyTransferWorkflow workflow = client.newWorkflowStub(MoneyTransferWorkflow.class, options);
-        String referenceId = UUID.randomUUID().toString();
-        String fromAccount = "001-001";
-        String toAccount = "002-002";
-        double amount = 18.74;
-        // Asynchronous execution. This process will exit after making this call.
-        WorkflowExecution we = WorkflowClient.start(workflow::transfer, fromAccount, toAccount, referenceId, amount);
-        System.out.printf("\nTransfer of $%f from account %s to account %s is processing\n", amount, fromAccount, toAccount);
-        System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(), we.getRunId());
+        
+        // Configure the details for this money transfer request
+        String referenceId = UUID.randomUUID().toString().substring(0, 18);
+        String fromAccount = randomAccountIdentifier();
+        String toAccount = randomAccountIdentifier();
+        int amountToTransfer = ThreadLocalRandom.current().nextInt(15, 75);
+        TransactionDetails transaction = new CoreTransactionDetails(fromAccount, toAccount, referenceId, amountToTransfer);
+
+        // Perform asynchronous execution.
+        // This process exits after making this call and printing details.
+        WorkflowExecution we = WorkflowClient.start(workflow::transfer, transaction);
+
+        System.out.printf("\nMONEY TRANSFER PROJECT\n\n");
+        System.out.printf("Initiating transfer of $%d from [Account %s] to [Account %s].\n\n",
+                          amountToTransfer, fromAccount, toAccount);
+        System.out.printf("[WorkflowID: %s]\n[RunID: %s]\n[Transaction Reference: %s]\n\n", we.getWorkflowId(), we.getRunId(), referenceId);
         System.exit(0);
     }
 }
@@ -206,25 +330,46 @@ It's time to start the Worker. A Worker is responsible for executing pieces of W
 
 After The Worker executes code, it returns the results back to the Temporal server. Note that the Worker listens to the same Task Queue that the Workflow and Activity tasks are sent to. This is called "Task routing", and is a built-in mechanism for load balancing.
 
-<!--SNIPSTART money-transfer-project-template-java-worker-->
-[src/main/java/moneytransferapp/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/MoneyTransferWorker.java)
+<!--SNIPSTART money-transfer-java-worker-->
+[src/main/java/moneytransfer/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorker.java)
 ```java
+package moneytransferapp;
+
+import io.temporal.client.WorkflowClient;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.worker.Worker;
+import io.temporal.worker.WorkerFactory;
+
 public class MoneyTransferWorker {
 
     public static void main(String[] args) {
+        // Create a stub that accesses a Temporal Service on the local development machine
+        WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newLocalServiceStubs();
 
-        // WorkflowServiceStubs is a gRPC stubs wrapper that talks to the local Docker instance of the Temporal server.
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-        WorkflowClient client = WorkflowClient.newInstance(service);
-        // Worker factory is used to create Workers that poll specific Task Queues.
+        // The Worker uses the Client to communicate with the Temporal Service
+        WorkflowClient client = WorkflowClient.newInstance(serviceStub);
+
+        // A WorkerFactory creates Workers
         WorkerFactory factory = WorkerFactory.newInstance(client);
+
+        // A Worker listens to one Task Queue.
+        // This Worker processes both Workflows and Activities
         Worker worker = factory.newWorker(Shared.MONEY_TRANSFER_TASK_QUEUE);
-        // This Worker hosts both Workflow and Activity implementations.
+
+        // Register a Workflow implementation with this Worker
+        // The implementation must be known at runtime to dispatch Workflow tasks
         // Workflows are stateful so a type is needed to create instances.
         worker.registerWorkflowImplementationTypes(MoneyTransferWorkflowImpl.class);
+
+        // Register Activity implementation(s) with this Worker.
+        // The implementation must be known at runtime to dispatch Activity tasks
         // Activities are stateless and thread safe so a shared instance is used.
         worker.registerActivitiesImplementations(new AccountActivityImpl());
-        // Start listening to the Task Queue.
+
+        System.out.println("Worker is running and actively polling the Task Queue.");
+        System.out.println("To quit, use ^C to interrupt.");
+
+        // Start all registered Workers. The Workers will start polling the Task Queue.
         factory.start();
     }
 }
@@ -233,11 +378,12 @@ public class MoneyTransferWorker {
 
 Task Queues are defined by a simple string name.
 
-<!--SNIPSTART money-transfer-project-template-java-shared-constants-->
-[src/main/java/moneytransferapp/Shared.java](https://github.com/temporalio/money-transfer-project-java/blob/cloud/src/main/java/moneytransferapp/Shared.java)
+<!--SNIPSTART money-transfer-java-shared-->
+[src/main/java/moneytransfer/Shared.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransfer/Shared.java)
 ```java
-public interface Shared {
+package moneytransferapp;
 
+public interface Shared {
     static final String MONEY_TRANSFER_TASK_QUEUE = "MONEY_TRANSFER_TASK_QUEUE";
 }
 ```
@@ -284,29 +430,35 @@ Visit the UI. Your Workflow is still listed.
 
 Next let's simulate a bug in one of the Activity functions. Inside your project, open the `AccountActivityImpl.java` file and uncomment the line that throws an Exception in the `deposit()` method.
 
-<!--SNIPSTART money-transfer-project-template-java-activity-implementation-->
-[src/main/java/moneytransferapp/AccountActivityImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransferapp/AccountActivityImpl.java)
+<!--SNIPSTART money-transfer-java-activity-implementation-->
+[src/main/java/moneytransfer/AccountActivityImpl.java](https://github.com/temporalio/money-transfer-project-template-java/blob/main/src/main/java/moneytransfer/AccountActivityImpl.java)
 ```java
+package moneytransferapp;
+
+import io.temporal.activity.*;
+
 public class AccountActivityImpl implements AccountActivity {
-
+    // Mock up the withdrawal of an amount of money from the source account
     @Override
-    public void withdraw(String accountId, String referenceId, double amount) {
-
+    public void withdraw(String accountId, String referenceId, int amount) {
         System.out.printf(
-                "\nWithdrawing $%f from account %s. ReferenceId: %s\n",
+                "\nWithdrawing $%d from account %s.\n[ReferenceId: %s]\n",
                 amount, accountId, referenceId
         );
     }
 
+    // Mock up the deposit of an amount of money from the destination account
     @Override
-    public void deposit(String accountId, String referenceId, double amount) {
-
+    public void deposit(String accountId, String referenceId, int amount, boolean activityShouldSucceed) {
         System.out.printf(
-                "\nDepositing $%f into account %s. ReferenceId: %s\n",
+                "\nDepositing $%d into account %s.\n[ReferenceId: %s]\n",
                 amount, accountId, referenceId
         );
-        // Uncomment the following line to simulate an Activity error.
-        // throw new RuntimeException("simulated");
+
+        if (!activityShouldSucceed) {
+            System.out.println("Deposit failed");
+            throw Activity.wrap(new RuntimeException("Simulated Activity error during deposit of funds"));
+        }
     }
 }
 ```
