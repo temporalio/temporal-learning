@@ -48,9 +48,6 @@ tags:
   - workflow
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-
 The first step to creating a new Temporal Application is to set up your development environment.
 This chapter walks through the steps to do that using the TypeScript SDK.
 
@@ -395,25 +392,8 @@ To define a Workflow, import the Activity types and the `@temporalio/workflow` l
 Define the Activity Execution options. `StartToCloseTimeout` or `ScheduleToCloseTimeout` must be set:
 The `backgroundCheck` function that follows is an example of a basic Workflow Definition.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/workflows.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import * as workflow from "@temporalio/workflow";
-import type * as activities from "./activities";
-
-const { ssnTrace } = workflow.proxyActivities<typeof activities>({
-  startToCloseTimeout: "10 seconds",
-});
-
-export async function backgroundCheck(ssn: string): Promise<string> {
-  return await ssnTrace(ssn);
-}
-```
+<!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-workflow-->
+<!--SNIPEND-->
 
 Temporal Workflows may have any number of custom parameters. However, we
 strongly recommend that you use objects as parameters, so that the object's
@@ -457,20 +437,8 @@ You'll define your Activities in this file.
 
 Add the following code to define your Activity:
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/activities.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-export async function ssnTrace(param: string): Promise<string> {
-  // This is where a call to another service is made
-  // Here we are pretending that the service that does SSNTrace returned "pass"
-  return "pass";
-}
-```
+<!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-activity-->
+<!--SNIPEND-->
 
 This Activity definition uses a single input parameter and returns a string.
 
@@ -493,53 +461,8 @@ In regards to organization, we recommend keeping Worker code separate from Workf
 
 Add the following code to `src/worker.ts` to define a worker process that communicates with a local development server:
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/worker.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import { NativeConnection, Worker } from "@temporalio/worker";
-import * as activities from "./activities";
-
-async function run() {
-  // Step 1: Establish a connection with Temporal server.
-  //
-  // Worker code uses `@temporalio/worker.NativeConnection`.
-  // (But in your application code it's `@temporalio/client.Connection`.)
-  const connection = await NativeConnection.connect({
-    address: "localhost:7233",
-    // TLS and gRPC metadata configuration goes here.
-  });
-  // Step 2: Register Workflows and Activities with the Worker and specify your
-  // namespace and Task Queue.
-  const worker = await Worker.create({
-    connection,
-    namespace: "default",
-    taskQueue: "background-check",
-    // Workflows are registered using a path as they run in a separate JS context.
-    workflowsPath: require.resolve("./workflows"),
-    activities,
-  });
-
-  // Step 3: Start accepting tasks on the `background-check` queue
-  //
-  // The worker runs until it encounters an unexepected error or the process receives a shutdown signal registered on
-  // the SDK Runtime object.
-  //
-  // By default, worker logs are written via the Runtime logger to STDERR at INFO level.
-  //
-  // See https://typescript.temporal.io/api/classes/worker.Runtime#install to customize these defaults.
-  await worker.run();
-}
-
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-```
+<!--SNIPSTART typescript-project-setup-chapter-dev-service-worker-->
+<!--SNIPEND-->
 
 :::info Auto restart Worker when code changes
 
@@ -562,95 +485,8 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 Add the following code to `src/worker.ts` to define a worker process that communicates with Temporal Cloud using an mTLS connection, using
 configuration provided via environment variables:
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/worker-cloud.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import fs from "fs/promises";
-
-import { Worker, NativeConnection } from "@temporalio/worker";
-import * as activities from "./activities";
-
-// Note that serverNameOverride and serverRootCACertificate are optional.
-async function run({
-  address,
-  namespace,
-  clientCertPath,
-  clientKeyPath,
-  serverNameOverride,
-  serverRootCACertificatePath,
-  taskQueue,
-}: Env) {
-  let serverRootCACertificate: Buffer | undefined = undefined;
-  if (serverRootCACertificatePath) {
-    serverRootCACertificate = await fs.readFile(serverRootCACertificatePath);
-  }
-
-  const connection = await NativeConnection.connect({
-    address,
-    tls: {
-      serverNameOverride,
-      serverRootCACertificate,
-      clientCertPair: {
-        crt: await fs.readFile(clientCertPath),
-        key: await fs.readFile(clientKeyPath),
-      },
-    },
-  });
-
-  const worker = await Worker.create({
-    connection,
-    namespace,
-    workflowsPath: require.resolve("./workflows"),
-    activities,
-    taskQueue,
-  });
-  console.log("Worker connection successfully established");
-
-  await worker.run();
-  await connection.close();
-}
-
-run(getEnv()).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-
-// Helpers for configuring the mTLS client and worker samples
-function requiredEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new ReferenceError(`${name} environment variable is not defined`);
-  }
-  return value;
-}
-
-export interface Env {
-  address: string;
-  namespace: string;
-  clientCertPath: string;
-  clientKeyPath: string;
-  serverNameOverride?: string;
-  serverRootCACertificatePath?: string;
-  taskQueue: string;
-}
-
-export function getEnv(): Env {
-  return {
-    address: requiredEnv("TEMPORAL_ADDRESS"),
-    namespace: requiredEnv("TEMPORAL_NAMESPACE"),
-    clientCertPath: requiredEnv("TEMPORAL_CLIENT_CERT_PATH"),
-    clientKeyPath: requiredEnv("TEMPORAL_CLIENT_KEY_PATH"),
-    serverNameOverride: process.env.TEMPORAL_SERVER_NAME_OVERRIDE,
-    serverRootCACertificatePath: process.env.TEMPORAL_SERVER_ROOT_CA_CERT_PATH,
-    taskQueue: process.env.TEMPORAL_TASK_QUEUE || "hello-world-mtls",
-  };
-}
-```
+<!--SNIPSTART typescript-project-setup-chapter-cloud-worker-->
+<!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
 You'll use:
@@ -732,45 +568,8 @@ To use a Worker with a self-hosted Temporal Cluster, set the IP address, port, a
 
 Add the following code to `src/worker.ts` to define a worker process that communicates with a self-hosted Temporal cluster using a specific namespace and IP address:
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/worker-self-hosted.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import { NativeConnection, Worker } from "@temporalio/worker";
-import * as activities from "./activities";
-
-async function run() {
-  // Step 1: Establish a connection with Temporal server.
-  //
-  // Worker code uses `@temporalio/worker.NativeConnection`.
-  // (But in your application code it's `@temporalio/client.Connection`.)
-  const connection = await NativeConnection.connect({
-    address: "172.18.0.4:7233",
-    // TLS and gRPC metadata configuration goes here.
-  });
-  // Step 2: Register Workflows and Activities with the Worker and specify your
-  // namespace and Task Queue.
-  const worker = await Worker.create({
-    connection,
-    namespace: "backgroundcheck_namespace",
-    taskQueue: "hello-world",
-    // Workflows are registered using a path as they run in a separate JS context.
-    workflowsPath: require.resolve("./workflows"),
-    activities,
-  });
-
-  await worker.run();
-}
-
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-```
+<!--SNIPSTART typescript-project-setup-chapter-self-hosted-worker-->
+<!--SNIPEND-->
 
 #### Build and deploy Docker image {#dockerfile}
 
@@ -876,14 +675,7 @@ When you visit for the first time, the Web UI directs you to [http://localhost:8
 
 Use the Namespace dropdown to select the project Namespace you created earlier.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Web UI Namespace selection</p>
-  </div>
-  <div class="tdiiw" height="1402">
-    <img class="img_ev3q" src="/img/web-ui-namespace-selection.png" alt="Web UI Namespace selection" />
-  </div>
-</div>
+![Web UI Namespace selection](./images/web-ui-namespace-selection.png)
 
 You should now be at [http://localhost:8233/namespaces/backgroundcheck_namespace/workflows](http://localhost:8233/namespaces/backgroundcheck_namespace/workflows).
 
@@ -891,30 +683,12 @@ You should now be at [http://localhost:8233/namespaces/backgroundcheck_namespace
 
 If you ever want to confirm that a Worker is polling on the Task Queue that the Workflow started on, you can visit the Workflow Execution's details page and click on the Task Queue name.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Click on the Task Queue name to view polling Workers</p>
-  </div>
-  <div class="tdiiw" height="782">
-    <img
-      class="img_ev3q"
-      src="/img/click-task-queue-name.png"
-      alt="Click on the Task Queue name to view polling Workers"
-    />
-  </div>
-</div>
+![Click on the Task Queue name to view polling Workers](./images/click-task-queue-name.png)
 
 This will direct you to a page where you can view the Workers polling that Task Queue.
 If there are none, the application won't run.
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">Confirm Workers polling Task Queue</p>
-  </div>
-  <div class="tdiiw" height="692">
-    <img class="img_ev3q" src="/img/confirm-workers-polling-task-queue.png" alt="Confirm Workers polling Task Queue" />
-  </div>
-</div>
+![Confirm Workers polling Task Queue](./images/confirm-workers-polling-task-queue.png)
 
 ### Temporal Cloud
 
@@ -984,14 +758,7 @@ The URL will look something like the following:
 https://cloud.temporal.io/namespaces/<namespace>.<account-id>/workflows
 ```
 
-<div class="tdiw">
-  <div class="tditw">
-    <p class="tdit">View Workflows in the Cloud UI</p>
-  </div>
-  <div class="tdiiw" height="578">
-    <img class="img_ev3q" src="/img/cloud-view-workflows.png" alt="View Workflows in the Cloud UI" />
-  </div>
-</div>
+![View Workflows in the Cloud UI](./images/cloud-view-workflows.png)
 
 ### Self-hosted
 
@@ -1044,56 +811,8 @@ You can test Workflow code for the following conditions:
 
 Add the following code to `src/mocha/backgroundcheck.test.ts` to test that the Workflow executes successfully.
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/mocha/backgroundcheck.test.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import { TestWorkflowEnvironment } from "@temporalio/testing";
-import { before, describe, it } from "mocha";
-import { Worker } from "@temporalio/worker";
-import { backgroundCheck } from "../workflows";
-import assert from "assert";
-
-describe("Background check workflow", () => {
-  let testEnv: TestWorkflowEnvironment;
-
-  before(async () => {
-    testEnv = await TestWorkflowEnvironment.createLocal();
-  });
-
-  after(async () => {
-    await testEnv?.teardown();
-  });
-
-  it("successfully completes the Workflow", async () => {
-    const ssn = "111-22-3333";
-    const { client, nativeConnection } = testEnv;
-    const taskQueue = "testing";
-
-    const worker = await Worker.create({
-      connection: nativeConnection,
-      taskQueue,
-      workflowsPath: require.resolve("../workflows"),
-      activities: {
-        ssnTrace: async () => "pass",
-      },
-    });
-
-    const result = await worker.runUntil(
-      client.workflow.execute(backgroundCheck, {
-        args: [ssn],
-        workflowId: "background-check-test",
-        taskQueue,
-      })
-    );
-    assert.equal(result, "pass");
-  });
-});
-```
+<!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-workflow-test-->
+<!--SNIPEND-->
 
 This test uses a local testing server that ships with the Temporal TypeScript SDK.
 This server becomes the environment that runs the Worker. This example uses the `before` and `after` hooks
@@ -1119,28 +838,8 @@ You can test Activity code for the following conditions:
 Add the following code to `src/mocha/ssntrace.test.ts` to test the `ssnTrace`
 Activity and ensure it returns the expected value:
 
-<div class="copycode-notice-container">
-  <a href="https://github.com/temporalio/documentation/blob/main/sample-apps/typescript/chapter_project_setup/backgroundcheck/src/mocha/ssntrace.test.ts">
-    View the source code
-  </a>{" "}
-  in the context of the rest of the application code.
-</div>
-
-```typescript
-import { MockActivityEnvironment } from "@temporalio/testing";
-import { describe, it } from "mocha";
-import * as activities from "../activities";
-import assert from "assert";
-
-describe("ssnTrace activity", async () => {
-  it("successfully passes the ssn trace", async () => {
-    const env = new MockActivityEnvironment();
-    const ssn = "111-22-3333";
-    const result = await env.run(activities.ssnTrace, ssn);
-    assert.equal(result, "pass");
-  });
-});
-```
+<!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-activity-test-->
+<!--SNIPEND-->
 
 ## Conclusion {#conclusion}
 
