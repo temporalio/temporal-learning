@@ -1,24 +1,9 @@
-/* dacx */
 package backgroundcheckboilerplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import io.temporal.testing.TestActivityExtension;
-
-/*
-Temporal provides the `TestActivityEnvironment` and `TestActivityExtension` classes
-to allow for testing Activities outside the scope of a Workflow. Testing
-Activities is similar to testing non-Temporal java code.
-
-Some examples of things an Activity can be tested for are:
-- Exceptions thrown when invoking the Activity Execution.
-- Exceptions thrown when checking for the result of the Activity Execution.
-- Activity return values. Check to ensure the return value is expected.
-
-This example asserts that the expected value was returned by the invocation of the Activity.
-*/
-
 
 public class BackgroundCheckBoilerplateActivitiesTest {
 
@@ -42,41 +27,3 @@ public class BackgroundCheckBoilerplateActivitiesTest {
   }
 
 }
-
-/*
-Temporal provides the `TestActivityExtension` class to simplify the creation of 
-the test environment. Using this extension you provide your Activity 
-to register with a Worker created by the testing framework to be used during testing. 
-The extension provides a a stubbed Activity  object to each test as well as 
-manage the lifecycle of the test environment.
-If you require more granular control of the test environments, you can manually create
-and destroy all these parts in methods annotated with `@BeforeEach` and `@AfterEach`
-as defined by JUnit.
-
-You annotate the method with @Test and test the results of the Activity via assertions.
-*/
-
-/* @dacx
-id: backgroundcheck-boilerplate-add-activity-tests
-title: Testing Activities
-description: How to add a testing framework to your Temporal Application.
-label: Test framework
-lines: 4-44
-tags:
-- testing
-- developer guide
-- test framework
-- java sdk
-@dacx */
-
-/* @dacx
-id: backgroundcheck-boilerplate-add-activity-tests-details
-title: Add Activity method tests
-description: How to test Activity code
-label: Test Activity code
-lines: 46-57
-tags:
-- testing
-- developer guide
-- java sdk
-@dacx */

@@ -1,4 +1,3 @@
-/* dacx */
 package backgroundcheckreplay.workers;
 
 import backgroundcheckreplay.BackgroundCheckReplayActivitiesImpl;
@@ -8,18 +7,6 @@ import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-
-/*
-To run a Worker Process with a local development server, define the following steps in code:
-- Generate the gRPC stubs necessary to configure a connection to a Temporal Cluster running on localhost using the 'default' namespace
-- Initialize a Temporal Client (`WorkflowClient`), passing in the gRPC stubs.
-- Initialize a WorkerFactory, passing in the Temporal Client (`WorkflowClient`)
-- Create a new Worker using the WorkerFactory, passing in the task queue the Worker should listen on.
-- Register the application's Workflow and Activities.
-- Call start on the Worker.
-
-Temporal recommends keeping Worker code separate from Workflow and Activity code.
-*/
 
 public class DevServerWorker {
   public static void main(String[] args) {
@@ -47,15 +34,3 @@ public class DevServerWorker {
     factory.start();
   }
 }
-
-/* @dacx
-id: backgroundcheck-boilerplate-run-a-dev-server-worker
-title: Run a dev server Worker
-description: Define the code needed to run a Worker Process in Java.
-label: Dev server Worker
-lines: 4-47
-tags:
-- worker
-- developer guide
-- temporal client
-@dacx */
