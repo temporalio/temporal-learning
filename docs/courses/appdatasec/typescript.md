@@ -1,6 +1,6 @@
 ---
 title: "Securing Application Data with TypeScript"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Securing Application Data with TypeScript"
 draft: false
 tags: [courses, TypeScript]
