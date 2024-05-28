@@ -1,6 +1,6 @@
 ---
 title: "Temporal 101 with Python"
-sidebar_position: 4
+sidebar_position: 3
 sidebar_label: "Temporal 101 with Python"
 draft: false
 tags: [courses, Python]

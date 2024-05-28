@@ -1,6 +1,6 @@
 ---
 title: "Temporal 102: Exploring Durable Execution with TypeScript"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Temporal 102: Exploring Durable Execution with TypeScript"
 draft: false
 tags: [courses, TypeScript]

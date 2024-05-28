@@ -1,6 +1,6 @@
 ---
 title: "Versioning Workflows with Python"
-sidebar_position: 4
+sidebar_position: 3
 sidebar_label: "Versioning Workflows with Python"
 draft: false
 tags: [courses, Python]

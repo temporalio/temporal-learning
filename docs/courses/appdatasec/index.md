@@ -34,6 +34,5 @@ When you've completed the course, you'll be able to:
 
 <Link className="button button--primary" to="go">Go</Link>&nbsp;
 <Link className="button button--primary" to="java">Java</Link>&nbsp;
-<Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python">Python</Link>&nbsp;
-
+<Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;

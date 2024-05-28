@@ -1,6 +1,6 @@
 ---
 title: "Temporal 101 with TypeScript"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Temporal 101 with TypeScript"
 draft: false
 tags: [courses, TypeScript]

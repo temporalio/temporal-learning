@@ -1,6 +1,6 @@
 ---
 title: "Securing Application Data with Python"
-sidebar_position: 4
+sidebar_position: 3
 sidebar_label: "Securing Application Data with Python"
 draft: false
 tags: [courses, Python]
