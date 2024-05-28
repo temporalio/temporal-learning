@@ -7,7 +7,6 @@ description: The Durable Execution section of the Temporal Go SDK Background Che
 toc_max_heading_level: 4
 keywords:
 - determinism
-- developer-guide-doc-type
 - durable execution
 - event history
 - go sdk
@@ -23,7 +22,6 @@ keywords:
 - timer
 tags:
 - determinism
-- developer-guide-doc-type
 - durable-execution
 - event-history
 - go-sdk
@@ -150,7 +148,7 @@ Register the Workflow Definition and then specify an existing Event History to c
 Run the tests in the test directory (`go test`).
 If the Workflow Definition and the Event History are incompatible then the test fails.
 
-<!--SNIPSTART durability-chapter-replay-test-->
+<!--SNIPSTART go-durability-chapter-replay-test-->
 [docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
 ```go
 
@@ -211,7 +209,7 @@ The following are some common operations that **can't** be done inside of a Work
 
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
-<!--SNIPSTART durability-chapter-non-deterministic-workflow-->
+<!--SNIPSTART go-durability-chapter-non-deterministic-workflow-->
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go)
 ```go
 // CAUTION! Do not use this code!
@@ -401,7 +399,7 @@ The Temporal SDK offers both a `workflow.StartTimer()` API, and a `workflow.Slee
 
 Use the `workflow.GetLogger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
-<!--SNIPSTART durability-chapter-workflow-->
+<!--SNIPSTART go-durability-chapter-workflow-->
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go)
 ```go
 package workflows

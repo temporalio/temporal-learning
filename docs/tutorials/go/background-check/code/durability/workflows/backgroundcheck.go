@@ -1,4 +1,4 @@
-// @@@SNIPSTART durability-chapter-workflow
+// @@@SNIPSTART go-durability-chapter-workflow
 package workflows
 
 import (
