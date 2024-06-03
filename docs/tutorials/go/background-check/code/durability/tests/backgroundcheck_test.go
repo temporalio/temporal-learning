@@ -68,7 +68,7 @@ func (s *UnitTestSuite) Test_SSNTraceActivity() {
 	s.Equal("pass", result)
 }
 
-//@@@SNIPSTART durability-chapter-replay-test
+//@@@SNIPSTART go-durability-chapter-replay-test
 
 // TestReplayWorkflowHistoryFromFile tests for Event History compatibility.
 func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {

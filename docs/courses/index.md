@@ -69,9 +69,9 @@ In this course, you'll go beyond the fundamentals, learning how to safely evolve
 
 -----
 
-## [Securing Temporal Applications](appdatasec/index.md)
+## [Securing Application Data](appdatasec/index.md)
 
-In this course, you'll implement Custom Data Conversion for your Temporal Workflows. 
+In this course, you'll implement Custom Data Conversion for your Temporal Workflows.
 By implementing Custom Data Converters and a Codec Server, you can expand this behavior to support a variety of complex input and output data. Incorporating encryption mechanisms into your Temporal Workflows adds several considerations around user management, encryption standards, and key rotation. This course provides some general guidance and example applications for addressing each of these considerations.
 
 **Estimated time**: ⏱️ 2 hours, self-paced.
@@ -84,6 +84,23 @@ By implementing Custom Data Converters and a Codec Server, you can expand this b
 <Link className="button button--primary" to="appdatasec/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="appdatasec/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="appdatasec/python">Python</Link>&nbsp;
+
+-----
+
+## [Interacting with Workflows](interacting_with_workflows/index.md)
+
+In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+
+**Estimated time**: ⏱️ 3 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="interacting_with_workflows/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
 
 -----
 

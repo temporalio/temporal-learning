@@ -5,6 +5,7 @@ origins:
     repo: money-transfer-project-template-python
   - owner: temporalio
     repo: money-transfer-project-template-java
+    ref: 4e1ca12d8d1c058c67d810efe8dcf68f7b318208
   - owner: temporalio
     repo: hello-world-project-template-java
   - owner: temporalio
@@ -23,6 +24,7 @@ origins:
     repo: subscription-workflow-project-template-php
   - owner: temporalio
     repo: samples-php
+    ref: master
   - owner: temporalio
     repo: hello-world-project-template-python
   - owner: temporalio
@@ -52,8 +54,23 @@ origins:
     repo: money-transfer-project-template-go
     ref: cloud
   # Background Check tutorial code in the learn repo
-  - files: 
+  - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
+      ref: 'main'
+  - files:
+      pattern: './docs/tutorials/java/background-check/code/**/*.java'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
+      ref: 'main'
+  - files:
+      pattern: './docs/tutorials/python/background-check/code/**/*.py'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
+      ref: 'main'
+  - files:
+      pattern: './docs/tutorials/typescript/background-check/code/**/*.ts'
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'

@@ -1,4 +1,4 @@
-// @@@SNIPSTART durability-chapter-non-deterministic-workflow
+// @@@SNIPSTART go-durability-chapter-non-deterministic-workflow
 // CAUTION! Do not use this code!
 package workflows
 
