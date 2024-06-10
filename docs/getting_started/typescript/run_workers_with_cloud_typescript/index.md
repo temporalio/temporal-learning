@@ -135,10 +135,6 @@ Import the [NativeConnection](https://nodejs.temporal.io/api/classes/worker.Nati
 This is used to configure settings used when connecting to Temporal Cloud.
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-nativeconnection-->
-[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/worker.ts)
-```ts
-import { Worker, NativeConnection } from "@temporalio/worker";
-```
 <!--SNIPEND-->
 
 Temporal supports mTLS as a way of encrypting network traffic between the services of a cluster and also between application processes and a Cluster.
@@ -150,10 +146,6 @@ To read the TLS certificate and key files, use the `fs/promises` module.
 Add the following import statement at the top of your file:
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-promises-->
-[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/worker.ts)
-```ts
-import fs from "fs/promises";
-```
 <!--SNIPEND-->
 
 Next, update the configuration used to make a connection with the Worker.
@@ -161,18 +153,6 @@ Next, update the configuration used to make a connection with the Worker.
 Add the [NativeConnection](https://nodejs.temporal.io/api/classes/worker.NativeConnection) and pass in the [TLS configuration](https://nodejs.temporal.io/api/interfaces/client.TLSConfig):
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-connect-to-cloud-->
-[src/worker.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/worker.ts)
-```ts
-  const connection = await NativeConnection.connect({
-    address: process.env.TEMPORAL_ADDRESS!,
-    tls: {
-      clientCertPair: {
-        crt: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_CERT!),
-        key: await fs.readFile(process.env.TEMPORAL_MTLS_TLS_KEY!),
-      },
-    },
-  });
-```
 <!--SNIPEND-->
 
 This code reads the TLS certificate and key files using the `fs/promises` module and uses them to configure the `NativeConnection` object.
@@ -182,10 +162,6 @@ Next, update the Worker configuration to read the Namespace from the shared file
 Open `shared.ts` and add the following:
 
 <!--SNIPSTART money-transfer-project-template-ts-worker-namespace-->
-[src/shared.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/cloud/src/shared.ts)
-```ts
-export const namespace: string = process.env.TEMPORAL_NAMESPACE;
-```
 <!--SNIPEND-->
 
 This retrieves the Namespace from environment variable and passes it to the `Worker.create()` method.

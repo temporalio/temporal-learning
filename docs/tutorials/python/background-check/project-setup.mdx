@@ -308,26 +308,6 @@ In the Temporal Python SDK programming model, a Workflow Definition is defined a
 The `BackgroundCheck class` below is an example of a basic Workflow Definition.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-workflow-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/workflows/backgroundcheck.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/workflows/backgroundcheck.py)
-```py
-from datetime import timedelta
-
-from temporalio import workflow
-
-with workflow.unsafe.imports_passed_through():
-    from activities.ssntraceactivity_dacx import ssn_trace_activity
-
-@workflow.defn
-class BackgroundCheck:
-    @workflow.run
-    async def run(self, ssn: str) -> str:
-        return await workflow.execute_activity(
-            ssn_trace_activity,
-            ssn,
-            schedule_to_close_timeout=timedelta(seconds=5),
-        )
-
-```
 <!--SNIPEND-->
 
 Use the `@workflow.defn` decorator on the `BackgroundCheck` class to identify a Workflow.
@@ -347,15 +327,6 @@ You can use asynchronous, synchronous multithreaded, and synchronous multiproces
 Below is an example of an Activity defined as a function.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-activity-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/activities/ssntraceactivity.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/activities/ssntraceactivity.py)
-```py
-from temporalio import activity
-
-@activity.defn
-async def ssn_trace_activity(ssn) -> str:
-    return "pass"
-
-```
 <!--SNIPEND-->
 
 The `ssn_trace_activity` function passes a string and returns `pass`.
@@ -392,34 +363,6 @@ To run a Worker Process with a local development server, define the following st
 In regards to organization, we recommend keeping Worker code separate from Workflow and Activity code.
 
 <!--SNIPSTART python-project-setup-chapter-dev-service-worker-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/dev_server_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/dev_server_worker/main.py)
-```py
-import asyncio
-
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities.ssntraceactivity_dacx import ssn_trace_activity
-from workflows.backgroundcheck_dacx import BackgroundCheck
-
-async def main():
-    client = await Client.connect("localhost:7233", namespace="backgroundcheck_namespace")
-
-    worker = Worker(
-        client,
-        namespace="backgroundcheck_namespace",
-        task_queue="backgroundcheck-boilerplate-task-queue",
-        workflows=[BackgroundCheck],
-        activities=[ssn_trace_activity],
-    )
-
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-```
 <!--SNIPEND-->
 
 ### Run a Temporal Cloud Worker {#cloud-worker}
@@ -431,46 +374,6 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 - Certificate and private key associated with the Namespace
 
 <!--SNIPSTART python-project-setup-chapter-cloud-worker-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/cloud_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/cloud_worker/main.py)
-```py
-import asyncio
-import os
-
-from temporalio.client import Client, TLSConfig
-from temporalio.worker import Worker
-
-from activities.ssntraceactivity_dacx import ssn_trace_activity
-from workflows.backgroundcheck_dacx import BackgroundCheck
-
-async def main():
-    with open(os.getenv("TEMPORAL_MTLS_TLS_CERT"), "rb") as f:
-        client_cert = f.read()
-
-    with open(os.getenv("TEMPORAL_MTLS_TLS_KEY"), "rb") as f:
-        client_key = f.read()
-
-    client = await Client.connect(
-        os.getenv("TEMPORAL_HOST_URL"),
-        namespace=os.getenv("TEMPORAL_NAMESPACE"),
-        tls=TLSConfig(
-            client_cert=client_cert,
-            client_private_key=client_key,
-        ),
-    )
-
-    worker = Worker(
-        client,
-        task_queue="backgroundcheck-boilerplate-task-queue",
-        workflows=[BackgroundCheck],
-        activities=[ssn_trace_activity],
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-```
 <!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
@@ -550,34 +453,6 @@ Copy the IP address part.
 Set IP address, port, and Namespace in the Temporal Client options.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-self-hosted-worker-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/self_hosted_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/self_hosted_worker/main.py)
-```py
-import asyncio
-
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities.ssntraceactivity_dacx import ssn_trace_activity
-from workflows.backgroundcheck_dacx import BackgroundCheck
-
-async def main():
-    client = await Client.connect(
-        "172.18.0.4:7233"  # The IP address of the Temporal Server on your network.
-    )
-
-    worker = Worker(
-        client,
-        task_queue="backgroundcheck-boilerplate-task-queue",
-        workflows=[BackgroundCheck],
-        activities=[ssn_trace_activity],
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-```
 <!--SNIPEND-->
 
 #### Build and deploy Docker image {#dockerfile}
@@ -802,36 +677,6 @@ Then, it executes the `BackgroundCheck.run` method with a social security number
 The test is marked with `@pytest.mark.asyncio` to indicate that it is an asynchronous test.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-workflow-test-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/workflow_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/workflow_test.py)
-```py
-import uuid
-
-import pytest
-
-from temporalio.testing import WorkflowEnvironment
-from temporalio.worker import Worker
-
-from activities.ssntraceactivity_dacx import ssn_trace_activity
-from workflows.backgroundcheck_dacx import BackgroundCheck
-
-@pytest.mark.asyncio
-async def test_execute_workflow():
-    task_queue_name = str(uuid.uuid4())
-    async with await WorkflowEnvironment.start_time_skipping() as env:
-        async with Worker(
-            env.client,
-            task_queue=task_queue_name,
-            workflows=[BackgroundCheck],
-            activities=[ssn_trace_activity],
-        ):
-            assert "pass" == await env.client.execute_workflow(
-                BackgroundCheck.run,
-                "555-55-5555",
-                id=str(uuid.uuid4()),
-                task_queue=task_queue_name,
-            )
-
-```
 <!--SNIPEND-->
 
 ### Add Activity function tests {#test-activity-code}
@@ -842,19 +687,4 @@ The function takes a social security number as input and returns a string indica
 The test checks if the function returns "pass" when given the SSN "55-55-555".
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-activity-test-->
-[docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/activity_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/activity_test.py)
-```py
-import pytest
-from temporalio.testing import ActivityEnvironment
-from activities.ssntraceactivity_dacx import ssn_trace_activity
-
-@pytest.mark.asyncio
-async def test_ssn_trace_activity() -> str:
-    activity_environment = ActivityEnvironment()
-    expected_output = "pass"
-    assert expected_output == await activity_environment.run(
-        ssn_trace_activity, "55-55-555"
-    )
-
-```
 <!--SNIPEND-->

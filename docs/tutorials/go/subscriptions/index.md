@@ -51,20 +51,6 @@ You'll create an `EmailDetails` struct with the following fields:
 Add the following code to the `subscribe.go` file to define the struct, as well as the Task Queue name and the host and port your web API will use:
 
 <!--SNIPSTART subscription-workflow-go-subscribe {"selectedLines": ["1-11"]}-->
-[subscribe.go](https://github.com/temporalio/email-subscription-project-go/blob/main/subscribe.go)
-```go
-package subscribeemails
-
-const TaskQueueName string = "email_subscription"
-const ClientHostPort string = "localhost:4000"
-
-type EmailDetails struct {
-	EmailAddress      string `json:"emailAddress"`
-	Message           string `json:"message"`
-	IsSubscribed      bool   `json:"isSubscribed"`
-	SubscriptionCount int    `json:"subscriptionCount"`
-}
-```
 <!--SNIPEND-->
 
 Now that you have your `EmailDetails` struct defined, you can move on to writing the Workflow Definition.
@@ -76,72 +62,6 @@ Use the `workflow.go` file to write deterministic logic inside your Workflow Def
 Add the following code to define the Workflow:
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["1-15", "24-29", "53-92"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
-```go
-package subscribeemails
-
-import (
-	"errors"
-	"time"
-
-	"go.temporal.io/sdk/workflow"
-)
-
-// Workflow definition
-func SubscriptionWorkflow(ctx workflow.Context, emailDetails EmailDetails) error {
-	duration := 12 * time.Second
-	logger := workflow.GetLogger(ctx)
-	logger.Info("Subscription created", "EmailAddress", emailDetails.EmailAddress)
-
-// ...
-	// variable for Activity Options. Timeout can be set to a longer timespan (such as a month)
-	ctx = workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: 2 * time.Minute,
-		WaitForCancellation: true,
-	})
-
-// ...
-	// handling for the first email ever
-	logger.Info("Sending welcome email", "EmailAddress", emailDetails.EmailAddress)
-	emailDetails.SubscriptionCount++
-	data := EmailDetails{
-		EmailAddress:      emailDetails.EmailAddress,
-		Message:           "Welcome! Looks like you've been signed up!",
-		IsSubscribed:      true,
-		SubscriptionCount: emailDetails.SubscriptionCount,
-	}
-
-	// send welcome email, increment billing period
-	err = workflow.ExecuteActivity(ctx, SendEmail, data).Get(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	// start subscription period. execute until no longer subscribed
-	for emailDetails.IsSubscribed {
-		emailDetails.SubscriptionCount++
-		data := EmailDetails{
-			EmailAddress:      emailDetails.EmailAddress,
-			Message:           "This is yet another email in the Subscription Workflow.",
-			IsSubscribed:      true,
-			SubscriptionCount: emailDetails.SubscriptionCount,
-		}
-
-		err = workflow.ExecuteActivity(ctx, SendEmail, data).Get(ctx, nil)
-		if err != nil {
-			return err
-		}
-		logger.Info("Sent content email", "EmailAddress", emailDetails.EmailAddress)
-		// Sleep the Workflow until the next subscription email needs to be sent.
-		// This can be set to sleep every month between emails.
-		if err = workflow.Sleep(ctx, duration); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-```
 <!--SNIPEND-->
 
 The `SubscriptionWorkflow()` function requires two arguments: `ctx` and `EmailDetails`.  `ctx` references `workflow.Context`, which the Go SDK uses to pass around Workflow Execution context.
@@ -163,23 +83,6 @@ An [Activity](https://docs.temporal.io/activities) is a normal function or metho
 Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
 <!--SNIPSTART subscription-workflow-go-activities-->
-[activities.go](https://github.com/temporalio/email-subscription-project-go/blob/main/activities.go)
-```go
-package subscribeemails
-
-import (
-	"context"
-
-	"go.temporal.io/sdk/activity"
-)
-
-// email activities
-func SendEmail(ctx context.Context, emailInfo EmailDetails) (string, error) {
-	activity.GetLogger(ctx).Info("Sending email to customer", "EmailAddress", emailInfo.EmailAddress)
-	return "Email sent to " + emailInfo.EmailAddress, nil
-}
-
-```
 <!--SNIPEND-->
 
 Each iteration of the Workflow loop will execute this Activity, which simulates sending a message to the user.
@@ -193,42 +96,6 @@ Temporal Workflows and Activities are executed by [Workers](https://docs.tempora
 Create a `worker` folder, and create the `main.go` file for the [Worker program](https://docs.temporal.io/workers#worker-program).
 
 <!--SNIPSTART subscription-workflow-go-worker-->
-[worker/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/worker/main.go)
-```go
-package main
-
-import (
-	"log"
-	"subscribeemails"
-
-	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/worker"
-)
-
-func main() {
-	// create client and worker
-	c, err := client.Dial(client.Options {
-		HostPort: client.DefaultHostPort,
-		Namespace: client.DefaultNamespace,
-	})
-	if err != nil {
-		log.Fatalln("Unable to create Temporal Client.", err)
-	}
-	defer c.Close()
-	// create Worker
-	w := worker.New(c, subscribeemails.TaskQueueName, worker.Options{})
-	// register Activity and Workflow
-	w.RegisterWorkflow(subscribeemails.SubscriptionWorkflow)
-	w.RegisterActivity(subscribeemails.SendEmail)
-
-	log.Println("Worker is starting.")
-	// Listen to Task Queue
-	err = w.Run(worker.InterruptCh())
-	if err != nil {
-		log.Fatalln("Unable to start Worker.", err)
-	}
-}
-```
 <!--SNIPEND-->
 
 Now that you've written the logic to execute the Workflow and Activity Definitions, try to build the gateway.
@@ -242,54 +109,6 @@ Create a `gateway` folder with the file `main.go`.
 Establish your JSON request and response structs, set the endpoint handlers, and connect to the Temporal Client.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["1-25", "197-215"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
-```go
-package main
-
-import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"net/url"
-	"subscribeemails"
-
-	"go.temporal.io/sdk/client"
-)
-
-var temporalClient client.Client
-
-type RequestData struct {
-	Email string `json:"email"`
-}
-
-type ResponseData struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
-
-// ...
-func main() {
-
-	var err error
-	temporalClient, err = client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Starting the web server on %s\n", subscribeemails.ClientHostPort)
-
-	http.HandleFunc("/subscribe", subscribeHandler)
-	http.HandleFunc("/unsubscribe", unsubscribeHandler)
-	http.HandleFunc("/details", showDetailsHandler)
-	_ = http.ListenAndServe(":4000", nil)
-}
-
-```
 <!--SNIPEND-->
 
 The Temporal Client enables you to communicate with the Temporal Cluster. Communication with a Temporal Cluster includes, but isn't limited to, the following:
@@ -306,81 +125,6 @@ Now that the connection to the Temporal Server is open, define your first endpoi
 Create a `subscribeHandler()` function in the same file so users can subscribe to the emails.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["26-96"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
-```go
-// ...
-// create subscribe handler, which collects the email in the index handler form
-func subscribeHandler(w http.ResponseWriter, r *http.Request) {
-
-	// only respond to POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// ensure JSON request
-	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "Invalid Content-Type, expecting application/json", http.StatusUnsupportedMediaType)
-		return
-	}
-
-	var requestData RequestData
-
-	// decode request into variable
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, "Error processing request body", http.StatusBadRequest)
-		return
-	}
-
-	// check if the email is blank
-	if requestData.Email == "" {
-		http.Error(w, "Email is blank", http.StatusBadRequest)
-		return
-	}
-
-	// use the email as the id in the workflow.
-	workflowOptions := client.StartWorkflowOptions{
-		ID:                                       requestData.Email,
-		TaskQueue:                                subscribeemails.TaskQueueName,
-		WorkflowExecutionErrorWhenAlreadyStarted: true,
-	}
-
-	// Define the EmailDetails struct
-	subscription := subscribeemails.EmailDetails{
-		EmailAddress:      requestData.Email,
-		Message:           "Welcome to the Subscription Workflow!",
-		SubscriptionCount: 0,
-		IsSubscribed:      true,
-	}
-
-	// Execute the Temporal Workflow to start the subscription.
-	_, err = temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, subscribeemails.SubscriptionWorkflow, subscription)
-
-	if err != nil {
-		http.Error(w, "Couldn't sign up user. Please try again.", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-
-	// build response
-	responseData := ResponseData{
-		Status:  "success",
-		Message: "Signed up.",
-	}
-
-	// send headers
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated) // 201 Created status code
-
-	// send response
-	if err := json.NewEncoder(w).Encode(responseData); err != nil {
-		log.Print("Could not encode response JSON", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-	}
-}
-
-```
 <!--SNIPEND-->
 
 Use error handlers to ensure that the function only responds to a "POST" request in JSON format.
@@ -403,20 +147,6 @@ To allow users to retrieve information about their subscription details, add a n
 Open the `workflow.go` file and add a Query handler to the top of the Workflow Definition, right after the logging statement::
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["15-24"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
-```go
-// ...
-
-	// Query handler
-	err := workflow.SetQueryHandler(ctx, "GetDetails", func() (EmailDetails, error) {
-		return emailDetails, nil
-	})
-
-	if err != nil {
-		return err
-	}
-	// variable for Activity Options. Timeout can be set to a longer timespan (such as a month)
-```
 <!--SNIPEND-->
 
 This Query handler returns the contents of the `emailDetails` variable. Queries should never mutate anything in the Workflow.
@@ -429,53 +159,6 @@ Create a function called `showDetailsHandler()` in which a user can get informat
 Make sure to include error handlers to ensure proper "GET" requests and responses.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["153-195"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
-```go
-// ...
-// create part of the Query handler that returns information at localhost:4000/details
-func showDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the query string
-	queryValues, err := url.ParseQuery(r.URL.RawQuery)
-	if err != nil {
-		http.Error(w, "Couldn't query values. Please try again.", http.StatusInternalServerError)
-		log.Println("Failed to query Workflow.")
-		return
-	}
-
-	// Extract the email parameter
-	email := queryValues.Get("email")
-
-	workflowID := email
-	queryType := "GetDetails"
-
-	// print email, billing period, charge, etc.
-	resp, err := temporalClient.QueryWorkflow(context.Background(), workflowID, "", queryType)
-	if err != nil {
-		http.Error(w, "Couldn't query values. Please try again.", http.StatusInternalServerError)
-		log.Println("Failed to query Workflow.")
-		return
-	}
-
-	var result subscribeemails.EmailDetails
-
-	if err := resp.Get(&result); err != nil {
-		http.Error(w, "Couldn't query values. Please try again.", http.StatusInternalServerError)
-		log.Println("Failed to query Workflow.")
-		return
-	}
-
-	// send headers
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated) // 201 Created status code
-
-	// send response
-	if err := json.NewEncoder(w).Encode(result); err != nil {
-		log.Print("Could not encode response JSON", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-	}
-}
-
-```
 <!--SNIPEND-->
 
 The resulting function returns the email address associated with the Workflow—in other words, the Workflow Id.
@@ -489,32 +172,6 @@ Users will need to unsubscribe from the email list at some point. To gracefully 
 Create a new `defer` block within `SubscriptionWorkflow()` to send cancellation emails and end the Workflow Execution:
 
 <!--SNIPSTART subscription-workflow-go-main {"selectedLines": ["31-52"]}-->
-[workflow.go](https://github.com/temporalio/email-subscription-project-go/blob/main/workflow.go)
-```go
-// ...
-	defer func() {
-		newCtx, cancel := workflow.NewDisconnectedContext(ctx)
-		defer cancel()
-
-		if errors.Is(ctx.Err(), workflow.ErrCanceled) {
-			data := EmailDetails{
-				EmailAddress:      emailDetails.EmailAddress,
-				Message:           "Your subscription has been canceled. Sorry to see you go!",
-				IsSubscribed:      false,
-				SubscriptionCount: emailDetails.SubscriptionCount,
-			}
-			// send cancellation email
-			err := workflow.ExecuteActivity(newCtx, SendEmail, data).Get(newCtx, nil)
-			if err != nil {
-				logger.Error("Failed to send cancellation email", "Error", err)
-			} else {
-				// Cancellation received.
-				logger.Info("Sent cancellation email", "EmailAddress", emailDetails.EmailAddress)
-			}
-		}
-	}()
-
-```
 <!--SNIPEND-->
 
 To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to return a [cancel()](https://python.temporal.io/temporalio.client.WorkflowHandle.html#cancel) method on the Workflow's handle.
@@ -522,66 +179,6 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 Create a new function called `unsubscribeHandler()` that sends a cancellation request to the Workflow Execution.
 
 <!--SNIPSTART subscription-workflow-go-gateway {"selectedLines": ["97-152"]}-->
-[gateway/main.go](https://github.com/temporalio/email-subscription-project-go/blob/main/gateway/main.go)
-```go
-// ...
-// create unsubscribe handler, accessed at localhost:4000/unsubscribe
-func unsubscribeHandler(w http.ResponseWriter, r *http.Request) {
-
-	// only respond to POST
-	if r.Method != http.MethodDelete {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// ensure JSON request
-	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "Invalid Content-Type, expecting application/json", http.StatusUnsupportedMediaType)
-		return
-	}
-
-	var requestData RequestData
-
-	// decode request into variable
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, "Error processing request body", http.StatusBadRequest)
-		return
-	}
-
-	// check if the email is blank
-	if requestData.Email == "" {
-		http.Error(w, "Email is blank", http.StatusBadRequest)
-		return
-	}
-	workflowID := requestData.Email
-
-	// cancel the Workflow Execution
-	err = temporalClient.CancelWorkflow(context.Background(), workflowID, "")
-	if err != nil {
-		http.Error(w, "Couldn't unsubscribe. Please try again.", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-
-	// build response
-	responseData := ResponseData{
-		Status:  "success",
-		Message: "Unsubscribed.",
-	}
-
-	// send headers
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusAccepted) // 202 Accepted status code
-
-	// send response
-	if err := json.NewEncoder(w).Encode(responseData); err != nil {
-		log.Print("Could not encode response JSON", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-	}
-}
-
-```
 <!--SNIPEND-->
 
 The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint. 
@@ -606,43 +203,6 @@ To set up the test environment, create a new file called `subscription_test.go`.
 Create a test function called `Test_CanceledSubscriptionWorkflow()`.
 
 <!--SNIPSTART subscription-workflow-go-subscribe-test-->
-[subscription_test.go](https://github.com/temporalio/email-subscription-project-go/blob/main/subscription_test.go)
-```go
-package subscribeemails
-
-import (
-	"testing"
-	"time"
-
-	"go.temporal.io/sdk/testsuite"
-)
-
-func Test_CanceledSubscriptionWorkflow(t *testing.T) {
-	testSuite := &testsuite.WorkflowTestSuite{}
-	env := testSuite.NewTestWorkflowEnvironment()
-
-	testDetails := EmailDetails{
-		EmailAddress:      "example@temporal.io",
-		Message:           "This is a test to see if the Workflow cancels. This is dependent on the bool variable in the testDetails struct.",
-		IsSubscribed:      true,
-		SubscriptionCount: 12,
-	}
-
-	// set delayed callback to allow time for cancellation.
-	env.RegisterDelayedCallback(func() {
-		env.CancelWorkflow()
-	}, 5 * time.Second)
-
-	env.RegisterWorkflow(SubscriptionWorkflow)
-	env.RegisterActivity(SendEmail)
-
-	env.ExecuteWorkflow(SubscriptionWorkflow, testDetails)
-}
-
-
-
-
-```
 <!--SNIPEND-->
 
 This function creates a Workflow Execution by starting the Workflow with some test data.
