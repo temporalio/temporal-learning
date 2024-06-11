@@ -50,7 +50,7 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
     const scope = new CancellationScope({cancellable: false});
     try {
       while (true) {
-        // Await cancellation or sleep
+        // Await cancellation
         await scope.cancelRequested;
       }
     } catch (err) {
