@@ -1,0 +1,122 @@
+---
+id: deploy-to-production
+title: Deploy to Digital Ocean Droplet
+description: Deploy the WorkQueue Slackbot to production.
+sidebar_label: Deploy to Production
+sidebar_position: 3
+---
+
+## Create a droplet
+
+- Add SSH user to droplet
+  - possible helpful links:
+    - https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/
+      - https://superuser.com/questions/772660/howto-force-ssh-to-use-a-specific-private-key
+        for me that is `ssh -i ~/.ssh/id_rsa_digitalocean`
+- Add public key to file on server:
+  To add your public key to the **`authorized_keys`** file on the server:
+  1. Display your public key with **`cat ~/.ssh/id_rsa_digitalocean.pub`** and copy the output.
+  2. Log into your DigitalOcean account, go to the Droplets section, and access your Droplet's console.
+  3. As **`root`**, open the **`~/.ssh/authorized_keys`** file with a text editor like **`nano`** or **`vi`**.
+  4. Paste your public key at the end of this file, save it, and then exit the editor.
+     If you have an existing key with a special name you can specify it when making the call
+     `ssh -i <private key filename>`
+- Now you can ssh into server
+
+Create a database
+
+- Make sure you restrict access to just the droplet
+-
+
+Register your domain and point it at the IP
+
+setup ngnix - more or less follow this tutorial (Steps 1 & 2) https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04
+
+Make sure to include the full server block set up here?
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04#step-5-setting-up-server-blocks-recommended
+
+Not sure if the /var/www/your-domain/html/index.html is really needed tho…
+
+Use cert bot to add cert:
+
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+
+```bash
+sudo certbot --nginx -d iq-staging.temporal.io
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator nginx, Installer nginx
+Enter email address (used for urgent renewal and security notices) (Enter 'c' to
+cancel): cully@temporal.io
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please read the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.3-September-21-2022.pdf. You must
+agree in order to register with the ACME server at
+https://acme-v02.api.letsencrypt.org/directory
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(A)gree/(C)ancel: A
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing to share your email address with the Electronic Frontier
+Foundation, a founding partner of the Let's Encrypt project and the non-profit
+organization that develops Certbot? We'd like to send you email about our work
+encrypting the web, EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: Y
+Obtaining a new certificate
+Performing the following challenges:
+http-01 challenge for iq-staging.temporal.io
+Waiting for verification...
+Cleaning up challenges
+Deploying Certificate to VirtualHost /etc/nginx/sites-enabled/default
+
+Please choose whether or not to redirect HTTP traffic to HTTPS, removing HTTP access.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+1: No redirect - Make no further changes to the webserver configuration.
+2: Redirect - Make all requests redirect to secure HTTPS access. Choose this for
+new sites, or if you're confident your site works on HTTPS. You can undo this
+change by editing your web server's configuration.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Select the appropriate number [1-2] then [enter] (press 'c' to cancel): 2
+Redirecting all traffic on port 80 to ssl in /etc/nginx/sites-enabled/default
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Congratulations! You have successfully enabled https://iq-staging.temporal.io
+
+You should test your configuration at:
+https://www.ssllabs.com/ssltest/analyze.html?d=iq-staging.temporal.io
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/iq-staging.temporal.io/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/iq-staging.temporal.io/privkey.pem
+   Your cert will expire on 2023-12-10. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot again
+   with the "certonly" option. To non-interactively renew *all* of
+   your certificates, run "certbot renew"
+ - Your account credentials have been saved in your Certbot
+   configuration directory at /etc/letsencrypt. You should make a
+   secure backup of this folder now. This configuration directory will
+   also contain certificates and private keys obtained by Certbot so
+   making regular backups of this folder is ideal.
+ - If you like Certbot, please consider supporting our work by:
+
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
+```
+
+Generate a separate Cert for Cloud
+
+install tcld → https://docs.temporal.io/cloud/tcld#install-tcld
+
+generate using tcld → https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates
+
+Add certs to a env file
+
+Clone the repo on the droplet
+
+Install pm2
+
+Run the slack bot and temporal app with pm2
