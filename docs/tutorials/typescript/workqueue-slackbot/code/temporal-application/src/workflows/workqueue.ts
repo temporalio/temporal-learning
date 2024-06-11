@@ -15,7 +15,6 @@ const addWorkqueueDataSignal =
 const claimWorkSignal =
   defineSignal<[{workId: string; claimantId: string}]>("claimWork");
 const completeWorkSignal = defineSignal<[{workId: string}]>("completeWork");
-const maxEventCount = 2000;
 
 export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   const wqdata: WorkqueueData[] = existingData ?? [];
