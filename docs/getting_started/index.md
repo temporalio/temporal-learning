@@ -9,8 +9,20 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 import Link from '@docusaurus/Link';
+import ResizedImage from '../../src/components/resized-images/ResizedImage.js'
 
 ![Get Started with Temporal](/img/banners/getstarted.png)
+
+Temporal delivers durable execution. It abstracts away the complexity of building scalable distributed systems and lets you keep focus on what matters – delivering reliable systems, faster.
+
+It allows you to avoid coding for infrastructure nuances and their inevitable failures.
+
+<ResizedImage 
+  src='/img/zines/durable-execution-zine.png' 
+  alt="Why Durable Execution Zine" 
+  width="400px" 
+  height="auto" 
+/>
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 
@@ -26,7 +38,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 <Link className="button button--primary" to="python/dev_environment/">Python</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/dev_environment/">.NET</Link>&nbsp;
 
-----
+---
 
 ## Run your first Temporal Application
 
@@ -40,7 +52,7 @@ Download and run a small application and explore how Temporal executes Workflows
 <Link className="button button--primary" to="python/first_program_in_python">Python</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/first_program_in_dotnet">.NET</Link>&nbsp;
 
------
+---
 
 ## Build a Temporal Application from scratch
 
@@ -53,7 +65,8 @@ Write a program from the ground up in one of the supported languages:
 <Link className="button button--primary" to="typescript/hello_world_in_typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python/hello_world_in_python">Python</Link>&nbsp;
 
-----
+---
+
 ## Run Workers with Temporal Cloud
 
 **Estimated time**: ⏱️ ~10 minutes
@@ -65,7 +78,7 @@ Update your Worker code to connect to Temporal Cloud and run your Workflows.
 <Link className="button button--primary" to="typescript/run_workers_with_cloud_typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python/run_workers_with_cloud_python">Python</Link>&nbsp;
 
-----
+---
 
 ## Next steps
 
