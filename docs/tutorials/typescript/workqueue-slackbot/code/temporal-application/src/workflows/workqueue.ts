@@ -1,6 +1,5 @@
 import {
-  CancellationScope,
-  CancelledFailure,
+  isCancellation,
   continueAsNew,
   defineQuery,
   defineSignal,
@@ -10,12 +9,14 @@ import {
 } from "@temporalio/workflow";
 import {WorkqueueData} from "../../../common-types/types";
 
-const getWorkqueueDataQuery = defineQuery<WorkqueueData[]>("getWorkqueueData");
-const addWorkqueueDataSignal =
+export const getWorkqueueDataQuery =
+  defineQuery<WorkqueueData[]>("getWorkqueueData");
+export const addWorkToQueueSignal =
   defineSignal<[WorkqueueData]>("addWorkqueueData");
-const claimWorkSignal =
+export const claimWorkSignal =
   defineSignal<[{workId: string; claimantId: string}]>("claimWork");
-const completeWorkSignal = defineSignal<[{workId: string}]>("completeWork");
+export const completeWorkSignal =
+  defineSignal<[{workId: string}]>("completeWork");
 
 export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   const wqdata: WorkqueueData[] = existingData ?? [];
@@ -26,7 +27,7 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   });
 
   // Register the Signal handler for adding work
-  setHandler(addWorkqueueDataSignal, (data: WorkqueueData) => {
+  setHandler(addWorkToQueueSignal, (data: WorkqueueData) => {
     wqdata.push(data);
   });
 
@@ -47,19 +48,19 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
     }
   });
 
-  while (!workflowInfo().continueAsNewSuggested) {
-    try {
-      // Await cancellation
-      await CancellationScope.current().cancelRequested;
-    } catch (err) {
-      if (err instanceof CancelledFailure) {
-        // Set the Workflow status to Cancelled by throwing the CancelledFailure error
-        throw err;
-      } else {
-        // Handle other types of errors
-        throw err;
-      }
+  try {
+    // Await until suggestion to Continue-As-New due to History size
+    // If a Cancellation request exists, the condition call will throw the Cancellation error
+    await condition(() => workflowInfo().continueAsNewSuggested);
+  } catch (e) {
+    // Catch a Cancellation error
+    if (isCancellation(e)) {
+      // Set the Workflow status to Cancelled by throwing the CancelledFailure error
+      throw e;
+    } else {
+      // Handle other types of errors
+      throw e;
     }
   }
-  await continueAsNew(workqueue, [wqdata]);
+  await continueAsNew<typeof workqueue>(wqdata);
 }

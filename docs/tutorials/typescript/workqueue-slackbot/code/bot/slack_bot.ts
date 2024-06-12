@@ -29,12 +29,6 @@ app.message("iq awake?", async ({message, say}) => {
 });
 
 // Listen for Work Queue messages
-// app.message("!w", async ({ message, say, client }) => {
-//   const genericMessage = message as GenericMessageEvent;
-//   await handleWorkqueueMessages(genericMessage, say, client);
-// });
-
-// Listen for Work Queue messages
 app.command("/workqueue", async ({command, ack, say, client, respond}) => {
   await ack(); // Acknowledge the command request
   await handleWorkqueueCommand(command, client, say, respond);
@@ -49,17 +43,9 @@ app.action<BlockAction<BlockElementAction>>(
     const action = body.actions[0] as ButtonAction;
     const [channelName, workId, userId] = action.value.split("_");
     const claimantId = body.user.id;
-    const message = body.message as GenericMessageEvent;
     // Send signal to the Temporal workflow to claim the work
     console.log(body);
-    await signalClaimWork(
-      channelName,
-      workId,
-      claimantId,
-      message,
-      userId,
-      say
-    );
+    await signalClaimWork(channelName, workId, claimantId, userId, say);
   }
 );
 // Listen for Work Item Completion

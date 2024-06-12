@@ -15,10 +15,3 @@ export enum WorkqueueStatus {
   InProgress = 2,
   Done = 3,
 }
-
-export interface SlackCommandMessage {
-  text: string;
-  user: string;
-  channel: string;
-  response_url: string;
-}

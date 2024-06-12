@@ -10,6 +10,13 @@ import {WorkqueueData, WorkqueueStatus} from "../../common-types/types";
 import {temporalClient} from "./temporal";
 import crypto from "crypto";
 import {formatDistanceToNow} from "date-fns";
+import {
+  getWorkqueueDataQuery,
+  addWorkToQueueSignal,
+  claimWorkSignal,
+  completeWorkSignal,
+} from "../../temporal-application/src/workflows/workqueue";
+import {WorkflowExecutionAlreadyStartedError} from "@temporalio/client";
 
 // Handles and routes all incoming Work Queue messages
 export async function handleWorkqueueCommand(
@@ -69,22 +76,16 @@ async function displayWorkqueue(
   // Get the channel name in plain text
   const channelName = command.channel_name;
   // Check if the Work Queue already exists for the channel
-  if (await checkIfWorkqueueExists(channelName)) {
-    // If the Work Queue already exists, Query it
-    const data = await queryWorkqueue(channelName, respond);
-    await replyEphemeral(
-      respond,
-      "Work Queue cannot display",
-      formatWorkqueueDataForSlack(channelName, data)
-    );
-  } else {
-    // Create a new Work Queue for the channel
-    await replyEphemeral(
-      respond,
-      `Workqueue does not yet exist for ${channelName}, creating...`
-    );
-    await createNewWorkqueue(channelName);
-  }
+
+  // Create a new Work Queue for the channel
+  await createNewWorkqueue(channelName);
+  // If the Work Queue already exists, Query it
+  const data = await queryWorkqueue(channelName, respond);
+  await replyEphemeral(
+    respond,
+    "Work Queue cannot display",
+    formatWorkqueueDataForSlack(channelName, data)
+  );
 }
 
 async function addWorkToQueue(
@@ -198,10 +199,18 @@ async function checkIfWorkqueueExists(workflowId: string) {
 }
 
 async function createNewWorkqueue(workflowid: string): Promise<void> {
-  await temporalClient.workflow.start("workqueue", {
-    taskQueue: `${process.env.IQ_ENV}-temporal-iq-task-queue`,
-    workflowId: workflowid,
-  });
+  try {
+    await temporalClient.workflow.start("workqueue", {
+      taskQueue: `${process.env.IQ_ENV}-temporal-iq-task-queue`,
+      workflowId: workflowid,
+    });
+  } catch (e) {
+    if (e instanceof WorkflowExecutionAlreadyStartedError) {
+      console.log("Workflow already started");
+    } else {
+      throw e;
+    }
+  }
 }
 
 async function queryWorkqueue(
@@ -210,7 +219,7 @@ async function queryWorkqueue(
 ): Promise<WorkqueueData[]> {
   try {
     const handle = temporalClient.workflow.getHandle(workflowId);
-    const result = await handle.query<WorkqueueData[]>("getWorkqueueData");
+    const result = await handle.query<WorkqueueData[]>(getWorkqueueDataQuery);
     console.log("Current workqueue data:", result);
     return result;
   } catch (error) {
@@ -225,7 +234,7 @@ async function signalAddWork(params: WorkqueueData, say: SayFn): Promise<void> {
     await temporalClient.workflow.signalWithStart("workqueue", {
       workflowId: params.channelName,
       taskQueue: `${process.env.IQ_ENV}-temporal-iq-task-queue`,
-      signal: "addWorkqueueData",
+      signal: addWorkToQueueSignal,
       signalArgs: [params],
     });
   } catch (error) {
@@ -238,13 +247,12 @@ export async function signalClaimWork(
   channelName: string,
   workId: string,
   claimantId: string,
-  message: GenericMessageEvent,
   userId: string,
   say: SayFn
 ) {
   try {
     const handle = temporalClient.workflow.getHandle(channelName);
-    await handle.signal("claimWork", {workId, claimantId});
+    await handle.signal(claimWorkSignal, {workId, claimantId});
     console.log(`Work item ${workId} claimed by ${claimantId}`);
     await reply(
       say,
@@ -264,7 +272,7 @@ export async function signalCompleteWork(
 ) {
   try {
     const handle = temporalClient.workflow.getHandle(channelId);
-    await handle.signal("completeWork", {workId});
+    await handle.signal(completeWorkSignal, {workId});
     console.log(`Work item ${workId} marked as complete`);
     await reply(say, `<@${userId}> Work item ${workId} marked as complete.`);
   } catch (error) {
