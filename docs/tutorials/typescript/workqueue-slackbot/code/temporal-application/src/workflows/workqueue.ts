@@ -49,10 +49,8 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
 
   while (!workflowInfo().continueAsNewSuggested) {
     try {
-      while (true) {
-        // Await cancellation
-        await CancellationScope.current().cancelRequested;
-      }
+      // Await cancellation
+      await CancellationScope.current().cancelRequested;
     } catch (err) {
       if (err instanceof CancelledFailure) {
         // Set the Workflow status to Cancelled by throwing the CancelledFailure error

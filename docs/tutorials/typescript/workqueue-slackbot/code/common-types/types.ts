@@ -5,7 +5,6 @@ export interface WorkqueueData {
   channelId: string;
   userId: string;
   work: string;
-  messageLink: string;
   status: WorkqueueStatus;
   claimantId?: string;
   // Add more properties as needed

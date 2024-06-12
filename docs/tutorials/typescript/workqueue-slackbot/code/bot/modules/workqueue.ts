@@ -124,17 +124,7 @@ function buildWQData(
   channelName: string
 ): WorkqueueData {
   // Provide a default value if message.text is undefined
-  const messageText = command.text ?? "";
-  // Strip out '!wa' from the beginning
-  const work = messageText.startsWith("!wa") ? messageText.slice(3).trim() : "";
-  // Use the thread_ts if it exists, otherwise use the ts
-  let ts: string = "";
-  if (command.thread_ts) {
-    ts = command.thread_ts;
-  } else {
-    ts = command.ts;
-  }
-  console.log("Command ts:", ts);
+  const work = command.text ?? "";
   // Construct the WorkqueueData object
   return {
     id: generateUniqueId(),
@@ -143,7 +133,6 @@ function buildWQData(
     channelName: channelName,
     userId: command.user_id,
     work: work,
-    messageLink: `https://${process.env.SLACK_WORKSPACE}.slack.com/archives/${channelId}/${command.ts}`,
     status: WorkqueueStatus.Backlog,
   };
 }
@@ -326,9 +315,7 @@ function formatWorkqueueDataForSlack(
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*${index + 1} <${item.messageLink}|${
-            item.id
-          }>* | ${statusText} | ${combinedText}`,
+          text: `*${index + 1} ${item.id}* | ${statusText} | ${combinedText}`,
         },
         accessory: !item.claimantId
           ? {
