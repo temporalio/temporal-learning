@@ -6,6 +6,7 @@ import {
   defineSignal,
   setHandler,
   workflowInfo,
+  condition,
 } from "@temporalio/workflow";
 import {WorkqueueData} from "../../../common-types/types";
 
@@ -19,39 +20,38 @@ const completeWorkSignal = defineSignal<[{workId: string}]>("completeWork");
 export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   const wqdata: WorkqueueData[] = existingData ?? [];
 
+  // Register a Query handler for 'getWorkqueueData'
+  setHandler(getWorkqueueDataQuery, () => {
+    return wqdata;
+  });
+
+  // Register the Signal handler for adding work
+  setHandler(addWorkqueueDataSignal, (data: WorkqueueData) => {
+    wqdata.push(data);
+  });
+
+  // Register Signal handler for claiming work
+  setHandler(claimWorkSignal, ({workId, claimantId}) => {
+    const workItem = wqdata.find((item) => item.id === workId);
+    if (workItem) {
+      workItem.claimantId = claimantId;
+      workItem.status = 2;
+    }
+  });
+
+  // Register Signal handler for completing work
+  setHandler(completeWorkSignal, ({workId}) => {
+    const index = wqdata.findIndex((item) => item.id === workId);
+    if (index !== -1) {
+      wqdata.splice(index, 1);
+    }
+  });
+
   while (!workflowInfo().continueAsNewSuggested) {
-    // Register a Query handler for 'getWorkqueueData'
-    setHandler(getWorkqueueDataQuery, () => {
-      return wqdata;
-    });
-
-    // Register the Signal handler for adding work
-    setHandler(addWorkqueueDataSignal, (data: WorkqueueData) => {
-      wqdata.push(data);
-    });
-
-    // Register Signal handler for claiming work
-    setHandler(claimWorkSignal, ({workId, claimantId}) => {
-      const workItem = wqdata.find((item) => item.id === workId);
-      if (workItem) {
-        workItem.claimantId = claimantId;
-        workItem.status = 2;
-      }
-    });
-
-    // Register Signal handler for completing work
-    setHandler(completeWorkSignal, ({workId}) => {
-      const index = wqdata.findIndex((item) => item.id === workId);
-      if (index !== -1) {
-        wqdata.splice(index, 1);
-      }
-    });
-
-    const scope = new CancellationScope({cancellable: false});
     try {
       while (true) {
         // Await cancellation
-        await scope.cancelRequested;
+        await CancellationScope.current().cancelRequested;
       }
     } catch (err) {
       if (err instanceof CancelledFailure) {

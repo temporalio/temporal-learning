@@ -6,9 +6,9 @@ import {
   BlockAction,
   BlockElementAction,
 } from "@slack/bolt";
-import { initializeTemporalClient } from "./modules/temporal";
+import {initializeTemporalClient} from "./modules/temporal";
 import {
-  handleWorkqueueMessages,
+  handleWorkqueueCommand,
   signalClaimWork,
   signalCompleteWork,
 } from "./modules/workqueue";
@@ -22,22 +22,28 @@ const app = new App({
 });
 
 // Listen for generic awake test message
-app.message("iq awake?", async ({ message, say }) => {
+app.message("iq awake?", async ({message, say}) => {
   console.log("I am.");
   const genericMessage = message as GenericMessageEvent;
   await say(`I am <@${genericMessage.user}>!`);
 });
 
 // Listen for Work Queue messages
-app.message("!w", async ({ message, say, client }) => {
-  const genericMessage = message as GenericMessageEvent;
-  await handleWorkqueueMessages(genericMessage, say, client);
-});
-// Listen for Work Item Claim
+// app.message("!w", async ({ message, say, client }) => {
+//   const genericMessage = message as GenericMessageEvent;
+//   await handleWorkqueueMessages(genericMessage, say, client);
+// });
 
+// Listen for Work Queue messages
+app.command("/workqueue", async ({command, ack, say, client, respond}) => {
+  await ack(); // Acknowledge the command request
+  await handleWorkqueueCommand(command, client, say, respond);
+});
+
+// Listen for Work Item Claim
 app.action<BlockAction<BlockElementAction>>(
   "wq_claim",
-  async ({ ack, say, body }) => {
+  async ({ack, say, body}) => {
     await ack();
     // Ensure the body.actions[0] is a ButtonAction
     const action = body.actions[0] as ButtonAction;
@@ -45,6 +51,7 @@ app.action<BlockAction<BlockElementAction>>(
     const claimantId = body.user.id;
     const message = body.message as GenericMessageEvent;
     // Send signal to the Temporal workflow to claim the work
+    console.log(body);
     await signalClaimWork(
       channelName,
       workId,
@@ -58,7 +65,7 @@ app.action<BlockAction<BlockElementAction>>(
 // Listen for Work Item Completion
 app.action<BlockAction<BlockElementAction>>(
   "wq_complete",
-  async ({ ack, say, body }) => {
+  async ({ack, say, body}) => {
     await ack();
     const action = body.actions[0] as ButtonAction;
     const [channelName, workId, userId] = action.value.split("_");
@@ -69,7 +76,7 @@ app.action<BlockAction<BlockElementAction>>(
 );
 
 // Register Slack bot error handler
-app.error(async ({ error }: { error: Error }) => {
+app.error(async ({error}: {error: Error}) => {
   if (error instanceof Error) {
     console.error(`Error: ${error.name}, Message: ${error.message}`);
   } else {

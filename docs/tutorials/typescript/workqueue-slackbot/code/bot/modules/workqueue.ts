@@ -1,34 +1,31 @@
 import "dotenv/config";
-import { SayFn, GenericMessageEvent } from "@slack/bolt";
-import { WebClient } from "@slack/web-api";
-import { WorkqueueData, WorkqueueStatus } from "../../common-types/types";
-import { temporalClient } from "./temporal";
+import {
+  SayFn,
+  RespondFn,
+  SlackCommandMiddlewareArgs,
+  GenericMessageEvent,
+} from "@slack/bolt";
+import {WebClient} from "@slack/web-api";
+import {WorkqueueData, WorkqueueStatus} from "../../common-types/types";
+import {temporalClient} from "./temporal";
 import crypto from "crypto";
-import { formatDistanceToNow } from "date-fns";
+import {formatDistanceToNow} from "date-fns";
 
 // Handles and routes all incoming Work Queue messages
-export async function handleWorkqueueMessages(
-  message: GenericMessageEvent,
+export async function handleWorkqueueCommand(
+  command: SlackCommandMiddlewareArgs["command"],
+  client: WebClient,
   say: SayFn,
-  client: WebClient
+  respond: RespondFn
 ) {
-  const messageText = message.text?.trim();
+  const commandText = command.text?.trim();
 
-  if (
-    !messageText ||
-    (!messageText.startsWith("!w") && !messageText.startsWith("!wa"))
-  ) {
-    // Ignore the message if it doesn't start with "!w" or "!wa"
-    return;
-  }
-
-  if (messageText === "!wdelete") {
-    const channelName = await getChannelName(message.channel, say, client);
-    await deleteWorkqueue(channelName, say, message);
-  } else if (messageText === "!w") {
-    await displayWorkqueue(message, say, client);
-  } else if (messageText.startsWith("!wa")) {
-    await addWorkToQueue(message, say, client);
+  if (commandText === "!delete") {
+    await deleteWorkqueue(command, say, client);
+  } else if (commandText === "") {
+    await displayWorkqueue(command, respond, client);
+  } else {
+    await addWorkToQueue(command, say, client);
   }
   return;
 }
@@ -37,109 +34,116 @@ export async function handleWorkqueueMessages(
 
 // Custom reply function that sends a message in the same thread
 // Defaults to text, but capable of sending blocks as well
-async function reply(
-  say: SayFn,
-  text: string,
-  m: GenericMessageEvent,
-  blocks?: any
-) {
+async function reply(say: SayFn, text: string, blocks?: any) {
   try {
-    if (m.thread_ts) {
-      // If the message is already part of a thread, reply in the same thread
-      await say({
-        text, // Always include the text field
-        blocks, // Include blocks if provided
-        thread_ts: m.thread_ts,
-      });
-    } else {
-      // If the message is not part of a thread, start a new thread
-      await say({
-        text, // Always include the text field
-        blocks, // Include blocks if provided
-        thread_ts: m.ts,
-      });
-    }
+    // If the message is already part of a thread, reply in the same thread
+    await say({
+      text, // Always include the text field
+      blocks, // Include blocks if provided
+    });
   } catch (error) {
     console.error("Error occurred while sending message:", error);
     throw new Error("Failed to send message");
   }
 }
 
-// Dispay the Work Queue for the channel
+async function replyEphemeral(respond: RespondFn, text: string, blocks?: any) {
+  try {
+    await respond({
+      text, // Always include the text field
+      blocks, // Include blocks if provided
+    });
+  } catch (error) {
+    console.error("Error occurred while sending ephemeral message:", error);
+    throw new Error("Failed to send ephemeral message");
+  }
+}
+
+// Display the Work Queue for the channel
 // Creates a new Work Queue if it does not exist
 async function displayWorkqueue(
-  message: GenericMessageEvent,
-  say: SayFn,
+  command: SlackCommandMiddlewareArgs["command"],
+  respond: RespondFn,
   client: WebClient
 ) {
-  // Only take action if the message starts with "w!"
-  const text = message.text?.trim();
-  if (!message.text || message.text.trim() != "!w") {
-    return;
-  }
   // Get the channel name in plain text
-  const channelName = await getChannelName(message.channel, say, client);
-  // Check if the Workqueue already exists for the channel
+  const channelName = command.channel_name;
+  // Check if the Work Queue already exists for the channel
   if (await checkIfWorkqueueExists(channelName)) {
-    // If the Workqueue already exists, Query it
-    const data = await queryWorkqueue(channelName, say);
-    await reply(
-      say,
+    // If the Work Queue already exists, Query it
+    const data = await queryWorkqueue(channelName, respond);
+    await replyEphemeral(
+      respond,
       "Work Queue cannot display",
-      message,
       formatWorkqueueDataForSlack(channelName, data)
     );
   } else {
-    // Create a new Workqueue for the channel
-    await reply(
-      say,
-      `Workqueue does not yet exist for ${channelName}, creating...`,
-      message
+    // Create a new Work Queue for the channel
+    await replyEphemeral(
+      respond,
+      `Workqueue does not yet exist for ${channelName}, creating...`
     );
     await createNewWorkqueue(channelName);
   }
 }
 
 async function addWorkToQueue(
-  message: GenericMessageEvent,
+  command: SlackCommandMiddlewareArgs["command"],
   say: SayFn,
   client: WebClient
 ) {
-  const genericMessage = message as GenericMessageEvent;
   // Get the channel name in plain text
-  const channelId = genericMessage.channel;
-  const channelName = await getChannelName(channelId, say, client);
-  const wqdata = buildWQData(genericMessage, channelId, channelName);
-  await signalWorkqueue(wqdata, say);
+  const channelId = command.channel_id;
+  const channelName = command.channel_name;
+  const wqdata = buildWQData(command, channelId, channelName);
+  await signalAddWork(wqdata, say);
   // Reply to the message directly in the thread
-  await reply(say, `Added Work ${wqdata.id} to the Queue.`, genericMessage);
+  await reply(say, `Added Work ${wqdata.id} to the Queue.`);
+}
+
+export async function deleteWorkqueue(
+  command: SlackCommandMiddlewareArgs["command"],
+  say: SayFn,
+  client: WebClient
+): Promise<void> {
+  const workflowId = command.channel_name;
+  try {
+    const handle = temporalClient.workflow.getHandle(workflowId);
+    await handle.cancel();
+    console.log(`Workflow with ID ${workflowId} has been cancelled.`);
+    await reply(say, `Work Queue has been deleted for this channel.`);
+  } catch (error) {
+    console.error(`Failed to cancel workflow with ID ${workflowId}:`, error);
+    await reply(say, `Failed to delete Work Queue for this channel.`);
+  }
 }
 
 function buildWQData(
-  message: GenericMessageEvent,
+  command: SlackCommandMiddlewareArgs["command"],
   channelId: string,
   channelName: string
 ): WorkqueueData {
   // Provide a default value if message.text is undefined
-  const messageText = message.text ?? "";
+  const messageText = command.text ?? "";
   // Strip out '!wa' from the beginning
   const work = messageText.startsWith("!wa") ? messageText.slice(3).trim() : "";
   // Use the thread_ts if it exists, otherwise use the ts
   let ts: string = "";
-  if (message.thread_ts) {
-    ts = message.thread_ts;
+  if (command.thread_ts) {
+    ts = command.thread_ts;
   } else {
-    ts = message.ts;
+    ts = command.ts;
   }
+  console.log("Command ts:", ts);
   // Construct the WorkqueueData object
   return {
     id: generateUniqueId(),
     timestamp: createTimestamp(),
     channelId: channelId,
     channelName: channelName,
-    userId: message.user,
+    userId: command.user_id,
     work: work,
-    messageLink: `https://${process.env.SLACK_WORKSPACE}.slack.com/archives/${channelId}/${message.ts}`,
+    messageLink: `https://${process.env.SLACK_WORKSPACE}.slack.com/archives/${channelId}/${command.ts}`,
     status: WorkqueueStatus.Backlog,
   };
 }
@@ -161,7 +165,7 @@ async function getChannelName(
 ): Promise<string> {
   try {
     // Use the WebClient to fetch channel info
-    const channelInfo = await client.conversations.info({ channel: channelId });
+    const channelInfo = await client.conversations.info({channel: channelId});
     if (channelInfo.ok) {
       return channelInfo.channel?.name ?? "Unknown Channel";
     } else {
@@ -227,10 +231,7 @@ async function queryWorkqueue(
   }
 }
 
-async function signalWorkqueue(
-  params: WorkqueueData,
-  say: SayFn
-): Promise<void> {
+async function signalAddWork(params: WorkqueueData, say: SayFn): Promise<void> {
   try {
     await temporalClient.workflow.signalWithStart("workqueue", {
       workflowId: params.channelName,
@@ -254,12 +255,11 @@ export async function signalClaimWork(
 ) {
   try {
     const handle = temporalClient.workflow.getHandle(channelName);
-    await handle.signal("claimWork", { workId, claimantId });
+    await handle.signal("claimWork", {workId, claimantId});
     console.log(`Work item ${workId} claimed by ${claimantId}`);
     await reply(
       say,
-      `<@${userId}> Work item ${workId} claimed by <@${claimantId}>.`,
-      message
+      `<@${userId}> Work item ${workId} claimed by <@${claimantId}>.`
     );
   } catch (error) {
     console.error("Failed to signal claim work:", error);
@@ -275,31 +275,11 @@ export async function signalCompleteWork(
 ) {
   try {
     const handle = temporalClient.workflow.getHandle(channelId);
-    await handle.signal("completeWork", { workId });
+    await handle.signal("completeWork", {workId});
     console.log(`Work item ${workId} marked as complete`);
-    await reply(
-      say,
-      `<@${userId}> Work item ${workId} marked as complete.`,
-      message
-    );
+    await reply(say, `<@${userId}> Work item ${workId} marked as complete.`);
   } catch (error) {
     console.error("Failed to signal complete work:", error);
-  }
-}
-
-export async function deleteWorkqueue(
-  workflowId: string,
-  say: SayFn,
-  message: GenericMessageEvent
-): Promise<void> {
-  try {
-    const handle = temporalClient.workflow.getHandle(workflowId);
-    await handle.cancel();
-    console.log(`Workflow with ID ${workflowId} has been cancelled.`);
-    await reply(say, `Work Queue has been deleted for this channel.`, message);
-  } catch (error) {
-    console.error(`Failed to cancel workflow with ID ${workflowId}:`, error);
-    await reply(say, `Failed to delete Work Queue for this channel.`, message);
   }
 }
 
