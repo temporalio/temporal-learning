@@ -261,7 +261,7 @@ Your output will be similar to this:
 Next you will need to ensure that the Java version Maven is compiling against supports building Temporal Applications. Temporal requires a minimum version of Java 1.8. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with `1.8`.
 
 <!--SNIPSTART hello-world-project-template-java-maven-version-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/maven/app/pom.xml)
 ```xml
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -274,7 +274,7 @@ Next you will need to ensure that the Java version Maven is compiling against su
 Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` replace the generated `<dependencies>` section in the file with the following:
 
 <!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/maven/app/pom.xml)
 ```xml
   <dependencies>
 
@@ -343,7 +343,7 @@ From the `app` directory of your project that contains the `pom.xml` execute the
 mvn compile
 ```
 
-You will see output similar to this if your build was successful. If it is your first time running mvn compile y ou may see more output of the dependencies being downloaded:
+You will see output similar to this if your build was successful. If it is your first time running mvn compile you may see more output of the dependencies being downloaded:
 
 ```
 [INFO] Scanning for projects...
@@ -681,7 +681,7 @@ To configure a Worker process using the Java SDK, you create an instance of `Wor
 
 You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
-Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp`and define the Task Queue name there:
+Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp` and define the Task Queue name there:
 
 <!--SNIPSTART hello-world-project-template-java-shared-constants-->
 [app/src/main/java/helloworldapp/Shared.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/Shared.java)
@@ -849,7 +849,7 @@ A Workflow Id is unique in a namespace and is used for deduplication. Using an i
 The program then creates a stubbed instance of your Workflow, `workflow`, taking the interface class of your workflow along with the options you have set as parameters. This stub looks like an implementation of the interface, but is used to communicate with the Temporal Server under the hood.
 
 :::note
-Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the Workflow implementation.The workflow communicates with an Workflow through its public interface and is not aware of its implementation.
+Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow stub, not the Workflow implementation.The workflow communicates with a Workflow through its public interface and is not aware of its implementation.
 
 :::
 
@@ -1029,7 +1029,7 @@ Each Worker is configured to poll a specified Task Queue, whose name is specifie
 <details>
 <summary>
 
-**True or false, with the Temporal Java SDK, you define Activities and Workflows by writing an Interface to create a definition and and implementation of this interface that gets executed by the Workers?**
+**True or false, with the Temporal Java SDK, you define Activities and Workflows by writing an Interface to create a definition and implementation of this interface that gets executed by the Workers?**
 
 </summary>
 
