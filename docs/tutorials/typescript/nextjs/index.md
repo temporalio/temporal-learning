@@ -558,7 +558,7 @@ You now have a Next.js application that uses Temporal Workflows to power one of 
 When you're moving from your local machine to either [Temporal Cloud](https:temporal.io/cloud) or a self-hosted Temporal Service, you'll need to configure Temporal Clients and Temporal Workers to communicate with the remote service.
 To connect to a Temporal Service using mTLS authentication, you will need to configure the connection address, namespace, and mTLS certificates and keys.
 
-Reeview [Run Workers with Temporal Cloud for the TypeScript SDK](run-workers-with-cloud-typescript) for more details on creating certificates and connecting to Temporal Cloud.
+Reeview [Run Workers with Temporal Cloud for the TypeScript SDK](/getting_started/typescript/run_workers_with_cloud_typescript/index.md) for more details on creating certificates and connecting to Temporal Cloud.
 
 In this application, you'd modify `temporal/src/worker.ts` to add certificate information:
 
