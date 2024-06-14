@@ -26,7 +26,7 @@ image: /img/temporal-logo-twitter-card.png
 
 
 Temporal addresses many challenges developers face when building reliable applications.
-Whether managing complex transaction-based workflows or calling remote APIs, creating reliable applications involves significant overhead.
+Whether managing complex transaction-based processes or calling remote APIs, creating reliable applications involves significant overhead.
 The Temporal Platform ensures your code runs to completion regardless of the circumstances your app encounters.
 The Temporal [Java SDK](https://github.com/temporalio/java-sdk) provides comprehensive solutions for the complexities of modern application development.
 Temporal offers reliability features to ensure durable execution of your code.
