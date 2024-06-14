@@ -477,9 +477,6 @@ This code includes several components:
 * **`ActivityOptions`** define fixed limits for how long an Activity can keep trying before the Service shuts down further attempts.
   You must set either a start-to-close timeout or a schedule-to-close timeout.
   Prefer to use start-to-close because it's easiest to estimate the entire time an Activity may need.
-  
-  Schedule-to-close includes the entire duration of an activity.
-  Otherwise, by default, Temporal retries failed activities forever.
 * **Activity-specific options** adjust options for specific Activity types.
 
 :::note Non-Retryable Errors
