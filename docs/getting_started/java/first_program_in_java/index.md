@@ -337,7 +337,7 @@ That would break determinism.
 
 ### Activity Attributes
 
-When defining Activities, mark the class interface with `@ActivityInterface` and methods with `@ActivityMethod`:
+When defining Activities, mark the interface with `@ActivityInterface` and methods with `@ActivityMethod`:
 
 <!--SNIPSTART money-transfer-java-activity-interface {"selectedLines": ["3-19"]}-->
 [src/main/java/moneytransfer/AccountActivity.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/AccountActivity.java)
