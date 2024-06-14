@@ -782,7 +782,7 @@ Each step is recorded in the Event History.
 
 Now that you've seen an Execution run and complete, it's time to introduce a failure.
 
-## ![](/img/icons/warning.png) Simulate failures
+## ![Warning icon](/img/icons/warning.png) Simulate failures
 
 Temporal is built to allow failure-prone processes to keep moving forward.
 It provides the backbone and oversight (called "Orchestration") that enables this without you having to develop the technology in your own code.
