@@ -122,7 +122,7 @@ The Service dispatches these tasks to a Task Queue, where a Worker can pick them
 The Money Transfer application uses one Workflow.
 It transfers money by withdrawing from a source account and depositing to a destination account.
 It defines two Activity methods: `withdraw` and `deposit`.
-These are Activities because both processes might fail.
+These are implemented as Activities because both processes have the possibility of failure.
 The Workflow calls `withdraw` and then `deposit`.
 The following diagram illustrates what happens when you start the Workflow:
 
