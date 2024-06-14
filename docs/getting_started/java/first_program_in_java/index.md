@@ -24,7 +24,6 @@ image: /img/temporal-logo-twitter-card.png
 
 :::
 
-
 Temporal addresses many challenges developers face when building reliable applications.
 Whether managing complex transaction-based processes or calling remote APIs, creating reliable applications involves significant overhead.
 The Temporal Platform ensures your code runs to completion regardless of the circumstances your app encounters.
@@ -76,13 +75,11 @@ Now that you know how this application works, download a copy of the tutorial co
 Copy the [Money Transfer Project](https://github.com/temporalio/money-transfer-project-java) from GitHub.
 Open a new terminal window and use `git` to clone the repository:
 
-
 ```bash
 git clone https://github.com/temporalio/money-transfer-project-java
 ```
 
 Change directories into the project folder:
-
 
 ```bash
 cd money-transfer-project-java
@@ -155,7 +152,7 @@ This means you can always complete your tasks and you won't have to repeat work 
 
 ### Workflow Definition
 
-A Temporal Workflow uses attributes from the Temporal Java SDK to integrate Temporal Service's orchestration into code.
+A Temporal Workflow uses attributes from the Temporal Java SDK to integrate the Temporal Service into code.
 In Java, a Workflow Definition is broken down into the type interface and its implementation.
 This section shows you how to integrate these pieces with the Temporal Service using SDK annotations.
 
@@ -293,7 +290,6 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
 Unlike a normal Java program, you don't call Activities directly in Temporal apps, you invoke them through an Activity stub.
 This is part of the Temporal oversight mechanism, in which Temporal tracks progress and state.
-Temporal tracks progress and state.
 It supports features like automatic Activity retries when code encounters adverse conditions that prevent Activities from completing normally.
 
 :::note
@@ -319,7 +315,6 @@ Common failure scenarios that should be placed in Activities include:
 * **External API Calls**: Third-party API calls can fail if the API is down, cannot be connected to, or it's slow to respond.
 * **Resource-Intensive Operations**: Operations that use significant CPU or memory can fail due to resource exhaustion.
 * **Hardware Interactions**: Interactions with devices like printers or IoT devices might fail.
-
 
 :::note Determinism
 
@@ -500,20 +495,18 @@ In the next sections, you'll launch the Temporal Server and create a Workflow Ex
 
 In this section, you'll run and observe a Workflow using the project code and the Temporal Web UI.
 
-
 ### Prepare to run
 
 Start running a [Temporal Service](https://docs.temporal.io/clusters) by launching it from a Terminal session, as discussed in the [Getting Started tutorial](https://learn.temporal.io/getting_started/java/dev_environment/):
 
-
 ```bash
 temporal server start-dev \
+    --log-level=never \
     --ui-port 8080
 ```
 
 If a Service is already running, you do not have to re-launch it again.
 If you are running a Unix-like system, you can check for this by issuing `pgrep`:
-
 
 ```bash
 pgrep -fl temporal
@@ -521,11 +514,16 @@ pgrep -fl temporal
 
 ### Workflow Execution
 
-When you _start_ a Workflow, you tell the Temporal Server, "Track the state of a Workflow that uses this method signature."
-This tracked state is called a Workflow Execution, and follows the code from the Workflow and Activity definitions you just saw through their lifetimes.
-The Workflow Execution represents a complete history of the Workflow's lifetime, including its intermediate states, its retries, and so forth.
+When you start a Workflow, the Temporal Server begins to manage and track it.
+This is called a Workflow Execution.
+The tracked state is the Execution's Event History.
+It follows the code from the Workflow and Activity definitions you just saw through their lifetimes.
+It stores intermediate states, retries, and so forth.
 
-The Service breaks down the Workflow Execution into pieces, called Tasks.
+The Temporal Service persists each Event History.
+This supports seamless recovery of application state after crashes or failures and provides an audit log for debugging 
+
+The Service decomposes the Workflow Execution into pieces, called Tasks.
 There are Workflow Tasks and Activity Tasks.
 Workers look for those Tasks on "Task Queues" (called "polling" for Tasks).
 That's why when you set up a Java Worker, you must tell it the Task Queue it should use to look for work.
@@ -537,8 +535,8 @@ This is recorded into the Event History for the Workflow Execution.
 Workflow Executions "live" on the Temporal Server.
 In the most basic form, a Workflow Execution consists of a set of set-up data and an Event history.
 You initiate a Workflow Execution with the name of a Workflow Definition (the `MoneyTransferWorkflow` class), a Task Queue name to use, and optional input data.
-Each Workflow Execution has an identifier.
-If you do not supply one, the Service creates a random unique ID to use instead.
+Each Workflow Execution needs an identifier.
+You should always supply one, as it's used to ensure Workflow uniqueness.
 
 ### The Transfer application
 
@@ -572,7 +570,7 @@ Here is the code that performs this work:
         // WorkflowStubs enable calls to methods as if the Workflow object is local
         // but actually perform a gRPC call to the Temporal Service.
         MoneyTransferWorkflow workflow = client.newWorkflowStub(MoneyTransferWorkflow.class, options);
-        
+
         // Configure the details for this money transfer request
         String referenceId = UUID.randomUUID().toString().substring(0, 18);
         String fromAccount = randomAccountIdentifier();
@@ -612,7 +610,6 @@ mvn compile exec:java \
 ```
 
 It creates a new transfer request for a random amount between $15 and $75:
-
 
 ```bash
 MONEY TRANSFER PROJECT
@@ -670,7 +667,6 @@ You need at least one Worker running to execute your Workflows. You'll start the
 The Worker for this project is defined by the `MoneyTransferWorker` type.
 You run a Worker by issuing the following command in the terminal.
 
-
 ```bash
 mvn compile exec:java \
     -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" \
@@ -679,7 +675,6 @@ mvn compile exec:java \
 
 The Worker does not return control to you until you quit out of it.
 It prints status updates to stdout, so you can keep track as it finds and processes Money Transfer tasks:
-
 
 ```bash
 Worker is running and actively polling the Task Queue.
@@ -784,7 +779,7 @@ Now that you've seen an Execution run and complete, it's time to introduce a fai
 ## ![Warning icon](/img/icons/warning.png) Simulate failures
 
 Temporal is built to allow failure-prone processes to keep moving forward.
-It provides the backbone and oversight (called "Orchestration") that enables this without you having to develop the capability in your own code.
+It provides the backbone and oversight that enables this without you having to develop the capability in your own code.
 This keeps your code focused on your business logic and not on recovery strategies.
 
 Despite your best efforts, services and other items will fail.
@@ -804,8 +799,8 @@ Try it out by following these steps:
    Shut it down with `CTRL+C`.
 1. After the Temporal Cluster has stopped, restart it to use a local database.
 
-   
-```bash
+
+   ```bash
    temporal server start-dev \
        --log-level=never \
        --ui-port 8080 \
@@ -815,8 +810,8 @@ Try it out by following these steps:
 1. Switch back to the terminal where your Workflow ran.
    Start a new Workflow Execution.
 
-   
-```bash
+
+   ```bash
    mvn compile exec:java \
        -Dexec.mainClass="moneytransferapp.TransferApp" \
        -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
@@ -829,15 +824,15 @@ Try it out by following these steps:
    Shut it down with `CTRL+C`.
 1. Re-start the server, using the same data.
 
-   
-```bash
+
+   ```bash
    temporal server start-dev \
        --log-level=never \
        --ui-port 8080 \
        --db-filename=temporal.db
    ```
 
-1. Verify the Workflow is running in the [Development Service Web UI](http://localhost:8233).
+1. Verify the Workflow is running in the [Development Service Web UI](http://localhost:8080).
 
    ![](images/still-running.png)
 
@@ -851,7 +846,6 @@ The `deposit` Activity lets you "fail" a deposit when you set `activityShouldSuc
 
 Your Worker app should not be running at this time.
 Recompile it and run it to pick up this new logic.
-
 
 ```bash
 mvn clean install \
@@ -868,7 +862,6 @@ You must compile and restart the Worker every time there's a change in code.
 :::
 
 Now visit the Worker running in the terminal window:
-
 
 ```bash
 Withdrawing $63 from account 714985048.
@@ -901,7 +894,7 @@ Click on this to reveal the detail information about the failure call.
 
 ### Retry Logic
 
-Without Temporal Orchestration, you must implement timeout and retry logic within the service code.
+Without Temporal oversight, you must implement timeout and retry logic within the service code.
 It makes it your code hard to read with your recovery logic living right next to business logic.
 With Temporal, you can specify timeout configurations in the Workflow code as Activity options.
 
@@ -938,8 +931,8 @@ That is, you'll override some code that makes `deposit` continue to fail and pre
 
 1. Compile and run the updated Worker
 
-   
-```bash
+
+   ```bash
    mvn clean install \
        -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
    mvn compile exec:java \
@@ -953,8 +946,8 @@ Next, you'll explore a Workflow Execution that cannot complete.
 
 1. Start another Workflow:
 
-   
-```bash
+
+   ```bash
    mvn compile exec:java -Dexec.mainClass="moneytransferapp.TransferApp" \
       -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
    ```
@@ -982,8 +975,8 @@ Next, you'll explore a Workflow Execution that cannot complete.
 
 1. Once again, compile and run the Worker:
 
-   
-```bash
+
+   ```bash
    mvn clean install \
        -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
    mvn compile exec:java \
