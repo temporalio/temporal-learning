@@ -592,7 +592,7 @@ Here is the code that performs this work:
 ```
 <!--SNIPEND-->
 
-This code builds a Temporal Client, which is a type that can communicate with the Temporal Service.
+This code builds a Temporal Client, which is an object that can communicate with the Temporal Service.
 The Client is used to create a new Workflow stub that points to the Workflow method.
 With the details for the transfer collected together in a single instance (`transaction`), the `WorkflowClient` type creates a new Workflow Execution using the stub and the `transaction` instance.
 The execution runs asynchronously.
