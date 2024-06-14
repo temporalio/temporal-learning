@@ -507,7 +507,8 @@ Start running a [Temporal Service](https://docs.temporal.io/clusters) by launchi
 
 
 ```bash
-temporal server start-dev --ui-port 8080
+temporal server start-dev \
+    --ui-port 8080
 ```
 
 If a Service is already running, you do not have to re-launch it again.
