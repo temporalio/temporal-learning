@@ -833,6 +833,7 @@ Try it out by following these steps:
 ```bash
    temporal server start-dev \
        --log-level=never \
+       --ui-port 8080 \
        --db-filename=temporal.db
    ```
 
