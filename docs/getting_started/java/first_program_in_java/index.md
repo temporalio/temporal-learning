@@ -886,7 +886,7 @@ Refunding $63 to account 714985048.
 [cc935eb0-cfe1-421e] Transaction is complete. No transfer made.
 ```
 
-The Worker completed the `withdraw` activity but errored (as you set) with `deposit`.
+The Worker completed the `withdraw` activity but failed (as you set) with `deposit`.
 In this log, the Activity ran out of time, stopped after 3 retries, and the Workflow moved onto the compensating activity.
 
 ### Review the failed activity with the Development Server WebUI
