@@ -785,7 +785,7 @@ Now that you've seen an Execution run and complete, it's time to introduce a fai
 ## ![Warning icon](/img/icons/warning.png) Simulate failures
 
 Temporal is built to allow failure-prone processes to keep moving forward.
-It provides the backbone and oversight (called "Orchestration") that enables this without you having to develop the technology in your own code.
+It provides the backbone and oversight (called "Orchestration") that enables this without you having to develop the capability in your own code.
 This keeps your code focused on your business logic and not on recovery strategies.
 
 Despite your best efforts, services and other items will fail.
