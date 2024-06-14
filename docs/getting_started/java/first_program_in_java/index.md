@@ -309,7 +309,7 @@ Activities perform any business logic that is either subject to failure or non-d
 
 ### Fail points
 
-A failed call may need to be retried.
+Often, a failed call may be resolved by initiating a retry.
 This allows a service to come back up, or the Internet to start working again, a backup system to be deployed, and so on.
 Activities are retried by default and are ideal for executing calls that may potentially fail.
 Common failure scenarios that should be placed in Activities include:
