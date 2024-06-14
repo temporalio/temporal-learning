@@ -485,7 +485,7 @@ This code includes several components:
   Otherwise, by default, Temporal retries failed activities forever.
 * **Activity-specific options** adjust options for specific Activity types.
 
-:::note Retryable Errors
+:::note Non-Retryable Errors
 
 Although not shown in this code sample, you can specify Activity errors that Temporal should not attempt to retry.
 Set the Retry Option's non-retryable errors field.
