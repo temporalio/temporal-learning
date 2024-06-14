@@ -132,7 +132,7 @@ The following diagram illustrates what happens when you start the Workflow:
 
 Transferring money is a tricky subject.
 This Tutorial example doesn't cover all possible issues.
-It can't clean up if a Workflow is cancelled.
+It can't clean up if a Workflow is cancelled, or handle edge cases where money is withdrawn but not deposited.
 It doesn't handle edge cases where money is withdrawn but not deposited.
 The Workflow might fail when refunding money to the original account.
 In a production scenario, you'd want to account for these cases with advanced logic.
