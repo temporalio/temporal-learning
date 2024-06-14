@@ -487,7 +487,7 @@ This code includes several components:
 
 :::note Non-Retryable Errors
 
-Although not shown in this code sample, you can specify Activity errors that Temporal should not attempt to retry.
+Although not shown in this code sample, you can specify Activity error types that Temporal should not attempt to retry.
 Set the Retry Option's non-retryable errors field.
 This provides you with the flexibility to choose the circumstances to retry.
 
