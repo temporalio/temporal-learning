@@ -433,7 +433,7 @@ With the "fixed" Worker running, use the Temporal Web UI (you'll read about it s
 ## Set the Retry Policy
 
 Temporal makes software durable and fault-tolerant by design.
-The Service can "retry" Activities, which are failable by nature.
+The Service can retry Activities, which are failable by nature.
 That is, it can wait a little time for an issue to resolve, and then try running the Activity again, repeating as needed.
 You customize how this happens in a retry policy.
 That policy, along with time-out settings, is defined in the following Workflow implementation:
