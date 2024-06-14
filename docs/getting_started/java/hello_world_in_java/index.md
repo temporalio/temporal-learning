@@ -263,7 +263,7 @@ Your output will be similar to this:
 Next you will need to ensure that the Java version Maven is compiling against supports building Temporal Applications. Temporal requires a minimum version of Java 1.8. Open the Maven configuration file at `app/pom.xml` and locate the `<properties>` tag that contains the `<maven.compiler.source>` and `<maven.compiler.target>` tags. Update these two property tags with `1.8`.
 
 <!--SNIPSTART hello-world-project-template-java-maven-version-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/maven/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
 ```xml
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -276,7 +276,7 @@ Next you will need to ensure that the Java version Maven is compiling against su
 Next you will add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. In `pom.xml` replace the generated `<dependencies>` section in the file with the following:
 
 <!--SNIPSTART hello-world-project-template-java-maven-dependencies-->
-[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/maven/app/pom.xml)
+[app/pom.xml](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/pom.xml)
 ```xml
   <dependencies>
 
