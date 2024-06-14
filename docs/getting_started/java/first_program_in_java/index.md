@@ -753,7 +753,7 @@ A Worker:
 
 ### ![](/img/icons/harbor-crane.png) Use the Web UI to explore
 
-Return to the [Temporal development service Web UI](http://127.0.0.1:8233).
+Return to the [Temporal development service Web UI](http://127.0.0.1:8080).
 Now, there's one Worker registered.
 Before there was none.
 The Workflow status shows completion:
