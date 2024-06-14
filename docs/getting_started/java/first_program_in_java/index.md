@@ -100,7 +100,7 @@ Each Temporal application uses some or all of the following building blocks:
    They are also great for dealing with timers and schedules.
 1. An [Activity](https://docs.temporal.io/activities) implements business logic that's prone to failure.
     For example, if you call a service that sometimes becomes unavailable, use an Activity.
-    Activities can be automatically retried when they run up against failures that can be handled through additional attempts.
+    Activities can be automatically retried when they encounter failures that can be handled through additional attempts.
     This is because many third-party failures are self-correcting over time, as outages are resolved or backup services are brought online.
 1. A [Worker](https://docs.temporal.io/workers) interacts with the Temporal Service.
    It checks for available work and then initiates Workflow and Activity Tasks as needed.
