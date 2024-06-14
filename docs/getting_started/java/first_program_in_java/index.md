@@ -419,7 +419,7 @@ public class AccountActivityImpl implements AccountActivity {
 * The `deposit` process "attempts" to add money to a destination account.
   Its success is controlled by the `activityShouldSucceed` Boolean, which is set to `true`.
   If you change this to `false`, the "deposit" fails and throws an exception.
-* The `refund process mimics the `deposit` process.
+* The refund process mimics the `deposit` process.
 
 :::note Recovering a failed Workflow
 
