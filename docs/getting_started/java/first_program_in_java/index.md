@@ -510,7 +510,7 @@ Start running a [Temporal Service](https://docs.temporal.io/clusters) by launchi
 temporal server start-dev
 ```
 
-If a Service is already running, you do not (and cannot) have to re-launch it again.
+If a Service is already running, you do not have to re-launch it again.
 If you are running a Unix-like system, you can check for this by issuing `pgrep`:
 
 
