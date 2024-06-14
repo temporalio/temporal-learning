@@ -644,7 +644,7 @@ You use this interface to track the results of Activities and Workflows.
 It also helps you identify problems with your Workflow Execution.
 
 1. Visit the [Temporal Web UI](http://localhost:8080).
-   This is hosted by the local development server using 'localhost' on port 8233.
+   This is hosted by the local development server using 'localhost' on port 8080.
    When you open the page, you'll see your Workflow running in the list there.
    Notice that the Run ID matches the one printed out by running the transfer app.
 
