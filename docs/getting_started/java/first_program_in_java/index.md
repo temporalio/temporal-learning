@@ -291,7 +291,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 ```
 <!--SNIPEND-->
 
-Unlike a normal Java program, you don't call Activities directly in Temporal apps.
+Unlike a normal Java program, you don't call Activities directly in Temporal apps, you invoke them through an Activity stub.
 You invoke them through an Activity stub.
 This is part of the Temporal oversight mechanism.
 Temporal tracks progress and state.
