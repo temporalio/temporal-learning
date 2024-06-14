@@ -631,7 +631,6 @@ The complete system is known as the Temporal Service, which is a deployment of t
 :::note
 
 This app uses a hard-coded "money-transfer-workflow" string for the Workflow ID.
-If you run the transfer app a second time, you'll raise an error unless a Worker is running and has already processed the previous request.
 If this happens to you, just ignore the error.
 
 :::
