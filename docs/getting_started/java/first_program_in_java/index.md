@@ -330,7 +330,7 @@ That would break determinism.
 
 :::
 
-### Activity Attributes
+### Activity attributes
 
 When defining Activities, mark the interface with `@ActivityInterface` and methods with `@ActivityMethod`:
 
@@ -358,7 +358,7 @@ public interface AccountActivity {
 ```
 <!--SNIPEND-->
 
-#### Activity Implementation
+### Activity Implementation
 
 This `AccountActivity` class implements three Activity methods: `withdraw`, `deposit`, and `refund`:
 
@@ -483,7 +483,7 @@ This code includes several components:
 
 Although not shown in this code sample, you can specify Activity error types that Temporal should not attempt to retry.
 Set the Retry Option's non-retryable errors field.
-This provides you with the flexibility to choose the circumstances to retry.
+This provides you with the flexibility to choose the circumstances for when to retry.
 
 :::
 
@@ -524,7 +524,7 @@ This supports seamless recovery of application state after crashes or failures a
 
 The Service decomposes the Workflow Execution into pieces, called Tasks.
 There are Workflow Tasks and Activity Tasks.
-Workers look for those Tasks on "Task Queues" (called "polling" for Tasks).
+Workers look for those Tasks on "Task Queues" (this is called "polling" for Tasks).
 That's why when you set up a Java Worker, you must tell it the Task Queue it should use to look for work.
 
 A Worker runs each piece of the Workflow separately, Task by Task.
@@ -537,7 +537,7 @@ You initiate a Workflow Execution with the name of a Workflow Definition (the `M
 Each Workflow Execution needs an identifier.
 You should always supply one, as it's used to ensure Workflow uniqueness.
 
-### The Transfer application
+### The money transfer application
 
 The "money transfer" app is a small Java program that creates a Workflow Execution.
 In a real deployments, you might invoke similar code when someone submits a form, presses a button, or visits a certain URL.
@@ -683,7 +683,7 @@ To quit, use ^C to interrupt.
 In production environments, Temporal applications often operate with hundreds or thousands of Workers.
 Adding more Workers boosts scalability.
 
-### Worker Code
+### Worker code
 
 Like the transfer application, your Worker app creates a stub to talk to the Temporal Service and wraps it into a Client.
 In the Java SDK, a Worker Factory creates new Workers and assigns their Task Queue.
@@ -787,7 +787,7 @@ To demonstrate this, you will simulate failures for your Workflow and see how Te
 
 ### Recover from a server crash
 
-Unlike many modern applications that require complex processes and external databases to handle failure, Temporal preserves the state of your Workflow even if the server is down.
+Unlike many modern applications that require complex processes and external databases to handle failure, Temporal preserves the state of your Workflow Execution even if the server is down.
 Test this by stopping the local Temporal Cluster while a Workflow is running.
 
 Try it out by following these steps:
@@ -891,7 +891,7 @@ Click on this to reveal the detail information about the failure call.
 
 ![ActivityTaskFailed event details](images/activity-task-failed-details.png)
 
-### Retry Logic
+### Retry logic
 
 Without Temporal oversight, you must implement timeout and retry logic within the service code.
 It makes it your code hard to read with your recovery logic living right next to business logic.
