@@ -181,7 +181,7 @@ public interface MoneyTransferWorkflow {
 <!--SNIPEND-->
 
 Mark each Workflow entry point with **`@WorkflowMethod`** attribute.
-A Workflow Interface can define multiple Workflow methods but this class defines a single `transfer` method.
+The Workflow Interface defines a single `transfer` method as its only point of entry.
 It has one parameter, a `transaction` that stores the transfer details for this process.
 Integrating transaction details into a single structure means the method signature won't change, even if you later update your code implementation:
 
