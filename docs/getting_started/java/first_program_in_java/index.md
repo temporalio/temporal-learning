@@ -887,7 +887,7 @@ Refunding $63 to account 714985048.
 The Worker completed the `withdraw` activity but failed (as you set) with `deposit`.
 In this log, the Activity ran out of time, stopped after 3 retries, and the Workflow moved onto the compensating activity.
 
-### Review the failed activity with the Development Server WebUI
+### Review the failed Activity with the Development Server WebUI
 
 Visit the [Temporal Web UI](http://localhost:8233) and click your Workflow Id to view the Workflow details.
 The Event History is longer this time and contains an ActivityTaskFailed event.
