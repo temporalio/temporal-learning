@@ -183,7 +183,7 @@ public interface MoneyTransferWorkflow {
 Mark each Workflow entry point with **`@WorkflowMethod`** attribute.
 The Workflow Interface defines a single `transfer` method as its only point of entry.
 It has one parameter, a `transaction` that stores the transfer details for this process.
-Integrating transaction details into a single structure means the method signature won't change, even if you later update your code implementation:
+Integrating transaction details into a single object means the method signature won't change, even if you later update your code implementation:
 
 <!--SNIPSTART money-transfer-java-transaction-details {"selectedLines": ["5-10"]}-->
 [src/main/java/moneytransfer/TransactionDetails.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/TransactionDetails.java)
