@@ -423,7 +423,7 @@ public class AccountActivityImpl implements AccountActivity {
 
 :::note Recovering a failed Workflow
 
-It is not part of this tutorial, but you can try setting both `activityShouldSucceed` Booleans to false to see a Workflow Execution fail.
+It is not part of this tutorial, but you can try setting both `activityShouldSucceed` Booleans to false to see a Workflow Task fail.
 Temporal lets you recover the Workflow.
 Stop the Worker, revert the changes, and restart
 With the "fixed" Worker running, use the Temporal Web UI (you'll read about it shortly) to reset the failed Workflow Execution to a point in its Event History where it can pick up and complete its work.
