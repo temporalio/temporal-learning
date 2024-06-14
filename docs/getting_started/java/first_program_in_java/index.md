@@ -631,7 +631,6 @@ The complete system is known as the Temporal Service, which is a deployment of t
 :::note
 
 This app uses a hard-coded "money-transfer-workflow" string for the Workflow ID.
-If this happens to you, just ignore the error.
 
 :::
 
