@@ -298,7 +298,7 @@ It supports features like automatic Activity retries when code encounters advers
 
 :::note
 
-This code extract omits some implementation details before the `transfer` method.
+This code excerpt omits some implementation details before the `transfer` method.
 These are discussed later in this tutorial.
 
 :::
