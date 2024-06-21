@@ -43,7 +43,7 @@ In this tutorial, you will build your first [Temporal Application](https://docs.
 1. A [Workflow](https://docs.temporal.io/workflows): A workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a Workflow Definition, and are carried out by running that code, which results in a Workflow Execution.
 2. An [Activity](https://docs.temporal.io/activities): Activities are methods called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
 3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and are responsible for processing Workflow and Activity Tasks.
-4. A client: Client code that triggers the execution of the workflow on the Temporal Server. The Client used to start the Workflow submits a request to the Temporal Service, which then queues a Task that the Worker will pick up, and the Worker will begin executing the code in the Workflow Definition.
+4. A client: Client code that triggers the execution of the workflow on the Temporal Server. The Client used to start the Workflow submits a request to the Temporal Cluster, which then queues a Task that the Worker will pick up, and the Worker will begin executing the code in the Workflow Definition.
 
 You'll also write a unit test to ensure your Workflow executes successfully.
 
@@ -55,7 +55,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
 - Follow the tutorial [Run your first Temporal application with the Java SDK](/getting_started/java/first_program_in_java/index.md) to gain a better understanding of what Temporal is and how its components fit together.
-- Ensure a build tool like [Maven](https://maven.apache.org/install.html) is installed and ready to use to create a Java project.
+- Ensure a build tool like [Gradle](https://gradle.org/install/) or [Maven](https://maven.apache.org/install.html) is installed and ready to use to create a Java project.
 
 ## ![](/img/icons/harbor-crane.png) Create a new Java project
 
@@ -72,6 +72,143 @@ Switch to the new directory:
 ```command
 cd hello-world-temporal
 ```
+
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
+Create a new Java project with Gradle by running the following command:
+
+```command
+gradle init
+```
+
+This command will begin the process of creating a Java project by asking you a series of questions. When asked what type of project to generate, select `2: application`:
+
+```
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+Select type of project to generate:
+  1: basic
+  2: application
+  3: library
+  4: Gradle plugin
+Enter selection (default: basic) [1..4] 2
+```
+
+Next, select the default option `3: Java` to specify Java as the language of your application:
+
+```
+Select implementation language:
+  1: C++
+  2: Groovy
+  3: Java
+  4: Kotlin
+  5: Scala
+  6: Swift
+Enter selection (default: Java) [1..6] 3
+```
+
+Your Hello World application will be contained within a single application library, so select `1: no - only one application project` to keep your application in a single project:
+
+```
+Split functionality across multiple subprojects?:
+  1: no - only one application project
+  2: yes - application and library projects
+Enter selection (default: no - only one application project) [1..2] 1
+```
+
+You'll use [Groovy](https://groovy-lang.org/) as the build script DSL, so select `1: Groovy`:
+
+```
+Select build script DSL:
+  1: Groovy
+  2: Kotlin
+Enter selection (default: Groovy) [1..2] 1
+```
+
+Select `no` when asked to generate build using new APIs and behavior:
+
+```
+Generate build using new APIs and behavior (some features may change in the next minor release)? (default: no) [yes, no] no
+```
+
+Select `1: JUnit 4` as the test framework for this application:
+
+```
+Select test framework:
+  1: JUnit 4
+  2: TestNG
+  3: Spock
+  4: JUnit Jupiter
+Enter selection (default: JUnit Jupiter) [1..4] 1
+```
+
+Name your project the same as the directory you are currently in, `hello-world-temporal`:
+
+```
+Project name (default: hello-world-temporal): hello-world-temporal
+```
+
+Finally, name your source package `helloworldapp`:
+
+```
+Source package (default: hello.world.temporal): helloworldapp
+```
+
+Once you've done this you should see the following output informing you of the success of your project's creation:
+
+```
+> Task :init
+Get more help with your project: https://docs.gradle.org/8.0/samples/sample_building_java_applications.html
+
+BUILD SUCCESSFUL in 19s
+2 actionable tasks: 2 executed
+```
+
+Once you have finished scaffolding your Java project you will need to add the Temporal SDK as a dependency, along with a handful of other libraries for testing and logging. Open the Gradle build configuration file at `app/build.gradle` and replace the current contents of the `dependencies` block with the following: 
+
+<!--SNIPSTART hello-world-project-template-java-gradle-dependencies-->
+[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/build.gradle)
+```gradle
+dependencies {
+    implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'
+    implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'
+    
+    testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'
+}
+```
+<!--SNIPEND-->
+
+Below is a more detailed explanation about the dependencies you will be installing:
+
+- `implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.18.2'` 
+  - The Temporal SDK for use in your application.
+- `implementation group: 'org.slf4j',  name: 'slf4j-nop', version: '2.0.6'` 
+  - A NOOP logging package to suppress logging warnings. **This is not intended for production use and a proper logger should be implemented.**
+- `testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.18.2'` 
+  - The necessary packages for testing a Temporal application.
+- `testImplementation group: 'junit', name: 'junit', version: '4.13.2'` 
+  - The core Java Unit Testing framework. 
+- `testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.1.1'`
+  - A mocking framework in Java to be used during testing.
+
+Once you have added the build dependencies, perform a test build on your application. From the root directory of your project execute the following command:
+
+```command
+./gradlew build
+```
+
+You will see output similar to this if your build was successful:
+
+```command
+BUILD SUCCESSFUL in 28s
+7 actionable tasks: 6 executed, 1 up-to-date
+```
+
+  </TabItem>
+  <TabItem value="maven" label="Maven">
 
 Create a new Java project with Maven by running the following command:
 
@@ -231,6 +368,10 @@ Downloaded from central: https://repo.maven.apache.org/maven2/com/thoughtworks/q
 [INFO] Finished at: 2023-03-29T15:47:31-05:00
 [INFO] ------------------------------------------------------------------------
 ```
+
+  </TabItem>
+</Tabs>
+
 
 Finally, your build tool may have created a default `App.java` file. You won't need this file for this tutorial, so delete it.
 
@@ -462,6 +603,21 @@ The first test, `testIntegrationGetGreeting`, creates a test execution environme
 
 Run the following command from the project root to execute the unit tests:
 
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
+```command
+./gradlew test
+```
+You'll see output similar to the following from your test run indicating that the test was successful
+```
+BUILD SUCCESSFUL in 317ms
+3 actionable tasks: 2 executed, 1 up-to-date
+```
+
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
 ```command
 mvn compile test
 ```
@@ -511,18 +667,21 @@ You'll see output similar to the following from your test run indicating that th
 [INFO] ------------------------------------------------------------------------
 ```
 
+  </TabItem>
+</Tabs>
+
 You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
 
 
 ## Configure a Worker
 
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity methods and executes the code in the Workflow Definition. The Temporal Service orchestrates the execution of code in a Workflow Definition or Activity Definition by adding Tasks to a [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), which Workers poll. When a Worker accepts a Task, it will execute the necessary code, and report the result (or error) back to the Temporal Service. After the Worker runs the code, it communicates the results back to the Temporal Server.
+A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity methods and executes the code in the Workflow Definition. The Temporal Cluster orchestrates the execution of code in a Workflow Definition or Activity Definition by adding Tasks to a [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), which Workers poll. When a Worker accepts a Task, it will execute the necessary code, and report the result (or error) back to the Temporal Cluster. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
 When you start a Workflow, you specify which Task Queue the Workflow uses. A Worker listens and polls on the Task Queue, looking for work to do.
 
 To configure a Worker process using the Java SDK, you create an instance of `Worker` and give it the name of the Task Queue to poll. 
 
-You'll connect to the Temporal Service using a Temporal Client, which provides a set of APIs to communicate with a Temporal Service. You'll use Clients to interact with existing Workflows or to start new ones.
+You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
 
 Since you'll use the Task Queue name in multiple places in your project, create the file `Shared.java` in `app/src/main/java/helloworldapp` and define the Task Queue name there:
 
@@ -606,7 +765,7 @@ This program first implements a service stub to be used when instantiating the c
 
 :::tip
 
-By default, the client connects to the `default` namespace of the Temporal Service running at `localhost` on port `7233` by using the `newLocalServiceStubs()` method. If you want to connect to an external Temporal Service you would use the following code:
+By default, the client connects to the `default` namespace of the Temporal Cluster running at `localhost` on port `7233` by using the `newLocalServiceStubs()` method. If you want to connect to an external Temporal Cluster you would use the following code:
 
 ```java
 WorkflowServiceStubs service =
@@ -704,7 +863,53 @@ You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execut
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
-First, ensure that your local Temporal Service is running. 
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
+First, open the file `app/build.gradle` and add the following commands to the end of the file in order to define tasks for Gradle to execute your Worker and Client application:
+
+<!--SNIPSTART hello-world-project-template-java-gradle-tasks-->
+[app/build.gradle](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/build.gradle)
+```gradle
+task sayHello(type: JavaExec) {
+    mainClass = 'helloworldapp.InitiateHelloWorld'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task startWorker(type: JavaExec) {
+    mainClass = 'helloworldapp.HelloWorldWorker'
+    classpath = sourceSets.main.runtimeClasspath
+}
+```
+<!--SNIPEND-->
+
+Next, ensure that your local Temporal Cluster is running. 
+
+To start the Worker, run this command from the project root:
+
+
+
+```command
+./gradlew startWorker
+```
+
+You will see similar output from Gradle:
+
+```
+<=========----> 75% EXECUTING [0h 0m 42s]
+> :app:startWorker
+```
+
+:::note
+
+Observe that Gradle is reporting that the application is executing but appears to be stuck at 75%. Since the worker is an application that runs indefinitely, Gradle will not report it as running at 100% completion. This is expected and if you see this, your application is running and ready to accept Workflows to be executed. Leave this program running and proceed to the next step.
+
+:::
+
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+
+First, ensure that your local Temporal Cluster is running. 
 
 To start the Worker, run this command from the project root:
 
@@ -730,11 +935,38 @@ Based on the output above, it may appear that your application is stuck or non-r
 
 :::
 
+  </TabItem>
+</Tabs>
+
 To start the Workflow, open a new terminal window and switch to your project root:
 
 ```command
 cd hello-world-temporal
 ```
+
+<Tabs groupId="build-tool" queryString>
+  <TabItem value="gradle" label="Gradle">
+
+Run the following command to start the Workflow Execution:
+
+```command
+./gradlew sayHello
+```
+
+The program runs and returns the result:
+
+```
+> Task :app:sayHello
+HelloWorldWorkflowID Hello World!
+
+BUILD SUCCESSFUL in 1s
+2 actionable tasks: 1 executed, 1 up-to-date
+```
+
+You can switch back to the terminal running the Worker and stop it with `CTRL-C`.
+
+  </TabItem>
+  <TabItem value="maven" label="Maven">
 
 Run the following command to start the Workflow Execution:
 
@@ -757,6 +989,9 @@ HelloWorldWorkflowID Hello World!
 ```
 
 You can switch back to the terminal running the Worker and stop it with `CTRL-C`.
+  </TabItem>
+</Tabs>
+
 
 You have successfully built a Temporal application from scratch.
 
