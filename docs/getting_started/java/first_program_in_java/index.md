@@ -744,7 +744,7 @@ A Worker:
 - Knows which piece of code to execute based on the Tasks it gets from the Task Queue.
 - Only listens to the Task Queue that it's registered to.
 
-### ![Crane clip art](/img/icons/harbor-crane.png) Use the Web UI to explore
+### ![](/img/icons/harbor-crane.png) Use the Web UI to explore
 
 Return to the [Temporal development service Web UI](http://127.0.0.1:8080).
 Now, there's one Worker registered.
@@ -775,7 +775,7 @@ Each step is recorded in the Event History.
 
 Now that you've seen an Execution run and complete, it's time to introduce a failure.
 
-## ![Warning icon](/img/icons/warning.png) Simulate failures
+## ![](/img/icons/warning.png) Simulate failures
 
 Temporal is built to allow failure-prone processes to keep moving forward.
 It provides the backbone and oversight that enables this without you having to develop the capability in your own code.
