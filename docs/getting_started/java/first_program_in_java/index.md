@@ -569,7 +569,7 @@ Here is the code that performs this work:
         // WorkflowStubs enable calls to methods as if the Workflow object is local
         // but actually perform a gRPC call to the Temporal Service.
         MoneyTransferWorkflow workflow = client.newWorkflowStub(MoneyTransferWorkflow.class, options);
-
+        
         // Configure the details for this money transfer request
         String referenceId = UUID.randomUUID().toString().substring(0, 18);
         String fromAccount = randomAccountIdentifier();
