@@ -55,7 +55,7 @@ Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using the Java programming language](/getting_started/java/dev_environment/index.md)
 - Follow the tutorial [Run your first Temporal application with the Java SDK](/getting_started/java/first_program_in_java/index.md) to gain a better understanding of what Temporal is and how its components fit together.
-- Ensure a build tool like [Maven](https://maven.apache.org/install.html) is installed and ready to use to create a Java project.
+- Ensure the build tool [Maven](https://maven.apache.org/install.html) is installed and ready to use to create a Java project.
 
 ## ![](/img/icons/harbor-crane.png) Create a new Java project
 
