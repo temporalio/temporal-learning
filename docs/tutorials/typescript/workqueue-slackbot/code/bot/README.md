@@ -1,1 +1,0 @@
-# iq-slack-bot
