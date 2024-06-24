@@ -1,11 +1,13 @@
 ---
-id: booking-saga-tutorial
+id: build_a_trip_booking_app-php
+title: Build a trip booking system with PHP
 sidebar_position: 1
 keywords: [PHP, temporal, sdk, tutorial, saga pattern, transactions, compensations]
-tags: [PHP, SDK, Saga]
+tags:
+- php
+- saga
 last_update:
   date: 2021-10-01
-title: Create a trip booking system with the Saga pattern and Temporal in PHP
 description: In this tutorial, you'll explore the different components that make up the Temporal Booking Saga code sample.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -31,7 +33,7 @@ All of these steps together make up a  **distributed transaction** that crosses 
 ## Prerequisites
 
 - [Set up a local development environment for developing Temporal applications using PHP](/getting_started/php/dev_environment/index.md)
-- Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) to  understood the basics of getting a Temporal PHP SDK project up and running. 
+- Review the [Hello World in PHP tutorial](/getting_started/php/hello_world_in_php/index.md) to  understood the basics of getting a Temporal PHP SDK project up and running.
 
 ## Review the Saga architecture pattern
 

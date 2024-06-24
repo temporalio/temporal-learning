@@ -1,11 +1,11 @@
 ---
-id: data-pipeline-tutorial
+title: Build a data pipeline with Python
+id: build-a-data-pipeline-python
 sidebar_position: 3
 keywords: [Python, temporal, sdk, tutorial]
 tags: [Python, SDK]
 last_update:
   date: 2023-05-01
-title: Build a data pipeline Workflow with Temporal and Python
 description: You'll implement a data pipeline application in Python, using Temporal's Workflows, Activities, and Schedules to orchestrate and run the steps in your pipeline.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -283,7 +283,7 @@ For this example, `stories` is processed by a [Pandas Data Frame](https://pandas
 
 The code runs in an `asyncio` event loop.
 
-To run your code, open two terminal windows. 
+To run your code, open two terminal windows.
 
 In the first terminal, run this command to start the worker:
 
@@ -330,7 +330,7 @@ You've successfully run your Workflow and explored the Event History, now schedu
 You just built and ran a Workflow, that returns information from your data pipeline. Now, you'll run this Workflow on a schedule.
 
 Cron jobs have a reputation for fragility because they run commands in a different environment than the user's shell, which can lead to configuration management issues and random machine failures.
-Additionally, cron errors are not always directed to live email, making it hard to know when things go wrong. 
+Additionally, cron errors are not always directed to live email, making it hard to know when things go wrong.
 While newer systems like systemd timers and Kubernetes cron jobs fix some of these issues, there is still a reliance on the archaic five-field string syntax for specifying times.
 Fortunately, Temporal provides an alternative solution for scheduling workflows that doesn't require configuring additional dependencies or worrying about system alerts.
 

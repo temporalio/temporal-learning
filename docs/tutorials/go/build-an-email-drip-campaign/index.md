@@ -1,11 +1,14 @@
 ---
-title: Build an email subscription workflow with Temporal and Go
+id: build-an-email-drip-campaign-go
+title: Build an email drip campaign with Go
 sidebar_position: 3
 keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
 description: Implement an email subscription application in Go with Temporal's Workflows, Activities, and Queries, using the Temporal Client in a web API.
 last_update:
   date: 2023-09-28
 image: /img/temporal-logo-twitter-card.png
+tags:
+- Go
 ---
 
 ### Introduction
@@ -18,7 +21,7 @@ By the end of this tutorial, you'll have a clear understanding of how to use Tem
 
 You'll find the code for this tutorial on GitHub in the [email-subscription-project-go](https://github.com/temporalio/email-subscription-project-go) repository.
 
-## Prerequisites 
+## Prerequisites
 
 - [Set up a local development environment for Temporal and Go](https://learn.temporal.io/getting_started/go/dev_environment/).
 - Complete the [Hello World](https://learn.temporal.io/getting_started/go/hello_world_in_go/) to ensure you understand the basics of creating Workflows and Activities with Temporal.
@@ -151,7 +154,7 @@ The `SubscriptionWorkflow()` function uses a `for` loop to send the emails. The 
 
 Later in this tutorial, you will find that the user's email address is set to the [Workflow Id](https://docs.temporal.io/workflows#workflow-id). This means that attempting to subscribe with the same email address twice will result in an error and prevent the Workflow Execution from spawning again.
 
-Therefore, only one running Workflow Execution per email address can exist within the associated [Namespace](https://docs.temporal.io/namespaces). 
+Therefore, only one running Workflow Execution per email address can exist within the associated [Namespace](https://docs.temporal.io/namespaces).
 This ensures that the user won't receive multiple email subscriptions. This also helps reduce the complexity of the code you have to write and maintain.
 
 With this Workflow Definition in place, you can now develop an Activity to send emails.
@@ -236,7 +239,7 @@ Now that you've written the logic to execute the Workflow and Activity Definitio
 ## Build the web server
 
 The web server is used to handle requests.
-This tutorial uses [Go's HTTP library](https://pkg.go.dev/net/http) as the entry point for initiating Workflow Executions and for communicating with the `/subscribe`, `/unsubscribe`, and `/details` endpoints. 
+This tutorial uses [Go's HTTP library](https://pkg.go.dev/net/http) as the entry point for initiating Workflow Executions and for communicating with the `/subscribe`, `/unsubscribe`, and `/details` endpoints.
 
 Create a `gateway` folder with the file `main.go`.
 Establish your JSON request and response structs, set the endpoint handlers, and connect to the Temporal Client.
@@ -388,10 +391,10 @@ After decoding the request, use `workflowOptions` to pass in the user's email ad
 This ensures that the email is unique across all Workflows so that the user can't sign up multiple times.
 They'll only receive the emails they've subscribed to, and once they unsubscribe, they cancel the Workflow run.
 
-With this endpoint in place, you can now send a "POST" request to `/subscribe` with an email address in the request body. 
+With this endpoint in place, you can now send a "POST" request to `/subscribe` with an email address in the request body.
 In return, you'll receive a JSON response that shows a new Workflow has started, along with a welcome email.
 
-But how would you get details about the subscription? 
+But how would you get details about the subscription?
 In the next section, you'll query your Workflow to get back information on the state of things.
 
 ## Add a Query
@@ -423,7 +426,7 @@ This Query handler returns the contents of the `emailDetails` variable. Queries 
 
 You can use Queries even if the Workflow completes, which is useful for when the user unsubscribes but still wants to retrieve information about their subscription.
 
-Now that you've added the ability to Query your Workflow, add the ability to Query from the web API. 
+Now that you've added the ability to Query your Workflow, add the ability to Query from the web API.
 
 Create a function called `showDetailsHandler()` in which a user can get information about their subscription details.
 Make sure to include error handlers to ensure proper "GET" requests and responses.
@@ -584,12 +587,12 @@ func unsubscribeHandler(w http.ResponseWriter, r *http.Request) {
 ```
 <!--SNIPEND-->
 
-The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint. 
+The `CancelWorkflow()` function sends a cancellation request to the Workflow Execution you started on the `/subscribe` endpoint.
 
 When the Workflow receives the cancellation request, it will cancel the Workflow Execution and return a `CancelledError` to the Workflow Execution.
 This is then handled by the error handlers included in the `unsubscribeHandler()` function.
 
-Users can now send a "DELETE" request to `/unsubscribe` to cancel the Workflow associated with the request body's email address. 
+Users can now send a "DELETE" request to `/unsubscribe` to cancel the Workflow associated with the request body's email address.
 This lets users unsubscribe from the email list and prevent any further emails from sending.
 
 Now that you've added the ability to unsubscribe from the email list, test your application code to ensure it works as expected.
@@ -670,9 +673,9 @@ ok      subscribeemails 0.285s
 ```
 
 With a cancellation request that fires after five seconds, this test shows the successful creation of a subscription as well as its cancellation.
-You've successfully written, executed, and passed a Cancellation Workflow test. 
+You've successfully written, executed, and passed a Cancellation Workflow test.
 
-Temporal's Go SDK provides a number of functions that help you test your Workflow Executions. 
+Temporal's Go SDK provides a number of functions that help you test your Workflow Executions.
 By following the best practices for testing your code, you can be confident that your Workflows are reliable and performant.
 
 ## Conclusion

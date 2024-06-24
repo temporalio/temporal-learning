@@ -1,3 +1,49 @@
 {
-  "trailingSlash": true
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/tutorials/go/ecommerce",
+      "destination": "/tutorials/go/build-ecommerce-app",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/go/subscriptions",
+      "destination": "/tutorials/go/build-an-email_drip_campaign",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/php/booking_saga",
+      "destination": "/tutorials/php/build_a_trip_booking_app",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/php/subscriptiosn",
+      "destination": "/tutorials/php/build-a-recurring-billing-app",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/python/subscriptions",
+      "destination": "/tutorials/python/build-an-email-drip-campaign",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/python/data-pipelines",
+      "destination": "/tutorials/python/build-a-data-pipeline",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/typescript/subscriptiosn",
+      "destination": "/tutorials/typescript/build-a-recurring-billing-app",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/typescript/nextjs",
+      "destination": "/tutorials/typescript/build-one-click-order-app-nextjs",
+      "permanent": true
+    },
+      "source": "/tutorials/typescript/chatbot",
+      "destination": "/tutorials/typescript/build-choose-your-own-adventure-bot",
+      "permanent": true
+    }
+  ]
 }

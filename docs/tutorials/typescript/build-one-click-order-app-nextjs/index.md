@@ -1,11 +1,12 @@
 ---
-id: nextjs-tutorial
+id: build-one-click-order-app-nextjs
+title: Build a one-click order application with TypeScript and Next.js
 sidebar_position: 2
 keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
-tags: [TypeScript, SDK]
+tags:
+- TypeScript
 last_update:
   date: 2021-10-01
-title: Integrating Temporal into an existing Next.js application
 description: Explore how Temporal integrates into an existing Next.js application using Next.js API routes. This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
 image: /img/temporal-logo-twitter-card.png
 ---

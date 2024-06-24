@@ -1,11 +1,12 @@
 ---
-id: subscription-tutorial
+id: build-a-recurring-billing-app-ts
+title: Build a recurring billing subscription system with TypeScript
 sidebar_position: 3
 keywords: [TypeScript, temporal, sdk, tutorial]
-tags: [TypeScript, SDK]
+tags:
+- TypeScript
 last_update:
   date: 2021-10-01
-title: Build a subscription workflow with Temporal and TypeScript
 description: In this tutorial, we will tour all of the Workflow APIs you should know, primarily Signals, Queries, `condition`, and `sleep`, by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -412,5 +413,5 @@ These are meant to be low level primitives, and it is entirely expected that you
 Two paths from here:
 
 - **Go Full Stack**: Integrate the manually-run Temporal Client scripts you have written here into an Express.js app, or serverless function.
-  Our [Next.js Tutorial](/tutorials/typescript/nextjs/index.md) should help show you how to integrate this with a frontend app, and give indications on how to deploy.
+  Our [Next.js Tutorial](/tutorials/typescript/build-one-click-order-app-nextjs/index.md) should help show you how to integrate this with a frontend app, and give indications on how to deploy.
 - **Learn More**: Explore using [Child Workflows](https://docs.temporal.io/typescript/workflows#child-workflows) and [`continueAsNew`](https://docs.temporal.io/typescript/workflows#continueasnew) so that your subscriptions can keep running indefinitely.

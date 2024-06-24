@@ -1,11 +1,13 @@
 ---
-id: subscription-tutorial
+id: build-an-email-drip-campaign-python
+title: Build an email drip campaign with Python
 sidebar_position: 3
 keywords: [Python, temporal, sdk, tutorial, entity workflow, email subscription, sending emails]
-tags: [Python, SDK]
+tags:
+- Python
+- entity workflow
 last_update:
   date: 2024-03-06
-title: Build an email subscription workflow with Temporal and Python
 description: Implement an email subscription application with Temporal's Workflows, Activities, and Queries, and allow users to start  your business logic through a web action.
 image: /img/temporal-logo-twitter-card.png
 ---
