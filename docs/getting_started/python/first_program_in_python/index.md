@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the Pyth
 keywords: [python, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Python, SDK]
 last_update:
-  date: 2024-01-22
+  date: 2024-06-24
 code_repo: https://github.com/temporalio/money-transfer-project-template-python
 image: /img/temporal-logo-twitter-card.png
 ---
