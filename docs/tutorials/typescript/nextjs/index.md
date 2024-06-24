@@ -4,7 +4,7 @@ title: Build a one-click order application with TypeScript and Next.js
 sidebar_position: 2
 keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
 tags:
-  TypeScript
+  - TypeScript
 last_update:
   date: 2024-06-25
 description: Build a One-Click Buy application with Next.js and integrate Temporal using Next.js API routes to create a durable order processing backend.
