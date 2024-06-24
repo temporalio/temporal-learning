@@ -174,7 +174,7 @@ class MoneyTransfer:
 
 This type is defined in the file `shared.py`:
 
-<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
+<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-12"]}-->
 [shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/shared.py)
 ```py
 from dataclasses import dataclass
@@ -184,6 +184,7 @@ class PaymentDetails:
     source_account: str
     target_account: str
     amount: int
+    reference_id: str
 ```
 <!--SNIPEND-->
 
@@ -194,7 +195,8 @@ It's a good practice to send a single data class object into a Workflow as its i
 :::
 
 :::note
-Notice that the `MoneyTransfer` includes a `reference_id` instance attribute. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
+
+Notice that the `PaymentDetails` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
 
 :::
 
@@ -216,7 +218,7 @@ First, the `withdraw()` Activity takes the details about the transfer and calls 
         reference_id = f"{data.reference_id}-withdrawal"
         try:
             confirmation = await asyncio.to_thread(
-                self.bank.withdraw, data.source_account, data.amount, reference_id
+                self.bank.withdraw, data.source_account, data.amount, 
             )
             return confirmation
         except InvalidAccountError:
