@@ -108,7 +108,7 @@ The Temporal Application will consist of the following pieces:
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Java. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three Activity async methods, `WithdrawAsync`, `DepositAsync`, and `RefundAsync`. These symbolize the movement of funds between accounts. They operate asynchronously, ensuring that the application can handle other tasks while waiting for the banking operations to complete.
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three Activity methods, `withdraw`, `deposit`, and `refund`. These symbolize the movement of funds between accounts.
 
 
 The following diagram illustrates what happens when you start the Workflow:
@@ -132,6 +132,21 @@ This is what the Workflow Definition looks like for this process:
 
 
 <!--SNIPSTART money-transfer-java-workflow-interface-->
+[src/main/java/moneytransfer/MoneyTransferWorkflow.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorkflow.java)
+```java
+package moneytransferapp;
+
+import io.temporal.workflow.WorkflowInterface;
+import io.temporal.workflow.WorkflowMethod;
+
+@WorkflowInterface
+public interface MoneyTransferWorkflow {
+    // The Workflow Execution that starts this method can be initiated from code or
+    // from the 'temporal' CLI utility.
+    @WorkflowMethod
+    void transfer(TransactionDetails transaction);
+}
+```
 <!--SNIPEND-->
 
 
@@ -139,6 +154,115 @@ This is what the Workflow Definition looks like for this process:
 
 
 <!--SNIPSTART money-transfer-java-workflow-implementation-->
+[src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java)
+```java
+package moneytransferapp;
+
+import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
+import io.temporal.common.RetryOptions;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
+    private static final String WITHDRAW = "Withdraw";
+
+    // RetryOptions specify how to automatically handle retries when Activities fail
+    private final RetryOptions retryoptions = RetryOptions.newBuilder()
+        .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
+        .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
+        .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
+        .setMaximumAttempts(5000) // Fail after 5000 attempts
+        .build();
+
+    // ActivityOptions specify the limits on how long an Activity can execute before
+    // being interrupted by the Orchestration service
+    private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
+        .setRetryOptions(retryoptions) // Apply the RetryOptions defined above
+        .setStartToCloseTimeout(Duration.ofSeconds(2)) // Max execution time for single Activity
+        .setScheduleToCloseTimeout(Duration.ofSeconds(5000)) // Entire duration from scheduling to completion including queue time
+        .build();
+
+    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
+        // A heartbeat time-out is a proof-of life indicator that an activity is still working.
+        // The 5 second duration used here waits for up to 5 seconds to hear a heartbeat.
+        // If one is not heard, the Activity fails.
+        // The `withdraw` method is hard-coded to succeed, so this never happens.
+        // Use heartbeats for long-lived event-driven applications.
+        put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
+    }};
+
+    // ActivityStubs enable calls to methods as if the Activity object is local but actually perform an RPC invocation
+    private final AccountActivity accountActivityStub = Workflow.newActivityStub(AccountActivity.class, defaultActivityOptions, perActivityMethodOptions);
+
+    // The transfer method is the entry point to the Workflow
+    // Activity method executions can be orchestrated here or from within other Activity methods
+    @Override
+    public void transfer(TransactionDetails transaction) {
+        // Retrieve transaction information from the `transaction` instance
+        String sourceAccountId = transaction.getSourceAccountId();
+        String destinationAccountId = transaction.getDestinationAccountId();
+        String transactionReferenceId = transaction.getTransactionReferenceId();
+        int amountToTransfer = transaction.getAmountToTransfer();
+
+        // Stage 1: Withdraw funds from source
+        try {
+            // Launch `withdrawal` Activity
+            accountActivityStub.withdraw(sourceAccountId, transactionReferenceId, amountToTransfer);
+        } catch (Exception e) {
+            // If the withdrawal fails, for any exception, it's caught here
+            System.out.printf("[%s] Withdrawal of $%d from account %s failed", transactionReferenceId, amountToTransfer, sourceAccountId);
+            System.out.flush();
+
+            // Transaction ends here
+            return;
+        }
+
+        // Stage 2: Deposit funds to destination
+        try {
+            // Perform `deposit` Activity
+            accountActivityStub.deposit(destinationAccountId, transactionReferenceId, amountToTransfer);
+
+            // The `deposit` was successful
+            System.out.printf("[%s] Transaction succeeded.\n", transactionReferenceId);
+            System.out.flush();
+
+            //  Transaction ends here
+            return;
+        } catch (Exception e) {
+            // If the deposit fails, for any exception, it's caught here
+            System.out.printf("[%s] Deposit of $%d to account %s failed.\n", transactionReferenceId, amountToTransfer, destinationAccountId);
+            System.out.flush();
+        }
+
+        // Continue by compensating with a refund
+
+        try {
+            // Perform `refund` Activity
+            System.out.printf("[%s] Refunding $%d to account %s.\n", transactionReferenceId, amountToTransfer, sourceAccountId);
+            System.out.flush();
+
+            accountActivityStub.refund(sourceAccountId, transactionReferenceId, amountToTransfer);
+
+            // Recovery successful. Transaction ends here
+            System.out.printf("[%s] Refund to originating account was successful.\n", transactionReferenceId);
+            System.out.printf("[%s] Transaction is complete. No transfer made.\n", transactionReferenceId);
+            return;
+        } catch (Exception e) {
+            // A recovery mechanism can fail too. Handle any exception here
+            System.out.printf("[%s] Deposit of $%d to account %s failed. Did not compensate withdrawal.\n",
+                transactionReferenceId, amountToTransfer, destinationAccountId);
+            System.out.printf("[%s] Workflow failed.", transactionReferenceId);
+            System.out.flush();
+
+            // Rethrowing the exception causes a Workflow Task failure
+            throw(e);
+        }
+    }
+}
+```
 <!--SNIPEND-->
 
 
@@ -148,19 +272,30 @@ This is what the Workflow Definition looks like for this process:
 
 - The `MoneyTransferWorkflow` class is designed to manage the transaction process, which entails withdrawing funds from one account and depositing the money into another through executing the Activities.
 
-- The `MoneyTransferWorkflow` class contains a method, `transfer`, that takes a `TransactionDetails` object as input. This holds the transaction details to perform the money transfer.
+- The `MoneyTransferWorkflow` class contains a method, `transfer`, that takes a `TransactionDetails` instance as input. This holds the transaction details to perform the money transfer.
 
 This type is defined in the `TransactionDetails` class:
 
 <!--SNIPSTART money-transfer-java-transaction-details-->
-<!--SNIPEND-->
-<!--SNIPSTART money-transfer-java-coreTransactionDetails-->
+[src/main/java/moneytransfer/TransactionDetails.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/TransactionDetails.java)
+```java
+package moneytransferapp;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = CoreTransactionDetails.class)
+public interface TransactionDetails {
+    String getSourceAccountId();
+    String getDestinationAccountId();
+    String getTransactionReferenceId();
+    int getAmountToTransfer();
+}
+```
 <!--SNIPEND-->
 
 :::tip
 
 
-It's a good practice to send a single object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
+It's a good practice to send a single object into a Workflow as its input, rather than multiple, separate arguments. As your Workflows evolve, you may need to add information, and using a single argument will make it easier for you to change long-running Workflows in the future.
 
 
 :::
@@ -179,6 +314,27 @@ In the Temporal Java SDK, you mark a method within a class as an Activity by add
 
 
 <!--SNIPSTART money-transfer-java-activity-interface {"selectedLines": ["3-19"]}-->
+[src/main/java/moneytransfer/AccountActivity.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/AccountActivity.java)
+```java
+// ...
+import io.temporal.activity.ActivityInterface;
+import io.temporal.activity.ActivityMethod;
+
+@ActivityInterface
+public interface AccountActivity {
+    // Withdraw an amount of money from the source account
+    @ActivityMethod
+    void withdraw(String accountId, String referenceId, int amount);
+
+    // Deposit an amount of money into the destination account
+    @ActivityMethod
+    void deposit(String accountId, String referenceId, int amount);
+
+    // Compensate a failed deposit by refunding to the original account
+    @ActivityMethod
+    void refund(String accountId, String referenceId, int amount);
+}
+```
 <!--SNIPEND-->
 
 
@@ -190,6 +346,50 @@ Second, if the transfer succeeded, the `withdraw` method returns the confirmatio
 Lastly, the `deposit` Activity method works like the `withdraw` method. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 <!--SNIPSTART money-transfer-java-activity-implementation {"selectedLines": ["3-42"]}-->
+[src/main/java/moneytransfer/AccountActivityImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/AccountActivityImpl.java)
+```java
+// ...
+import io.temporal.activity.*;
+
+public class AccountActivityImpl implements AccountActivity {
+    // Mock up the withdrawal of an amount of money from the source account
+    @Override
+    public void withdraw(String accountId, String referenceId, int amount) {
+        System.out.printf("\nWithdrawing $%d from account %s.\n[ReferenceId: %s]\n", amount, accountId, referenceId);
+        System.out.flush();
+    }
+
+    // Mock up the deposit of an amount of money from the destination account
+    @Override
+    public void deposit(String accountId, String referenceId, int amount) {
+        boolean activityShouldSucceed = true;
+
+        if (!activityShouldSucceed) {
+            System.out.println("Deposit failed");
+            System.out.flush();
+            throw Activity.wrap(new RuntimeException("Simulated Activity error during deposit of funds"));
+        }
+
+        System.out.printf("\nDepositing $%d into account %s.\n[ReferenceId: %s]\n", amount, accountId, referenceId);
+        System.out.flush();
+    }
+
+    // Mock up a compensation refund to the source account
+    @Override
+    public void refund(String accountId, String referenceId, int amount) {
+        boolean activityShouldSucceed = true;
+
+        if (!activityShouldSucceed) {
+            System.out.println("Refund failed");
+            System.out.flush();
+            throw Activity.wrap(new RuntimeException("Simulated Activity error during refund to source account"));
+        }
+
+        System.out.printf("\nRefunding $%d to account %s.\n[ReferenceId: %s]\n", amount, accountId, referenceId);
+        System.out.flush();
+   }
+}
+```
 <!--SNIPEND-->
 
 :::tip Why you use Activities
@@ -220,13 +420,43 @@ In the `MoneyTransferWorkflow` class, you define a Retry Policy right at the beg
 You'll see a **Retry Policy** defined that looks like this:
 
 <!--SNIPSTART money-transfer-java-workflow-implementation {"selectedLines": ["12-37"]}-->
+[src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java)
+```java
+// ...
+    private static final String WITHDRAW = "Withdraw";
+
+    // RetryOptions specify how to automatically handle retries when Activities fail
+    private final RetryOptions retryoptions = RetryOptions.newBuilder()
+        .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
+        .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
+        .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
+        .setMaximumAttempts(5000) // Fail after 5000 attempts
+        .build();
+
+    // ActivityOptions specify the limits on how long an Activity can execute before
+    // being interrupted by the Orchestration service
+    private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
+        .setRetryOptions(retryoptions) // Apply the RetryOptions defined above
+        .setStartToCloseTimeout(Duration.ofSeconds(2)) // Max execution time for single Activity
+        .setScheduleToCloseTimeout(Duration.ofSeconds(5000)) // Entire duration from scheduling to completion including queue time
+        .build();
+
+    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
+        // A heartbeat time-out is a proof-of life indicator that an activity is still working.
+        // The 5 second duration used here waits for up to 5 seconds to hear a heartbeat.
+        // If one is not heard, the Activity fails.
+        // The `withdraw` method is hard-coded to succeed, so this never happens.
+        // Use heartbeats for long-lived event-driven applications.
+        put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
+    }};
+```
 <!--SNIPEND-->
 
 
 By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
 
 
-In the case of an error with the `DepositAsync()` Activity, the Workflow will attempt to put the money back.
+In the case of an error with the `deposit` Activity, the Workflow will attempt to put the money back.
 
 
 In this Workflow, each Activity uses the same Retry Policy options, but you could specify different options for each Activity.
@@ -254,11 +484,13 @@ Let's see that in action.
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/encyclopedia/temporal-sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 
-First, make sure the local [Temporal Service](https://docs.temporal.io/clusters) is running in a Terminal from the [previous tutorial](https://learn.temporal.io/getting_started/dotnet/dev_environment/). This is done by opening a new terminal window and running the following command:
+First, make sure the local [Temporal Service](https://docs.temporal.io/clusters) is running in a Terminal from the [previous tutorial](https://learn.temporal.io/getting_started/java/dev_environment/). This is done by opening a new terminal window and running the following command:
+
 ```command
 temporal server start-dev \
     --log-level=never \
-    --ui-port 8080
+       --ui-port 8080 \
+       --db-filename=temporal.db
 ```
 
 To start the Workflow, run this Maven command:
@@ -275,11 +507,11 @@ The Workflow starts running and the app ends:
 ```
 MONEY TRANSFER PROJECT
 
-Initiating transfer of $19 from [Account 300891909] to [Account 748137397].
+Initiating transfer of $62 from [Account 249946050] to [Account 591856595].
 
 [WorkflowID: money-transfer-workflow]
-[RunID: 158fdc2a-ab9e-4960-9828-c92e6ff05874]
-[Transaction Reference: 10541c87-1b17-4fa5]
+[RunID: 37688cca-ffa2-48cf-809b-f18f5119bca3]
+[Transaction Reference: 1480a22d-d0fc-4361]
 ```
 
 
@@ -296,6 +528,14 @@ The Task Queue is where Temporal Workers look for Workflows and Activities to ex
 
 
 <!--SNIPSTART money-transfer-java-shared-->
+[src/main/java/moneytransfer/Shared.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/Shared.java)
+```java
+package moneytransferapp;
+
+public interface Shared {
+    static final String MONEY_TRANSFER_TASK_QUEUE = "MONEY_TRANSFER_TASK_QUEUE";
+}
+```
 <!--SNIPEND-->
 
 
@@ -308,6 +548,83 @@ This tutorial uses a separate program to start the Workflow, but you don't have 
 
 :::
 
+Here is the how the code works for the application that creates new Workflows to transfer money:
+
+<!--SNIPSTART money-transfer-java-initiate-transfer {"selectedLines": ["3-71"]}-->
+[src/main/java/moneytransfer/TransferApp.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/TransferApp.java)
+```java
+// ...
+import io.temporal.api.common.v1.WorkflowExecution;
+import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowOptions;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class TransferApp {
+    private static final SecureRandom random;
+
+    static {
+        // Seed the random number generator with nano date
+        random = new SecureRandom();
+        random.setSeed(Instant.now().getNano());
+    }
+
+    public static String randomAccountIdentifier() {
+        return IntStream.range(0, 9)
+                .mapToObj(i -> String.valueOf(random.nextInt(10)))
+                .collect(Collectors.joining());
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        // In the Java SDK, a stub represents an element that participates in
+        // Temporal orchestration and communicates using gRPC.
+
+        // A WorkflowServiceStubs communicates with the Temporal front-end service.
+        WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newLocalServiceStubs();
+
+        // A WorkflowClient wraps the stub.
+        // It can be used to start, signal, query, cancel, and terminate Workflows.
+        WorkflowClient client = WorkflowClient.newInstance(serviceStub);
+
+        // Workflow options configure  Workflow stubs.
+        // A WorkflowId prevents duplicate instances, which are removed.
+        WorkflowOptions options = WorkflowOptions.newBuilder()
+                .setTaskQueue(Shared.MONEY_TRANSFER_TASK_QUEUE)
+                .setWorkflowId("money-transfer-workflow")
+                .build();
+
+        // WorkflowStubs enable calls to methods as if the Workflow object is local
+        // but actually perform a gRPC call to the Temporal Service.
+        MoneyTransferWorkflow workflow = client.newWorkflowStub(MoneyTransferWorkflow.class, options);
+        
+        // Configure the details for this money transfer request
+        String referenceId = UUID.randomUUID().toString().substring(0, 18);
+        String fromAccount = randomAccountIdentifier();
+        String toAccount = randomAccountIdentifier();
+        int amountToTransfer = ThreadLocalRandom.current().nextInt(15, 75);
+        TransactionDetails transaction = new CoreTransactionDetails(fromAccount, toAccount, referenceId, amountToTransfer);
+
+        // Perform asynchronous execution.
+        // This process exits after making this call and printing details.
+        WorkflowExecution we = WorkflowClient.start(workflow::transfer, transaction);
+
+        System.out.printf("\nMONEY TRANSFER PROJECT\n\n");
+        System.out.printf("Initiating transfer of $%d from [Account %s] to [Account %s].\n\n",
+                          amountToTransfer, fromAccount, toAccount);
+        System.out.printf("[WorkflowID: %s]\n[RunID: %s]\n[Transaction Reference: %s]\n\n", we.getWorkflowId(), we.getRunId(), referenceId);
+        System.exit(0);
+    }
+}
+```
+<!--SNIPEND-->
 
 
 Next, you'll explore one of the unique value propositions Temporal offers: application state visibility.
@@ -334,12 +651,12 @@ Temporal's Web UI lets you see details about the Workflow you're running. You ca
 Now you can see everything you want to know about the execution of the Workflow, including the input values it received, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
 
 
-   ![The details of the run.](images/workflow-status.png)
+![The details of the run.](images/workflow-status.png)
 
 3. You can see the inputs and results of the Workflow Execution by clicking the **Input and Results** section:
 
 
-![Input and results](images/inputs_results.png)
+![Input and results](images/workflow-input.png)
 
 
 You started the Workflow, and the interface shows that the Workflow is running, but the Workflow hasn't executed yet. As you see from the Web UI, there are no Workers connected to the Task Queue.
@@ -387,6 +704,49 @@ Like the program that started the Workflow, it connects to the Temporal Cluster 
 
 
 <!--SNIPSTART money-transfer-java-worker-->
+[src/main/java/moneytransfer/MoneyTransferWorker.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorker.java)
+```java
+package moneytransferapp;
+
+import io.temporal.client.WorkflowClient;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.worker.Worker;
+import io.temporal.worker.WorkerFactory;
+
+public class MoneyTransferWorker {
+
+    public static void main(String[] args) {
+        // Create a stub that accesses a Temporal Service on the local development machine
+        WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newLocalServiceStubs();
+
+        // The Worker uses the Client to communicate with the Temporal Service
+        WorkflowClient client = WorkflowClient.newInstance(serviceStub);
+
+        // A WorkerFactory creates Workers
+        WorkerFactory factory = WorkerFactory.newInstance(client);
+
+        // A Worker listens to one Task Queue.
+        // This Worker processes both Workflows and Activities
+        Worker worker = factory.newWorker(Shared.MONEY_TRANSFER_TASK_QUEUE);
+
+        // Register a Workflow implementation with this Worker
+        // The implementation must be known at runtime to dispatch Workflow tasks
+        // Workflows are stateful so a type is needed to create instances.
+        worker.registerWorkflowImplementationTypes(MoneyTransferWorkflowImpl.class);
+
+        // Register Activity implementation(s) with this Worker.
+        // The implementation must be known at runtime to dispatch Activity tasks
+        // Activities are stateless and thread safe so a shared instance is used.
+        worker.registerActivitiesImplementations(new AccountActivityImpl());
+
+        System.out.println("Worker is running and actively polling the Task Queue.");
+        System.out.println("To quit, use ^C to interrupt.");
+
+        // Start all registered Workers. The Workers will start polling the Task Queue.
+        factory.start();
+    }
+}
+```
 <!--SNIPEND-->
 
 When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
@@ -396,12 +756,12 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 Worker is running and actively polling the Task Queue.
 To quit, use ^C to interrupt.
 
-Withdrawing $19 from account 300891909.
-[ReferenceId: 10541c87-1b17-4fa5]
+Withdrawing $62 from account 249946050.
+[ReferenceId: 1480a22d-d0fc-4361]
 
-Depositing $19 into account 748137397.
-[ReferenceId: 10541c87-1b17-4fa5]
-[10541c87-1b17-4fa5] Transaction succeeded.
+Depositing $62 into account 591856595.
+[ReferenceId: 1480a22d-d0fc-4361]
+[1480a22d-d0fc-4361] Transaction succeeded.
 ```
 
 
@@ -435,9 +795,6 @@ After a Workflow completes, the full history persists for a set retention period
 You just ran a Temporal Workflow application and saw how Workflows, Activities, and Workers interact. Now you'll explore how Temporal gives you tools to handle failures.
 
 
-wefwef
-
-
 ## ![](/img/icons/warning.png) Simulate failures
 
 
@@ -454,108 +811,37 @@ Try it out by following these steps:
 
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `dotnet run --project MoneyTransferClient`.
-3. Verify the Workflow is running in the [Web UI](http://localhost:8233).
-4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
-5. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8233](http://localhost:8233/).
+2. Verify the Workflow is running in the [Web UI](http://localhost:8080).
+3. Shut down the Temporal Server with `CTRL+C` in the terminal window running the server.
+4. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8080](http://localhost:8080/).
+
+Your Workflow is still listed and running.
 
 
-Your Workflow is still listed:
+![The second Workflow appears in the list of Workflows](images/still-running.png)
 
 
-![The second Workflow appears in the list of Workflows](images/second_workflow.png)
+If the Temporal Cluster goes offline, you can pick up where you left off when it comes back online again.
 
 
-Despite your best efforts, there's going to be a time when something goes wrong in your application. You might encounter a network glitch, a server might go offline, or you might introduce a bug into your code. One of Temporal's most important features is its ability to maintain the state of a Workflow when something fails. To demonstrate this, you will simulate some failures for your Workflow and see how Temporal responds.
+### Recover from an unknown error in an Activity
 
 
-### Recover from a server crash
+This demo application makes a call to an external service in an Activity. If that call fails due to a bug in your code, the Activity produces an error.
 
 
-Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
+To test this out and see how Temporal responds, you'll simulate a bug in the `deposit` Activity method.
 
 
-Try it out by following these steps:
+Let your Workflow continue to run but don't start the Worker yet.
 
 
-1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `dotnet run --project MoneyTransferClient`.
-3. Verify the Workflow is running in the [Web UI](http://localhost:8080).
-4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
-5. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8080](http://localhost:8080/).
+1. Open the `AccountActivityImpl` file and modify the `deposit` method so `activityShouldSucceed` is set to false.
 
 
-Your Workflow is still listed:
+2. Save your changes and switch to the terminal that was running your Worker.
 
-## ![](/img/icons/warning.png) Simulate failures
-
-Temporal is built to allow failure-prone processes to keep moving forward.
-It provides the backbone and oversight that enables this without you having to develop the capability in your own code.
-This keeps your code focused on your business logic and not on recovery strategies.
-
-Despite your best efforts, services and other items will fail.
-One of Temporal's most important features is its ability to maintain the state of a Workflow during a failure and continue on once that failure resolves.
-To demonstrate this, you will simulate failures for your Workflow and see how Temporal responds.
-
-### Recover from a server crash
-
-Unlike many modern applications that require complex processes and external databases to handle failure, Temporal preserves the state of your Workflow Execution even if the server is down.
-Test this by stopping the local Temporal Cluster while a Workflow is running.
-
-Try it out by following these steps:
-
-1. Stop your Worker.
-   Switch to the terminal that's running your Worker and press `CTRL+C`.
-1. Return to the terminal window running the development server.
-   Shut it down with `CTRL+C`.
-1. After the Temporal Cluster has stopped, restart it to use a local database.
-
-
-   ```bash
-   temporal server start-dev \
-       --log-level=never \
-       --ui-port 8080 \
-   ```
-
-1. Switch back to the terminal where your Workflow ran.
-   Start a new Workflow Execution.
-
-
-   ```bash
-   mvn compile exec:java \
-       -Dexec.mainClass="moneytransferapp.TransferApp" \
-       -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-   ```
-
-   Note the WorkflowID and RunID.
-   They also appear in the WebUI and help you locate the process you were using.
-
-1. Return to the development server terminal session.
-   Shut it down with `CTRL+C`.
-1. Re-start the server, using the same data.
-
-
-   ```bash
-   temporal server start-dev \
-       --log-level=never \
-       --ui-port 8080 \
-       --db-filename=temporal.db
-   ```
-
-1. Verify the Workflow is running in the [Development Service Web UI](http://localhost:8080).
-
-   ![](images/still-running.png)
-
-When you add a database to your Temporal Service you can recover from where you left off, even when a service goes offline.
-You pick up from where you left off when it comes back online again.
-
-### Recover from an Activity error
-
-Explore how Temporal responds to failed Activities and works with your timeout and retry policies
-The `deposit` Activity lets you "fail" a deposit when you set `activityShouldSucceed` to `false`.
-
-Your Worker app should not be running at this time.
-Recompile it and run it to pick up this new logic.
+3. Start the Worker again:
 
 ```bash
 mvn clean install \
@@ -565,178 +851,143 @@ mvn compile exec:java \
     -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 ```
 
-:::note
+Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw` Activity method, but it errors when it attempts the `deposit` Activity method.
 
-You must compile and restart the Worker every time there's a change in code.
+
+The important thing to note here is that the Worker keeps retrying the `deposit` method:
+
+```
+Withdrawing $32 from account 612849675.
+[ReferenceId: d3d9bcf0-a897-4326]
+Deposit failed
+Deposit failed
+Deposit failed
+Deposit failed
+```
+
+The Workflow keeps retrying using the `RetryPolicy` specified when the Workflow first executes the Activity.
+
+
+You can view more information about the process in the [Temporal Web UI](http://localhost:8080).
+
+
+4. Click the Workflow. You'll see more details including the state, the number of attempts run, and the next scheduled run time.
+
+:::note
+Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options.
+
+Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). By default the code will be retried forever, unless a Schedule-To-Close Timeout or Start-To-Close Timeout is specified.
 
 :::
 
-Now visit the Worker running in the terminal window:
+In the Workflow Definition, you can see that a **`StartToCloseTimeout`** is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 5000 times.
+
+You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
+
+
+Your Workflow is running, but only the `withdraw` Activity method has succeeded. In any other application, you would likely have to abandon the entire process and perform a rollback.
+
+
+With Temporal, you can debug and resolve the issue while the Workflow is running.
+
+6. Pretend that you found a fix for the issue. Switch `activityShouldSucceed` back to `true` and save your changes.
+
+
+How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
+
+
+7. To restart the Worker, go to the terminal where the Worker is running and cancel the Worker with `CTRL+C`.
+   Then restart the Worker by running the following command:
+
 
 ```bash
-Withdrawing $63 from account 714985048.
-[ReferenceId: cc935eb0-cfe1-421e]
-Deposit failed
-Deposit failed
-Deposit failed
-[cc935eb0-cfe1-421e] Deposit of $63 to account 993113084 failed.
-[cc935eb0-cfe1-421e] Refunding $63 to account 714985048.
-
-Refunding $63 to account 714985048.
-[ReferenceId: cc935eb0-cfe1-421e]
-[cc935eb0-cfe1-421e] Refund to originating account was successful.
-[cc935eb0-cfe1-421e] Transaction is complete. No transfer made.
+mvn clean install \
+    -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
+mvn compile exec:java \
+    -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" \
+    -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 ```
 
-The Worker completed the `withdraw` activity but failed (as you set) with `deposit`.
-In this log, the Activity ran out of time, stopped after 3 retries, and the Workflow moved onto the compensating activity.
 
-### Review the failed Activity with the Development Server WebUI
+The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `deposit` Activity method:
 
-Visit the [Temporal Web UI](http://localhost:8080) and click your Workflow Id to view the Workflow details.
-The Event History is longer this time and contains an ActivityTaskFailed event.
-
-![ActivityTaskFailed event](images/activity-task-failed-event.png)
-
-Click on this to reveal the detail information about the failure call.
-
-![ActivityTaskFailed event details](images/activity-task-failed-details.png)
-
-### Retry logic
-
-Without Temporal oversight, you must implement timeout and retry logic within the service code.
-It makes it your code hard to read with your recovery logic living right next to business logic.
-With Temporal, you can specify timeout configurations in the Workflow code as Activity options.
-
-Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
-By default your code will be retried forever, unless a Schedule-To-Close Timeout or Start-To-Close Timeout is specified.
-This is not a good outcome.
-You want your code to complete (best outcome) or fail sensibly (an acceptable outcome), not to hang forever.
-Failing "sensibly" means that you can revive your failed Workflows by changing the services it relies on or re-establishing other ways that ensure Workflow success.
-
-### Increase the bug severity
-
-Next, you'll make the Workflow fail harder.
-That is, you'll override some code that makes `deposit` continue to fail and prevent the timeout and recovery mechanisms from stepping in.
-
-1. Quit the Worker if it is still running.
-
-1. Make sure the `deposit` will still fail.
-
-   ```java
-   boolean activityShouldSucceed = false;
-   ```
-
-1. Increase out the maximum number of attempts from 5 to a much bigger number:
-
-   ```
-   .setMaximumAttempts(5000)
-   ```
-
-1. Increase the schedule-to-close timeout from 5 seconds to a much bigger number:
-
-   ```
-   .setScheduleToCloseTimeout(Duration.ofSeconds(5000))
-   ```
-
-1. Compile and run the updated Worker
-
-
-   ```bash
-   mvn clean install \
-       -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
-   mvn compile exec:java \
-       -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" \
-       -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-   ```
-
-### Start a Workflow Execution
-
-Next, you'll explore a Workflow Execution that cannot complete.
-
-1. Start another Workflow:
-
-
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="moneytransferapp.TransferApp" \
-      -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-   ```
-
-1. Wait for the Workflow to fail a few times.
-   The Workflow keeps retrying using the RetryPolicy.
-   Then quit from the Worker.
-
-   ```
-   Withdrawing $48 from account 420011264.
-   [ReferenceId: 29de07b9-c795-4dbb]
-   Deposit failed
-   Deposit failed
-   Deposit failed
-   Deposit failed
-   Deposit failed
-   ^C
-   ```
-
-1. Visit the Web UI and view the Workflow.
-   It will still be "Running".
-   The Timeline will show multiple deposit attempts.
-
-1. Return to your editor and set `activityShouldSucceed` to `true` in the `deposit` method.
-
-1. Once again, compile and run the Worker:
-
-
-   ```bash
-   mvn clean install \
-       -Dorg.slf4j.simpleLogger.defaultLogLevel=info 2>/dev/null
-   mvn compile exec:java \
-       -Dexec.mainClass="moneytransferapp.MoneyTransferWorker" \
-       -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-   ```
-
-Now, the transfer finally completes.
-The Workflow picks up and continues from where it left off.
 
 ```
-Depositing $48 into account 941350378.
-[ReferenceId: 29de07b9-c795-4dbb]
-[29de07b9-c795-4dbb] Transaction succeeded.
+Depositing $32 into account 872878204.
+[ReferenceId: d3d9bcf0-a897-4326]
+[d3d9bcf0-a897-4326] Transaction succeeded.
 ```
 
-You have just fixed a bug in a running application.
-You didn't lose the Workflow Execution state, didn't have to restart the transaction, and didn't have to repeat work.
-The Workflow Execution picked up from where it left off.
-It used the corrected code to move forward.
+8. Visit the [Web UI](http://localhost:8080) again, and you'll see the Workflow has completed.
 
-### Conclusion
+You have just fixed a bug in a running application without losing the state of the Workflow or restarting the transaction!
 
-You now know how to run a Temporal Workflow and understand a part of the value Temporal offers.
-You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution.
+## Conclusion
+
+
+You now know how to run a Temporal Workflow and understand some value Temporal offers. You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution.
+
+
 You also saw how Temporal recovers from failures and how it retries Activities.
 
-Temporal key advantages include:
 
-1. Temporal gives you **full visibility** into the state of your Workflow and code execution.
-1. Temporal **maintains the state** of your Workflow through server outages and errors.
-1. Temporal lets you **time out and retry Activity code** with options outside your business logic.
-1. Temporal helps you **perform "live debugging" of your business logic** while a Workflow is running.
+Exploring the key advantages Temporal offers:
+
+
+1. Temporal gives you **full visibility** in the state of your Workflow and code execution.
+2. Temporal **maintains the state** of your Workflow, even through server outages and errors.
+3. Temporal lets you **time out and retry Activity code** using options that exist outside your business logic.
+4. Temporal enables you to **perform "live debugging" of your business logic** while the Workflow is running.
+
+
+### Further exploration
+
+
+Try the following things before moving on to get more practice working with a Temporal application:
+
+
+- Change the Retry Policy in so it only retries 1 time.
+- Does the Workflow place the money back into the original account?
+
+
+### Review
+
 
 Answer the following questions to see if you remember some of the more important concepts from this tutorial:
 
-<details>
-<summary>
-Why should you define a shared constant to store the Task Queue name?
-</summary>
-The Task Queue name is used in two parts of the code.
-The first starts the Workflow.
-The second configures the Worker.
-If their values differ, the Worker and Temporal Service would not share the same Task Queue.
-The Workflow Execution could not progress.
-</details>
 
 <details>
 <summary>
-When you modify Activity code for a running Workflow, what do you need to do?
+
+
+
+
+**Why do we recommend defining a shared constant to store the Task Queue name?**
+
+
 </summary>
-Restart the Worker so it picks up the updated details and can apply them to Activity Tasks.
+
+
+Because the Task Queue name is specified in two different parts of the code (the first starts the Workflow and the second configures the Worker). If their values differ, the Worker and Temporal Cluster would not share the same Task Queue, and the Workflow Execution would not progress.
+
+
 </details>
+
+
+<details>
+<summary>
+
+
+**What do you have to do if you modify Activity code for a Workflow that is running?**
+
+
+</summary>
+
+
+Restart the Worker.
+
+
+</details>
+
+
+
