@@ -6,9 +6,8 @@ import {
   SlackCommandMiddlewareArgs,
   GenericMessageEvent,
 } from "@slack/bolt";
-import {WebClient} from "@slack/web-api";
 import {WorkqueueData, WorkqueueStatus} from "../../common-types/types";
-import {temporalClient} from "./temporal";
+import {temporalClient} from "./dev-temporal-client";
 import crypto from "crypto";
 import {formatDistanceToNow} from "date-fns";
 import {
@@ -19,26 +18,23 @@ import {
 } from "../../temporal-application/src/workflows/workqueue";
 import {WorkflowExecutionAlreadyStartedError} from "@temporalio/client";
 
-// Handles and routes all incoming Work Queue messages
+// Handles and routes all incoming Work Queue Slash Commands
 export async function handleWorkqueueCommand(
   command: SlackCommandMiddlewareArgs["command"],
-  client: WebClient,
   say: SayFn,
   respond: RespondFn
 ) {
   const commandText = command.text?.trim();
 
   if (commandText === "!delete") {
-    await deleteWorkqueue(command, say, client);
+    await deleteWorkqueue(command, say);
   } else if (commandText === "") {
-    await displayWorkqueue(command, respond, client);
+    await displayWorkQueue(command, respond);
   } else {
-    await addWorkToQueue(command, say, client);
+    await addWorkToQueue(command, say);
   }
   return;
 }
-
-// Handles the action of claiming a work item
 
 // Custom reply function that sends a message in the same thread
 // Defaults to text, but capable of sending blocks as well
@@ -55,6 +51,8 @@ async function reply(say: SayFn, text: string, blocks?: any) {
   }
 }
 
+// Custom replyEphemeral function that sends an ephemeral message
+// Defaults to text, but capable of sending blocks as well
 async function replyEphemeral(respond: RespondFn, text: string, blocks?: any) {
   try {
     await respond({
@@ -69,19 +67,16 @@ async function replyEphemeral(respond: RespondFn, text: string, blocks?: any) {
 
 // Display the Work Queue for the channel
 // Creates a new Work Queue if it does not exist
-async function displayWorkqueue(
+async function displayWorkQueue(
   command: SlackCommandMiddlewareArgs["command"],
-  respond: RespondFn,
-  client: WebClient
+  respond: RespondFn
 ) {
   // Get the channel name in plain text
   const channelName = command.channel_name;
-  // Check if the Work Queue already exists for the channel
-
   // Create a new Work Queue for the channel
-  await createNewWorkqueue(channelName);
+  await createNewWorkQueue(channelName);
   // If the Work Queue already exists, Query it
-  const data = await queryWorkqueue(channelName, respond);
+  const data = await queryWorkQueue(channelName, respond);
   await replyEphemeral(
     respond,
     "Work Queue cannot display",
@@ -89,10 +84,43 @@ async function displayWorkqueue(
   );
 }
 
+// Create a new Work Queue for the channel if one does not exist
+async function createNewWorkQueue(workflowid: string): Promise<void> {
+  try {
+    await temporalClient.workflow.start("workqueue", {
+      taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
+      workflowId: workflowid,
+    });
+  } catch (e) {
+    if (e instanceof WorkflowExecutionAlreadyStartedError) {
+      console.log("Workflow already started");
+    } else {
+      throw e;
+    }
+  }
+}
+
+// Read the state of the Work Queue for the channel using a Query
+async function queryWorkQueue(
+  workflowId: string,
+  say: SayFn
+): Promise<WorkqueueData[]> {
+  try {
+    const handle = temporalClient.workflow.getHandle(workflowId);
+    const result = await handle.query<WorkqueueData[]>(getWorkqueueDataQuery);
+    console.log("Current workqueue data:", result);
+    return result;
+  } catch (error) {
+    console.error("Error querying workqueue data:", error);
+    await say("An error occurred while Querying the Work Queue.");
+    return [];
+  }
+}
+
+// Add work to the queue using a Signal
 async function addWorkToQueue(
   command: SlackCommandMiddlewareArgs["command"],
-  say: SayFn,
-  client: WebClient
+  say: SayFn
 ) {
   // Get the channel name in plain text
   const channelId = command.channel_id;
@@ -103,10 +131,10 @@ async function addWorkToQueue(
   await reply(say, `Added Work ${wqdata.id} to the Queue.`);
 }
 
+// Delete the Work Queue for the channel with a Cancellation Request
 export async function deleteWorkqueue(
   command: SlackCommandMiddlewareArgs["command"],
-  say: SayFn,
-  client: WebClient
+  say: SayFn
 ): Promise<void> {
   const workflowId = command.channel_name;
   try {
@@ -120,6 +148,7 @@ export async function deleteWorkqueue(
   }
 }
 
+// Create a data object containing work item information
 function buildWQData(
   command: SlackCommandMiddlewareArgs["command"],
   channelId: string,
@@ -139,102 +168,23 @@ function buildWQData(
   };
 }
 
+// Generate a unique ID for the work item
 function generateUniqueId(): string {
   // 2 bytes = 4 hex digits
   return crypto.randomBytes(2).toString("hex");
 }
 
+// Create a timestamp in ISO format
 function createTimestamp(): string {
   const now = new Date();
   return now.toISOString();
-}
-
-async function getChannelName(
-  channelId: string,
-  say: SayFn,
-  client: WebClient
-): Promise<string> {
-  try {
-    // Use the WebClient to fetch channel info
-    const channelInfo = await client.conversations.info({channel: channelId});
-    if (channelInfo.ok) {
-      return channelInfo.channel?.name ?? "Unknown Channel";
-    } else {
-      await say("Unable to fetch channel info.");
-      return "Unknown Channel";
-    }
-  } catch (error) {
-    console.error(error);
-    await say("An error occurred while fetching channel info.");
-    return "Unknown Channel";
-  }
-}
-
-async function checkIfWorkqueueExists(workflowId: string) {
-  try {
-    const describeResult =
-      await temporalClient.workflowService.describeWorkflowExecution({
-        namespace: process.env.TEMPORAL_CLOUD_NAMESPACE!,
-        execution: {
-          workflowId: workflowId,
-        },
-      });
-    // Check if the Workflow is currently running
-    const status = describeResult.workflowExecutionInfo?.status;
-    // 1 corresponds to RUNNING
-    if (status === 1) {
-      console.log(`Workflow with ID ${workflowId} is currently running.`);
-      return true;
-    } else {
-      console.log(`Workflow with ID ${workflowId} is not running.`);
-      return false;
-    }
-  } catch (error: any) {
-    if (error.message.includes("NOT_FOUND")) {
-      console.log(`No workflow found with ID ${workflowId}.`);
-      return false;
-    }
-    console.error("Error describing workflow execution:", error);
-    throw error;
-  }
-}
-
-async function createNewWorkqueue(workflowid: string): Promise<void> {
-  try {
-    await temporalClient.workflow.start("workqueue", {
-      taskQueue: `${process.env.IQ_ENV}-temporal-iq-task-queue`,
-      workflowId: workflowid,
-    });
-  } catch (e) {
-    if (e instanceof WorkflowExecutionAlreadyStartedError) {
-      console.log("Workflow already started");
-    } else {
-      throw e;
-    }
-  }
-}
-
-async function queryWorkqueue(
-  workflowId: string,
-  say: SayFn
-): Promise<WorkqueueData[]> {
-  try {
-    const handle = temporalClient.workflow.getHandle(workflowId);
-    const result = await handle.query<WorkqueueData[]>(getWorkqueueDataQuery);
-    console.log("Current workqueue data:", result);
-    return result;
-  } catch (error) {
-    console.error("Error querying workqueue data:", error);
-    await say("An error occurred while Querying the Work Queue.");
-    return [];
-  }
 }
 
 async function signalAddWork(params: WorkqueueData, say: SayFn): Promise<void> {
   try {
     await temporalClient.workflow.signalWithStart("workqueue", {
       workflowId: params.channelName,
-      taskQueue: `${process.env.IQ_ENV}-temporal-iq-task-queue`,
+      taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
       signal: addWorkToQueueSignal,
       signalArgs: [params],
     });

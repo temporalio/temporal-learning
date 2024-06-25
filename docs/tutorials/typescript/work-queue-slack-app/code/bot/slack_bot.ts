@@ -1,4 +1,5 @@
 // @@@SNIPSTART typescript-slack-app-workqueue-slackbot-bot
+import "dotenv/config";
 import {
   App,
   GenericMessageEvent,
@@ -6,14 +7,14 @@ import {
   BlockAction,
   BlockElementAction,
 } from "@slack/bolt";
-import {initializeTemporalClient} from "./modules/temporal";
+import {initializeTemporalClient} from "./modules/dev-temporal-client";
 import {
   handleWorkqueueCommand,
   signalClaimWork,
   signalCompleteWork,
 } from "./modules/workqueue";
 
-// Initializes your app with your bot token and signing secret
+// Initializes your app with your bot token, app token, and signing secret
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN!,
   signingSecret: process.env.SLACK_SIGNING_SECRET!,
@@ -22,9 +23,9 @@ const app = new App({
 });
 
 // Listen for Work Queue messages
-app.command("/workqueue", async ({command, ack, say, client, respond}) => {
+app.command("/workqueue", async ({command, ack, say, respond}) => {
   await ack(); // Acknowledge the command request
-  await handleWorkqueueCommand(command, client, say, respond);
+  await handleWorkqueueCommand(command, say, respond);
 });
 
 // Listen for Work Item Claim
@@ -44,6 +45,7 @@ app.action<BlockAction<BlockElementAction>>(
     }
   }
 );
+
 // Listen for Work Item Completion
 app.action<BlockAction<BlockElementAction>>(
   "wq_complete",
@@ -72,8 +74,12 @@ app.error(async ({error}: {error: Error}) => {
 
 // Start the app
 (async () => {
-  await app.start();
-  await initializeTemporalClient();
-  console.log("⚡️ Bolt app is running!");
+  try {
+    await app.start();
+    await initializeTemporalClient();
+    console.log("⚡️ Bolt app is running!");
+  } catch (error) {
+    console.error("Failed to start Bolt app:", error);
+  }
 })();
 // @@@SNIPEND

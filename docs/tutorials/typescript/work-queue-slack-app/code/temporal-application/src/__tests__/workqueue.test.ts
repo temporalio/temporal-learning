@@ -1,6 +1,6 @@
 // @@@SNIPSTART typescript-slack-app-workqueue-workflow-tests
-import {WorkflowClient} from "@temporalio/client";
 import {TestWorkflowEnvironment} from "@temporalio/testing";
+import {WorkflowCoverage} from "@temporalio/nyc-test-coverage";
 import {Worker, Runtime, DefaultLogger} from "@temporalio/worker";
 import {v4 as uuidv4} from "uuid";
 import {
@@ -11,10 +11,8 @@ import {
   workqueue,
 } from "../workflows/workqueue";
 import {WorkqueueData, WorkqueueStatus} from "../../../common-types/types";
-import {WorkflowCoverage} from "@temporalio/nyc-test-coverage";
 
 describe("Work Queue Workflow", () => {
-  let client: WorkflowClient;
   let testEnv: TestWorkflowEnvironment;
   const workflowCoverage = new WorkflowCoverage();
 
@@ -32,7 +30,9 @@ describe("Work Queue Workflow", () => {
   });
 
   test("should add work to the queue", async () => {
+    // Get a test environment Temporal Client
     const {client, nativeConnection} = testEnv;
+    // Create a test environment Worker
     const worker = await Worker.create(
       workflowCoverage.augmentWorkerOptions({
         connection: nativeConnection,
@@ -41,6 +41,7 @@ describe("Work Queue Workflow", () => {
       })
     );
     const workflowId = uuidv4();
+    // Run the Worker
     await worker.runUntil(async () => {
       const handle = await client.workflow.start(workqueue, {
         args: [],
@@ -56,11 +57,14 @@ describe("Work Queue Workflow", () => {
         work: "Test work",
         status: WorkqueueStatus.Backlog,
       };
+      // Add work to the queue
       await handle.signal(addWorkToQueueSignal, workItem);
+      // Check to see if the data is there
       const result = await handle.query(getWorkqueueDataQuery);
+      // Compare the data
       expect(result).toContainEqual(workItem);
     });
-  }, 10000);
+  });
 
   test("should claim work in the queue", async () => {
     const {client, nativeConnection} = testEnv;
