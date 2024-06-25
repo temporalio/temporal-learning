@@ -46,7 +46,7 @@ In this tutorial, you'll run your first Temporal Application. You'll use Tempora
 Before starting this tutorial:
 
 
-- [Set up a local development environment for developing Temporal Applications using the Java  language](/getting_started/java/dev_environment/).
+- [Set up a local development environment for developing Temporal Applications using the Java language](/getting_started/java/dev_environment/).
 - Ensure you have Git installed to clone the project.
 
 :::note Package Management
@@ -122,7 +122,9 @@ None of your application code runs on the Temporal Server. Your Worker, Workflow
 ### Workflow Definition
 
 
-In the Temporal Java SDK, a Workflow Definition is marked by the **`@WorkflowInterface`** attribute placed above the class.
+In the Temporal Java SDK, a Workflow Definition is marked by the **`@WorkflowInterface`** attribute placed above the class interface.
+
+The **`@WorkflowMethod`** attribute is placed on the `transfer` method within the `MoneyTransferWorkflow` class. It is the entry point for the Workflow.
 
 
 This is what the Workflow Definition looks like for this process:
@@ -148,6 +150,43 @@ public interface MoneyTransferWorkflow {
 }
 ```
 <!--SNIPEND-->
+
+The `MoneyTransferWorkflow` class is designed to manage the transaction process, which entails withdrawing funds from one account and depositing the money into another through executing the Activities.
+
+The `MoneyTransferWorkflow` class contains a method, `transfer`, that takes a `TransactionDetails` instance as input. This holds the transaction details to perform the money transfer.
+
+This type is defined in the `TransactionDetails` class:
+
+<!--SNIPSTART money-transfer-java-transaction-details-->
+[src/main/java/moneytransfer/TransactionDetails.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/TransactionDetails.java)
+```java
+package moneytransferapp;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = CoreTransactionDetails.class)
+public interface TransactionDetails {
+    String getSourceAccountId();
+    String getDestinationAccountId();
+    String getTransactionReferenceId();
+    int getAmountToTransfer();
+}
+```
+<!--SNIPEND-->
+
+:::tip
+
+
+It's a good practice to send a single object into a Workflow as its input, rather than multiple, separate arguments. As your Workflows evolve, you may need to add information, and using a single argument will make it easier for you to change long-running Workflows in the future.
+
+
+:::
+
+
+:::note
+Notice that the `TransactionDetails` object includes a `transactionReferenceId` member. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
+
+
+:::
 
 
 **Workflow Definition implementation**
@@ -266,47 +305,6 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 <!--SNIPEND-->
 
 
-- The `@WorkflowMethod` attribute is placed on the `transfer` method within the `MoneyTransferWorkflow` class.
-
-- The `MoneyTransferWorkflow` interface uses the `@WorkflowInterface` attribute.
-
-- The `MoneyTransferWorkflow` class is designed to manage the transaction process, which entails withdrawing funds from one account and depositing the money into another through executing the Activities.
-
-- The `MoneyTransferWorkflow` class contains a method, `transfer`, that takes a `TransactionDetails` instance as input. This holds the transaction details to perform the money transfer.
-
-This type is defined in the `TransactionDetails` class:
-
-<!--SNIPSTART money-transfer-java-transaction-details-->
-[src/main/java/moneytransfer/TransactionDetails.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/TransactionDetails.java)
-```java
-package moneytransferapp;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-@JsonDeserialize(as = CoreTransactionDetails.class)
-public interface TransactionDetails {
-    String getSourceAccountId();
-    String getDestinationAccountId();
-    String getTransactionReferenceId();
-    int getAmountToTransfer();
-}
-```
-<!--SNIPEND-->
-
-:::tip
-
-
-It's a good practice to send a single object into a Workflow as its input, rather than multiple, separate arguments. As your Workflows evolve, you may need to add information, and using a single argument will make it easier for you to change long-running Workflows in the future.
-
-
-:::
-
-
-:::note
-Notice that the `TransactionDetails` object includes a `transactionReferenceId` member. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
-
-
-:::
-
 ### Activity Definition
 
 
@@ -341,7 +339,7 @@ public interface AccountActivity {
 Activities are where you perform the business logic for your application. In the money transfer application, you have three Activity methods, `withdraw`, `deposit`, and `refund`. The Workflow Definition calls the Activities `withdraw` and `deposit` methods to handle the money transfers.
 
 
-First, the `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
+First, the `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal.
 Second, if the transfer succeeded, the `withdraw` method returns the confirmation.
 Lastly, the `deposit` Activity method works like the `withdraw` method. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
@@ -419,7 +417,7 @@ In the `MoneyTransferWorkflow` class, you define a Retry Policy right at the beg
 
 You'll see a **Retry Policy** defined that looks like this:
 
-<!--SNIPSTART money-transfer-java-workflow-implementation {"selectedLines": ["12-37"]}-->
+<!--SNIPSTART money-transfer-java-workflow-implementation {"selectedLines": ["12-20"]}-->
 [src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java](https://github.com/temporalio/money-transfer-project-java/blob/main/src/main/java/moneytransfer/MoneyTransferWorkflowImpl.java)
 ```java
 // ...
@@ -432,23 +430,6 @@ You'll see a **Retry Policy** defined that looks like this:
         .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
         .setMaximumAttempts(5000) // Fail after 5000 attempts
         .build();
-
-    // ActivityOptions specify the limits on how long an Activity can execute before
-    // being interrupted by the Orchestration service
-    private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
-        .setRetryOptions(retryoptions) // Apply the RetryOptions defined above
-        .setStartToCloseTimeout(Duration.ofSeconds(2)) // Max execution time for single Activity
-        .setScheduleToCloseTimeout(Duration.ofSeconds(5000)) // Entire duration from scheduling to completion including queue time
-        .build();
-
-    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
-        // A heartbeat time-out is a proof-of life indicator that an activity is still working.
-        // The 5 second duration used here waits for up to 5 seconds to hear a heartbeat.
-        // If one is not heard, the Activity fails.
-        // The `withdraw` method is hard-coded to succeed, so this never happens.
-        // Use heartbeats for long-lived event-driven applications.
-        put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
-    }};
 ```
 <!--SNIPEND-->
 
@@ -489,8 +470,8 @@ First, make sure the local [Temporal Service](https://docs.temporal.io/clusters)
 ```command
 temporal server start-dev \
     --log-level=never \
-       --ui-port 8080 \
-       --db-filename=temporal.db
+    --ui-port 8080 \
+    --db-filename=temporal.db
 ```
 
 To start the Workflow, run this Maven command:
