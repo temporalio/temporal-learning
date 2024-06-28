@@ -53,6 +53,9 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
     ref: cloud
+  - owner: temporalio
+    repo: nextjs-temporal-one-click-template
+    ref: next-v2
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
