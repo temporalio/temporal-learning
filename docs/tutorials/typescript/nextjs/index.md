@@ -154,7 +154,7 @@ You'll use a Temporal Workflow to represent each order.
 Conceptually, a Workflow is a sequence of steps written in your programming language.
 
 Workflows orchestrate [Activities](https://docs.temporal.io/activities), which is how you interact with the outside world in Temporal.
-You use Activities to make API requests, access the filesystem, or perform other non-deterministic operations.
+You use Activities to make API requests, access the file system, or perform other non-deterministic operations.
 
 The Workflow you'll create in this tutorial will have a single Activity, `purchase`.
 
