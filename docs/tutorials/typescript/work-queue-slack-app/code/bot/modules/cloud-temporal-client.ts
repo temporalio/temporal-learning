@@ -1,3 +1,4 @@
+// @@@SNIPSTART typescript-slack-app-cloud-temporal-client
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
 
@@ -18,9 +19,9 @@ export async function initializeTemporalClient() {
     },
   });
 
-  CLOUD LOGIC
   temporalClient = new Client({
     connection,
     namespace: namespace,
   });
 }
+// @@@SNIPEND

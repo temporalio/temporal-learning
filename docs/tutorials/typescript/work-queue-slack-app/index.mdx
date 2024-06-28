@@ -21,6 +21,8 @@ When you're finished, you will have a fully functioning Slack App deployable to 
 
 Before starting this tutorial [Set up a local development environment for Temporal and TypeScript](/getting_started/typescript/dev_environment/).
 
+Review or complete the [Run your first Temporal application with the TypeScript SDK](/getting_started/typescript/first_program_in_typescript/) tutorial to get a basic understanding of how Temporal works.
+
 ## Overview of the application
 
 Before you start building, take a moment to understand the application and its requirements.
@@ -107,7 +109,7 @@ Since you have Socket Mode enabled, you won't need to add a request URL.
 
 ![Create a Slash Command](./images/enable-slash-command.png)
 
-### Event Subscriptions
+### Subscribe to Events
 
 Under Features in the navigation bar, select Event Subscriptions and ensure Enable Events is turned ON.
 The navigate to the section under "Subscribe to bot events" and add subscriptions for:
@@ -120,7 +122,7 @@ The navigate to the section under "Subscribe to bot events" and add subscription
 
 Once you've done this, click "Save Changes"
 
-### OAuth & Permissions
+### Set OAuth & Permissions
 
 Under Features in the navigation bar, go to OAuth & Permissions.
 
@@ -138,7 +140,7 @@ You'll need to enable the following Bot Token Scopes:
 
 After you've done this, install the app in Slack by going to Install App under Settings in the navigation bar.
 
-### Credentials
+### Get credentials
 
 You will need **Signing Secret** and **App Level Token** from the Basic Information page.
 And you will need the **Bot User OAuth Token** from the Install App page, which is also available on the OAuth & Permissions page.
@@ -263,7 +265,9 @@ ENV="dev"
 Create a file `types.ts` in the `common-types` directory and define a Work Item data object and its statuses:
 
 <!--SNIPSTART typescript-slack-app-common-types-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/common-types/types.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/common-types/types.ts)
+
 ```ts
 export interface WorkqueueData {
   id: string;
@@ -283,6 +287,7 @@ export enum WorkqueueStatus {
   Done = 3,
 }
 ```
+
 <!--SNIPEND-->
 
 ## Work Queue Workflow
@@ -317,20 +322,22 @@ This is a suggestion to essentially create a new instance of the Workflow with a
 When we continue the Workflow as a new one, we pass the existing Work Queue data to the new Workflow instance.
 
 <!--SNIPSTART typescript-slack-app-temporal-application-workqueue-workflow {"selectedLines": ["1-5", "9-10", "21-22", "51-66"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/workflows/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/workflows/workqueue.ts)
+
 ```ts
 import {
   isCancellation,
   continueAsNew,
   workflowInfo,
   condition,
-// ...
+  // ...
 } from "@temporalio/workflow";
 import {WorkqueueData} from "../../../common-types/types";
 // ...
 export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   const wqdata: WorkqueueData[] = existingData ?? [];
-// ...
+  // ...
   try {
     // Await until suggestion to Continue-As-New due to History size
     // If a Cancellation request exists, the condition call will throw the Cancellation error
@@ -348,6 +355,7 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
   await continueAsNew<typeof workqueue>(wqdata);
 }
 ```
+
 <!--SNIPEND-->
 
 What is also handy about the `condition` API is that if a Cancellation request is made to the Workflow, the condition call will throw a Cancellation error.
@@ -364,10 +372,12 @@ Next, you will want to define and handle Signals and Queries.
 It is a good practice to define the Signals and Queries outside of the Workflow and handle them right after declaring local state variables within the Workflow.
 
 <!--SNIPSTART typescript-slack-app-temporal-application-workqueue-workflow {"selectedLines": ["1", "6-9", "12-21", "24-49", "66"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/workflows/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/workflows/workqueue.ts)
+
 ```ts
 import {
-// ...
+  // ...
   defineQuery,
   defineSignal,
   setHandler,
@@ -383,7 +393,7 @@ export const completeWorkSignal =
   defineSignal<[{workId: string}]>("completeWork");
 
 export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
-// ...
+  // ...
   // Register a Query handler for 'getWorkqueueData'
   setHandler(getWorkqueueDataQuery, () => {
     return wqdata;
@@ -410,9 +420,10 @@ export async function workqueue(existingData?: WorkqueueData[]): Promise<void> {
       wqdata.splice(index, 1);
     }
   });
-// ...
+  // ...
 }
 ```
+
 <!--SNIPEND-->
 
 ### Test the Workflow with Jest framework
@@ -445,7 +456,9 @@ The Temporal TypeScript SDK comes equipped with a Test Suite and a pattern for t
 Set up the Test Suite like this:
 
 <!--SNIPSTART typescript-slack-app-workqueue-workflow-tests {"selectedLines": ["1-3", "14-29", "171"]}-->
-[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts)
+
+[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/**tests**/workqueue.test.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts)
+
 ```ts
 import {TestWorkflowEnvironment} from "@temporalio/testing";
 import {WorkflowCoverage} from "@temporalio/nyc-test-coverage";
@@ -467,9 +480,10 @@ describe("Work Queue Workflow", () => {
   afterAll(() => {
     workflowCoverage.mergeIntoGlobalCoverage();
   });
-// ...
+  // ...
 });
 ```
+
 <!--SNIPEND-->
 
 You can test for many scenarios.
@@ -483,40 +497,43 @@ For example, you could test for the following:
 The basic pattern to test adding work to the Work Queue looks like this:
 
 <!--SNIPSTART typescript-slack-app-workqueue-workflow-tests {"selectedLines": ["31-41", "43-50", "58-66"]}-->
-[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts)
+
+[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/**tests**/workqueue.test.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/__tests__/workqueue.test.ts)
+
 ```ts
 // ...
-  test("should add work to the queue", async () => {
-    // Get a test environment Temporal Client
-    const {client, nativeConnection} = testEnv;
-    // Create a test environment Worker
-    const worker = await Worker.create(
-      workflowCoverage.augmentWorkerOptions({
-        connection: nativeConnection,
-        taskQueue: "test",
-        workflowsPath: require.resolve("../workflows"),
-      })
-    );
-// ...
-    // Run the Worker
-    await worker.runUntil(async () => {
-      const handle = await client.workflow.start(workqueue, {
-        args: [],
-        workflowId: workflowId,
-        taskQueue: "test",
-      });
-      const workItem: WorkqueueData = {
-// ...
-      };
-      // Add work to the queue
-      await handle.signal(addWorkToQueueSignal, workItem);
-      // Check to see if the data is there
-      const result = await handle.query(getWorkqueueDataQuery);
-      // Compare the data
-      expect(result).toContainEqual(workItem);
+test("should add work to the queue", async () => {
+  // Get a test environment Temporal Client
+  const {client, nativeConnection} = testEnv;
+  // Create a test environment Worker
+  const worker = await Worker.create(
+    workflowCoverage.augmentWorkerOptions({
+      connection: nativeConnection,
+      taskQueue: "test",
+      workflowsPath: require.resolve("../workflows"),
+    })
+  );
+  // ...
+  // Run the Worker
+  await worker.runUntil(async () => {
+    const handle = await client.workflow.start(workqueue, {
+      args: [],
+      workflowId: workflowId,
+      taskQueue: "test",
     });
+    const workItem: WorkqueueData = {
+      // ...
+    };
+    // Add work to the queue
+    await handle.signal(addWorkToQueueSignal, workItem);
+    // Check to see if the data is there
+    const result = await handle.query(getWorkqueueDataQuery);
+    // Compare the data
+    expect(result).toContainEqual(workItem);
   });
+});
 ```
+
 <!--SNIPEND-->
 
 For more test examples, see the Work Queue Workflow test file by clicking the link above the preceeding code snippet.
@@ -530,7 +547,9 @@ Now that you have the Work Queue Workflow in place, you can start building the i
 First, you will need to create and export a Temporal Client in `bot/modules/temporal-client.ts`.
 
 <!--SNIPSTART typescript-slack-app-dev-temporal-client-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts)
+
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -546,6 +565,7 @@ export async function initializeTemporalClient() {
   });
 }
 ```
+
 <!--SNIPEND-->
 
 ### Initialize the Slack App
@@ -553,12 +573,14 @@ export async function initializeTemporalClient() {
 In the root of the `bot` project, create a file `slack_bot.ts` and initialize the Slack bot similar to the following, making sure to import and initialize the Temporal Client module:
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["1-3", "8-9", "16-22", "65-83"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts)
+
 ```ts
 import "dotenv/config";
 import {
   App,
-// ...
+  // ...
 } from "@slack/bolt";
 import {initializeTemporalClient} from "./modules/dev-temporal-client";
 // ...
@@ -590,6 +612,7 @@ app.error(async ({error}: {error: Error}) => {
   }
 })();
 ```
+
 <!--SNIPEND-->
 
 ### Handle `workqueue` Slash Command
@@ -600,14 +623,16 @@ This is where a majority of the Slack Command, work claiming, and work completin
 Here you will export a function that looks at the command text and decides what to do based on the text.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["2-5","7-9","18","20-36"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 import {
   SayFn,
   RespondFn,
   SlackCommandMiddlewareArgs,
-// ...
+  // ...
 } from "@slack/bolt";
 import {WorkqueueData, WorkqueueStatus} from "../../common-types/types";
 import {temporalClient} from "./dev-temporal-client";
@@ -632,6 +657,7 @@ export async function handleWorkqueueCommand(
   return;
 }
 ```
+
 <!--SNIPEND-->
 
 In the preceeding snippet you can see that the there are three possible ways to use the `workqueue` Slash Command.
@@ -646,14 +672,16 @@ In the preceeding snippet you can see that the there are three possible ways to 
 ### Send a Cancellation Request
 
 You will want to have the functionality to delete a Work Queue for the channel.
-This is useful if you just want to start fresh with a new Work Queue, especially if you are testing out the App.
-Otherwise, you will need to constantly visit the Temporal UI or use the Temporal CLI to terminate the Workflow.
+This is useful if you just want to start fresh with a new Work Queue, especially if you are testing out the App,
+because otherwise you will need to constantly visit the Temporal UI or use the Temporal CLI to terminate the Workflow.
 
 To send a Cancellation Request, in the `workqueue.ts` module, define a function that uses the Temporal Client to get the handle of Workflow using the Workflow ID.
 This Slack App assumes that the Slack channel name is unique and therefor can be used as the Workflow ID.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["133-148"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 // Delete the Work Queue for the channel with a Cancellation Request
@@ -673,6 +701,7 @@ export async function deleteWorkqueue(
   }
 }
 ```
+
 <!--SNIPEND-->
 
 By using the Slack channel name as the Workflow ID, it becomes easy to know which Workflow corresponds to which channel in the Temporal UI if you need to do any debugging.
@@ -688,7 +717,9 @@ If it does, then in this case you will just ignore the error and Query the Workf
 Define three functions, `displayWorkQueue`, `createNewWorkqueue`, and `queryWorkqueue` in the `workqueue.ts` module.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["67-117"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 // Display the Work Queue for the channel
@@ -743,6 +774,7 @@ async function queryWorkQueue(
   }
 }
 ```
+
 <!--SNIPEND-->
 
 In the preceeding snippet, the `createNewWorkqueue` function attempts to start a new Work Queue Workflow.
@@ -758,7 +790,9 @@ This function needs to build the Work Item data object and call another function
 Click the link below to visit the source code to see the full code implementation for building the Work Item data object.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["119-131", "182-194"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 // Add work to the queue using a Signal
@@ -789,6 +823,7 @@ async function signalAddWork(params: WorkqueueData, say: SayFn): Promise<void> {
   }
 }
 ```
+
 <!--SNIPEND-->
 
 The key part of this functionality is using the Temporal Client's `signalWithStart` API.
@@ -800,13 +835,15 @@ Essentially, this one API makes it so you don't have to check whether the Workfl
 In the `slack_bot.ts` file, you will need to add a listener for the `wq_complete` button click event.
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["10","12","14","30-46"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts)
+
 ```ts
 // ...
 import {
-// ...
+  // ...
   signalClaimWork,
-// ...
+  // ...
 } from "./modules/workqueue";
 // ...
 // Listen for Work Item Claim
@@ -827,12 +864,15 @@ app.action<BlockAction<BlockElementAction>>(
   }
 );
 ```
+
 <!--SNIPEND-->
 
 Then, in `workqueue.ts` module, define a function `claimWork` that sends a Signal to the Work Queue Workflow to claim the work item.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["196-214"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 export async function signalClaimWork(
@@ -855,6 +895,7 @@ export async function signalClaimWork(
   }
 }
 ```
+
 <!--SNIPEND-->
 
 ### Mark work item complete
@@ -862,11 +903,13 @@ export async function signalClaimWork(
 In the `slack_bot.ts` file, you will need to add a listener for the`wq_claim` button click event.
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["10", "13-14", "48-63"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/slack_bot.ts)
+
 ```ts
 // ...
 import {
-// ...
+  // ...
   signalCompleteWork,
 } from "./modules/workqueue";
 // ...
@@ -887,12 +930,15 @@ app.action<BlockAction<BlockElementAction>>(
   }
 );
 ```
+
 <!--SNIPEND-->
 
 Then, in the `workqueue.ts` module, define a function `completeWork` that sends a Signal to the Work Queue Workflow to mark the work item as complete.
 
 <!--SNIPSTART typescript-slack-app-bot-workqueue-module {"selectedLines":["216-231"]}-->
+
 [docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/workqueue.ts)
+
 ```ts
 // ...
 export async function signalCompleteWork(
@@ -912,4 +958,15 @@ export async function signalCompleteWork(
   }
 }
 ```
+
 <!--SNIPEND-->
+
+## Conclusion
+
+In this tutorial, you learned how to build a Slack App that uses Temporal to manage a Work Queue.
+You learned how to create a Work Queue Workflow, send Signals and Queries to the Workflow, and how to test the Workflow.
+You also learned how to build a Slack bot that interacts with the Work Queue Workflow using the Temporal Client.
+
+This Slack App is a great example of how you can use Temporal as a backend for your application.
+
+If you want to deploy your TypeScript application to Digital Ocean, see the [Deploy your TypeScript application to Digital Ocean](/tutorials/typescript/digital-ocean-deployment) tutorial for more information.

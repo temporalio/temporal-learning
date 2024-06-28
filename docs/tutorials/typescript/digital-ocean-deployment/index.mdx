@@ -1,50 +1,283 @@
 ---
 id: index
-title: Deploy to Digital Ocean Droplet
-description: Deploy the WorkQueue Slackbot to production.
-sidebar_label: Deploy to Production
+title: Deploy a TypeScript application to production on a Digital Ocean Droplet
+description: Learn how to deploy your TypeScript-based Temporal Application to a DigitalOcean Droplet using Ubuntu 20.04 or 22.04
+sidebar_label: Deploy a TypeScript application to production on a Digital Ocean Droplet
+tags:
+  - typescript
+  - deployment
+  - digital-ocean
+  - temporal-cloud
+keywords:
+  - TypeScript Temporal Application deployment
+  - DigitalOcean Droplet setup
+  - Ubuntu 20.04 server setup
+  - Ubuntu 22.04 server setup
+  - Install Node.js on Ubuntu
+  - Install TypeScript on Ubuntu
+  - SSH setup DigitalOcean
+  - Custom domain configuration
+  - Nginx reverse proxy setup
+  - Let's Encrypt SSL certificate
+  - PM2 process manager
+  - Temporal Cloud integration
+  - Deploy TypeScript application DigitalOcean
+  - Temporal Cloud certificates
 ---
 
-## Create a droplet
+When you are ready to deploy your TypeScript based Temporal Application to production, you need a server to host it.
+Digital Ocean is provides flexible Cloud servers called Droplets that can be used to host your application.
 
-- Add SSH user to droplet
-  - possible helpful links:
-    - https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/
-      - https://superuser.com/questions/772660/howto-force-ssh-to-use-a-specific-private-key
-        for me that is `ssh -i ~/.ssh/id_rsa_digitalocean`
-- Add public key to file on server:
-  To add your public key to the **`authorized_keys`** file on the server:
-  1. Display your public key with **`cat ~/.ssh/id_rsa_digitalocean.pub`** and copy the output.
-  2. Log into your DigitalOcean account, go to the Droplets section, and access your Droplet's console.
-  3. As **`root`**, open the **`~/.ssh/authorized_keys`** file with a text editor like **`nano`** or **`vi`**.
-  4. Paste your public key at the end of this file, save it, and then exit the editor.
-     If you have an existing key with a special name you can specify it when making the call
-     `ssh -i <private key filename>`
-- Now you can ssh into server
+In this tutorial we will walk through the steps to deploy your Temporal Application to a Digital Ocean Droplet while using Temporal Cloud as your Temporal Application's supervisor.
 
-Register your domain and point it at the IP
+## Create a Droplet {#create-droplet}
 
-setup ngnix - more or less follow this tutorial (Steps 1 & 2) https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04
+Assuming you already have a Digital Ocean Account, create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
 
-Make sure to include the full server block set up here?
-https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04#step-5-setting-up-server-blocks-recommended
+**Set up SSH**
 
-Not sure if the /var/www/your-domain/html/index.html is really needed tho…
+Next, set up SSH so you can set up your server from your local terminal.
+You can do that by following the [Add SSH Key to Droplet tutorial](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/).
 
-Use cert bot to add cert:
+If you already have a private key on your local machine and you need to force SSH to use the new key, you can force it with the `-i` flag, for example:
 
-https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+```
+ssh -i ~/.ssh/id_rsa_digitalocean
+```
 
-Generate a separate Cert for Cloud
+**Install Node.js**
 
-install tcld → https://docs.temporal.io/cloud/tcld#install-tcld
+Once you have SSH'd into your Droplet, you can install Node.js.
 
-generate using tcld → https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates
+Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively:
 
-Add certs to a env file
+- [How To Install Node.js on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04)
+- [How To Install Node.js on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
+
+**Install TypeScript and TS Node**
+
+```
+sudo npm install -g typescript ts-node
+```
+
+## Use a custom domain {#custom-domain}
+
+You need a domain, because you need to have a valid SSL certificate for the Temporal Application to communicate with Temporal Cloud.
+
+Register your domain and ensure the domain's A record points to the droplet's IP address.
+
+## Set up Nginx as a reverse proxy {#set-up-nginx}
+
+SSH into your Droplet and set up Nginx as a reverse proxy.
+
+Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively, including setting up the server blocks:
+
+- [Set up Nginx for Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
+- [Set up Nginx for Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04)
+
+## Create a domain certificate {#create-domain-cert}
+
+Use Let's encrypt certbot to create a certificate for your domain.
+This will effectively enable HTTPS for your domain and your Digital Ocean Droplet.
+
+Follow the tutorial for your Ubuntu version:
+
+- [How To Secure Nginx with Let's Encrypt on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04)
+- [How To Secure Nginx with Let's Encrypt on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-22-04)
+
+## Create a Temporal Cloud certificate {#create-temporal-cloud-cert}
+
+You will need a seperate certificate to authenticate the communication between your Temporal Client, Temporal Workers, and Temporal Cloud.
+
+You can use tcld to generate the certificate.
+
+Follow the [steps to install tcld](https://docs.temporal.io/cloud/tcld#install-tcld).
+
+Then, follow the [steps to generate a Temporal Cloud certificate using tcld](https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates).
+
+## Clone your repo into the droplet {#clone-repo}
 
 Clone the repo on the droplet
 
-Install pm2
+Install dependencies
 
-Run the slack bot and temporal app with pm2
+## Create a `.env` file
+
+Add your Temporal Cloud Namespace, address, certificate PEM and KEY to your projects `.env` file.
+
+```plaintext
+TEMPORAL_CLOUD_ADDRESS=""
+TEMPORAL_CLOUD_NAMESPACE=""
+TEMPORAL_CLOUD_PEM=""
+TEMPORAL_CLOUD_PRIVATE_KEY=""
+```
+
+Your Temporal Client and Worker will need those environment variables to connect to Temporal Cloud.
+
+## Ensure you are using Temporal Cloud {#use-temporal-cloud}
+
+Make sure you have changed the connection details in your Temporal Application to use Temporal Cloud.
+You may want to commit these changes to your repository before cloning your repo into the Droplet.
+But, if you have not done so, you can make the changes directly on the Droplet.
+
+**Temporal Client**
+
+When developing locally, your Temporal Client may look like this:
+
+<!--SNIPSTART typescript-slack-app-dev-temporal-client-->
+
+[docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts)
+
+```ts
+import "dotenv/config";
+import {Client, Connection} from "@temporalio/client";
+
+export let temporalClient: Client;
+
+export async function initializeTemporalClient() {
+  const connection = await Connection.connect();
+
+  temporalClient = new Client({
+    connection,
+    namespace: process.env.TEMPORAL_DEV_NAMESPACE!,
+  });
+}
+```
+
+<!--SNIPEND-->
+
+When using Temporal Cloud, your Temporal Client should look like this:
+
+<!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
+
+[docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/cloud-temporal-client.ts)
+
+```ts
+import "dotenv/config";
+import {Client, Connection} from "@temporalio/client";
+
+export let temporalClient: Client;
+
+export async function initializeTemporalClient() {
+  const key = Buffer.from(process.env.TEMPORAL_CLOUD_PRIVATE_KEY!, "utf-8");
+  const cert = Buffer.from(process.env.TEMPORAL_CLOUD_PEM!, "utf-8");
+  const address = process.env.TEMPORAL_CLOUD_ADDRESS!;
+  const namespace = process.env.TEMPORAL_CLOUD_NAMESPACE!;
+  const connection = await Connection.connect({
+    address: address,
+    tls: {
+      clientCertPair: {
+        crt: cert,
+        key: key,
+      },
+    },
+  });
+
+  temporalClient = new Client({
+    connection,
+    namespace: namespace,
+  });
+}
+```
+
+<!--SNIPEND-->
+
+**Temporal Worker**
+
+When developing locally, your Temporal Worker may look like this:
+
+<!--SNIPSTART typescript-slack-app-temporal-application-dev-worker-->
+
+[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/dev-worker.ts)
+
+```ts
+import "dotenv/config";
+import path from "path";
+import {Worker, NativeConnection} from "@temporalio/worker";
+import * as activities from "./activities/index";
+
+async function run() {
+  try {
+    const worker = await Worker.create({
+      namespace: process.env.TEMPORAL_DEV_NAMESPACE || "",
+      workflowsPath: path.resolve(__dirname, "./workflows"),
+      activities,
+      taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
+    });
+
+    await worker.run();
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
+
+run();
+```
+
+<!--SNIPEND-->
+
+When using Temporal Cloud, your Temporal Client should look like this:
+
+<!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
+
+[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/cloud-worker.ts)
+
+```ts
+import "dotenv/config";
+import path from "path";
+import {Worker, NativeConnection} from "@temporalio/worker";
+import * as activities from "./activities/index";
+
+async function run() {
+  try {
+    const key = Buffer.from(
+      process.env.TEMPORAL_CLOUD_PRIVATE_KEY || "",
+      "utf-8"
+    );
+    const cert = Buffer.from(process.env.TEMPORAL_CLOUD_PEM || "", "utf-8");
+    const connection = await NativeConnection.connect({
+      address: process.env.TEMPORAL_CLOUD_ADDRESS || "",
+      tls: {
+        clientCertPair: {
+          crt: cert,
+          key: key,
+        },
+      },
+    });
+
+    const worker = await Worker.create({
+      connection,
+      namespace: process.env.TEMPORAL_CLOUD_NAMESPACE || "",
+      workflowsPath: path.resolve(__dirname, "./workflows"),
+      activities,
+      taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
+    });
+
+    await worker.run();
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
+
+run();
+```
+
+<!--SNIPEND-->
+
+## Use `pm2` to run your Worker {#use-pm2}
+
+```shell
+sudo npm install -g pm2
+```
+
+Change directory into your project and run your Temporal Worker with `pm2`.
+
+```shell
+pm2 start <your-app-entry>.ts --interpreter ts-node
+```
+
+## Conclusion
+
+You should now have a TypeScript based Temporal Application running on a Digital Ocean Droplet using Temporal Cloud as your Temporal Application's supervisor.
