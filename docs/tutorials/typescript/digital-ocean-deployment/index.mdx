@@ -55,6 +55,7 @@ Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively:
 - [How To Install Node.js on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
 
 **Install TypeScript and TS Node**
+Next, use the Node.js package manager, `npm`, to install some packages that provide TypeScript compatibility. Install the `typescript` and `ts-node` packages globally, using the `-g` flag:
 
 ```
 sudo npm install -g typescript ts-node
@@ -68,7 +69,11 @@ Register your domain and ensure the domain's A record points to the droplet's IP
 
 ## Set up Nginx as a reverse proxy {#set-up-nginx}
 
-SSH into your Droplet and set up Nginx as a reverse proxy.
+Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also deploying an Nginx reverse proxy. 
+
+Node.js applications typically bind to `localhost`. This means by default, your application will only be accessible locally on the machine it resides on. While you can specify a different port to allow access through the internet, Node.js's built in application server provides fairly minimal security and configurability. Using a reverse proxy isolates the application server from direct internet access, allows you to centralize firewall protection, and minimizes the attack surface for common threats such as denial of service attacks.
+
+From a client’s perspective, interacting with a reverse proxy is no different from interacting with the application server directly. It is functionally the same, and the client cannot tell the difference. A client requests a resource and then receives it, without any extra configuration required by the client. Nginx, a popular open source web server, can act as a reverse proxy with a nearly drop-in configuration.
 
 Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively, including setting up the server blocks:
 
