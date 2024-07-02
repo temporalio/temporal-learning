@@ -131,7 +131,7 @@ Since you have Socket Mode enabled, you won't need to add a request URL.
 ### Subscribe to Events
 
 Under Features in the navigation bar, select Event Subscriptions and ensure Enable Events is turned ON.
-The navigate to the section under "Subscribe to bot events" and add subscriptions for:
+Then navigate to the section under "Subscribe to bot events" and add subscriptions for:
 
 - `message.groups`
 - `message.im`
@@ -162,9 +162,10 @@ After you've done this, install the app in Slack by going to Install App under S
 ### Get credentials
 
 You will need **Signing Secret** and **App Level Token** from the Basic Information page.
-And you will need the **Bot User OAuth Token** from the Install App page, which is also available on the OAuth & Permissions page.
+You will also need the **Bot User OAuth Token** from the Install App page, which is also available on the OAuth & Permissions page.
+Record all of these strings for now so you can use them to configure your app later.
 
-## Create TypeScript projects for the Slack App
+## Step 2 -- Create TypeScript Projects for the Slack App
 
 You need two TypeScript projects for this Slack application.
 You may have already created the first one for the Temporal Application in the [Prerequisite steps](/getting_started/typescript/dev_environment/).
@@ -309,7 +310,7 @@ export enum WorkqueueStatus {
 
 <!--SNIPEND-->
 
-## Work Queue Workflow
+## Step 3 -- Creating a Work Queue Workflow
 
 Before you start building the Slack bot, you need to create a Temporal Workflow to persist the state of the Work Queue.
 
@@ -557,7 +558,7 @@ test("should add work to the queue", async () => {
 
 For more test examples, see the Work Queue Workflow test file by clicking the link above the preceeding code snippet.
 
-## Slack bot
+## Step 4 -- Putting Together your Slack Bot
 
 Now that you have the Work Queue Workflow in place, you can start building the interactive bot portion of the application.
 
@@ -589,7 +590,7 @@ export async function initializeTemporalClient() {
 
 ### Initialize the Slack App
 
-In the root of the `bot` project, create a file `slack_bot.ts` and initialize the Slack bot similar to the following, making sure to import and initialize the Temporal Client module:
+In the root of the `bot` project, create a file called `slack_bot.ts` and initialize the Slack bot, making sure to import and initialize the Temporal Client module:
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["1-3", "8-9", "16-22", "65-83"]}-->
 
@@ -723,7 +724,7 @@ export async function deleteWorkqueue(
 
 <!--SNIPEND-->
 
-By using the Slack channel name as the Workflow ID, it becomes easy to know which Workflow corresponds to which channel in the Temporal UI if you need to do any debugging.
+By using the Slack channel name as the Workflow ID, you can tell which Workflow corresponds to which channel in the Temporal UI if you need to do any debugging.
 
 ![Workflow ID in Temporal UI](./images/workflow-id-temporal-ui.png)
 
@@ -796,9 +797,9 @@ async function queryWorkQueue(
 
 <!--SNIPEND-->
 
-In the preceeding snippet, the `createNewWorkqueue` function attempts to start a new Work Queue Workflow.
+In the preceding snippet, the `createNewWorkqueue` function attempts to start a new Work Queue Workflow.
 If there is a Workflow already running for the channel, it will catch the WorkflowExecutionAlreadyStartedError, but ignore it and continue.
-The `queryWorkqueue` function then sends a Query the Work Queue Workflow for the channel and returns the data.
+The `queryWorkqueue` function then sends a Query to the Work Queue Workflow for the channel and returns the data.
 This pattern reduces the need to explictly check if a Workflow exists before sending the Query.
 
 ### Add work to the Work Queue
