@@ -26,7 +26,7 @@ keywords:
 ---
 
 When you are ready to deploy your TypeScript based Temporal Application to production, you need a server to host it.
-Digital Ocean is provides flexible Cloud servers called Droplets that can be used to host your application.
+Digital Ocean provides flexible Cloud servers called Droplets that can be used to host your application.
 
 In this tutorial we will walk through the steps to deploy your Temporal Application to a Digital Ocean Droplet while using Temporal Cloud as your Temporal Application's supervisor.
 
@@ -67,7 +67,7 @@ You need a domain, because you need to have a valid SSL certificate for the Temp
 
 Register your domain and ensure the domain's A record points to the droplet's IP address.
 
-## Set up Nginx as a reverse proxy {#set-up-nginx}
+## Step 2 -- Install and Configure Nginx as a Reverse Proxy {#set-up-nginx}
 
 Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also deploying an Nginx reverse proxy. 
 
@@ -271,7 +271,7 @@ run();
 
 <!--SNIPEND-->
 
-## Use `pm2` to run your Worker {#use-pm2}
+## Step 5 -- Use `pm2` to run your Worker {#use-pm2}
 
 ```shell
 sudo npm install -g pm2
