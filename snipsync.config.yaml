@@ -75,7 +75,7 @@ origins:
   #     repo: "temporal-learning"
   #     ref: "main"
   - files:
-      pattern: "./docs/tutorials/typescript/work-queue-slack-app/code/**/*.ts"
+      pattern: "./docs/tutorials/typescript/work-queue-slack-app/code/build/**/*.ts"
       owner: "temporalio"
       repo: "temporal-learning"
       ref: "edu-2636-workqueue-slackbot-tut"
