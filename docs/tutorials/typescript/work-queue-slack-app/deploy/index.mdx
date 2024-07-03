@@ -1,8 +1,8 @@
 ---
 id: index
-title: Part 2 -- Deploy a TypeScript Slack App to production on a Digital Ocean Droplet using Temporal Cloud
+title: Part 2 -- Deploy a TypeScript Slack App to production on a DigitalOcean Droplet using Temporal Cloud
 description: Learn how to deploy your TypeScript and Temporal based Slack App to production on a DigitalOcean Droplet using Ubuntu 20.04 or 22.04 and Temporal Cloud.
-sidebar_label: Part 2 -- Deploy a TypeScript Slack App to production on a Digital Ocean Droplet using Temporal Cloud
+sidebar_label: Part 2 -- Deploy a TypeScript Slack App to production on a DigitalOcean Droplet using Temporal Cloud
 tags:
   - typescript
   - deployment
@@ -28,9 +28,9 @@ keywords:
 ### Introduction
 
 When you are ready to deploy your TypeScript based Slack App to production, you need a server to host it.
-Digital Ocean provides flexible Cloud servers called Droplets that can be used to host your application.
+DigitalOcean provides flexible Cloud servers called Droplets that can be used to host your application.
 
-In this tutorial we will walk through the steps to deploy your Temporal backed Slack App to a Digital Ocean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
+In this tutorial we will walk through the steps to deploy your Temporal backed Slack App to a DigitalOcean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ Before you begin, you will need the following:
 
 - **Complete the [Build a Work Queue Slack App with TypeScript and Temporal](/tutorials/typescript/work-queue-slack-app/build) tutorial:** This tutorial builds on the previous tutorial, so you need to have completed it.
   However, you should be able to refer to these steps generically for any TypeScript Temporal Application you have built.
-- **A Digital Ocean account:** You need a Digital Ocean account to create a Droplet.
+- **A DigitalOcean account:** You need a DigitalOcean account to create a Droplet.
 - **A domain name:** You need a domain, because you need to have a valid SSL certificate for the Temporal Application to communicate with Temporal Cloud.
 - **A Temporal Cloud account** You need a [Temporal Cloud account](https://cloud.temporal.io) from which to create a Namespace.
 - **A Temporal Cloud Namespace:** You need a [Namepsace](https://docs.temporal.io/cloud/namespaces#create-a-namespace) in which to register a certificate for your Temporal Application to communicate with Temporal Cloud.
@@ -209,7 +209,7 @@ You will need to update the `.env` files in both your `temporal-application` and
 
 You will want to do this step locally first to ensure that your Slack bot and Temporal Application can connect to Temporal Cloud.
 
-However, you will need to ensure that these same environment variables are set when you deploy your code to your Digital Ocean Droplet.
+However, you will need to ensure that these same environment variables are set when you deploy your code to your DigitalOcean Droplet.
 
 :::
 
@@ -314,7 +314,7 @@ Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively, including settin
 ### Create a domain certificate {#create-domain-cert}
 
 Use Let's encrypt certbot to create a certificate for your domain.
-This will effectively enable HTTPS for your domain and your Digital Ocean Droplet.
+This will effectively enable HTTPS for your domain and your DigitalOcean Droplet.
 
 Follow the tutorial for your Ubuntu version:
 
@@ -338,7 +338,7 @@ cd <your-repo>/bot
 npm install
 ```
 
-:::Note Private repos require an access token
+:::note Private repos require an access token
 
 If your repo is public then the above steps will work.
 However, if your repo is private, you will need to use an access token to clone the repo.
@@ -441,4 +441,4 @@ echo "The repository has been cloned, .env files have been created successfully,
 
 ## Conclusion
 
-You should now have a TypeScript based Temporal Application running on a Digital Ocean Droplet using Temporal Cloud as your Temporal Application's orchestrator.
+You should now have a TypeScript based Temporal Application running on a DigitalOcean Droplet using Temporal Cloud as your Temporal Application's orchestrator.
