@@ -1,8 +1,8 @@
 ---
 id: index
-title: Deploy a TypeScript application to production on a Digital Ocean Droplet
-description: Learn how to deploy your TypeScript-based Temporal Application to a DigitalOcean Droplet using Ubuntu 20.04 or 22.04
-sidebar_label: Deploy a TypeScript application to production on a Digital Ocean Droplet
+title: Deploy a TypeScript application to production on a Digital Ocean Droplet using Temporal Cloud
+description: Learn how to deploy your TypeScript-based Temporal Application to a DigitalOcean Droplet using Ubuntu 20.04 or 22.04 and Temporal Cloud
+sidebar_label: Deploy a TypeScript application to production on a Digital Ocean Droplet using Temporal Cloud
 tags:
   - typescript
   - deployment
@@ -25,16 +25,35 @@ keywords:
   - Temporal Cloud certificates
 ---
 
+### Introduction
+
 When you are ready to deploy your TypeScript based Temporal Application to production, you need a server to host it.
 Digital Ocean provides flexible Cloud servers called Droplets that can be used to host your application.
 
-In this tutorial we will walk through the steps to deploy your Temporal Application to a Digital Ocean Droplet while using Temporal Cloud as your Temporal Application's supervisor.
+In this tutorial we will walk through the steps to deploy your Temporal Application to a Digital Ocean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
 
-## Create a Droplet {#create-droplet}
+## Prerequisites
 
-Assuming you already have a Digital Ocean Account, create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
+Before you begin, you will need the following:
 
-**Set up SSH**
+- **A Digital Ocean account:** You need a Digital Ocean account to create a Droplet.
+- **A domain name:** You need a domain, because you need to have a valid SSL certificate for the Temporal Application to communicate with Temporal Cloud.
+- **A Temporal Cloud account:** You need a [Temporal Cloud account](https://cloud.temporal.io) to generate a certificate for your Temporal Application to communicate with Temporal Cloud.
+- **A Temporal Application that you want to deploy:** You need a TypeScript based Temporal Application that you want to deploy to a Digital Ocean Droplet.
+
+## Step 1 -- Create and set up Droplet {#create-droplet}
+
+Create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
+
+Then, set up the following on your Droplet:
+
+- Configure SSH
+- Install Node.js
+- Install TypeScript and TS Node
+- Set up Nginx as a reverse proxy
+- Create a domain certificate
+
+### Set up SSH {#set-up-ssh}
 
 Next, set up SSH so you can set up your server from your local terminal.
 You can do that by following the [Add SSH Key to Droplet tutorial](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/).
@@ -45,31 +64,40 @@ If you already have a private key on your local machine and you need to force SS
 ssh -i ~/.ssh/id_rsa_digitalocean
 ```
 
-**Install Node.js**
+### Install Node.js {#install-nodejs}
 
-Once you have SSH'd into your Droplet, you can install Node.js.
+Since you are going to be deploying a TypeScript application, you need to install TypeScript into this environment.
+First, install Node.js, a JavaScript runtime for server-side programming.
 
-Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively:
+There are several options for installing Node.js. The most straightforward is to install from your system package manager.
+For example, on Ubuntu:
+
+```shell
+sudo apt update
+sudo apt install nodejs
+```
+
+This will install the newest stable version from Ubuntu sources.
+If you need to install a different version of Node.js for compatibility reasons, refer to these tutorials respectively:
 
 - [How To Install Node.js on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04)
 - [How To Install Node.js on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
 
-**Install TypeScript and TS Node**
+### Install TypeScript and TS Node {#install-typescript}
+
 Next, use the Node.js package manager, `npm`, to install some packages that provide TypeScript compatibility. Install the `typescript` and `ts-node` packages globally, using the `-g` flag:
 
 ```
 sudo npm install -g typescript ts-node
 ```
 
-## Use a custom domain {#custom-domain}
+**Update your domain's DNS**
 
-You need a domain, because you need to have a valid SSL certificate for the Temporal Application to communicate with Temporal Cloud.
+Ensure the domain's A record points to the droplet's IP address.
 
-Register your domain and ensure the domain's A record points to the droplet's IP address.
+### Install and Configure Nginx as a Reverse Proxy {#set-up-nginx}
 
-## Step 2 -- Install and Configure Nginx as a Reverse Proxy {#set-up-nginx}
-
-Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also deploying an Nginx reverse proxy. 
+Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also deploying an Nginx reverse proxy.
 
 Node.js applications typically bind to `localhost`. This means by default, your application will only be accessible locally on the machine it resides on. While you can specify a different port to allow access through the internet, Node.js's built in application server provides fairly minimal security and configurability. Using a reverse proxy isolates the application server from direct internet access, allows you to centralize firewall protection, and minimizes the attack surface for common threats such as denial of service attacks.
 
@@ -80,7 +108,7 @@ Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively, including settin
 - [Set up Nginx for Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
 - [Set up Nginx for Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04)
 
-## Create a domain certificate {#create-domain-cert}
+### Create a domain certificate {#create-domain-cert}
 
 Use Let's encrypt certbot to create a certificate for your domain.
 This will effectively enable HTTPS for your domain and your Digital Ocean Droplet.
@@ -90,7 +118,7 @@ Follow the tutorial for your Ubuntu version:
 - [How To Secure Nginx with Let's Encrypt on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04)
 - [How To Secure Nginx with Let's Encrypt on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-22-04)
 
-## Create a Temporal Cloud certificate {#create-temporal-cloud-cert}
+## Step 2 -- Create a Temporal Cloud certificate {#create-temporal-cloud-cert}
 
 You will need a seperate certificate to authenticate the communication between your Temporal Client, Temporal Workers, and Temporal Cloud.
 
@@ -100,15 +128,29 @@ Follow the [steps to install tcld](https://docs.temporal.io/cloud/tcld#install-t
 
 Then, follow the [steps to generate a Temporal Cloud certificate using tcld](https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates).
 
-## Clone your repo into the droplet {#clone-repo}
+## Step 3 -- Configure your app on the Droplet {#configure-app}
 
-Clone the repo on the droplet
+Now that you have your Droplet set up, and your Temporal Cloud certificates, you can set up your Temporal Application on the Droplet.
 
-Install dependencies
+### Clone the repo {#clone-repo}
 
-## Create a `.env` file
+Using Git, you can clone the droplet and install the dependencies.
 
-Add your Temporal Cloud Namespace, address, certificate PEM and KEY to your projects `.env` file.
+```shell
+git clone <your-repo>
+cd <your-repo>/temporal-application
+npm install
+cd ..
+cd <your-repo>/bot
+npm install
+```
+
+### Populate your `.env` file {#env-file}
+
+Per the [12 Factor App methodology](https://12factor.net/config), you should store your credentials in environment variables.
+
+Create a `.env` file in the root of any project that uses a Temporal Client or runs a Temporal Worker.
+Then, add your Temporal Cloud Namespace, address, certificate PEM and KEY to the `.env` file.
 
 ```plaintext
 TEMPORAL_CLOUD_ADDRESS=""
@@ -119,11 +161,9 @@ TEMPORAL_CLOUD_PRIVATE_KEY=""
 
 Your Temporal Client and Worker will need those environment variables to connect to Temporal Cloud.
 
-## Ensure you are using Temporal Cloud {#use-temporal-cloud}
+### Use Temporal Cloud connection details {#use-temporal-cloud}
 
-Make sure you have changed the connection details in your Temporal Application to use Temporal Cloud.
-You may want to commit these changes to your repository before cloning your repo into the Droplet.
-But, if you have not done so, you can make the changes directly on the Droplet.
+Connecting to Temporal Cloud requires a few changes to your Temporal Client and Worker, using the environment variables you set in the `.env` file.
 
 **Temporal Client**
 
@@ -271,7 +311,9 @@ run();
 
 <!--SNIPEND-->
 
-## Step 5 -- Use `pm2` to run your Worker {#use-pm2}
+## Step 4 -- Use `pm2` to run your Worker {#use-pm2}
+
+`pm2` is a process manager for Node.js applications, and will ensure that your TypeScript application runs continuously on your Droplet.
 
 ```shell
 sudo npm install -g pm2
@@ -285,4 +327,4 @@ pm2 start <your-app-entry>.ts --interpreter ts-node
 
 ## Conclusion
 
-You should now have a TypeScript based Temporal Application running on a Digital Ocean Droplet using Temporal Cloud as your Temporal Application's supervisor.
+You should now have a TypeScript based Temporal Application running on a Digital Ocean Droplet using Temporal Cloud as your Temporal Application's orchestrator.
