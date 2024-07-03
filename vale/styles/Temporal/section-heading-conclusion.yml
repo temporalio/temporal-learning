@@ -1,6 +1,6 @@
 extends: occurrence
 message: Tutorials need a Conclusion heading.
-level: error
+level: warning
 scope: raw
 ignorecase: false
 min: 1
