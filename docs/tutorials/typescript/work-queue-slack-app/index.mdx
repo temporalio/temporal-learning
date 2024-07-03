@@ -366,7 +366,7 @@ You can use this to await on a specific condition before continuing.
 
 In this case the Workflow awaits on a [Continue-As-New](https://docs.temporal.io/workflows#continue-as-new) suggestion from the Temporal Service.
 This is a suggestion to essentially create a new instance of the Workflow with a fresh Event History because the current one is too large.
-When we continue the Workflow as a new one, we pass the existing Work Queue data to the new Workflow instance.
+When you continue the Workflow as a new one, you will pass the existing Work Queue data to the new Workflow instance.
 
 <!--SNIPSTART typescript-slack-app-temporal-application-workqueue-workflow {"selectedLines": ["1-5", "9-10", "21-22", "51-66"]}-->
 
@@ -672,7 +672,7 @@ By using the Slack channel name as the Workflow ID, you can tell which Workflow 
 
 ### Display the Work Queue {#display-the-work-queue}
 
-To display the Work Queue, first we need to ensure that a Work Queue exists for this channel.
+To display the Work Queue, first you need to ensure that a Work Queue exists for this channel.
 If one already exists you will get a "Workflow already started" error.
 If it does, then in this case you will just ignore the error and Query the Workflow.
 
