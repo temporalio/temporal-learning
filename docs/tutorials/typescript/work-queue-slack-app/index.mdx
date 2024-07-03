@@ -282,7 +282,7 @@ Instead, store them in an `.env` file in your project root, and add that `.env` 
 
 **Slack bot environment variables**
 
-Grab the [Slack credentials](#credentials) you got from the Slack App configuration and add them to a `.env` file in the `bot` project:
+Grab the [Slack credentials](#credentials) you got from the Slack App configuration, and in the project root of the bot application, add them to a `.env` file:
 
 ```plaintext
 SLACK_SIGNING_SECRET="<slack-signing-secret>"
@@ -292,9 +292,10 @@ SLACK_WORKSPACE="<slack_workspace>"
 ENV="dev"
 ```
 
-You can find yor Slack Workspace in the URL when you are logged into Slack.
-
 Also add your Slack Workspace and an `ENV` variable.
+You can find yor Slack Workspace in the dropdown in the top left of your Slack Window, or in the URL when you are logged into Slack.
+It is the part of the URL that comes after `https://` and before `.slack.com`, e.g. `<your-workspace>.slack.com`.
+
 The `ENV` variable is prepended to the Task Queue name for your Temporal Application.
 This enables you to use the same Temporal Namespace locally and in production without worrying about production Tasks getting executed on your local machine.
 
