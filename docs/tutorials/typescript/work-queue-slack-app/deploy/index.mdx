@@ -63,7 +63,7 @@ When developing locally, your Temporal Client, located in `bot/modules/temporal-
 
 <!--SNIPSTART typescript-slack-app-dev-temporal-client-->
 
-[docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/dev-temporal-client.ts)
+[docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts)
 
 ```ts
 import "dotenv/config";
@@ -87,7 +87,7 @@ When using Temporal Cloud, your Temporal Client should look like this:
 
 <!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
 
-[docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/bot/modules/cloud-temporal-client.ts)
+[docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts)
 
 ```ts
 import "dotenv/config";
@@ -125,7 +125,7 @@ When developing locally, your Temporal Worker, located in `temporal-application/
 
 <!--SNIPSTART typescript-slack-app-temporal-application-dev-worker-->
 
-[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/dev-worker.ts)
+[docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts)
 
 ```ts
 import "dotenv/config";
@@ -158,7 +158,7 @@ When using Temporal Cloud, your Temporal Worker should look like this:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
 
-[docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/code/temporal-application/src/cloud-worker.ts)
+[docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts)
 
 ```ts
 import "dotenv/config";
@@ -199,47 +199,6 @@ async function run() {
 }
 
 run();
-```
-
-### Update Environment variables {#update-env-vars}
-
-You will need to update the `.env` files in both your `temporal-application` and `bot` projects to use the Temporal Cloud environment variables.
-
-:::note Do this step locally first to test your Temporal Cloud connection
-
-You will want to do this step locally first to ensure that your Slack bot and Temporal Application can connect to Temporal Cloud.
-
-However, you will need to ensure that these same environment variables are set when you deploy your code to your DigitalOcean Droplet.
-
-:::
-
-#### Slack bot environment variables {#slack-bot-env-vars}
-
-In addition to the existing environment variables in your `.env` file, you will need to add your Temporal Cloud Namespace, address, certificate PEM and KEY to the `.env` file.
-
-```plaintext
-TEMPORAL_CLOUD_ADDRESS="<your-temporal-cloud-address>"
-TEMPORAL_CLOUD_NAMESPACE="<your-temporal-cloud-namespace>"
-TEMPORAL_CLOUD_PEM="<your-temoral-cloud-namespace-pem>"
-TEMPORAL_CLOUD_PRIVATE_KEY="<your-temporal-cloud-namespace-key>"
-```
-
-Then update your `ENV` variable from `dev` to `prod`.
-
-```plaintext
-ENV="prod"
-```
-
-#### Temporal Application environment variables {#temporal-app-env-vars}
-
-Your Temporal Application `.env` file also needs to be updated with the Temporal Cloud environment variables and have the `ENV` variable changed from `dev` to `prod`.
-
-```plaintext
-TEMPORAL_CLOUD_ADDRESS="<your-temporal-cloud-address>"
-TEMPORAL_CLOUD_NAMESPACE="<your-temporal-cloud-namespace>"
-TEMPORAL_CLOUD_PEM="<your-temoral-cloud-namespace-pem>"
-TEMPORAL_CLOUD_PRIVATE_KEY="<your-temporal-cloud-namespace-key>"
-ENV="prod"
 ```
 
 <!--SNIPEND-->
