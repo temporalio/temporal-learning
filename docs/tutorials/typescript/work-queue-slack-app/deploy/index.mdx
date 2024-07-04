@@ -53,6 +53,14 @@ Follow the [steps to install tcld](https://docs.temporal.io/cloud/tcld#install-t
 
 Then, follow the [steps to generate a Temporal Cloud certificate using tcld](https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates).
 
+In the following steps you will add your PEM (certificate) and Private Key to your `.env` file as environment variables.
+
+You also need to save the PEM (certificate) to your Temporal Cloud Namespace.
+In your Temporal Cloud Account, navigate to Namespaces, and select the Namespace you want to use.
+Then, scroll down to the "CA Certificates" section, and copy in the PEM (certificate) you generated.
+
+![Temporal Cloud Namespace CA Certificates](./images/save-cert-to-namespace.png)
+
 ## Step 2 -- Update code to use Temporal Cloud {#use-temporal-cloud}
 
 Connecting to Temporal Cloud requires a few changes to your Temporal Client and Worker, using the environment variables you set in the `.env` file.
