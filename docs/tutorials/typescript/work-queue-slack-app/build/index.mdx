@@ -795,7 +795,7 @@ Essentially, this one API makes it so you don't have to check whether the Workfl
 
 ### Claim a work item {#claim-a-work-item}
 
-In the `slack_bot.ts` file, you will need to add a listener for the `wq_complete` button click event.
+In the `slack_bot.ts` file, you will need to add a listener for the `wq_claim` button click event.
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["10","12","14","30-46"]}-->
 
@@ -863,7 +863,7 @@ export async function signalClaimWork(
 
 ### Mark work item complete {#mark-work-item-complete}
 
-In the `slack_bot.ts` file, you will need to add a listener for the`wq_claim` button click event.
+In the `slack_bot.ts` file, you will need to add a listener for the`wq_complete` button click event.
 
 <!--SNIPSTART typescript-slack-app-workqueue-slackbot-bot {"selectedLines": ["10", "13-14", "48-63"]}-->
 
@@ -944,7 +944,7 @@ Then from the root of the `bot` project, run the Slack bot:
 npm start
 ```
 
-Once running the bot will be listening for the `workqueue` Slash Command and the `wq_claim` and `wq_complete` button click events in your Slack workspace.
+Once running the bot will be listening for the `workqueue` Slash Command, the `wq_claim` button click event, and the `wq_complete` button click event in your Slack workspace.
 
 ## Step 5 (Optional) -- Test the Workflow with Jest framework {#test-workflow}
 
