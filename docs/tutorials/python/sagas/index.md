@@ -19,7 +19,7 @@ Instead of a single monolithic transaction, the Saga pattern breaks the transact
 Temporal orchestrates long-running transactions, automatically compensating for failures.
 The compensation, combined with the guarantee that the method will complete execution, makes this method a reliable, long-running transaction.
 
-In this guide, you'll build a Flask API that uses Temporal to manage the booking process for cars, hotels, and flights. 
+With this guide, you'll build a Flask API that uses Temporal to manage the booking process for cars, hotels, and flights.
 This approach ensures that even if one part of the booking fails, the system can gracefully handle the rollback of previous steps, maintaining data consistency.
 
 When you're finished, you'll be able to handle complex distributed transactions with ease and reliability using Temporal.
@@ -45,11 +45,17 @@ This file will contain the definitions of the Activities needed for the booking 
 
 Import the necessary modules:
 
-```python
+<!--SNIPSTART saga-py-activities-import-->
+[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+```py
 import asyncio
+
 from temporalio import activity
+
 from shared import BookVacationInput
+
 ```
+<!--SNIPEND-->
 
 The `asyncio` library is used for asynchronous operations.
 The `activity` module from the `temporalio` library provides decorators and functions for defining Activities.
@@ -61,60 +67,79 @@ For brevity, these Activities will print a message indicating that they were inv
 
 The function will return a success message if no errors occur.
 
-```python
+<!--SNIPSTART saga-py-activities-book-hotel-->
+[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+```py
 @activity.defn
-async def book_car(input: BookVacationInput) -> str:
-    await asyncio.sleep(3)
-    if activity.info().attempt < input.attempts:
-        activity.heartbeat(
-            f"Invoking activity, attempt number {activity.info().attempt}"
-        )
-        await asyncio.sleep(3)
-        raise RuntimeError("Car service is down")
+async def book_hotel(book_input: BookVacationInput) -> str:
+    """
+    Books a hotel.
 
-    if "invalid" in input.book_car_id:
-        raise Exception("Invalid car booking, rolling back!")
+    Args:
+        book_input (BookVacationInput): Input data for booking the hotel.
 
-    print(f"Booking car: {input.book_car_id}")
-    return f"Booked car: {input.book_car_id}"
+    Returns:
+        str: Confirmation message.
+    """
+    await asyncio.sleep(1)
+    attempt_info = f"Invoking activity, attempt number {activity.info().attempt}"
+    if activity.info().attempt < 2:
+        activity.heartbeat(attempt_info)
+        await asyncio.sleep(1)
+        raise RuntimeError("Hotel service is down. Retrying...")
+
+    if "invalid" in book_input.book_hotel_id:
+        raise ValueError("Invalid hotel booking, rolling back!")
+
+    print(f"Booking hotel: {book_input.book_hotel_id}")
+    return f"{book_input.book_hotel_id}"
+
+
 ```
+<!--SNIPEND-->
 
-The `book_hotel` and `book_flight` functions follow a similar structure:
+The `book_car` and `book_flight` functions follow a similar structure:
 
-```python
+<!--SNIPSTART saga-py-activities-book-car-->
+[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+```py
 @activity.defn
-async def book_hotel(input: BookVacationInput) -> str:
-    await asyncio.sleep(3)
-    if activity.info().attempt < input.attempts:
-        activity.heartbeat(
-            f"Invoking activity, attempt number {activity.info().attempt}"
-        )
-        await asyncio.sleep(3)
-        raise RuntimeError("Hotel service is down")
+async def book_car(book_input: BookVacationInput) -> str:
+    """
+    Books a car.
 
-    if "invalid" in input.book_hotel_id:
-        raise Exception("Invalid hotel booking, rolling back!")
+    Args:
+        book_input (BookVacationInput): Input data for booking the car.
 
-    print(f"Booking hotel: {input.book_hotel_id}")
-    return f"Booked hotel: {input.book_hotel_id}"
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Booking car: {book_input.book_car_id}")
+    return f"{book_input.book_car_id}"
 
 
-@activity.defn
-async def book_flight(input: BookVacationInput) -> str:
-    await asyncio.sleep(3)
-    if activity.info().attempt < input.attempts:
-        activity.heartbeat(
-            f"Invoking activity, attempt number {activity.info().attempt}"
-        )
-        await asyncio.sleep(3)
-        raise RuntimeError("Flight service is down")
-
-    if "invalid" in input.book_flight_id:
-        raise Exception("Invalid flight booking, rolling back!")
-
-    print(f"Booking flight: {input.book_flight_id}")
-    return f"Booked flight: {input.book_flight_id}"
 ```
+<!--SNIPEND-->
+<!--SNIPSTART saga-py-activities-book-flight-->
+[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+```py
+@activity.defn
+async def book_flight(book_input: BookVacationInput) -> str:
+    """
+    Books a flight.
+
+    Args:
+        book_input (BookVacationInput): Input data for booking the flight.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Booking flight: {book_input.book_flight_id}")
+    return f"{book_input.book_flight_id}"
+
+
+```
+<!--SNIPEND-->
 
 With the main booking Activities in place, it's time to define the compensation Activities.
 These undo actions are crucial for maintaining data consistency by rolling back successful steps if a subsequent step fails.
@@ -124,24 +149,57 @@ These undo actions are crucial for maintaining data consistency by rolling back 
 For every action (`book_car`, `book_hotel`, and `book_flight`), you will create a corresponding undo action.
 These Activities will log the undo action and return a success message.
 
-```python
+
+<!--SNIPSTART saga-py-activities-undo-book-->
+[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+```py
 @activity.defn
-async def undo_book_car(input: BookVacationInput) -> str:
-    print(f"Undoing booking of car: {input.book_car_id}")
-    return f"Undoing booking of car: {input.book_car_id}"
+async def undo_book_car(book_input: BookVacationInput) -> str:
+    """
+    Undoes the car booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the car booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of car: {book_input.book_car_id}")
+    return f"{book_input.book_car_id}"
 
 
 @activity.defn
-async def undo_book_hotel(input: BookVacationInput) -> str:
-    print(f"Undoing booking of hotel: {input.book_hotel_id}")
-    return f"Undoing booking of hotel: {input.book_hotel_id}"
+async def undo_book_hotel(book_input: BookVacationInput) -> str:
+    """
+    Undoes the hotel booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the hotel booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of hotel: {book_input.book_hotel_id}")
+    return f"{book_input.book_hotel_id}"
 
 
 @activity.defn
-async def undo_book_flight(input: BookVacationInput) -> str:
-    print(f"Undoing booking of flight: {input.book_flight_id}")
-    return f"Undoing booking of flight: {input.book_flight_id}"
+async def undo_book_flight(book_input: BookVacationInput) -> str:
+    """
+    Undoes the flight booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the flight booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of flight: {book_input.book_flight_id}")
+    return f"{book_input.book_flight_id}"
+
+
 ```
+<!--SNIPEND-->
 
 For this example, if the number of attempts is less than the allowed number of attempts or if the booking ID is invalid, the Activity will raise exceptions to simulate failures, then run the corresponding undo action.
 
@@ -157,21 +215,25 @@ Also, Task Queues are shared resources that can be used by multiple Workflows an
 
 Create a new file named `shared.py`:
 
-```python
+<!--SNIPSTART saga-py-shared-->
+[shared.py](https://github.com/rachfop/saga-2/blob/main/shared.py)
+```py
 from dataclasses import dataclass
 
 
 @dataclass
 class BookVacationInput:
+    attempts: int
     book_user_id: str
     book_car_id: str
     book_hotel_id: str
     book_flight_id: str
-    attempts: int
 
 
 TASK_QUEUE_NAME = "saga-task-queue"
 ```
+<!--SNIPEND-->
+
 
 These classes and constants will be used throughout Activities, Workflows, and Workers.
 
@@ -185,82 +247,107 @@ Each step in the Workflow has a corresponding compensation step that is executed
 
 This ensures that the system is returned to a consistent state, even in the case of partial failures.
 
-Create a new file named `saga_workflows.py`.
+Create a new file named `workflows.py`.
 This file will define your Workflow, which is responsible for executing your Activities in the correct order and handling compensation if necessary.
 
 First, import the necessary modules:
 
-```python
+<!--SNIPSTART saga-py-workflows-import-->
+[workflows.py](https://github.com/rachfop/saga-2/blob/main/workflows.py)
+```py
 from datetime import timedelta
+
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from activities import BookVacationInput, book_car, book_flight, book_hotel
+    from activities import (
+        BookVacationInput,
+        book_car,
+        book_flight,
+        book_hotel,
+        undo_book_car,
+        undo_book_flight,
+        undo_book_hotel,
+    )
+
+
 ```
+<!--SNIPEND-->
 
 Next, create the `BookWorkflow` class and define the compensation actions, as well as the functions that execute your core logic: `book_car`, `book_hotel`, and `book_flight`.
 
 These executions are wrapped in a `try` and `except` block to handle any exceptions and trigger compensations.
 
-```python
+<!--SNIPSTART saga-py-workflows-run-->
+[workflows.py](https://github.com/rachfop/saga-2/blob/main/workflows.py)
+```py
 @workflow.defn
-class BookWorkflow:
+class BookingWorkflow:
+    """
+    Workflow class for booking a vacation.
+    """
+
     @workflow.run
-    async def run(self, input: BookVacationInput):
+    async def run(self, book_input: BookVacationInput):
+        """
+        Executes the booking workflow.
+
+        Args:
+            book_input (BookVacationInput): Input data for the workflow.
+
+        Returns:
+            str: Workflow result.
+        """
         compensations = []
-
+        results = {}
         try:
-            # Attempt to book a car
-            compensations.append("undo_book_car")
-            output = await workflow.execute_activity(
+            compensations.append(undo_book_car)
+            car_result = await workflow.execute_activity(
                 book_car,
-                input,
+                book_input,
                 start_to_close_timeout=timedelta(seconds=10),
-                retry_policy=RetryPolicy(
-                    non_retryable_error_types=["Exception"],
-                ),
             )
+            results["booked_car"] = car_result
 
-            # Attempt to book a hotel
-            compensations.append("undo_book_hotel")
-            output += " " + await workflow.execute_activity(
+            # Book hotel
+            compensations.append(undo_book_hotel)
+            hotel_result = await workflow.execute_activity(
                 book_hotel,
-                input,
+                book_input,
                 start_to_close_timeout=timedelta(seconds=10),
-                retry_policy=RetryPolicy(
-                    non_retryable_error_types=["Exception"],
-                ),
+                maximum_attempts=book_input.attempts,
+                retry_policy=RetryPolicy(non_retryable_error_types=["ValueError"]),
             )
+            results["booked_hotel"] = hotel_result
 
-            # Attempt to book a flight
-            compensations.append("undo_book_flight")
-            output += " " + await workflow.execute_activity(
+            # Book flight
+            compensations.append(undo_book_flight)
+            flight_result = await workflow.execute_activity(
                 book_flight,
-                input,
+                book_input,
                 start_to_close_timeout=timedelta(seconds=10),
                 retry_policy=RetryPolicy(
                     initial_interval=timedelta(seconds=1),
                     maximum_interval=timedelta(seconds=1),
-                    maximum_attempts=input.attempts,
-                    non_retryable_error_types=["Exception"],
                 ),
             )
+            results["booked_flight"] = flight_result
 
-            # If all bookings are successful, return the output
-            return output
-        except Exception:
-            # If an error occurs, execute compensations in reverse order
+            return {"status": "success", "message": results}
+
+        except Exception as ex:
             for compensation in reversed(compensations):
                 await workflow.execute_activity(
                     compensation,
-                    input,
+                    book_input,
                     start_to_close_timeout=timedelta(seconds=10),
                 )
+            return {"status": "failure", "message": str(ex)}
 
-            # Return a message indicating the booking process was cancelled
-            return "Voyage cancelled"
+
 ```
+<!--SNIPEND-->
 
 The `compensations` list keeps track of the actions that need to be undone in case of a failure.
 Each compensation action is appended to this list after its corresponding booking action is successfully completed.
@@ -281,7 +368,9 @@ Create a new file named `run_worker.py`.
 Import the necessary modules, including the `asyncio` library, Temporal `Client`, and `Worker`.
 You will also import the Activities declared in the `activities.py` file.
 
-```python
+<!--SNIPSTART saga-py-worker-import-->
+[run_worker.py](https://github.com/rachfop/saga-2/blob/main/run_worker.py)
+```py
 import asyncio
 
 from temporalio.client import Client
@@ -295,26 +384,31 @@ from activities import (
     undo_book_flight,
     undo_book_hotel,
 )
-from saga_workflows import BookWorkflow
 from shared import TASK_QUEUE_NAME
+from workflows import BookingWorkflow
+
 ```
+<!--SNIPEND-->
 
 In the `main()` function, you will specify how to connect to the Temporal server, create a Worker, and run it.
 This Worker will listen to the specified Task Queue and execute the defined Workflows and Activities.
 
-```python
+<!--SNIPSTART saga-py-worker-loop-->
+[run_worker.py](https://github.com/rachfop/saga-2/blob/main/run_worker.py)
+```py
 interrupt_event = asyncio.Event()
 
 
 async def main():
-    # Connect to the Temporal server
+    """
+    Main function to start the worker.
+    """
     client = await Client.connect("localhost:7233")
 
-    # Create a Worker that listens to the specified task queue
     worker = Worker(
         client,
         task_queue=TASK_QUEUE_NAME,
-        workflows=[BookWorkflow],
+        workflows=[BookingWorkflow],
         activities=[
             book_car,
             book_hotel,
@@ -324,6 +418,7 @@ async def main():
             undo_book_flight,
         ],
     )
+    print("\nWorker started, ctrl+c to exit\n")
     await worker.run()
     try:
         await interrupt_event.wait()
@@ -340,6 +435,7 @@ if __name__ == "__main__":
         interrupt_event.set()
         loop.run_until_complete(loop.shutdown_asyncgens())
 ```
+<!--SNIPEND-->
 
 The `Client.connect()` line connects to the Temporal server running on `localhost` at port `7233`.
 This can be modified to run a Worker on Temporal Cloud.
@@ -366,49 +462,48 @@ You will create a Flask endpoint that accepts posts requests, so you can send da
 
 This setup allows you to interact with the Temporal service and trigger the booking Workflow through HTTP requests.
 
-Create a new file named `run_workflow.py`.
+Create a new file named `starter.py`.
 
 Import the necessary modules, including `uuid`, Flask, and Temporal `Client`.
 
-```python
+<!--SNIPSTART saga-py-starter-import-->
+[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+```py
+import asyncio
 import uuid
 
 from flask import Flask, jsonify, request
 from temporalio.client import Client
 
-from activities import BookVacationInput
-from saga_workflows import BookWorkflow
-from shared import TASK_QUEUE_NAME
+from shared import TASK_QUEUE_NAME, BookVacationInput
+from workflows import BookingWorkflow
+
+
 ```
+<!--SNIPEND-->
 
 The `uuid` module is used to generate a unique ID for each booking.
 The `Flask` module is used to set up the Flask API.
 The `Client` module is used to connect to the Temporal Service.
 
-Initialize the Flask app and set up the dependency injection for the Temporal Client.
+Next, initialize the Flask app and set up the Temporal Client.
 
-```python
-app = Flask(__name__)
+<!--SNIPSTART saga-py-starter-initialize-->
+[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+```py
+def create_app(temporal_client: Client):
+    app = Flask(__name__)
 
+    def generate_unique_username(name):
+        return f'{name.replace(" ", "-").lower()}-{str(uuid.uuid4().int)[:6]}'
 
-async def get_temporal_client():
-    return await Client.connect("localhost:7233")
 ```
+<!--SNIPEND-->
 
-Dependency injection for the Temporal Client is used here to ensure it is initialized once and reused, avoiding the resource-intensive process of repeatedly starting it for each booking request.
-This approach improves performance and resource management by maintaining a single, open connection for multiple bookings.
-
-Next, create a function to generate unique usernames.
-
-```python
-def generate_unique_username(name):
-    return f'{name.replace(" ", "-").lower()}-{str(uuid.uuid4().int)[:6]}'
-```
-
-The generate_unique_username function takes a name as input, replaces spaces with hyphens, converts the string to lowercase, and appends a unique identifier generated by `uuid`.
+The `generate_unique_username` function takes a name as input, replaces spaces with hyphens, converts the string to lowercase, and appends a unique identifier generated by `uuid`.
 
 Define a route to handle the booking process.
-This function expects to receive a `POST` request with the following JSON body:
+This function expects to receive a POST request with the following JSON body:
 
 ```json
 {
@@ -422,53 +517,58 @@ This function expects to receive a `POST` request with the following JSON body:
 
 This route will accept a `POST` request, extract the necessary data from the request, initiate the Workflow, and return the result.
 
-```python
-@app.route("/book", methods=["POST"])
-async def book_vacation():
-    # Extract data from the request
-    user_id = generate_unique_username(request.json.get("name"))
-    attempts = request.json.get("attempts")
-    car = request.json.get("car")
-    hotel = request.json.get("hotel")
-    flight = request.json.get("flight")
+<!--SNIPSTART saga-py-starter-post-->
+[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+```py
+    @app.route("/book", methods=["POST"])
+    async def book_vacation():
+        """
+        Endpoint to book a vacation.
 
-    # Create the input object for the Workflow
-    input = BookVacationInput(
-        attempts=int(attempts),
-        book_user_id=user_id,
-        book_car_id=car,
-        book_hotel_id=hotel,
-        book_flight_id=flight,
-    )
+        Returns:
+            Response: JSON response with booking details or error message.
+        """
+        user_id = generate_unique_username(request.json.get("name"))
+        attempts = request.json.get("attempts")
+        car = request.json.get("car")
+        hotel = request.json.get("hotel")
+        flight = request.json.get("flight")
 
-    # Get the Temporal client
-    client = await get_temporal_client()
+        input_data = BookVacationInput(
+            attempts=int(attempts),
+            book_user_id=user_id,
+            book_car_id=car,
+            book_hotel_id=hotel,
+            book_flight_id=flight,
+        )
 
-    # Execute the Workflow
-    result = await client.execute_workflow(
-        BookWorkflow.run,
-        input,
-        id=user_id,
-        task_queue=TASK_QUEUE_NAME,
-    )
+        result = await temporal_client.execute_workflow(
+            BookingWorkflow.run,
+            input_data,
+            id=user_id,
+            task_queue=TASK_QUEUE_NAME,
+        )
 
-    # Prepare the response based on the result
-    response = {"user_id": user_id, "result": result}
-    if result == "Voyage cancelled":
-        response["cancelled"] = True
-    else:
-        result_list = result.split("Booked ")
-        response["cancelled"] = False
-        response["car"] = result_list[1].split(" Booking ")[0].title()
-        response["hotel"] = result_list[2].split(" Booking ")[0].title()
-        response["flight"] = result_list[2].split(" Booking ")[1].title()
+        response = {"user_id": user_id, "result": result}
 
-    return jsonify(response)
+        if result == "Voyage cancelled":
+            response["cancelled"] = True
+
+        return jsonify(response)
+
+    return app
+
+
+async def main():
+    temporal_client = await Client.connect("localhost:7233")
+    app = create_app(temporal_client)
+    app.run(host="0.0.0.0", debug=True)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    asyncio.run(main())
 ```
+<!--SNIPEND-->
 
 The route extracts the username, number of attempts, car, hotel, and flight information from the request JSON.
 
@@ -479,6 +579,15 @@ The Temporal client is obtained using the `get_temporal_client()` function.
 The Workflow is executed using `client.execute_workflow()`, passing the input object and other required parameters.
 Based on the result of the Workflow execution, a response is prepared and returned.
 If the booking process is cancelled, the response indicates this. Otherwise, it provides details about the booked car, hotel, and flight.
+
+Next, create an async function to start the Flask app and connect to the Temporal service.
+
+<!--SNIPSTART saga-py-starter-main-->
+<!--SNIPEND-->
+The `main` function connects to the Temporal service and starts the Flask app.
+
+Dependency injection for the Temporal Client is used here to ensure it is initialized once and reused, avoiding the resource-intensive process of repeatedly starting it for each booking request.
+This approach improves performance and resource management by maintaining a single, open connection for multiple bookings.
 
 Now to start the Client, run the following command in your new terminal:
 
@@ -581,6 +690,6 @@ This demonstrates how the Saga pattern with Temporal handles both successful and
 
 ## Conclusion
 
-In this guide, you have implemented the Saga pattern using Temporal in Python to handle distributed transactions for booking services.
+With this guide, you have implemented the Saga pattern using Temporal in Python to handle distributed transactions for booking services.
 By following this guide, you now have a framework for your applications that can gracefully handle failures and ensure data consistency across multiple services.
 You can extend this implementation to other use cases where multi-step processes need reliable and scalable orchestration.
