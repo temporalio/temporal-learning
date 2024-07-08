@@ -108,7 +108,7 @@ To use Temporal Cloud in production, see the [Deploy your application to Digital
 
 ![App functionality demo](./images/work-queue-demo.gif)
 
-## Step 1 -- Create a new Slack App configuration
+## Create a new Slack App configuration
 
 Go to https://api.slack.com/apps?new_app=1 and create an app "From scratch." Name the app whatever you want, and select a workspace that you intend to install it to.
 
@@ -169,7 +169,7 @@ You will need **Signing Secret** and **App Level Token** from the Basic Informat
 You will also need the **Bot User OAuth Token** from the Install App page, which is also available on the OAuth & Permissions page.
 Record all of these strings for now so you can use them to configure your app later.
 
-## Step 2 -- Create TypeScript Projects for the Slack App
+## Create TypeScript Projects for the Slack App
 
 You need two TypeScript projects for this Slack application.
 The first of these can just be named `temporal-application`.
@@ -338,7 +338,7 @@ export enum WorkqueueStatus {
 
 <!--SNIPEND-->
 
-## Step 3 -- Create a Work Queue Workflow {#create-work-queue-workflow}
+## Create a Work Queue Workflow {#create-work-queue-workflow}
 
 Before you start building the Slack bot, you need to create a Temporal Workflow to persist the state of the Work Queue.
 
@@ -501,7 +501,7 @@ npm start
 You can keep the Worker running in the background while you develop the Slack bot.
 If you make any changes to the Workflow code however, you will need to restart the Worker.
 
-## Step 4 -- Develop your Slack Bot {#develop-slack-bot}
+## Develop your Slack Bot {#develop-slack-bot}
 
 Now that you have the Work Queue Workflow in place, you can start building the interactive bot portion of the application.
 
@@ -946,7 +946,7 @@ npm start
 
 Once running the bot will be listening for the `workqueue` Slash Command, the `wq_claim` button click event, and the `wq_complete` button click event in your Slack workspace.
 
-## Step 5 (Optional) -- Test the Workflow with Jest framework {#test-workflow}
+## Test the Workflow with Jest framework (Optional) {#test-workflow}
 
 To test your Work Queue Workflow, create `workqueue.test.ts` in the `temporal-application/src/__tests__` directory.
 

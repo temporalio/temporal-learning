@@ -43,7 +43,7 @@ Before you begin, you will need the following:
 - **A Temporal Cloud account** You need a [Temporal Cloud account](https://cloud.temporal.io) from which to create a Namespace.
 - **A Temporal Cloud Namespace:** You need a [Namepsace](https://docs.temporal.io/cloud/namespaces#create-a-namespace) in which to register a certificate for your Temporal Application to communicate with Temporal Cloud.
 
-## Step 1 -- Create a Temporal Cloud Namespace certificate {#create-temporal-cloud-cert}
+## Create a Temporal Cloud Namespace certificate {#create-temporal-cloud-cert}
 
 You will need a certificate to authenticate the communication between your Temporal Client, Temporal Workers, and Temporal Cloud.
 
@@ -61,7 +61,7 @@ Then, scroll down to the "CA Certificates" section, and copy in the PEM (certifi
 
 ![Temporal Cloud Namespace CA Certificates](./images/save-cert-to-namespace.png)
 
-## Step 2 -- Update code to use Temporal Cloud {#use-temporal-cloud}
+## Update code to use Temporal Cloud {#use-temporal-cloud}
 
 Connecting to Temporal Cloud requires a few changes to your Temporal Client and Worker, using the environment variables you set in the `.env` file.
 
@@ -211,7 +211,7 @@ run();
 
 <!--SNIPEND-->
 
-## Step 3 -- Create and set up Droplet {#create-droplet}
+## Create and set up Droplet {#create-droplet}
 
 Create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
 
@@ -314,7 +314,7 @@ However, if your repo is private, you will need to use an access token to clone 
 
 Then ensure you have the respective `.env` files in each of the project roots with the correct environment variables.
 
-## Step 5 -- Use `pm2` to run your Worker {#use-pm2}
+## Use `pm2` to run your Worker {#use-pm2}
 
 `pm2` is a process manager for Node.js applications, and will ensure that your TypeScript application runs continuously on your Droplet.
 
