@@ -168,7 +168,7 @@ touch temporal/src/activities.ts
 Inside of `temporal/src/activities.ts`, add the following code to define the `purchase` function:
 
 <!--SNIPSTART typescript-next-oneclick-activities -->
-[temporal/src/activities.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/activities.ts)
+[temporal/src/activities.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/activities.ts)
 ```ts
 import { activityInfo } from '@temporalio/activity';
 export async function purchase(id: string): Promise<string> {
@@ -191,7 +191,7 @@ touch temporal/src/workflows.ts
 Add the following code to `temporal/src/workflows.ts` to define the Workflow:
 
 <!--SNIPSTART typescript-next-oneclick-workflows -->
-[temporal/src/workflows.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/workflows.ts)
+[temporal/src/workflows.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/workflows.ts)
 ```ts
 import { proxyActivities, sleep } from '@temporalio/workflow';
 import type * as activities from './activities';
@@ -229,7 +229,7 @@ touch temporal/src/shared.ts
 Add the following line to the file to define the constant:
 
 <!--SNIPSTART typescript-next-oneclick-shared -->
-[temporal/src/shared.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/shared.ts)
+[temporal/src/shared.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/shared.ts)
 ```ts
 export const TASK_QUEUE_NAME = 'ecommerce-oneclick';
 ```
@@ -244,7 +244,7 @@ touch temporal/src/worker.ts
 In `temporal/src/worker.ts`, define the Worker Program:
 
 <!--SNIPSTART typescript-next-oneclick-worker -->
-[temporal/src/worker.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/worker.ts)
+[temporal/src/worker.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/worker.ts)
 ```ts
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
@@ -297,7 +297,7 @@ touch temporal/src/client.ts
 Add the following code to `temporal/src/client.ts` to define a `makeClient` function that creates the client, and a `getTemporalClient` function that retrieves it:
 
 <!--SNIPSTART typescript-next-oneclick-client -->
-[temporal/src/client.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/client.ts)
+[temporal/src/client.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/client.ts)
 ```ts
 import { Client, Connection } from '@temporalio/client';
 
@@ -334,7 +334,7 @@ touch app/api/startBuy/route.ts
 Within the file, create a `POST` route that fetches a Temporal Client and uses it to start a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution):
 
 <!--SNIPSTART typescript-next-oneclick-api -->
-[app/api/startBuy/route.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/api/startBuy/route.ts)
+[app/api/startBuy/route.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/api/startBuy/route.ts)
 ```ts
 import { oneClickBuy } from '../../../temporal/src/workflows';
 import { getTemporalClient } from '../../../temporal/src/client';
@@ -430,7 +430,7 @@ Build out the front-end user interface. Open `app/page.tsx` and remove the conte
 Then at the top, add the following code to add directives and import the necessary libraries:
 
 <!--SNIPSTART typescript-next-oneclick-page-start -->
-[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
 ```tsx
 'use client'
 import Head from 'next/head';
@@ -442,7 +442,7 @@ import { v4 as uuid4 } from 'uuid';
 Next, define a TypeScript Interface for the Product's properties, a Type to define states for the purchase, and a collection of Products:
 
 <!--SNIPSTART typescript-next-oneclick-page-vars -->
-[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
 ```tsx
 
 interface ProductProps {
@@ -475,7 +475,7 @@ In a production application, your products would come from another part of your 
 Next, define a `Product` component with the following code:
 
 <!--SNIPSTART typescript-next-oneclick-page-product -->
-[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
 ```tsx
 const Product: React.FC<ProductProps> = ({ product }) => {
   const itemId = product.id;
@@ -535,7 +535,7 @@ Based on the order state, the component replaces the button with confirmation me
 Now add a `ProductList` component with the following code that renders each `Product` component in the list of products:
 
 <!--SNIPSTART typescript-next-oneclick-page-productlist -->
-[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
 ```tsx
 const ProductList: React.FC = () => {
   return (
@@ -558,7 +558,7 @@ Like the `Product` component. you're using Tailwind to style the product list.
 Finally, add the `Home` component to define the overall page structure and render the product list:
 
 <!--SNIPSTART typescript-next-oneclick-page-home -->
-[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
 ```tsx
 const Home: React.FC = () => {
   return (

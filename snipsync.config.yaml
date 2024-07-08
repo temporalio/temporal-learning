@@ -55,7 +55,7 @@ origins:
     ref: cloud
   - owner: temporalio
     repo: nextjs-temporal-one-click-template
-    ref: next-v2
+    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
