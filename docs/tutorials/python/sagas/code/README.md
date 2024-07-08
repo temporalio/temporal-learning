@@ -1,6 +1,6 @@
 # SAGAS with Temporal
 
-This [tutorial](./tutorial.md) covers the implementation of the Sagas pattern using Temporal.
+This [tutorial](docs/tutorials/python/sagas/index.md) covers the implementation of the Sagas pattern using Temporal.
 
 ## Running the Example
 
