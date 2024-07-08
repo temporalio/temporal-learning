@@ -60,7 +60,7 @@ At this point, you've downloaded everything you need. The last thing to do is cr
 ```bash
 sudo useradd temporal
 sudo mkdir /etc/temporal
-sudo chown /etc/temporal temporal
+sudo chown temporal /etc/temporal
 ```
 
 Next, you'll create configuration files for both the Temporal Server and the UI Server in the `/etc` directory.
