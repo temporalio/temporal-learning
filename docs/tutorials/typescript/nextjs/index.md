@@ -31,6 +31,7 @@ When you're done, you'll have a framework you can follow for building full-stack
 Before starting this tutorial:
 
 - [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
+- Ensure you have a local Temporal Service running, and that you can access the Temporal Web UI from port `8233`.
 - Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
 
 ## Create your project
@@ -208,6 +209,8 @@ export async function oneClickBuy(id: string): Promise<string> {
 ```
 <!--SNIPEND-->
 
+This Workflow calls the `purchase` Activity and then uses `await sleep()` to create an artificial delay in the Workflow. A more complex Workflow would call more Activities.
+
 [Workflows must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints), so you perform non-deterministic work in Activities.
 The TypeScript SDK bundles Workflow code and runs it inside a [deterministic sandbox](https://docs.temporal.io/develop/typescript/core-application#workflow-logic-requirements). This sandbox can help detect if you're using nondeterministic code.
 This is why you must separate Workflow code from Activity code, and why you have to use the `proxyActivities` function to load your Activity functions instead of directly importing them. The Activities will be nondeterministic, so you can't run in the same sandbox as the Workflow code.
@@ -291,7 +294,7 @@ You don't want to create a new Temporal Client on every API request, so create a
 touch temporal/src/client.ts
 ```
 
-Add the following code to `temporal/src/client.ts` to define a `makeClient` function that creates the client, and a `getTemporalClient` function that retrives it:
+Add the following code to `temporal/src/client.ts` to define a `makeClient` function that creates the client, and a `getTemporalClient` function that retrieves it:
 
 <!--SNIPSTART typescript-next-oneclick-client -->
 [temporal/src/client.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/temporal/src/client.ts)
@@ -368,6 +371,13 @@ export async function POST(req: Request) {
 ```
 <!--SNIPEND-->
 
+The API route checks the JSON input and ensures a product ID exists. If it does, it then uses the Temporal Client to start the Workflow:
+
+`workflow.start` sends a request to the Temporal Service to start a Workflow Execution.
+The actual Workflow doesn't run until a Worker sees the Workflow Task in the Task Queue and starts working on it.
+This API endpoint immediately returns a response, even though the Workflow has a 10-second delay. If you change this to `workflow.execute`, the call will block until the Workflow finishes.
+That's because `workflow.start` resolves when the Temporal Service acknowledges that it's scheduled the Workflow Execution, whereas `workflow.execute` resolves only when the Workflow completes.
+
 Make sure you've saved all your changes.
 
 Now start Next.js and the Temporal Worker using the `npm run dev` script you defined:
@@ -375,6 +385,20 @@ Now start Next.js and the Temporal Worker using the `npm run dev` script you def
 ```command
 npm run dev
 ```
+
+:::info Connection issues
+If you receive an error like the following:
+
+```output
+[start:worker] TransportError: tonic::transport::Error(Transport, hyper::Error(Connect,
+ConnectError("tcp connect error", Os { code: 61,
+kind: ConnectionRefused, message: "Connection refused" })))
+```
+
+This means the Temporal Client can't connect to the Temporal Service.
+Make sure you have a local Temporal Service running.
+Open a separate terminal window and start the service with `temporal server start-dev`.
+:::
 
 In another terminal window, use the `curl` command to make a request to the API endpoint, which starts the Temporal Workflow:
 
@@ -391,14 +415,16 @@ The terminal that's running your application and Temporal Worker will print `Pur
 [start:worker] Purchased 1!
 ```
 
-Now that you know the API works, you can build the user interface.
+Remember, because the API endpoint uses `workflow.start`, it's not blocking on the Workflow Execution itself, so you see an almost immediate response from the API.
+
+Now that you know the API can start Temporal Workflows, you can build the user interface.
 
 ## Build the front-end interface
 
-You can call your Next.js API with `curl`, but that's not the idea user interface.
+You can call your Next.js API with `curl`, but that's not the user experience you want to present to shoppers.
 You'll use React components with Next.js to make a request to the API you just created to create the one-click buy experience.
 
-To call the API Route from the Next.js frontend, you'll use the `fetch` API to make a request to the `/api/startbuy` method using a similar payload when you click a button.
+To call the API Route from the Next.js frontend, you'll use the `fetch` API to make a request to the `/api/startbuy` route when you click a button.
 
 Build out the front-end user interface. Open `app/page.tsx` and remove the contents of the file that the project generator created.
 Then at the top, add the following code to add directives and import the necessary libraries:
@@ -410,7 +436,6 @@ Then at the top, add the following code to add directives and import the necessa
 import Head from 'next/head';
 import React, { useState, useRef } from 'react';
 import { v4 as uuid4 } from 'uuid';
-import 'react-toastify/dist/ReactToastify.css';
 ```
 <!--SNIPEND-->
 
@@ -441,7 +466,7 @@ const products = [
   },
 ];
 
-type ITEMSTATE = 'NEW' |  'ORDERED' | 'ERROR';
+type ITEMSTATE = 'NEW' | 'ORDERING' |  'ORDERED' | 'ERROR';
 ```
 <!--SNIPEND-->
 
@@ -458,6 +483,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
   const [transactionId, setTransactionId] = React.useState(uuid4());
 
   const buyProduct = () => {
+    setState('ORDERING');
     fetch('/api/startBuy', {
       method: 'POST',
       headers: {
@@ -474,6 +500,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
   };
 
   const buyStyle = "w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
+  const orderingStyle = "w-full bg-yellow-500 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
   const orderStyle = "w-full bg-green-500 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
   const errorStyle = "w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
 
@@ -488,6 +515,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
           {
             {
               NEW:     ( <button onClick={buyProduct} className={buyStyle}> Buy Now </button> ),
+              ORDERING: ( <div className={orderingStyle}>Orderering</div> ),
               ORDERED: ( <div className={orderStyle}>Ordered</div> ),
               ERROR:   ( <button onClick={buyProduct} className={errorStyle}>Error! Click to Retry </button> ),
             }[state]
@@ -501,10 +529,10 @@ const Product: React.FC<ProductProps> = ({ product }) => {
 <!--SNIPEND-->
 
 In this component, the `buyProduct` function makes the call to start the Temporal Workflow by making a request to the API route you defined.
-The component renders the product and displays a button for the customer to click. Based on the order state,
-the button is replaced with a confirmation message or a button that lets the customer try again if there's an error.
+The component renders the product and displays a button for the customer to click.
+Based on the order state, the component replaces the button with confirmation message or a new button that lets the customer try again if there's an error. Tailwind styles help control how the buttons and messages look.
 
-Now add a `ProductList` component with the following code that renders each `Product` component:
+Now add a `ProductList` component with the following code that renders each `Product` component in the list of products:
 
 <!--SNIPSTART typescript-next-oneclick-page-productlist -->
 [app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
@@ -525,7 +553,9 @@ const ProductList: React.FC = () => {
 ```
 <!--SNIPEND-->
 
-Finally, add the `Home` component to define the overall header and render the product list:
+Like the `Product` component. you're using Tailwind to style the product list.
+
+Finally, add the `Home` component to define the overall page structure and render the product list:
 
 <!--SNIPSTART typescript-next-oneclick-page-home -->
 [app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/next-v2/app/page.tsx)
@@ -560,7 +590,10 @@ export default Home;
 
 Ensure you've saved all your work.
 
-Visit `http://localhost:3000` in your browser and you'll see two products. Click their buttons and you'll execute the Temporal Workflows.
+Visit `http://localhost:3000` in your browser and you'll see two products.
+Click their buttons and you'll execute the Temporal Workflows.
+The UI state will change almost immediately because the Next.js API route returns immediately, even though you've added an artificial delay to the Workflow.
+Log into the local Temporal Web UI running on `http://localhost:8233` and you'll see the entire Workflow Execution.
 
 You now have a Next.js application that uses Temporal Workflows to power one of its back-end processes.
 
