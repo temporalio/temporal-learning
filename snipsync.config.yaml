@@ -52,9 +52,6 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
     ref: cloud
-  - owner: rachfop
-    repo: saga-2
-    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
@@ -76,6 +73,10 @@ origins:
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'
+  - files:
+      pattern: './docs/tutorials/python/sagas/code/*.py'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
 
 targets:
   - docs/tutorials

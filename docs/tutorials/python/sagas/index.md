@@ -46,7 +46,7 @@ This file will contain the definitions of the Activities needed for the booking 
 Import the necessary modules:
 
 <!--SNIPSTART saga-py-activities-import-->
-[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
 ```py
 import asyncio
 
@@ -68,7 +68,7 @@ For brevity, these Activities will print a message indicating that they were inv
 The function will return a success message if no errors occur.
 
 <!--SNIPSTART saga-py-activities-book-hotel-->
-[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
 ```py
 @activity.defn
 async def book_hotel(book_input: BookVacationInput) -> str:
@@ -101,7 +101,7 @@ async def book_hotel(book_input: BookVacationInput) -> str:
 The `book_car` and `book_flight` functions follow a similar structure:
 
 <!--SNIPSTART saga-py-activities-book-car-->
-[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
 ```py
 @activity.defn
 async def book_car(book_input: BookVacationInput) -> str:
@@ -121,7 +121,7 @@ async def book_car(book_input: BookVacationInput) -> str:
 ```
 <!--SNIPEND-->
 <!--SNIPSTART saga-py-activities-book-flight-->
-[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
 ```py
 @activity.defn
 async def book_flight(book_input: BookVacationInput) -> str:
@@ -151,7 +151,7 @@ These Activities will log the undo action and return a success message.
 
 
 <!--SNIPSTART saga-py-activities-undo-book-->
-[activities.py](https://github.com/rachfop/saga-2/blob/main/activities.py)
+[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
 ```py
 @activity.defn
 async def undo_book_car(book_input: BookVacationInput) -> str:
@@ -216,7 +216,7 @@ Also, Task Queues are shared resources that can be used by multiple Workflows an
 Create a new file named `shared.py`:
 
 <!--SNIPSTART saga-py-shared-->
-[shared.py](https://github.com/rachfop/saga-2/blob/main/shared.py)
+[docs/tutorials/python/sagas/code/shared.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/shared.py)
 ```py
 from dataclasses import dataclass
 
@@ -253,7 +253,7 @@ This file will define your Workflow, which is responsible for executing your Act
 First, import the necessary modules:
 
 <!--SNIPSTART saga-py-workflows-import-->
-[workflows.py](https://github.com/rachfop/saga-2/blob/main/workflows.py)
+[docs/tutorials/python/sagas/code/workflows.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/workflows.py)
 ```py
 from datetime import timedelta
 
@@ -280,7 +280,7 @@ Next, create the `BookWorkflow` class and define the compensation actions, as we
 These executions are wrapped in a `try` and `except` block to handle any exceptions and trigger compensations.
 
 <!--SNIPSTART saga-py-workflows-run-->
-[workflows.py](https://github.com/rachfop/saga-2/blob/main/workflows.py)
+[docs/tutorials/python/sagas/code/workflows.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/workflows.py)
 ```py
 @workflow.defn
 class BookingWorkflow:
@@ -369,7 +369,7 @@ Import the necessary modules, including the `asyncio` library, Temporal `Client`
 You will also import the Activities declared in the `activities.py` file.
 
 <!--SNIPSTART saga-py-worker-import-->
-[run_worker.py](https://github.com/rachfop/saga-2/blob/main/run_worker.py)
+[docs/tutorials/python/sagas/code/run_worker.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/run_worker.py)
 ```py
 import asyncio
 
@@ -394,7 +394,7 @@ In the `main()` function, you will specify how to connect to the Temporal server
 This Worker will listen to the specified Task Queue and execute the defined Workflows and Activities.
 
 <!--SNIPSTART saga-py-worker-loop-->
-[run_worker.py](https://github.com/rachfop/saga-2/blob/main/run_worker.py)
+[docs/tutorials/python/sagas/code/run_worker.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/run_worker.py)
 ```py
 interrupt_event = asyncio.Event()
 
@@ -467,7 +467,7 @@ Create a new file named `starter.py`.
 Import the necessary modules, including `uuid`, Flask, and Temporal `Client`.
 
 <!--SNIPSTART saga-py-starter-import-->
-[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+[docs/tutorials/python/sagas/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/starter.py)
 ```py
 import asyncio
 import uuid
@@ -477,8 +477,6 @@ from temporalio.client import Client
 
 from shared import TASK_QUEUE_NAME, BookVacationInput
 from workflows import BookingWorkflow
-
-
 ```
 <!--SNIPEND-->
 
@@ -489,14 +487,13 @@ The `Client` module is used to connect to the Temporal Service.
 Next, initialize the Flask app and set up the Temporal Client.
 
 <!--SNIPSTART saga-py-starter-initialize-->
-[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+[docs/tutorials/python/sagas/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/starter.py)
 ```py
 def create_app(temporal_client: Client):
     app = Flask(__name__)
 
     def generate_unique_username(name):
         return f'{name.replace(" ", "-").lower()}-{str(uuid.uuid4().int)[:6]}'
-
 ```
 <!--SNIPEND-->
 
@@ -518,7 +515,7 @@ This function expects to receive a POST request with the following JSON body:
 This route will accept a `POST` request, extract the necessary data from the request, initiate the Workflow, and return the result.
 
 <!--SNIPSTART saga-py-starter-post-->
-[starter.py](https://github.com/rachfop/saga-2/blob/main/starter.py)
+[docs/tutorials/python/sagas/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/starter.py)
 ```py
     @app.route("/book", methods=["POST"])
     async def book_vacation():
@@ -557,16 +554,6 @@ This route will accept a `POST` request, extract the necessary data from the req
         return jsonify(response)
 
     return app
-
-
-async def main():
-    temporal_client = await Client.connect("localhost:7233")
-    app = create_app(temporal_client)
-    app.run(host="0.0.0.0", debug=True)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
 ```
 <!--SNIPEND-->
 
@@ -583,6 +570,17 @@ If the booking process is cancelled, the response indicates this. Otherwise, it 
 Next, create an async function to start the Flask app and connect to the Temporal service.
 
 <!--SNIPSTART saga-py-starter-main-->
+[docs/tutorials/python/sagas/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/starter.py)
+```py
+async def main():
+    temporal_client = await Client.connect("localhost:7233")
+    app = create_app(temporal_client)
+    app.run(host="0.0.0.0", debug=True)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 The `main` function connects to the Temporal service and starts the Flask app.
 
@@ -605,15 +603,15 @@ This request will trigger the Workflow, and you will receive a response with the
 
 ```bash
 # terminal three
-curl -X POST http://localhost:3002/book \
--H "Content-Type: application/json" \
--d '{
-    "name": "John Doe",
-    "attempts": 5,
-    "car": "valid-car-id",
-    "hotel": "valid-hotel-id",
-    "flight": "valid-flight-id"
-}'
+curl -X POST http://localhost:3000/book \
+    -H "Content-Type: application/json" \
+        -d '{
+        "name": "John Doe",
+        "attempts": 5,
+        "car": "valid-car-id",
+        "hotel": "valid-hotel-id",
+        "flight": "valid-flight-id"
+    }'
 ```
 
 
@@ -644,15 +642,15 @@ This request includes an invalid hotel booking ID, which will cause the booking 
 
 ```bash
 # terminal three
-curl -X POST http://localhost:3002/book \
--H "Content-Type: application/json" \
--d '{
-    "name": "Jane Smith",
-    "attempts": 3,
-    "car": "valid-car-id",
-    "hotel": "invalid-hotel-id",
-    "flight": "valid-flight-id"
-}'
+curl -X POST http://localhost:3000/book \
+    -H "Content-Type: application/json" \
+    -d '{
+        "name": "Jane Smith",
+        "attempts": 3,
+        "car": "valid-car-id",
+        "hotel": "invalid-hotel-id",
+        "flight": "valid-flight-id"
+    }'
 ```
 
 The value `invalid` will trigger an exception, causing the booking to rollback.
