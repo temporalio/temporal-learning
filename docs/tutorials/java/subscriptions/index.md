@@ -6,7 +6,7 @@ tags: [Java, SDK]
 last_update:
   date: 2024-06-27
 title: Build an email subscription Workflow with Temporal and Java
-description: Implement an email subscription application with Temporal's Workflows, Activities, and Queries, and allow users to start  your business logic through a web action.
+description: Implement an email subscription application with Temporal's Workflows, Activities, and Queries, and allow users to start your business logic through a web action.
 sidebar_label: Build an email subscription Workflow with Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
