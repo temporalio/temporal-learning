@@ -615,7 +615,7 @@ Now that you've added the ability to unsubscribe from the email list, your API s
 ## Build the server app
 
 Create `Starter.java` in the subscription directory.
-It will run your SpringBoot app:
+It will run your Spring Boot app:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-starter-entry-point-app-->
 [src/main/java/subscription/Starter.java](https://github.com/temporalio/email-subscription-project-java/blob/main/src/main/java/subscription/Starter.java)
