@@ -29,7 +29,7 @@ You'll handle this by cancelling the Workflow Execution.
 You can view the user's entire process through Temporal's Web UI.
 By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 
-:::note
+:::note NEXT STEPS
 
 This tutorial simulates sending emails.
 You can adapt this example to call a live email service.
@@ -452,11 +452,11 @@ This code registers the Temporal Client to run before the first request to this 
 A Temporal Client enables you to communicate with the Temporal Service.
 Communication with a Temporal Service includes, but isn't limited to, the following:
 
-* Starting a Workflow Execution: This initiates a business process
-* Getting the Result of Workflow Execution: This allows you to retrieve the outcome of a business process
-* Listing Workflow Executions: This enables you to view all the business processes or entities
-* Querying a Workflow Execution: This allows you to check the state of your business process
-* Signalling a Workflow Execution: This enables you to send data into a running business process
+- Starting a Workflow Execution: This initiates a business process
+- Getting the Result of Workflow Execution: This allows you to retrieve the outcome of a business process
+- Listing Workflow Executions: This enables you to view all the business processes or entities
+- Querying a Workflow Execution: This allows you to check the state of your business process
+- Signalling a Workflow Execution: This enables you to send data into a running business process
 
 <!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-responder-->
 [src/main/java/subscription/Controller.java](https://github.com/temporalio/email-subscription-project-java/blob/main/src/main/java/subscription/Controller.java)
