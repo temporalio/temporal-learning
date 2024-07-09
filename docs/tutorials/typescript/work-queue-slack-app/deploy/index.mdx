@@ -1,12 +1,12 @@
 ---
 id: index
 title: Part 2 -- Deploy a TypeScript Slack App to production on a DigitalOcean Droplet using Temporal Cloud
-description: Learn how to deploy your TypeScript and Temporal based Slack App to production on a DigitalOcean Droplet using Ubuntu 20.04 or 22.04 and Temporal Cloud.
+description: Deploy your TypeScript and Temporal based Slack App to production on a DigitalOcean Droplet using Ubuntu 20.04 or 22.04 and Temporal Cloud.
 sidebar_label: Part 2 -- Deploy a TypeScript Slack App to production on a DigitalOcean Droplet using Temporal Cloud
 tags:
   - typescript
   - deployment
-  - digital-ocean
+  - digitalocean
   - temporal-cloud
 keywords:
   - TypeScript Temporal Application deployment
@@ -28,9 +28,14 @@ keywords:
 ### Introduction
 
 When you are ready to deploy your TypeScript based Slack App to production, you need a server to host it.
-DigitalOcean provides flexible Cloud servers called Droplets that can be used to host your application.
+You will also need to connect to a Temporal Service to orchestrate and supervise your Temporal Application.
 
-In this tutorial we will walk through the steps to deploy your Temporal backed Slack App to a DigitalOcean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
+![Temporal development vs production](../build/images/temporal-slack-app-dev-vs-prod.svg)
+
+DigitalOcean provides flexible Cloud servers called Droplets that you can use to host your Slack application.
+You can then use Temporal Cloud to orchestrate your Temporal Application.
+
+In this tutorial you'll deploy your Temporal backed Slack App to a DigitalOcean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
 
 ## Prerequisites
 
@@ -65,12 +70,14 @@ Then, scroll down to the "CA Certificates" section, and copy in the PEM (certifi
 
 Connecting to Temporal Cloud requires a few changes to your Temporal Client and Worker, using the environment variables you set in the `.env` file.
 
-### Update your Temporal Client {#update-temporal-client}
+First, you'll update your Temporal Client.
 
 When developing locally, your Temporal Client, located in `bot/modules/temporal-client.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-dev-temporal-client-->
+
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts)
+
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -86,12 +93,15 @@ export async function initializeTemporalClient() {
   });
 }
 ```
+
 <!--SNIPEND-->
 
-When using Temporal Cloud, your Temporal Client should look like this:
+To use Temporal Cloud, change the Temporal Client code so it includes the namespace and certificate information:
 
 <!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
+
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts)
+
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -119,14 +129,17 @@ export async function initializeTemporalClient() {
   });
 }
 ```
+
 <!--SNIPEND-->
 
-### Update Temporal Worker {#update-temporal-worker}
+Then update the code for the Temporal Worker to change how it connects.
 
 When developing locally, your Temporal Worker, located in `temporal-application/src/worker.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-dev-worker-->
+
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts)
+
 ```ts
 import "dotenv/config";
 import path from "path";
@@ -149,12 +162,16 @@ async function run() {
 
 run();
 ```
+
 <!--SNIPEND-->
 
-When using Temporal Cloud, your Temporal Worker should look like this:
+To use Temporal Cloud, you'll change the connection information for your Worker in the same way you changed your client.
+Alter the `worker.ts` file so it looks like the following:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
+
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts)
+
 ```ts
 import "dotenv/config";
 import path from "path";
@@ -193,11 +210,31 @@ async function run() {
 
 run();
 ```
+
 <!--SNIPEND-->
+
+Now update each of your `.env` files with your Temporal Cloud credentials so you can test your application locally to ensure it works with Temporal Cloud.
+
+You should have the following Temporal Cloud credentials to add to your `.env` files:
+
+```shell
+TEMPORAL_CLOUD_ADDRESS="<your-temporal-cloud-address>"
+TEMPORAL_CLOUD_NAMESPACE="<your-temporal-cloud-namespace>"
+# Note that you will want to retain the multiline format for the PEM and Private Key
+TEMPORAL_CLOUD_PEM="<your-temoral-cloud-namespace-pem>"
+TEMPORAL_CLOUD_PRIVATE_KEY="<your-temporal-cloud-namespace-key>"
+```
+
+You should have a `.env` file in the root of your `temporal-application` and `bot` directories.
+
+You can now run your application locally to ensure it works with Temporal Cloud.
+If it does, then you can move on to setting up your Droplet.
 
 ## Create and set up Droplet {#create-droplet}
 
 Create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
+
+Once, created ensure the domain's A record points to the droplet's IP address.
 
 Then, set up the following on your Droplet:
 
@@ -207,9 +244,7 @@ Then, set up the following on your Droplet:
 - Set up Nginx as a reverse proxy
 - Create a domain certificate
 
-### Set up SSH {#set-up-ssh}
-
-Next, set up SSH so you can set up your server from your local terminal.
+First, set up SSH so you can set up your server from your local terminal.
 You can do that by following the [Add SSH Key to Droplet tutorial](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/).
 
 If you already have a private key on your local machine and you need to force SSH to use the new key, you can force it with the `-i` flag, for example:
@@ -218,10 +253,8 @@ If you already have a private key on your local machine and you need to force SS
 ssh -i ~/.ssh/id_rsa_digitalocean root@your-droplet-ip
 ```
 
-### Install Node.js {#install-nodejs}
-
 Since you are going to be deploying a TypeScript application, you need to install TypeScript into this environment.
-First, install Node.js, a JavaScript runtime for server-side programming.
+Next, install Node.js, a JavaScript runtime for server-side programming.
 
 There are several options for installing Node.js. The most straightforward is to install from your system package manager.
 For example, on Ubuntu:
@@ -237,23 +270,20 @@ If you need to install a different version of Node.js for compatibility reasons,
 - [How To Install Node.js on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04)
 - [How To Install Node.js on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
 
-### Install TypeScript and TS Node {#install-typescript}
-
-Next, use the Node.js package manager, `npm`, to install some packages that provide TypeScript compatibility. Install the `typescript` and `ts-node` packages globally, using the `-g` flag:
+Next, use the Node.js package manager, `npm`, to install some packages that provide TypeScript compatibility.
+Install the `typescript` and `ts-node` packages globally, using the `-g` flag:
 
 ```
 sudo npm install -g typescript ts-node
 ```
 
-**Update your domain's DNS**
+Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also using Nginx reverse proxy.
+You'll use Nginx to handle requests and hand them off to your Node.js application.
 
-Ensure the domain's A record points to the droplet's IP address.
-
-### Install and Configure Nginx as a Reverse Proxy {#set-up-nginx}
-
-Because you'll be deploying an application that handles external requests over HTTP/S, we strongly recommend also deploying an Nginx reverse proxy.
-
-Node.js applications typically bind to `localhost`. This means by default, your application will only be accessible locally on the machine it resides on. While you can specify a different port to allow access through the internet, Node.js's built in application server provides fairly minimal security and configurability. Using a reverse proxy isolates the application server from direct internet access, allows you to centralize firewall protection, and minimizes the attack surface for common threats such as denial of service attacks.
+Node.js applications typically bind to `localhost`.
+This means by default, your application will only be accessible locally on the machine it resides on.
+While you can specify a different port to allow access through the internet, Node.js's built in application server provides fairly minimal security and configurability.
+Using a reverse proxy isolates the application server from direct internet access, allows you to centralize firewall protection, and minimizes the attack surface for common threats such as denial of service attacks.
 
 From a client’s perspective, interacting with a reverse proxy is no different from interacting with the application server directly. It is functionally the same, and the client cannot tell the difference. A client requests a resource and then receives it, without any extra configuration required by the client. Nginx, a popular open source web server, can act as a reverse proxy with a nearly drop-in configuration.
 
@@ -262,9 +292,7 @@ Follow these tutorials, for Ubuntu 20.04 or 22.04 respectively, including settin
 - [Set up Nginx for Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
 - [Set up Nginx for Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04)
 
-### Create a domain certificate {#create-domain-cert}
-
-Use Let's encrypt certbot to create a certificate for your domain.
+Next, you can use **Let's Encrypt certbot** to create a certificate for your domain.
 This will effectively enable HTTPS for your domain and your DigitalOcean Droplet.
 
 Follow the tutorial for your Ubuntu version:
@@ -272,9 +300,9 @@ Follow the tutorial for your Ubuntu version:
 - [How To Secure Nginx with Let's Encrypt on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04)
 - [How To Secure Nginx with Let's Encrypt on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-22-04)
 
-## Step 4 -- Configure your Slack App on the Droplet {#configure-app}
-
 Now that you have your Droplet set up, and you have your Temporal Cloud certificate, you can set up your Slack App on the Droplet.
+
+## Configure your Slack App on the Droplet {#configure-app}
 
 ### Clone the repo {#clone-repo}
 
