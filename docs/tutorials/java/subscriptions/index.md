@@ -6,7 +6,7 @@ tags: [Java, SDK]
 last_update:
   date: 2024-06-27
 title: Build an email subscription Workflow with Temporal and Java
-description: Implement an email subscription application with Temporal's Workflows, Activities, and Queries, and allow users to start  your business logic through a web action.
+description: Implement an email subscription application with Temporal's Workflows, Activities, and Queries, and allow users to start your business logic through a web action.
 sidebar_label: Build an email subscription Workflow with Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -118,7 +118,7 @@ With your project structure mocked up, you're ready to start adding content.
 
 ## Build your model content
 
-In this sections, you'll populate the `model` directory.
+In this section, you'll populate the `model` directory.
 You'll create a shared string constant class and three data classes: messages, email details, and Workflow details.
 
 **Create Constants.java for shared string constants**
@@ -471,7 +471,7 @@ public class Controller {
 <!--SNIPEND-->
 
 Initialize `WorkflowClient` private variable `client` with `@Autowired`.
-This lets the Temporal WorkflowClient use the specifications in `application.yml`.
+This lets the Temporal `WorkflowClient` use the specifications in `application.yml`.
 Each endpoint uses the `client` to handle actions like starting, querying, and cancelling the Workflow.
 
 ### Build the subscription endpoint
@@ -615,7 +615,7 @@ Now that you've added the ability to unsubscribe from the email list, your API s
 ## Build the server app
 
 Create `Starter.java` in the subscription directory.
-It will run your SpringBoot app:
+It will run your Spring Boot app:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-starter-entry-point-app-->
 [src/main/java/subscription/Starter.java](https://github.com/temporalio/email-subscription-project-java/blob/main/src/main/java/subscription/Starter.java)
