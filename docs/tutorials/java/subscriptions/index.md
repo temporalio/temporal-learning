@@ -118,7 +118,7 @@ With your project structure mocked up, you're ready to start adding content.
 
 ## Build your model content
 
-In this sections, you'll populate the `model` directory.
+In this section, you'll populate the `model` directory.
 You'll create a shared string constant class and three data classes: messages, email details, and Workflow details.
 
 **Create Constants.java for shared string constants**
