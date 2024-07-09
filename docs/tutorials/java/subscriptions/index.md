@@ -471,7 +471,7 @@ public class Controller {
 <!--SNIPEND-->
 
 Initialize `WorkflowClient` private variable `client` with `@Autowired`.
-This lets the Temporal WorkflowClient use the specifications in `application.yml`.
+This lets the Temporal `WorkflowClient` use the specifications in `application.yml`.
 Each endpoint uses the `client` to handle actions like starting, querying, and cancelling the Workflow.
 
 ### Build the subscription endpoint
