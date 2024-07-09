@@ -70,9 +70,7 @@ Connecting to Temporal Cloud requires a few changes to your Temporal Client and 
 When developing locally, your Temporal Client, located in `bot/modules/temporal-client.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-dev-temporal-client-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts)
-
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -88,15 +86,12 @@ export async function initializeTemporalClient() {
   });
 }
 ```
-
 <!--SNIPEND-->
 
 When using Temporal Cloud, your Temporal Client should look like this:
 
 <!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts)
-
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -124,7 +119,6 @@ export async function initializeTemporalClient() {
   });
 }
 ```
-
 <!--SNIPEND-->
 
 ### Update Temporal Worker {#update-temporal-worker}
@@ -132,21 +126,17 @@ export async function initializeTemporalClient() {
 When developing locally, your Temporal Worker, located in `temporal-application/src/worker.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-dev-worker-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts)
-
 ```ts
 import "dotenv/config";
 import path from "path";
 import {Worker, NativeConnection} from "@temporalio/worker";
-import * as activities from "./activities/index";
 
 async function run() {
   try {
     const worker = await Worker.create({
       namespace: process.env.TEMPORAL_DEV_NAMESPACE || "",
       workflowsPath: path.resolve(__dirname, "./workflows"),
-      activities,
       taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
     });
 
@@ -159,20 +149,16 @@ async function run() {
 
 run();
 ```
-
 <!--SNIPEND-->
 
 When using Temporal Cloud, your Temporal Worker should look like this:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts)
-
 ```ts
 import "dotenv/config";
 import path from "path";
 import {Worker, NativeConnection} from "@temporalio/worker";
-import * as activities from "./activities/index";
 
 async function run() {
   try {
@@ -195,7 +181,6 @@ async function run() {
       connection,
       namespace: process.env.TEMPORAL_CLOUD_NAMESPACE || "",
       workflowsPath: path.resolve(__dirname, "./workflows"),
-      activities,
       taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
     });
 
@@ -208,7 +193,6 @@ async function run() {
 
 run();
 ```
-
 <!--SNIPEND-->
 
 ## Create and set up Droplet {#create-droplet}

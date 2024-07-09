@@ -2,7 +2,6 @@
 import "dotenv/config";
 import path from "path";
 import {Worker, NativeConnection} from "@temporalio/worker";
-import * as activities from "./activities/index";
 
 async function run() {
   try {
@@ -25,7 +24,6 @@ async function run() {
       connection,
       namespace: process.env.TEMPORAL_CLOUD_NAMESPACE || "",
       workflowsPath: path.resolve(__dirname, "./workflows"),
-      activities,
       taskQueue: `${process.env.ENV}-temporal-iq-task-queue`,
     });
 
