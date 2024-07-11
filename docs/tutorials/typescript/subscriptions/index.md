@@ -100,14 +100,14 @@ Create the `package.json` file in the root of your project and add the following
     ]
   },
   "dependencies": {
-    "@temporalio/activity": "~1.10.0",
-    "@temporalio/client": "~1.10.0",
-    "@temporalio/worker": "~1.10.0",
-    "@temporalio/workflow": "~1.10.0",
+    "@temporalio/activity": "^1.10.0",
+    "@temporalio/client": "^1.10.0",
+    "@temporalio/worker": "^1.10.0",
+    "@temporalio/workflow": "^1.10.0",
     "@types/node": "^20.14.2"
   },
   "devDependencies": {
-    "@temporalio/testing": "~1.10.0",
+    "@temporalio/testing": "^1.10.0",
     "@types/mocha": "8.x",
     "@tsconfig/node20": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -262,8 +262,6 @@ To create a new Workflow Definition, create a new file called `workflows.ts`. Th
 
 Create the `workflows.ts` file with the following code:
 
-<!--SNIPSTART subscription-ts-workflow-definition {"selectedLines": ["1-12", "14-22", "35-42", "57-59", "72-79", "91", "94-100"]}-->
-
 [src/workflows.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/workflows.ts)
 
 ```ts
@@ -278,8 +276,7 @@ import {
   sleep,
 } from "@temporalio/workflow";
 import type * as activities from "./activities";
-import {Customer} from "./shared";
-// ...
+import { Customer } from "./shared";
 const {
   sendWelcomeEmail,
   sendCancellationEmailDuringActiveSubscription,
@@ -289,7 +286,7 @@ const {
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "5 seconds",
 });
-// ...
+
 export async function subscriptionWorkflow(
   customer: Customer
 ): Promise<string> {
@@ -298,32 +295,31 @@ export async function subscriptionWorkflow(
   let billingPeriodNumber = 1;
   let billingPeriodChargeAmount =
     customer.subscription.initialBillingPeriodCharge;
-  // ...
   // Send welcome email to customer
   await sendWelcomeEmail(customer);
   await sleep(customer.subscription.trialPeriod);
-  // ...
   while (true) {
     if (billingPeriodNumber > customer.subscription.maxBillingPeriods) break;
+
+    if (subscriptionCancelled) {
+      await sendCancellationEmailDuringActiveSubscription(customer);
+      return `Subscription finished for: ${customer.id}, Total Charged: ${totalCharged}`;
+    }
 
     log.info(`Charging ${customer.id} amount ${billingPeriodChargeAmount}`);
 
     await chargeCustomerForBillingPeriod(customer, billingPeriodChargeAmount);
     totalCharged += billingPeriodChargeAmount;
     billingPeriodNumber++;
-    // ...
+    if (subscriptionCancelled) {
+      await sendSubscriptionOverEmail(customer);
+    }
+    return `Completed ${
+      workflowInfo().workflowId
+    }, Total Charged: ${totalCharged}`;
   }
-  // ...
-  if (!subscriptionCancelled) {
-    await sendSubscriptionOverEmail(customer);
-  }
-  return `Completed ${
-    workflowInfo().workflowId
-  }, Total Charged: ${totalCharged}`;
 }
 ```
-
-<!--SNIPEND-->
 
 Notice that in the above code, you are using the [`sleep`](https://typescript.temporal.io/api/namespaces/workflow#sleep) API for the first time.
 
@@ -544,18 +540,12 @@ In the above example, the `handle` variable is now set to the Workflow instance 
 
 Next, use the handle to send the `cancelSubscription` Signal to the Workflow, instructing it to cancel the subscription:
 
-<!--SNIPSTART subscription-ts-cancel-subscription-signal {"selectedLines": ["20-25"]}-->
+<!--SNIPSTART subscription-ts-cancel-subscription-signal {"selectedLines": ["21"]}-->
 
 [src/scripts/cancel-subscription.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/scripts/cancel-subscription.ts)
 
 ```ts
-// ...
-try {
-  await handle.signal(cancelSubscription);
-} catch (err: any) {
-  if (err.details) console.error(err.details);
-  else console.error(err);
-}
+await handle.signal(cancelSubscription);
 ```
 
 <!--SNIPEND-->
