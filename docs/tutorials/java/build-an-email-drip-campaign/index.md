@@ -17,26 +17,18 @@ image: /img/temporal-logo-twitter-card.png
 
 In this tutorial, you'll build an email drip campaign and a subscription web application using Temporal and Java.
 You'll create a web server using the Spring Boot framework to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application.
-Your server will handle requests from end users and interact with a Temporal Workflow to manage the email subscription process.
+Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process.
 Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or Task Queue.
 This reduces the complexity of the code you have to write and support.
 
-You'll create an endpoint for users to provide their email address and create a new Workflow execution using that email address.
-This will simulate sending an email message at certain intervals.
-The user can check on the status of their subscription, which you'll handle using a Query.
-They can end the subscription at any time by unsubscribing.
-You'll handle this by cancelling the Workflow Execution.
-You can view the user's entire process through Temporal's Web UI.
+You'll create an endpoint for users to give their email address, and then create a new Workflow execution using that email address which will simulate sending an email message at certain intervals.
+The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution.
+You can view the user's entire process through Temporal's Web UI. 
+For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
+
 By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 
-:::note NEXT STEPS
-
-This tutorial simulates sending emails.
-You can adapt this example to call a live email service.
-
-:::
-
-Find the code for this tutorial on GitHub at the [email-drip-campaign-project-java](https://github.com/temporalio/email-drip-campaign-project-java) repository.
+You'll find the code for this tutorial on GitHub in the [email-drip-campaign-project-java](https://github.com/temporalio/email-drip-campaign-project-java) repository.
 
 ## Prerequisites
 
@@ -49,8 +41,6 @@ Before starting this tutorial:
 - You'll use [Spring Initializer](https://start.spring.io/) to generate a project with a `build.gradle` file for Java.
   Add Spring Web dependencies before generating the project.
   After creating the `build.gradle` file, add your temporal-sdk and temporal-spring-boot dependencies.
-
-### Set up
 
 Your `build.gradle` dependencies section should look like this:
 
@@ -71,23 +61,17 @@ rootProject.name = 'email-subscription'
 
 With the Gradle configurations complete, you're ready to code a Spring Boot web application.
 
-### Build your file structure
+## Develop the Workflow
 
-A Workflow defines a sequence of steps defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition).
-These steps are carried out by running that code, which results in a Workflow Execution.
+A Workflow defines a sequence of steps defined by writing code, known as a Workflow Definition, and is carried out by running that code, which results in a Workflow Execution.
 
-The Temporal Java SDK recommends the use of a single class for parameters and return types.
-This lets you add class field members without breaking compatibility.
+The Temporal Java SDK recommends the use of a single data class for parameters and return types.
+This lets you add fields without breaking compatibility.
+Before writing the Workflow Definition, you'll define the data objects used by the Workflow Definitions.
+You'll also define the Task Queue name you'll use in your Worker.
 
-Before writing the Workflow Definition, you'll define classes used by your Workflow Definitions.
-You'll also define a shared utility class to hold the Task Queue name you'll use when starting Workflows and a data class to hold a message that Spring Boot can return in json format through your web service.
-
-Create a new package called `subscription` in the `src/main/java` directory.
-This package contains the code used for this application.
-Update the `group` variable in your `build.gradle` to `'subscription'`.
-
-Your complete project will look like this:
-
+Create the package directories for this project:
+ 
 ```
 src
 ├── main
@@ -113,17 +97,13 @@ src
         └── StarterTest.java
 ```
 
-Create the intermediate package directories.
-With your project structure mocked up, you're ready to start adding content.
+Build the model files, which will:
 
-## Build your model content
+1. Set the Task Queue field to `email_subscription`.
+1. Add `Message`, `WorkflowData`, and `EmailDetails` data classes.
 
-In this section, you'll populate the `model` directory.
-You'll create a shared string constant class and three data classes: messages, email details, and Workflow details.
-
-**Create Constants.java for shared string constants**
-
-Define a public string variable `TASK_QUEUE_NAME` in `Constants.java` and set it to `"email_subscription"`.
+Create a new file called `Constants.java` in `src/main/java/subscription/model`.
+Define a public string field `TASK_QUEUE_NAME` in `Constants.java` and set it to `"email_subscription"`.
 
 <!--SNIPSTART email-drip-campaign-java-send-email-shared-constants-->
 [src/main/java/subscription/model/Constants.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/model/Constants.java)
@@ -137,9 +117,7 @@ public class Constants {
 ```
 <!--SNIPEND-->
 
-**Create Message.java, a message data class**
-
-The message class stores message data to return using the Spring Boot web service:
+Create a new file called `Message.java` in `src/main/java/subscription/model`:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-message-data-class-->
 [src/main/java/subscription/model/Message.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/model/Message.java)
@@ -147,6 +125,7 @@ The message class stores message data to return using the Spring Boot web servic
 package subscription.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class Message {
     public String message;
 
@@ -163,14 +142,7 @@ public class Message {
 ```
 <!--SNIPEND-->
 
-**Create EmailDetails.java, a subscription data class**
-
-The email data class stores several members:
-
-  - email: as a string to pass a user's email
-  - message: as a string to pass a message to the user
-  - count: as an integer to track the number of emails sent
-  - subscribed: as a boolean to track whether the user is currently subscribed
+Create a new file called `EmailDetails.java` in `src/main/java/subscription/model`:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-subscriber-details-data-class-->
 [src/main/java/subscription/model/EmailDetails.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/model/EmailDetails.java)
@@ -178,6 +150,7 @@ The email data class stores several members:
 package subscription.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class EmailDetails {
     public String email;
     public String message;
@@ -196,17 +169,7 @@ public class EmailDetails {
 ```
 <!--SNIPEND-->
 
-When you query your Workflow to retrieve the current Workflow status, you'll use the `EmailDetails` class.
-
-**Create WorkflowData.java, a Workflow initialization data class**
-
-The Workflow data class stores the information needed to create a new subscription [Workflow](https://docs.temporal.io/workflow).
-For this sample, it stores one data field member:
-  - email: a string to pass the user's email
-  
-Looking at this, you might ask why this type exists, when the `EmailDetails` class already has the same field.
-The answer is that this is the starting data that initiates the Workflow.
-It does not and should not have any knowledge of the internal Workflow state, which is what the other type defines.
+Create a new file called `WorkflowData.java` in `src/main/java/subscription/model`:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-workflow-data-class-->
 [src/main/java/subscription/model/WorkflowData.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/model/WorkflowData.java)
@@ -214,6 +177,7 @@ It does not and should not have any knowledge of the internal Workflow state, wh
 package subscription.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class WorkflowData {
     public String email;
 
@@ -230,27 +194,43 @@ public class WorkflowData {
 ```
 <!--SNIPEND-->
 
-With the Task Queue and the data classes defined, you're ready to write your subscription Workflow Definition.
+The following describes each data class and their objects.
 
-## Create a Workflow Definition
+- `WorkflowData`: this data class starts the Workflow Execution.
+  - It will contain the following field:
+    - `email`: a string to pass the user's email
+- `EmailDetails`: this data class holds data about the current state of the subscription.
+  - It will contain the following field:
+    - `email`: as a string to pass a user's email
+    - `message`: as a string to pass a message to the user
+    - `count`: as an integer to track the number of emails sent
+    - `subscribed`: as a boolean to track whether the user is currently subscribed
+- `Message`: this data class holds data for a single message.
+  - It will contain the following field:
+    - `message`: a string to pass a message to the user
 
-Follow the steps in this section the build the code that allows your Workflow to manage each user subscription.
+When you Query your Workflow to retrieve the current statue of the Workflow, you'll use the `EmailDetails` data class.
 
-### Setup the Workflow Definition files.
+Now that you have the Task Queue and the data classes defined, you can write the Workflow Definition.
 
-Create a new package directory in `src/main/java/subscription` called `workflows`.
-Establish two news file called `SendEmailWorkflow.java` and `SendEmailWorkflowImpl.java`.
-These files provide the interface and implementation for your Workflow methods.
-Add the following code to the files to define your Workflow.
+To create a new Workflow Definition, create a new file called `SendEmailWorkflow.java` and `SendEmailWorkflowImpl.java`.
+These files will contain the `SendEmailWorkflow` class, attributes, and implementation.
 
-**Create the Workflow Definition Interface**
+Use the `SendEmailWorkflowImpl.java` file to write deterministic logic inside your Workflow Definition and to execute the Activity.
 
-The interface `SendEmailWorkflow`, annotated with `@WorkflowInterface`, defines the `run()` method entry point for the Workflow.
-The `run()` method, annotated with `@WorkflowMethod`, accepts the email address as an argument:
+Add the following code to define the Workflow:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-subscription-workflow-interface-->
 [src/main/java/subscription/workflows/SendEmailWorkflow.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/workflows/SendEmailWorkflow.java)
 ```java
+package subscription.workflows;
+
+import subscription.model.EmailDetails;
+import subscription.model.WorkflowData;
+import io.temporal.workflow.QueryMethod;
+import io.temporal.workflow.WorkflowInterface;
+import io.temporal.workflow.WorkflowMethod;
+
 @WorkflowInterface
 public interface SendEmailWorkflow {
 
@@ -263,14 +243,22 @@ public interface SendEmailWorkflow {
 ```
 <!--SNIPEND-->
 
-**Create the Workflow Definition Implementation**
-
-Add your `SendEmailWorkflow` implementation to `SendEmailWorkflowImpl.java`.
-This code implements the Workflow Definition used by `SendEmailWorkflow` Executions.
-
 <!--SNIPSTART email-drip-campaign-java-send-email-subscription-workflow-implementation-->
 [src/main/java/subscription/workflows/SendEmailWorkflowImpl.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/workflows/SendEmailWorkflowImpl.java)
 ```java
+package subscription.workflows;
+
+import io.temporal.spring.boot.WorkflowImpl;
+import subscription.activities.SendEmailActivities;
+import subscription.model.EmailDetails;
+import subscription.model.WorkflowData;
+import io.temporal.activity.ActivityOptions;
+import io.temporal.failure.CanceledFailure;
+import io.temporal.workflow.CancellationScope;
+import io.temporal.workflow.Workflow;
+
+import java.time.Duration;
+
 @WorkflowImpl(workers = "send-email-worker")
 public class SendEmailWorkflowImpl implements SendEmailWorkflow {
 
@@ -324,44 +312,51 @@ public class SendEmailWorkflowImpl implements SendEmailWorkflow {
 ```
 <!--SNIPEND-->
 
-The `run()` method initializes the email, message, subscribed, and count attributes of the private variable `emailDetails` for a `SendEmailWorkflowImpl` instance.
-The `SendEmailWorkflowImpl` class uses a loop to checks if the subscription is still active by checking if `emailDetails.subscribed` is still true.
-If so, it increments the count and starts the `sendEmail()` Activity with the current object.
+The `run()` method, annotated with `@WorkflowMethod`, takes in the email address as an argument.
+This method initializes the `email`, `message`, `subscribed`, and `count` fields of the `emailDetails` instance.
 
-The `activities` variable is initialized with the `SendEmailActivities` definition and `ActivityOptions`.
-The options specify a start to close timeout of 10 seconds.
-This tells the Temporal Server to time out the Activity 10 seconds from when the Activity starts.
+The `SendEmailWorkflow` class has a loop that checks if the subscription is active by checking if `emailDetails.subscribed` is true.
+If it is, it starts the `sendEmail()` Activity.
 
-The loop also includes a `Workflow.sleep()` statement that causes the Workflow to pause for a set amount of time between email.
+The while loop increments the `count` and calls the `sendEmail()` Activity with the current `EmailDetails` object.
+The loop continues as long as `emailDetails.subscribed` is true.
+
+The `run` method executes the `sendEmail()` Activity with the following parameters:
+
+- The `EmailDetails` data class
+
+A `start_to_close_timeout` parameter tells the Temporal Server to time out the Activity 10 seconds from when the Activity starts.
+
+The loop also includes a `Workflow.sleep()` statement that causes the Workflow to pause for a set amount of time between emails. 
 You can define this in seconds, days, months, or even years, depending on your business logic.
 
-If there's a cancellation request, the request throws a `CanceledFailure` error which you can catch and respond.
+If there's a cancellation request, the request throws a `CanceledFailure` error, which you can catch and respond.
+In this application, you'll use cancellation requests to unsubscribe users.
+You'll send one last email when they unsubscribe, before completing the Workflow Execution.
 
-In this application, you use cancellation requests to unsubscribe users.
-By using a detached cancellation scope, the Workflow can call the `sendEmail()` Activity to send one last email when users unsubscribe, before completing the Workflow Execution.
+Since the user's email address is set to the Workflow Id, attempting to subscribe with the same email address twice will result in a `Workflow Execution already started` error and prevent the Workflow Execution from spawning again.
 
-The user's email address is set to the Workflow Id.
-Attempting to subscribe with the same email address twice results in a Workflow Execution already started error.
-This prevents the Workflow Execution from spawning again.
-Only one running Workflow Execution per email address can exist within the associated Namespace.
+Therefore, only one running Workflow Execution per email address can exist within the associated Namespace.
+This ensures that the user won't receive multiple email subscriptions.
 This also helps reduce the complexity of the code you have to write and maintain.
 
 With this Workflow Definition in place, you can now develop an Activity to send emails.
 
-## Develop an email-sending Activity
+## Develop an Activity
 
 You'll need an Activity to send the email to the subscriber so you can handle failures.
-Create a new package directory in the `src/main/java/subscription` directory called `activities`.
-There, create your Java interface and implementation source pair.
-Name the files `SendEmailActivities.java` and `SendEmailActivitiesImpl.java`.
 
-**Create the Activity interface**
-
-Add the following code to `SendEmailActivities.java`:
+Create `SendEmailActivities.java` and `SendEmailActivitiesImpl.java` in `src/main/java/subscription/activities`:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-activities-interface-->
 [src/main/java/subscription/activities/SendEmailActivities.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/activities/SendEmailActivities.java)
 ```java
+package subscription.activities;
+
+import subscription.model.EmailDetails;
+import io.temporal.activity.ActivityInterface;
+import io.temporal.activity.ActivityMethod;
+
 @ActivityInterface
 public interface SendEmailActivities {
     @ActivityMethod
@@ -370,13 +365,16 @@ public interface SendEmailActivities {
 ```
 <!--SNIPEND-->
 
-**Create the Activity implementation**
-
-Add the following code to `SendEmailActivitiesImpl.java`:
-
 <!--SNIPSTART email-drip-campaign-java-send-email-activities-implementation-->
 [src/main/java/subscription/activities/SendEmailActivitiesImpl.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/activities/SendEmailActivitiesImpl.java)
 ```java
+package subscription.activities;
+
+import io.temporal.spring.boot.ActivityImpl;
+import org.springframework.stereotype.Component;
+import subscription.model.EmailDetails;
+import java.text.MessageFormat;
+
 @Component
 @ActivityImpl(workers = "send-email-worker")
 public class SendEmailActivitiesImpl implements SendEmailActivities {
@@ -393,13 +391,14 @@ public class SendEmailActivitiesImpl implements SendEmailActivities {
 <!--SNIPEND-->
 
 This implementation only prints a message, but you could replace the implementation with one that uses an email API.
+
 Each iteration of the Workflow loop will execute this Activity, which simulates sending a message to the user.
 
-Now that you have the Activity Definition and Workflow Definition, it's time to write the Worker process.
+Now that you have the Activity Definition and Workflow Definition, it's time to write the Worker.
 
-## Create your Temporal Worker
+## Create the Worker to handle the Workflow and Activity Executions
 
-Gradle and Temporal's' Java SDK [Spring Boot integration package](https://github.com/temporalio/sdk-java/tree/master/temporal-spring-boot-autoconfigure-alpha) let you write a Worker process for your Workflows and Activities without a dedicated Worker class.
+Temporal's Java SDK [Spring Boot integration package](https://github.com/temporalio/sdk-java/tree/master/temporal-spring-boot-autoconfigure-alpha) let you write a Worker process for your Workflows and Activities without a dedicated Worker class.
 This simplifies the steps needed to run your Temporal Spring Boot application.
 Your Worker will start automatically by running your Spring Boot application.
 Create a new file in the `src/main/resources` directory called `application.yml` and provide the specifications of your application.
@@ -427,17 +426,26 @@ Hand-match the `task-queue:` string to the `TASK_QUEUE_NAME` defined in `Constan
 Since this implementation uses Spring Boot, the Java and YAML sources cannot share the string constant.
 Both the Workflows and Activities packages must be specified separately under `packages:`.
 
-For a Spring-integrated Worker to run your Workflows and Activities, you must use the `@WorkflowImpl(workers = "send-email-worker")` and `@ActivityImpl(workers = "send-email-worker")` decorations in your Workflow and Activity implementation classes.
+For a Spring-integrated Worker to run your Workflows and Activities, you must use the `@WorkflowImpl(workers = "send-email-worker")` and `@ActivityImpl(workers = "send-email-worker")` annotations in your Workflow and Activity implementation classes.
 
-Now that you've written the logic to execute the Workflow and Activity Definitions, build the gateway and your subscriber endpoints.
+Now that you've written the logic to execute the Workflow and Activity Definitions, try to build the gateway.
 
-## Build the API server
+## Build the API server to handle subscription requests
 
-This tutorial uses the Spring Boot web framework to build a web server.
-The server is the entry point for initiating Workflow Execution and communicating with the subscribe, get-details, and unsubscribe routes.
-It handles HTTP requests and performs the appropriate operations with the Workflow.
-Create `Controller.java` in Subscriptions.
-Add the necessary headers:
+This tutorial uses the Spring Boot web framework to build a web server that acts as the entry point for initiating Workflow Execution and communicating with the `subscribe`, `get-details`, and `unsubscribe` routes.
+The web server will handle HTTP requests and perform the appropriate operations with the Workflow.
+
+Create `Controller.java` in `src/main/java/subscription` to develop your SpringBoot endpoints.
+
+First, register the Temporal Client method to run before the first request to this instance of the application.
+A Temporal Client enables you to communicate with the Temporal Cluster.
+Communication with a Temporal Cluster includes, but isn't limited to, the following:
+
+- Starting Workflow Executions
+- Sending Queries to Workflow Executions
+- Getting the results of a Workflow Execution
+
+Add the following code to import your libraries and connect to the Temporal Server:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-headers-->
 [src/main/java/subscription/Controller.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/Controller.java)
@@ -455,34 +463,13 @@ import subscription.workflows.SendEmailWorkflow;
 ```
 <!--SNIPEND-->
 
-This code registers the Temporal Client to run before the first request to this instance of the application.
-A Temporal Client enables you to communicate with the Temporal Service.
-Communication with a Temporal Service includes, but isn't limited to, the following:
-
-- Starting a Workflow Execution: This initiates a business process
-- Getting the Result of Workflow Execution: This allows you to retrieve the outcome of a business process
-- Listing Workflow Executions: This enables you to view all the business processes or entities
-- Querying a Workflow Execution: This allows you to check the state of your business process
-- Signalling a Workflow Execution: This enables you to send data into a running business process
-
-<!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-responder-->
-[src/main/java/subscription/Controller.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/Controller.java)
-```java
-@RestController
-public class Controller {
-
-    @Autowired
-    WorkflowClient client;
-
-```
-<!--SNIPEND-->
-
 Initialize `WorkflowClient` private variable `client` with `@Autowired`.
 This lets the Temporal `WorkflowClient` use the specifications in `application.yml`.
-Each endpoint uses the `client` to handle actions like starting, querying, and cancelling the Workflow.
+You'll use the client in your endpoints.
 
-### Build the subscription endpoint
-Now that your connection to the Temporal Server is open, define a `/subscribe` endpoint as function, so that users can subscribe to the emails.
+First, build the `/subscribe` endpoint.
+
+In the `Controller.java` file, define a `/subscribe` endpoint so that users can subscribe to the emails:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-subscribe-->
 [src/main/java/subscription/Controller.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/Controller.java)
@@ -503,28 +490,29 @@ Now that your connection to the Temporal Server is open, define a `/subscribe` e
 ```
 <!--SNIPEND-->
 
-In the `startSubscription()` function, use the `WorkflowClient` to start our Workflow Execution asynchronously.
-The `WorkflowData` object is used to pass the email address given by the user to the Workflow Execution and sets the Workflow ID in our `WorkflowOptions`.
+In the `startSubscription()` method, use the `WorkflowClient` instance to start your Workflow Execution.
+The `WorkflowData` object is used to pass the email address given by the user to the Workflow Execution and sets the Workflow Id. 
 This ensures that the email is unique across all Workflows so that the user can't sign up multiple times, only receive the emails they've subscribed to, and when they cancel; they cancel the Workflow run.
-With this endpoint in place, users can send a `POST` request to `/subscribe` with an email address in the request body to start a new Workflow that sends an email to that address.
-But how would you get details about the subscription?
 
-In the next section, you'll query your Workflow to get back information on the state of things in the next section.
+With this endpoint in place, you can now send a POST request to `/subscribe` with an email address in the request body to start a new Workflow that sends an email to that address.
 
-### Add a Query
+But how would you get details about the subscription? In the next section, you'll query your Workflow to get back information on the state of things in the next section.
 
-A Query method let users get information about their subscription details.
-Queries can be used even after the Workflow completes, which is useful for when the user unsubscribes but still wants to retrieve information about their subscription.
-Queries should never mutate anything in the Workflow.
+## Add a Query
 
-This method is declared using the `@QueryMethod` annotation in the Workflow interface.
+Now create a method in which a user can get information about their subscription details.
+Add a new method called `details()` to the `SendEmailWorkflow` class and use the `@QueryMethod` annotation.
+
+To allow users to retrieve information about their subscription details, add a new method called `details()` in the `SendEmailWorkflow` class
+Annotate this method with `@QueryMethod`.
+
 
 ```java
     @QueryMethod
     public EmailDetails details();
 ```
 
-The `details()` Query method allows users to retrieve information about their subscription details:
+Add the implementation to the `SendEmailWorkflowImpl` class implementation:
 
 ```java
     @Override
@@ -534,18 +522,16 @@ The `details()` Query method allows users to retrieve information about their su
     }
 ```
 
-The `emailDetails` object is an instance of `EmailDetails`.
+The emailDetails object is an instance of `EmailDetails`.
+Queries can be used even if after the Workflow completes, which is useful for when the user unsubscribes but still wants to retrieve information about their subscription.
 
-```java
-private EmailDetails emailDetails = new EmailDetails();
-```
+Queries should never mutate anything in the Workflow.
 
-Now that you've added the ability to Query your Workflow, add the ability to initiate your Query from the Spring Boot application.
-
-### Add a details endpoint
+Now that you've added the ability to Query your Workflow, add the ability to Query from the Spring Boot application.
 
 To enable users to query the Workflow from the Spring Boot application, add a new endpoint called `/get_details` to the `Controller.java` file.
-Use the `client.newWorkflowStub()` function to return a `SendEmailWorkflow` object by a Workflow Id.
+
+Use the `client.newWorkflowStub()` method to return a Workflow by a Workflow Id.
 
 <!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-details-->
 [src/main/java/subscription/Controller.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/Controller.java)
@@ -559,21 +545,22 @@ Use the `client.newWorkflowStub()` function to return a `SendEmailWorkflow` obje
 ```
 <!--SNIPEND-->
 
-Using `client.newWorkflowStub()` retrieves a `SendEmailWorkflow` object that can be have the Query method called on it to get the value of the its variables.
-
-This object enables you to return all the information about the user's email subscription that's declared in the Workflow.
+Using the Workflow, call the `details()` Query method to get the value of the variables.
+This method enables you to return all the information about the user's email subscription that's declared in the Workflow.
 
 Now that users can subscribe and view the details of their subscription, you need to provide them with a way to unsubscribe.
 
-### Add an unsubscribe option
+## Unsubscribe users with a Workflow Cancellation Request
 
 Users will want to unsubscribe from the email list at some point, so give them a way to do that.
+
 You cancel a Workflow by sending a cancellation request to the Workflow Execution.
 Your Workflow code can respond to this cancellation and perform additional operations in response.
 This is how you will handle unsubscribe requests.
 
 With the `Controller.java` file open, add a new endpoint called `/unsubscribe` to the Spring Boot application.
-To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the unsubscribe endpoint to instruct a given email's workflow to be cancelled.
+
+To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on the `unsubscribe` endpoint to `cancel()` the Workflow:
 
 <!--SNIPSTART email-drip-campaign-java-send-email-constroller-for-services-unsubscribe-->
 [src/main/java/subscription/Controller.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/main/java/subscription/Controller.java)
@@ -593,7 +580,6 @@ To send a cancellation notice to an endpoint, use the HTTP `DELETE` method on th
 The `workflowStub.cancel()` method sends a cancellation request to the Workflow Execution that was started with the `/subscribe` endpoint.
 
 When the Temporal Service receives the cancellation request, it will cancel the Workflow Execution and throw a `CanceledFailure` error to the Workflow Execution, which your Workflow Definition already handles in the try/catch block.
-
 Here's the relevant section as a reminder:
 
 ```java
@@ -611,10 +597,10 @@ Here's the relevant section as a reminder:
             }
 ```
 
-With this code in place, users can send a `DELETE` request to the unsubscribe endpoint to cancel a Workflow.
-This allows users to unsubscribe from the email list and prevent any further unwanted emails.
+With this endpoint in place, users can send a `DELETE` request to `unsubscribe` with an email address in the request body to cancel the Workflow associated with that email address.
+This allows users to unsubscribe from the email list and prevent any further emails from sending.
 
-Now that you've added the ability to unsubscribe from the email list, your API server is complete, and you only need to add a class to run the server.
+Now that you've added the ability to unsubscribe from the email list, build your server app. 
 
 ## Build the server app
 
@@ -645,17 +631,20 @@ Next, test your application code to ensure it works as expected.
 ## Create an integration test
 
 Integration testing is an essential part of software development that helps ensure that different components of an application work together correctly.
+
 The Temporal Java SDK includes classes and methods that help you test your Workflow Executions.
+
 Workflow testing can be done in an integration test fashion against a test server or from a given Client.
 
 In this section, you'll write an integration test using the Temporal Java SDK to test the cancellation of a Workflow.
 Now, add tests to the application to ensure the Cancellation works as expected.
 
-To set up the test environment, create a file in the `src/test/java` directory called `StarterTest.java`
+To set up the test environment, create a file in the `src/test/java` directory called `StarterTest.java`.
+
 The Temporal Java SDK includes classes and methods that help you test your Workflow Executions.
 In this section, you will import the necessary modules and classes to test the cancellation of a Workflow.
 
-In this code, you are defining two test functions `testCreateEmail()` and `testCancelWorkflow()` that use the Temporal SDK to create and cancel a Workflow Execution.
+In this code, you are defining two test methods `testCreateEmail()` and `testCancelWorkflow()` that use the Temporal SDK to create and cancel a Workflow Execution.
 
 <!--SNIPSTART email-drip-campaign-java-send-email-tests-->
 [src/test/java/StarterTest.java](https://github.com/temporalio/email-drip-campaign-project-java/blob/main/src/test/java/StarterTest.java)
@@ -746,24 +735,30 @@ public class StarterTest {
 ```
 <!--SNIPEND-->
 
-The `testCreateEmail()` function creates a Workflow Execution by starting the `SendEmailWorkflow` with some test data.
-The function then asserts that the status of the Workflow Execution is `RUNNING`.
-The `testCancelWorkflow()` function also starts a Workflow Execution, but it then immediately cancels it using the `cancel()` method on the `WorkflowStub`.
-It then enters a while loop to repeatedly get the status of the Workflow Execution until the status is returned as `CANCELED`.
+The `testCreateEmail()` method creates a Workflow Execution by starting the `SendEmailWorkflow` with some test data.
+The method then asserts that the status of the Workflow Execution is `RUNNING`.
 
-Now that you've created a test function for the Workflow Cancellation, run the test to see if that works.
-Run `./gradlew test --info` from the command line to execute your tests and view the info on your test's execution.
+The `testCancelWorkflow()` method also starts a Workflow Execution, but it then immediately cancels it using the `cancel()` method on the `WorkflowStub`.
+It then waits for the Workflow Execution to complete and asserts that the status is `CANCELED`.
+Finally, the method checks that the Workflow Execution was cancelled due to a `CancelledError`.
 
-Gradle will automatically run your tests without displaying execution information every time you run `gradle build`. 
-Use this command as an alternative if you are only interested in the successful result of the tests.
+Now that you've created a test method for the Workflow Cancellation, run the test to see if that works.
 
-Congratulations!
+
+To test the method, run `./gradlew test --info` from the command line to automatically discover and execute tests.
+
+```output
+BUILD SUCCESSFUL in 5s
+4 actionable tasks: 4 executed
+```
+
 You've successfully written, executed, and passed a Cancellation Workflow test, just as you would any other code written in Java.
 Temporal's Java SDK provides a number of classes and methods that help you test your Workflow Executions.
 By following the best practices for testing your code, you can be confident that your Workflows are reliable and performant.
 
 ## Conclusion
 
-This tutorial demonstrated how to build an email subscription web application using Temporal, Java, Spring Boot, and Gradle.
-By leveraging Temporal's Workflows, Activities, and Queries, the tutorial showed how to create a web server that interacts with Temporal to manage the email subscription process.
+This tutorial demonstrates how to build an email subscription web application using Temporal, Java, Spring Boot, and Gradle.
+By leveraging Temporal's Workflows, Activities, and Queries, the tutorial shows how to create a web server that interacts with Temporal to manage the email subscription process.
+
 With this knowledge, you will be able to take on more complex Workflows and Activities to create even stronger applications.
