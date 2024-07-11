@@ -5,7 +5,7 @@ keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
 last_update:
   date: 2024-07-10
-title: Build a Subscription Workflow with TypeScript
+title: Build a Recuring Billing Subscription Workflow with TypeScript
 description: Implement a subscription application using Temporal's Workflows, Activities, Signals, and Queries, enabling the payment workflow to be canceled or modified during execution.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -18,35 +18,26 @@ Managing subscription-based services requires precision and fault tolerance at e
 
 In this tutorial, you'll build a phone subscription management application using TypeScript. You'll handle the entire subscription lifecycle, from welcoming new users to managing billing and cancellations, ensuring that your application remains reliable even during failures.
 
-To achieve this, you will leverage Temporal, an open-source platform that provides fault tolerance and ensures the successful completion of long-running processes despite failures or network issues. Temporal is ideal for critical business operations because it abstracts the complexity of managing state and retries, allowing developers to focus on core business logic rather than infrastructure concerns.
+To achieve this, you will leverage Temporal, an open-source platform that ensures the successful completion of long-running processes despite failures or network issues. Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a power outage. It offers scalability to handle high volumes of Workflows concurrently, making it ideal for cases like the subscription service if it had thousands of customers.
 
-## Why Use Temporal for Subscription Management?
+## Prerequisites
 
-Temporal's features make it particularly suitable for critical business operations for several reasons:
+- [Set up a local development environment for Temporal and TypeScript](https://learn.temporal.io/getting_started/typescript/dev_environment/).
+- Complete the [Hello World](https://learn.temporal.io/getting_started/typescript/hello_world_in_typescript/) tutorial to ensure you understand the basics of creating Workflows and Activities with Temporal.
 
-- **_Fault Tolerance_**: Temporal automatically retries failed tasks, ensuring that transient issues do not result in data loss or incomplete processes. This is crucial for maintaining reliable service.
-- **_Durability_**: Workflow state is persisted to a durable store, allowing Workflows to resume from the last known state after a failure, whether it's a system crash or network outage.
-- **_Scalability_**: Temporal can handle high volumes of Workflows concurrently, making it scalable to meet the demands of growing businesses. If the subscription application is used by thousands of customers, and there is a need to have many servers available to handle the load, Temporal can scale out indefinitely.
-- **_Support for Entity Pattern_**: Temporal's support for Workflow Entities allows you to map and represent entities within your business domain, such as a customer or a subscription. These Workflows are long-lived, adapting to the lifecycle of the business entity they represent, from a few seconds to many years.
-
-## Tutorial Objectives
-
-In this tutorial, you will:
-
-- **Explore Temporal Workflow APIs**: Use Signals, Queries, Condition, and Sleep to enable your application to respond to external systems and dynamically react to changing conditions.
-- **Build a Realistic Application**: Develop a monthly subscription payments Workflow using Temporal.
+## Tutorial objectives
 
 Your task is to write a Workflow for a limited time subscription (e.g., a 36-month Phone plan) that satisfies these conditions:
 
 1. When the user signs up:
 
-- Send a welcome email.
-- Start a free trial for `trialPeriod`.
+    - Send a welcome email.
+    - Start a free trial for `trialPeriod`.
 
 2. During the trial period:
 
-- If the user cancels during the trial, **send a trial cancellation email** and complete the Workflow.
-- If the `trialPeriod` expires without cancellation, start the billing process.
+    - If the user cancels during the trial, **send a trial cancellation email** and complete the Workflow.
+    - If the `trialPeriod` expires without cancellation, start the billing process.
 
 3. Billing Process:
    - As long as you have not exceeded `maxBillingPeriods`,
@@ -60,16 +51,94 @@ Your task is to write a Workflow for a limited time subscription (e.g., a 36-mon
 
 All of this has to be fault tolerant, scalable to millions of customers, testable, maintainable!
 
-By the end of this tutorial, you will have a clear understanding of how to use Temporal to create and manage long-running Workflows. You will also be able to enable real-time updates to ongoing Workflows using Temporal's Signals and Queries to query users' billing information, update billing amounts, and cancel users' subscriptions at any time.
+By the end of this tutorial, you will have a clear understanding of how to create and manage a long-running Workflow for your subscription application. You will also be able to enable real-time updates to ongoing Workflows to retrieve subscription details such as users' billing information, update billing amounts, and cancel users' subscriptions at any time.
 
 You'll find the code for this tutorial on GitHub in the [subscription-workflow-project-template-typescript](https://github.com/temporalio/subscription-workflow-project-template-typescript) repository.
 
-## Prerequisites
+## Create your project
 
-- [Set up a local development environment for Temporal and TypeScript](https://learn.temporal.io/getting_started/typescript/dev_environment/).
-- Complete the [Hello World](https://learn.temporal.io/getting_started/typescript/hello_world_in_typescript/) tutorial to ensure you understand the basics of creating Workflows and Activities with Temporal.
+In a terminal, create a new project directory called `subscription-workflow-with-temporal`:
 
-## Define External Interactions
+```command
+mkdir subscription-workflow-with-temporal
+```
+
+Switch to the new directory:
+
+```command
+cd subscription-workflow-with-temporal
+```
+
+Create the `package.json` file in the root of your project and add the following code to the file that defines the project, sets up scripts, and defines the dependencies this project requires:
+
+[package.json](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/package.json)
+
+```json
+{
+  "name": "temporal-subscription-workflow-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc --build",
+    "build.watch": "tsc --build --watch",
+    "start": "ts-node src/worker.ts",
+    "start.watch": "nodemon src/worker.ts",
+    "workflow": "ts-node src/scripts/execute-workflow.ts",
+    "querybillinginfo": "ts-node src/scripts/query-billinginfo.ts",
+    "cancelsubscription": "ts-node src/scripts/cancel-subscription.ts",
+    "updatechargeamount": "ts-node src/scripts/update-chargeamt.ts",
+    "lint": "eslint .",
+    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts",
+    "watch": [
+      "src"
+    ]
+  },
+  "dependencies": {
+    "@temporalio/activity": "~1.10.0",
+    "@temporalio/client": "~1.10.0",
+    "@temporalio/worker": "~1.10.0",
+    "@temporalio/workflow": "~1.10.0",
+    "@types/node": "^20.14.2"
+  },
+  "devDependencies": {
+    "@temporalio/testing": "~1.10.0",
+    "@types/mocha": "8.x",
+    "@tsconfig/node20": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-deprecation": "^1.2.1",
+    "nodemon": "^3.1.3",
+    "mocha": "8.x",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
+```
+
+Review the scripts section of the `package.json`. These are the `npm` commands you'll use to build, lint, and start your application code.
+
+Next, examine the packages listed as dependencies. These are the packages that compose the Temporal TypeScript SDK, and each package maps to the four parts of a Temporal application: an Activity, Client, Worker, and Workflow. You will explore each component in this subscription, and how they work together to create a fault-tolerant Workflow for your subscription application.
+
+Save the file, then download the dependencies specified in the `package.json` file with the command:
+
+```command
+npm install
+```
+
+Downloading the dependencies can take a few minutes to complete. Once the download is done, you will have new a `package-lock.json` file and a `node_modules` directory.
+
+Your project workspace is configured, so you're ready to start creating your application.
+
+## Define external interactions
 
 You will begin by defining the functions that handle interactions with external systems. These functions are called [Activities](https://docs.temporal.io/dev-guide/typescript/foundations/#develop-activities).
 
@@ -95,7 +164,7 @@ export async function sendCancellationEmailDuringTrialPeriod(
 
 <!--SNIPEND-->
 
-## Define Your Application Logic
+## Define your application logic
 
 A Workflow defines a sequence of steps defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition). These steps are executed as a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
@@ -227,10 +296,6 @@ export async function subscriptionWorkflow(
 
 <!--SNIPEND-->
 
-Now, you will explore how to use Timers, Signals, and Queries to interact with the Workflow during its execution.
-
-## Manage Workflow Delays with Timers
-
 Notice that in the above code, you are using the [`sleep`](https://typescript.temporal.io/api/namespaces/workflow#sleep) API for the first time.
 
 :::note The importance of deferred execution
@@ -257,7 +322,7 @@ await sleep(customer.subscription.trialPeriod);
 
 Now, you will look into how to query your Workflow to retrieve information such as the Workflow ID, the billing period, and the total amount charged. This allows you to interact with the Workflow while it is running and get real-time updates on its status and progress.
 
-## Retrieve Subscription Details
+## Retrieve subscription details
 
 A [Query](https://docs.temporal.io/encyclopedia/application-message-passing#queries) is a synchronous operation that is used to get the state or other details of a Workflow Execution without impacting its execution. Queries are typically used to access the state of an active Workflow Execution, but they can also be applied to closed Workflow Executions.
 
@@ -316,7 +381,7 @@ Queries can also be used after the Workflow completes, which is useful if a user
 
 Now that you've added the ability to query your Workflow, it's time to add Signals to your Workflow Definition as well to control the flow of your Workflow Execution.
 
-## Control Application Logic Flow
+## Control application logic flow
 
 A Signal is an asynchronous message sent to a running Workflow Execution, allowing you to change its state and control its flow. For example, in a subscription Workflow, you can send a Signal to change the subscription period. Note that a Signal can only deliver data to a Workflow Execution that has not already closed.
 
@@ -374,7 +439,7 @@ setHandler(updateBillingChargeAmount, (newAmount: number) => {
 
 You now know what a Query and Signal is, as well as how to define and handle them in your Workflow Definition. In the following sections, you will pause your Workflow until it receives a Signal, and you will send a Signal and Query.
 
-## Pause your Application Logic Until a Condition is Met
+## Wait for user input to continue application logic
 
 In many cases, you may want to pause the Workflow execution until a specific Signal is received or a certain condition is met. For example, in the `subscriptiptionWorkflow`, you might want to wait for the `subscriptionCancelled` Signal before invoking the `sendCancellationEmailDuringTrialPeriod` Activity.
 
@@ -411,11 +476,11 @@ if (
 
 In the above code, the condition method pauses the Workflow until either the `subscriptionCancelled` Signal is received or the trial period expires. Once the condition is met, the Workflow invokes the Activity to send a cancellation email. 
 
-To test this functionality, run your cancel-subscription script. You should see that the cancellation happens immediately when the Signal is received.
+To test this functionality, run your `cancel-subscription` script. You should see that the cancellation happens immediately when the Signal is received.
 
 You will will now send a Signal and Query.
 
-### Send Commands to Workflows
+## Send commands to Workflows
 
 Now, you will send your Signal from the Temporal [Client](https://docs.temporal.io/evaluate/development-features/temporal-client?_gl=1*143hp81*_gcl_au*MjEwNDA1NDEzLjE3MTM5ODYzOTk.*_ga*NDgwNzM3ODk0LjE3MDI0MDE5ODg.*_ga_R90Q9SJD3D*MTcyMDY0MTU1Ny4yOTguMC4xNzIwNjQxNTU3LjAuMC4w). A Temporal Client is a component available in each Temporal SDK that provides a set of APIs to communicate with a Temporal Service. You can use a Temporal Client in your application to perform various operations such as:
   - Start a subscription trial.
@@ -470,7 +535,7 @@ In this code, the Client sends the `cancelSubscription` Signal to the `subscript
 
 You now know how to obtain a handle on a Workflow Execution and send a Signal to it through the Client, enabling dynamic interaction with your running business processes.
 
-### Retrieve Details from Workflows
+## Retrieve details from Workflows
 
 You can also send a Query through the Client to retrieve information from a running or completed Workflow. The SDK provides the `WorkflowHandle.query` method to query a running or completed Workflow, allowing us to access details of the `subscriptionWorkflow`, without interrupting its execution.
 
