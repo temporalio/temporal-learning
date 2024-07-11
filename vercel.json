@@ -37,8 +37,8 @@
       "permanent": true
     },
     {
-      "source": "/tutorials/typescript/nextjs",
-      "destination": "/tutorials/typescript/build-one-click-order-app-nextjs",
+      "source": "/tutorials/typescript/nextjs/",
+      "destination": "/tutorials/typescript/build-one-click-order-app-nextjs/",
       "permanent": true
     },
     {
