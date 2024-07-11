@@ -165,7 +165,6 @@ Add the following configuration to the file:
   "include": ["src/**/*.ts"],
 }
 ```
-
 Your project workspace is configured, so you're ready to start creating your application.
 
 ## Define external interactions
@@ -193,8 +192,6 @@ export async function sendCancellationEmailDuringTrialPeriod(
 ```
 
 <!--SNIPEND-->
-
-Cre
 
 ## Define your application logic
 
