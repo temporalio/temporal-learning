@@ -4,261 +4,612 @@ title: Build a one-click order application with TypeScript and Next.js
 sidebar_position: 2
 keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
 tags:
-- TypeScript
-last_update:
-  date: 2021-10-01
+  - TypeScript
+title: Integrating Temporal into an existing Next.js application
 description: Explore how Temporal integrates into an existing Next.js application using Next.js API routes. This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
+last_update:
+  date: 2024-06-28
+description: Build a One-Click Buy application with Next.js and integrate Temporal using Next.js API routes to create a durable order processing backend.
 image: /img/temporal-logo-twitter-card.png
+repository: https://github.com/temporalio/nextjs-temporal-one-click-template/
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
 
-import { OutdatedNotice } from '@site/src/components'
+### Introduction
 
-<OutdatedNotice />
+When you're building an e-commerce application, you want to give customers a great user experience.
+You also need to make sure that any calls to external services, like databases, payment gateways, and other tools, are reliable.
 
-## Introduction
+[Next.js](https://nextjs.org/) is a popular choice for building full-stack web applications using Node.js and React. You can deliver a great experience across the stack by integrating a Temporal Workflow with Next.js.
+Temporal provides fault tolerance and ensures that long-running processes and background tasks complete successfully, even in the event of failures. This is ideal for critical business operations and transactions.
 
-In this tutorial, you'll explore how Temporal integrates into an **existing Next.js application** using Next.js API routes.  This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
-
-This tutorial is written for a reasonably experienced TypeScript/Next.js developer.  Whether you are using [Gatsby Functions](https://www.gatsbyjs.com/docs/reference/functions/), [Blitz.js API Routes](https://blitzjs.com/docs/api-routes) or just have a standard Express.js app, you should be able to adapt this tutorial with only minor modifications.
-
-:::tip Skip ahead
-
-**To skip straight to a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick)** or use the [package initializer](https://docs.temporal.io/typescript/package-initializer) to create a new project with the following command:
-
-```command
-npx @temporalio/create@latest nextjs-temporal-app --sample nextjs-ecommerce-oneclick
-```
-:::
+In this tutorial you'll build a back-end API using Nest API Routes that starts a Temporal Workflow.
+Then you'll build a quick user interface with React and Tailwind to call that API.
+When you're done, you'll have a framework you can follow for building full-stack web applications powered by Temporal.
 
 ## Prerequisites
 
+Before starting this tutorial:
+
 - [Set up a local development environment for developing Temporal applications using TypeScript](/getting_started/typescript/dev_environment/index.md)
+- Ensure you have a local Temporal Service running, and that you can access the Temporal Web UI from port `8233`.
 - Review the [Hello World in TypeScript tutorial](/getting_started/typescript/hello_world_in_typescript/index.md) to understand the basics of getting a Temporal TypeScript SDK project up and running.
 
-## Add Temporal to your Next.js project
+## Create your project
 
-Temporal doesn't prescribe folder structure; feel free to ignore or modify these instructions per your own needs.
+You'll use the Next.js project generator to create a basic Next.js application.
+Then you'll configure dependencies for the project and set up a Temporal project within the Next.js application.
 
-You can install Temporal's packages with a single dependency, then set up folders and files for your Workflow, Activity, and Worker code:
+Create a new Next.js project with the `create-next-app` tool. Call the project `nextjs-temporal`:
 
-```bash
-npm i @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity # in Next.js project root
-mkdir -p temporal/src # create folder, recursively
-cd temporal
-touch src/worker.ts src/workflows.ts src/activities.ts
+```command
+npx create-next-app@latest nextjs-temporal
 ```
 
-Configure TypeScript to compile from `temporal/src` to `temporal/lib` with a `tsconfig.json`.
+The project generator will prompt you with several questions. Accept the default values for each option.
+When the project generator completes, and the dependencies install, switch to the new project's root directory:
 
-Sample `tsconfig.json` to get you started:
+```command
+cd nextjs-temporal
+```
 
-```js
-// /temporal/tsconfig.json
+Install the `@tsconfig/node20` package as a developer dependency, as you'll use it as the foundation for a Temporal-specific `tsconfig` file you'll keep separate from the one generated by the Next.js project generator:
+
+```command
+npm install --save-dev @tsconfig/node20
+```
+
+Next, install [Nodemon](https://nodemon.io/) which you'll use to watch your files for changes and reload Temporal Workers:
+
+```command
+npm install --save-dev nodemon
+```
+
+With the dependencies installed, you can add Temporal to the project.
+
+In the root directory of your Next.js project, execute the following command to install Temporal and its dependencies:
+
+```command
+npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity
+```
+
+Now create a directory to hold your Temporal Workflows and Activities:
+
+```command
+mkdir -p temporal/src
+```
+
+Configure TypeScript to compile from `temporal/src` to `temporal/lib` by adding a new `tsconfig.json` in the `temporal/src` folder:
+
+```command
+touch temporal/tsconfig.json
+```
+
+Add the following configuration to the file:
+
+```json
 {
-  "extends": "@tsconfig/node16/tsconfig.json", // optional but nice to have
+  "extends": "@tsconfig/node20/tsconfig.json",
   "version": "4.4.2",
   "compilerOptions": {
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "composite": true,
     "rootDir": "./src",
     "outDir": "./lib"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"]
 }
 ```
 
-For convenience, you may want to set up some npm scripts to run the builds in your project root `package.json`.
+For convenience, set up some scripts to run the builds in your project root's `package.json`.
 
+Add the `npm-run-all` command to your project as a dependency:
 
-```js
-// /package.json
+```command
+npm install npm-run-all --save-dev
+```
+
+Then use `npm-run-all` to define scripts to run your Temporal build processes and run the Next.JS app alongside Temporal Workers.
+
+Locate your existing `scripts` section, which defines  scripts to run and build Next.js applications:
+
+```json
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+```
+
+Change the scripts so you can build and run your Next.js application and your Temporal Workers at the same time:
+
+```json
   "scripts": {
     "dev": "npm-run-all -l build:temporal --parallel dev:temporal dev:next start:worker",
     "dev:next": "next dev",
     "dev:temporal": "tsc --build --watch ./temporal/tsconfig.json",
     "build:next": "next build",
     "build:temporal": "tsc --build ./temporal/tsconfig.json",
-    "start": "npm run dev",
     "start:worker": "nodemon ./temporal/lib/worker",
+    "start": "next start",
     "lint": "eslint ."
   },
 ```
 
-In the above example we use `npm-run-all` and `nodemon` so that we are able to do 4 things:
+These scripts let you run the following steps with a single `npm run dev` command:
 
-- build Temporal once
-- start Next.js locally
-- start a Temporal Worker
-- rebuild Temporal files on change
+- build Temporal once.
+- start Next.js locally.
+- start a Temporal Worker.
+- rebuild Temporal files when they change.
 
-in a single `npm run dev` command.
+With your project configured, you can write your Temporal Workflows and Activities.
 
+## Define the business logic using Temporal
 
-## Write your first Workflow, Activity and Worker
+You'll use Temporal to power a one-click ordering process.
+You'll use a Temporal Workflow to represent each order.
 
-Inside of `/temporal/src/activities.ts` we'll write a simple Activity function to start with:
+[Workflows](https://docs.temporal.io/workflows) define the overall flow of your business process.
+Conceptually, a Workflow is a sequence of steps written in your programming language.
 
-```ts
-// /temporal/src/activities.ts
-import { Context } from '@temporalio/activity';
+Workflows orchestrate [Activities](https://docs.temporal.io/activities), which is how you interact with the outside world in Temporal.
+You use Activities to make API requests, access the file system, or perform other non-deterministic operations.
 
-export async function purchase(id: string): Promise<string> {
-  console.log(`Purchased ${id}!`);
-  return Context.current().info.activityId;
-}
+The Workflow you'll create in this tutorial will have a single Activity, `purchase`.
+
+Create the file `temporal/src/activities.ts`:
+
+```command
+touch temporal/src/activities.ts
 ```
 
-Activities are the only way to interact with the outside world in Temporal (e.g. making API requests, or accessing the filesystem).
-See the [Activities docs](https://docs.temporal.io/dev-guide/typescript/foundations//#develop-activities) for more info.
+Inside of `temporal/src/activities.ts`, add the following code to define the `purchase` function:
 
-Inside of `/temporal/src/workflows.ts` we'll write a Workflow function that calls this Activity:
-
+<!--SNIPSTART typescript-next-oneclick-activities -->
+[temporal/src/activities.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/activities.ts)
 ```ts
-// /temporal/src/workflows.ts
+import { activityInfo } from '@temporalio/activity';
+export async function purchase(id: string): Promise<string> {
+  console.log(`Purchased ${id}!`);
+  return activityInfo().activityId;
+}
+```
+<!--SNIPEND-->
+
+For this tutorial, the function prints a message to the console and returns the ID of the Activity.
+In a real application, this function would interact with a payment API and attempt to make a payment. You may also have other Activities that send emails or persist things to databases.
+
+Now define the `oneClickBuy` Workflow that calls this Activity. This is the Workflow you'll invoke from the Next.js API.
+Create the file `temporal/src/workflows.ts`:
+
+```command
+touch temporal/src/workflows.ts
+```
+
+Add the following code to `temporal/src/workflows.ts` to define the Workflow:
+
+<!--SNIPSTART typescript-next-oneclick-workflows -->
+[temporal/src/workflows.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/workflows.ts)
+```ts
 import { proxyActivities, sleep } from '@temporalio/workflow';
-import type * as activities from './activities'; // purely for type safety
+import type * as activities from './activities';
 
 const { purchase } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
 });
 
-export async function OneClickBuy(id: string): Promise<string> {
+export async function oneClickBuy(id: string): Promise<string> {
   const result = await purchase(id); // calling the activity
-  await sleep('10 seconds'); // demo use of timer
+  await sleep('10 seconds'); // sleep to simulate a longer response.
   console.log(`Activity ID: ${result} executed!`);
+  return result;
 }
 ```
+<!--SNIPEND-->
 
-Workflow code is bundled and run inside a [deterministic v8 isolate](https://docs.temporal.io/typescript/determinism) so we can persist and replay every state change.
-This is why Workflow code must be separate from Activity code, and why we have to `proxyActivities` instead of directly importing them.
-Workflows also have access to a special set of [Workflow APIs](https://docs.temporal.io/typescript/workflows#workflow-apis) which we recommend exploring next.
+This Workflow calls the `purchase` Activity and then uses `await sleep()` to create an artificial delay in the Workflow. A more complex Workflow would call more Activities.
 
-With your Workflows and Activities done, you can now write the Worker that will host both and poll the `tutorial` Task Queue:
+[Workflows must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints), so you perform non-deterministic work in Activities.
+The TypeScript SDK bundles Workflow code and runs it inside a [deterministic sandbox](https://docs.temporal.io/develop/typescript/core-application#workflow-logic-requirements). This sandbox can help detect if you're using nondeterministic code.
+This is why you must separate Workflow code from Activity code, and why you have to use the `proxyActivities` function to load your Activity functions instead of directly importing them. The Activities will be nondeterministic, so you can't run in the same sandbox as the Workflow code.
 
+With your Workflows and Activities in place, you can now write a [Worker Program](https://docs.temporal.io/workers#worker-program).
+You use a Worker Program to define a [Worker](https://docs.temporal.io/workers) which hosts your Activities and Workflows and polls the `ecommerce-oneclick` Task Queue to look for work to do.
+
+You'll need to use the Task Queue name in your Worker Program, and any time you interact with a Workflow from your Next.js application. To guarantee you use it consistently, create a constant.
+
+Create the file `temporal/src/shared.ts`:
+
+```command
+touch temporal/src/shared.ts
+```
+
+Add the following line to the file to define the constant:
+
+<!--SNIPSTART typescript-next-oneclick-shared -->
+[temporal/src/shared.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/shared.ts)
 ```ts
-// /temporal/src/worker.ts
-import { Worker } from '@temporalio/worker';
+export const TASK_QUEUE_NAME = 'ecommerce-oneclick';
+```
+<!--SNIPEND-->
+
+Now define the Worker program. Create `temporal/src/worker.ts`:
+
+```command
+touch temporal/src/worker.ts
+```
+
+In `temporal/src/worker.ts`, define the Worker Program:
+
+<!--SNIPSTART typescript-next-oneclick-worker -->
+[temporal/src/worker.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/worker.ts)
+```ts
+import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
+import { TASK_QUEUE_NAME } from './shared';
 
 run().catch((err) => console.log(err));
 
 async function run() {
-  const worker = await Worker.create({
-    workflowsPath: require.resolve('./workflows'), // passed to Webpack for bundling
-    activities, // directly imported in Node.js
-    taskQueue: 'tutorial',
+  const connection = await NativeConnection.connect({
+    address: 'localhost:7233',
+    // In production, pass options to configure TLS and other settings.
   });
-  await worker.run();
+  try {
+    const worker = await Worker.create({
+      connection,
+      workflowsPath: require.resolve('./workflows'),
+      activities,
+      taskQueue: TASK_QUEUE_NAME
+    });
+    await worker.run();
+  } finally {
+    connection.close();
+  }
 }
 ```
+<!--SNIPEND-->
 
-See the full [Worker docs](https://docs.temporal.io/dev-guide/typescript/foundations//#run-worker-processes) for more info.
-You should now be able to run your Worker with `npm run build:temporal && npm run start:worker`, but it's not very exciting because you have no way to start a Workflow yet.
+When the Worker finds [Workflow Tasks](https://docs.temporal.io/workers#workflow-task) or [Activity Tasks](https://docs.temporal.io/workers#activity-task) for the Workflows and Activities it hosts, it executes them.
 
-:::tip Pro tip
+Run your Worker with the following command to make sure that everything builds and there are no errors:
 
-You actually _can_ start a Workflow with [`tctl`](https://docs.temporal.io/tctl-v1/workflow/#start) with just a Worker running, and no Client code written!
-It is out of scope for this tutorial but try to `brew install tctl` and then `tctl workflow run --tq tutorial --wt OneClickBuy --et 60 -i '"Temporal CLI"'` if you enjoy developing with CLIs.
-
-:::
-
-## Write a Temporal Client inside a Next.js API Route
-
-We will use Next.js API routes to expose a serverless endpoint that can be called by our frontend and then communicate with Temporal on the backend:
-
-```bash
-# in Next.js project root
-mkdir pages/api
-touch pages/api/startBuy.ts
+```command
+npm run build:temporal && npm run start:worker`
 ```
 
-Now we will create a Client and start a Workflow Execution:
+The Worker runs, but it won't have any tasks to perform because you haven't started a Workflow yet.
 
+Next you'll make a Next.js API route that starts a Temporal Workflow.
+
+## Define the back-end API
+
+You'll use Next.js API routes to expose a serverless endpoint that your frontend can call and then communicate with Temporal on the back-end.
+
+You don't want to create a new Temporal Client on every API request, so create a function that creates a new Temporal Client or returns the existing one. In `temporal/src` add a new file called `client.ts`:
+
+```command
+touch temporal/src/client.ts
+```
+
+Add the following code to `temporal/src/client.ts` to define a `makeClient` function that creates the client, and a `getTemporalClient` function that retrieves it:
+
+<!--SNIPSTART typescript-next-oneclick-client -->
+[temporal/src/client.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/temporal/src/client.ts)
 ```ts
-// pages/api/startBuy.ts
-import { Connection, WorkflowClient } from '@temporalio/client';
-import { OneClickBuy } from '../../temporal/lib/workflows.js';
+import { Client, Connection } from '@temporalio/client';
 
-export default async function startBuy(req, res) {
-  const { itemId } = req.body; // TODO: validate itemId and req.method
-  const client = new WorkflowClient();
-  const handle = await client.start(OneClickBuy, {
-    workflowId: 'business-meaningful-id',
-    taskQueue: 'tutorial', // must match the taskQueue polled by Worker above
+const client: Client = makeClient();
+
+function makeClient(): Client {
+  const connection = Connection.lazy({
+    address: 'localhost:7233',
+    // In production, pass options to configure TLS and other settings.
+  });
+  return new Client({ connection });
+}
+
+export function getTemporalClient(): Client {
+  return client;
+}
+```
+<!--SNIPEND-->
+
+You'll use the `getTemporalClient` function in your Next.js application any time you need to interact with Temporal.
+
+Now build out the API route to buy an item. In the root of your application, add a new `app/api/startBuy` folder:
+
+```command
+mkdir -p app/api/startBuy
+```
+
+Then create the file `app/api/startBuy/route.ts`:
+
+```command
+touch app/api/startBuy/route.ts
+```
+
+Within the file, create a `POST` route that fetches a Temporal Client and uses it to start a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution):
+
+<!--SNIPSTART typescript-next-oneclick-api -->
+[app/api/startBuy/route.ts](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/api/startBuy/route.ts)
+```ts
+import { oneClickBuy } from '../../../temporal/src/workflows';
+import { getTemporalClient } from '../../../temporal/src/client';
+import { TASK_QUEUE_NAME } from '../../../temporal/src/shared';
+
+export async function POST(req: Request) {
+  interface RequestBody {
+    itemId: string;
+    transactionId: string;
+  }
+
+  let body: RequestBody;
+
+  try {
+    body = await req.json() as RequestBody;
+  } catch (error) {
+    return new Response("Invalid JSON body", { status: 400 });
+  }
+
+  const { itemId, transactionId } = body;
+
+  if (!itemId) {
+    return new Response("Must send the itemID to buy", { status: 400 });
+  }
+
+  await getTemporalClient().workflow.start(oneClickBuy, {
+    taskQueue: TASK_QUEUE_NAME,
+    workflowId: transactionId,
     args: [itemId],
-    // workflowId: // TODO: use business-meaningful user/transaction ID here
-  }); // kick off the purchase async
+  });
 
-  res.status(200).json({ workflowId: handle.workflowId });
+  return Response.json({ ok: true });
 }
 ```
+<!--SNIPEND-->
 
-Now if you have Next.js and Temporal running, you can at least start a Workflow Execution:
+The API route checks the JSON input and ensures a product ID exists. If it does, it then uses the Temporal Client to start the Workflow:
 
-```bash
-npm run dev # start Temporal and Next.js in parallel
-curl -d '{"itemId":"item123"}' -H "Content-Type: application/json" -X POST http://localhost:3000/api/startBuy
+`workflow.start` sends a request to the Temporal Service to start a Workflow Execution.
+The actual Workflow doesn't run until a Worker sees the Workflow Task in the Task Queue and starts working on it.
+This API endpoint immediately returns a response, even though the Workflow has a 10-second delay. If you change this to `workflow.execute`, the call will block until the Workflow finishes.
+That's because `workflow.start` resolves when the Temporal Service acknowledges that it's scheduled the Workflow Execution, whereas `workflow.execute` resolves only when the Workflow completes.
+
+Make sure you've saved all your changes.
+
+Now start Next.js and the Temporal Worker using the `npm run dev` script you defined:
+
+```command
+npm run dev
 ```
 
-The terminal that has your Temporal Worker will print `Purchased item123` if everything is working properly.
+:::info Connection issues
+If you receive an error like the following:
 
-## Call the API Route from the Next.js frontend
-
-If you are an experienced React/Next.js dev you should know what to do here.
-For tutorial purposes we will just assume you have an `itemId` to use here; in real life you are likely to pull this from some other data source like Shopify or a database.
-
-```ts
-// /pages/index.ts or whatever page you are on
-// inside event handler
-fetch('/api/startBuy', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ itemId }),
-});
+```output
+[start:worker] TransportError: tonic::transport::Error(Transport, hyper::Error(Connect,
+ConnectError("tcp connect error", Os { code: 61,
+kind: ConnectionRefused, message: "Connection refused" })))
 ```
 
-We recommend tracking the state of this API call and possibly toasting success, [per our sample code](https://github.com/temporalio/samples-typescript/blob/1f76cb6f78ef494074b937268c14fcc078e36956/nextjs-ecommerce-oneclick/pages/index.tsx#L143), but of course it is up to you what UX you want to provide.
-
-## Deploying your Temporal + Next.js app
-
-Your Next.js app, including Next.js API Routes with Temporal Clients in them, can be deployed anywhere Next.js can be deployed, including in serverless environments like Vercel or Netlify.
-
-:::important
-
-However, your Temporal Workers **must** be deployed in traditional "serverful" environments (e.g. with EC2, Digital Ocean or Render, not a serverless environment).
-
+This means the Temporal Client can't connect to the Temporal Service.
+Make sure you have a local Temporal Service running.
+Open a separate terminal window and start the service with `temporal server start-dev`.
 :::
 
-**Both Temporal Clients and Temporal Workers must be configured to communicate with a Temporal Server instance**, whether self-hosted or Temporal Cloud.
-You will need to configure gRPC connection address, namespace, and mTLS cert and key (strongly recommended).
+In another terminal window, use the `curl` command to make a request to the API endpoint, which starts the Temporal Workflow:
+
+```command
+curl -d '{"itemId":"1", "transactionId":"abc123"}' \
+     -H "Content-Type: application/json" \
+     -X POST http://localhost:3000/api/startBuy
+```
+
+The terminal that's running your application and Temporal Worker will print `Purchased 1`:
+
+```output
+[dev:next    ]  POST /api/startBuy 200 in 16ms
+[start:worker] Purchased 1!
+```
+
+Remember, because the API endpoint uses `workflow.start`, it's not blocking on the Workflow Execution itself, so you see an almost immediate response from the API.
+
+Now that you know the API can start Temporal Workflows, you can build the user interface.
+
+## Build the front-end interface
+
+You can call your Next.js API with `curl`, but that's not the user experience you want to present to shoppers.
+You'll use React components with Next.js to make a request to the API you just created to create the one-click buy experience.
+
+To call the API Route from the Next.js frontend, you'll use the `fetch` API to make a request to the `/api/startbuy` route when you click a button.
+
+Build out the front-end user interface. Open `app/page.tsx` and remove the contents of the file that the project generator created.
+Then at the top, add the following code to add directives and import the necessary libraries:
+
+<!--SNIPSTART typescript-next-oneclick-page-start -->
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
+```tsx
+'use client'
+import Head from 'next/head';
+import React, { useState, useRef } from 'react';
+import { v4 as uuid4 } from 'uuid';
+```
+<!--SNIPEND-->
+
+Next, define a TypeScript Interface for the Product's properties, a Type to define states for the purchase, and a collection of Products:
+
+<!--SNIPSTART typescript-next-oneclick-page-vars -->
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
+```tsx
+
+interface ProductProps {
+  product: {
+    id: number;
+    name: string;
+    price: string;
+  };
+}
+
+const products = [
+  {
+    id: 1,
+    name: 'PDF Book',
+    price: '$49',
+  },
+  {
+    id: 2,
+    name: 'Kindle Book',
+    price: '$49',
+  },
+];
+
+type ITEMSTATE = 'NEW' | 'ORDERING' |  'ORDERED' | 'ERROR';
+```
+<!--SNIPEND-->
+
+In a production application, your products would come from another part of your application, such as a database or a Shopify store.
+
+Next, define a `Product` component with the following code:
+
+<!--SNIPSTART typescript-next-oneclick-page-product -->
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
+```tsx
+const Product: React.FC<ProductProps> = ({ product }) => {
+  const itemId = product.id;
+  const [state, setState] = useState<ITEMSTATE>('NEW');
+  const [transactionId, setTransactionId] = React.useState(uuid4());
+
+  const buyProduct = () => {
+    setState('ORDERING');
+    fetch('/api/startBuy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ itemId, transactionId }),
+    })
+      .then(() => {
+        setState('ORDERED');
+      })
+      .catch(() => {
+        setState('ERROR');
+      });
+  };
+
+  const buyStyle = "w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
+  const orderingStyle = "w-full bg-yellow-500 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
+  const orderStyle = "w-full bg-green-500 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
+  const errorStyle = "w-full bg-white hover:bg-blue-200 bg-opacity-75 backdrop-filter backdrop-blur py-2 px-4 rounded-md text-sm font-medium text-gray-900 text-center";
+
+  return (
+    <div key={product.id} className="relative group">
+      <div className="mt-4 flex items-center justify-between text-base font-medium text-gray-900 space-x-8">
+        <h3>{product.name}</h3>
+        <p>{product.price}</p>
+      </div>
+      <div className="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden bg-gray-100">
+        <div className="flex items-end p-4" aria-hidden="true">
+          {
+            {
+              NEW:     ( <button onClick={buyProduct} className={buyStyle}> Buy Now </button> ),
+              ORDERING: ( <div className={orderingStyle}>Orderering</div> ),
+              ORDERED: ( <div className={orderStyle}>Ordered</div> ),
+              ERROR:   ( <button onClick={buyProduct} className={errorStyle}>Error! Click to Retry </button> ),
+            }[state]
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+<!--SNIPEND-->
+
+In this component, the `buyProduct` function makes the call to start the Temporal Workflow by making a request to the API route you defined.
+The component renders the product and displays a button for the customer to click.
+Based on the order state, the component replaces the button with confirmation message or a new button that lets the customer try again if there's an error. Tailwind styles help control how the buttons and messages look.
+
+Now add a `ProductList` component with the following code that renders each `Product` component in the list of products:
+
+<!--SNIPSTART typescript-next-oneclick-page-productlist -->
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
+```tsx
+const ProductList: React.FC = () => {
+  return (
+    <div className="bg-white">
+      <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+        <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 md:grid-cols-4">
+          {products.map((product) => (
+            <Product product={product} key={product.id} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+<!--SNIPEND-->
+
+Like the `Product` component. you're using Tailwind to style the product list.
+
+Finally, add the `Home` component to define the overall page structure and render the product list:
+
+<!--SNIPSTART typescript-next-oneclick-page-home -->
+[app/page.tsx](https://github.com/temporalio/nextjs-temporal-one-click-template/blob/main/app/page.tsx)
+```tsx
+const Home: React.FC = () => {
+  return (
+    <div className="pt-8 pb-80 sm:pt-12 sm:pb-40 lg:pt-24 lg:pb-48">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:static">
+        <Head>
+          <title>Temporal + Next.js One-Click Purchase</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <header className="relative overflow-hidden">
+          <div className="sm:max-w-lg">
+            <h1 className="text-4xl font font-extrabold tracking-tight text-gray-900 sm:text-6xl">
+              Temporal.io + Next.js One Click Purchase
+            </h1>
+            <p className="mt-4 text-xl text-gray-500">
+              Click on the item to buy it now.
+            </p>
+          </div>
+        </header>
+        <ProductList />
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+```
+<!--SNIPEND-->
+
+Ensure you've saved all your work.
+
+Visit `http://localhost:3000` in your browser and you'll see two products.
+Click their buttons and you'll execute the Temporal Workflows.
+The UI state will change almost immediately because the Next.js API route returns immediately, even though you've added an artificial delay to the Workflow.
+Log into the local Temporal Web UI running on `http://localhost:8233` and you'll see the entire Workflow Execution.
+
+You now have a Next.js application that uses Temporal Workflows to power one of its back-end processes.
+
+When you're moving from your local machine to either [Temporal Cloud](https:temporal.io/cloud) or a self-hosted Temporal Service, you'll need to configure Temporal Clients and Temporal Workers to communicate with the remote service.
+To connect to a Temporal Service using mTLS authentication, you will need to configure the connection address, Namespace, and mTLS certificates and keys.
+
+Review [Run Workers with Temporal Cloud for the TypeScript SDK](/getting_started/typescript/run_workers_with_cloud_typescript/index.md) for more details on creating certificates and connecting to Temporal Cloud.
+
+In this application, you'd change `temporal/src/worker.ts` to add certificate information:
 
 ```ts
-// before Worker.create call in worker.ts
 const connection = await NativeConnection.connect({
   address,
   tls: {
-    serverNameOverride,
-    serverRootCACertificate,
-    clientCertPair: {
-      crt: fs.readFileSync(clientCertPath),
-      key: fs.readFileSync(clientKeyPath),
-    },
-  },
-});
-
-// inside each Client call inside API Route
-const connection = await Connection.connect({
-  address,
-  tls: {
-    serverNameOverride,
-    serverRootCACertificate,
     clientCertPair: {
       crt: fs.readFileSync(clientCertPath),
       key: fs.readFileSync(clientKeyPath),
@@ -267,25 +618,41 @@ const connection = await Connection.connect({
 });
 ```
 
-[See the mTLS tutorial](https://docs.temporal.io/typescript/security#mtls-tutorial) for full details, or get in touch with us on Slack if you have reached this stage.
+Then you'd update the `makeClient` function in `temporal/src/client.ts` to include the same keys:
 
-## Production Concerns
+```ts
+function makeClient(): Client {
+  const connection = Connection.lazy({
+    address: 'localhost:7233',
+    tls: {
+      clientCertPair: {
+        crt: fs.readFileSync(clientCertPath),
+        key: fs.readFileSync(clientKeyPath),
+      },
+    },
+  });
+  return new Client({ connection });
+}
+```
 
-As you move into production with your app, please review our docs on:
-
-- [Securing](https://docs.temporal.io/typescript/security)
-- [Testing](https://docs.temporal.io/typescript/testing)
-- [Patching](https://docs.temporal.io/typescript/patching) (aka migrating code to new versions)
-- [Logging](https://docs.temporal.io/typescript/logging)
-- [Production Deploy Checklist](https://docs.temporal.io/typescript/production-deploy)
-
-You will also want to have a plan for **monitoring and scaling your Temporal Workers** that host and execute your Activity and Workflow code (separately from monitoring and scaling Temporal Server itself).
+Restart your application to establish the connections to the new Temporal Service.
 
 ## Conclusion
 
-At this point, you have a working full stack example of a Temporal Workflow running inside your Next.js app.
+At this point, you have a working full stack example of a Temporal Workflow running inside your Next.js app, and the beginnings of an order processing system.
+From here you can add more Activities to the Workflow, or use this project as the basis for a different kind of application that needs long-running processes.
 
-You can explore adding [Signals](https://docs.temporal.io/dev-guide/typescript/features//#signals)  [Queries](https://docs.temporal.io/dev-guide/typescript/features//#queries) to your Workflow, then adding a new API Route to call them.
-You can choose to set up one API Route per Signal or Query, or have one API Route handle all of them, Temporal has no opinion on how you set up routing.
+As you build out more features, you may find you need to change the state of an in-progress Workflow, or retrieve information from that Workflow.
+You can use [Signals](https://docs.temporal.io/develop/typescript#signals) to send asynchronous data to running Workflows, and you can use [Queries](https://docs.temporal.io/develop/typescript#queries) to check the state of a Workflow. You can map Signals and Queries to new Next.js API routes using the Temporal Client.
 
-Again, for a fully working example, you can check our [samples-typescript repo](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick).
+For a more detailed example, look at the Next.js E-Commerce One-Click example in the [samples-TypeScript repository](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick).
+
+You can deploy your Next.js app, including Next.js API Routes with Temporal Clients in them, anywhere you can deploy Next.js applications. This includes serverless environments like Vercel or Netlify. However, you **must deploy your Temporal Workers in traditional environments**, such as EC2, DigitalOcean, or Render. They won't work in a serverless environment.
+
+As you move into production with your app, you'll find the following documentation topics helpful:
+
+- [Securing your data](https://docs.temporal.io/develop/typescript/data-encryption)
+- [Testing your Workflows](https://docs.temporal.io/develop/typescript/testing-suite)
+- [Versioning your Workflows](https://docs.temporal.io/develop/typescript/versioning)
+- [Observability](https://docs.temporal.io/develop/typescript/observability)
+- [Production Deployment](https://docs.temporal.io/production-deployment)

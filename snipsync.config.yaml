@@ -7,6 +7,7 @@ origins:
     repo: money-transfer-project-java
   - owner: temporalio
     repo: hello-world-project-template-java
+    ref: main
   - owner: temporalio
     repo: money-transfer-project-template-ts
   - owner: temporalio
@@ -52,6 +53,9 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
     ref: cloud
+  - owner: temporalio
+    repo: nextjs-temporal-one-click-template
+    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'

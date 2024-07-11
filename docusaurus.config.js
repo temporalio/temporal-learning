@@ -3,27 +3,27 @@
 
 const path = require("path");
 const visit = require("unist-util-visit");
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require("prism-react-renderer/themes/github");
+const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 const FontPreloadPlugin = require("webpack-font-preload-plugin");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Learn Temporal',
+  title: "Learn Temporal",
   tagline: "Build invincible applications",
-  url: 'https://learn.temporal.io',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
+  url: "https://learn.temporal.io",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.png",
   trailingSlash: true,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'temporal', // Usually your GitHub org/user name.
-  projectName: 'temporal-learning', // Usually your repo name.
+  organizationName: "temporal", // Usually your GitHub org/user name.
+  projectName: "temporal-learning", // Usually your repo name.
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
   plugins: [
     function preloadFontPlugin() {
@@ -41,7 +41,7 @@ const config = {
     announcementBar: {
       id: "replay_announcement",
       content:
-        'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024">Submit a talk proposal</a> or <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">secure your ticket</a>.',
+        'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024"> <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">Secure your ticket</a>.',
       backgroundColor: "#141414",
       textColor: "#ffffff",
       isCloseable: true,
@@ -83,14 +83,14 @@ const config = {
         href: "https://temporal.io",
       },
       items: [
-        {to: '/', label: 'Home', position: 'left', activeBasePath: "none"},
-        {to: '/getting_started', label: 'Get started', position: 'left'},
-        {to: '/courses', label: 'Courses', position: 'left'},
-        {to: '/tutorials', label: 'Project-based tutorials', position: 'left'},
-        {to: '/examples', label: 'Example applications', position: 'left'},
+        {to: "/", label: "Home", position: "left", activeBasePath: "none"},
+        {to: "/getting_started", label: "Get started", position: "left"},
+        {to: "/courses", label: "Courses", position: "left"},
+        {to: "/tutorials", label: "Project-based tutorials", position: "left"},
+        {to: "/examples", label: "Example applications", position: "left"},
         {
-          href: 'https://docs.temporal.io',
-          label: 'Documentation',
+          href: "https://docs.temporal.io",
+          label: "Documentation",
         },
       ],
     },
@@ -143,8 +143,8 @@ const config = {
               href: "https://community.temporal.io/",
             },
             {
-              label: 'Ask an expert',
-              href: 'https://pages.temporal.io/ask-an-expert'
+              label: "Ask an expert",
+              href: "https://pages.temporal.io/ask-an-expert",
             },
           ],
         },
@@ -185,19 +185,18 @@ const config = {
             {
               label: "We're Hiring",
               href: "https://temporal.io/careers",
-            }
+            },
           ],
         },
         {
-          items: [
-          ],
+          items: [],
         },
       ],
     },
     algolia: {
       apiKey: "4a2fa646f476d7756a7cdc599b625bec",
       indexName: "temporal",
-      externalUrlRegex: 'temporal\\.io',
+      externalUrlRegex: "temporal\\.io",
       // contextualSearch: true, // Optional, If you have different version of docs etc (v1 and v2) doesn't display dup results
       appId: "T5D6KNJCQS", // Optional, if you run the DocSearch crawler on your own
       // algoliaOptions: {}, // Optional, if provided by Algolia
@@ -205,20 +204,20 @@ const config = {
   },
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         blog: false,
         docs: {
-          routeBasePath: '/', // Serve the docs at the site's root
-          sidebarPath: require.resolve('./sidebars.js'),
+          routeBasePath: "/", // Serve the docs at the site's root
+          sidebarPath: require.resolve("./sidebars.js"),
           /*editUrl: "https://github.com/temporalio/temporal-learning/blob/main", */
           exclude: [
-            '**/_*.{js,jsx,ts,tsx,md,mdx}',  // Exclude files starting with an underscore
-            '**/_*/**',                      // Exclude directories starting with an underscore
-            '**/*.test.{js,jsx,ts,tsx}',     // Exclude test files
-            '**/__tests__/**',               // Exclude test directories
-            '**/code/**/*.md'                // Exclude Markdown docs in code folders.
+            "**/_*.{js,jsx,ts,tsx,md,mdx}", // Exclude files starting with an underscore
+            "**/_*/**", // Exclude directories starting with an underscore
+            "**/*.test.{js,jsx,ts,tsx}", // Exclude test files
+            "**/__tests__/**", // Exclude test directories
+            "**/code/**/*.md", // Exclude Markdown docs in code folders.
           ],
           showLastUpdateAuthor: false,
           /**
@@ -250,11 +249,7 @@ const config = {
               require("remark-typescript-tools").transpileCodeblocks,
               {
                 compilerSettings: {
-                  tsconfig: path.join(
-                    __dirname,
-                    "docs",
-                    "tsconfig.json"
-                  ),
+                  tsconfig: path.join(__dirname, "docs", "tsconfig.json"),
                   externalResolutions: {},
                 },
                 fileExtensions: [".md", ".mdx"],
@@ -291,12 +286,12 @@ const config = {
           ],
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
         // gtag: {
-          // trackingID: "UA-163137879-1",
-          // // Optional fields.
-          // anonymizeIP: true, // Should IPs be anonymized?
+        // trackingID: "UA-163137879-1",
+        // // Optional fields.
+        // anonymizeIP: true, // Should IPs be anonymized?
         // },
         // Will be passed to @docusaurus/plugin-content-sitemap
         sitemap: {
@@ -319,7 +314,8 @@ const config = {
       "data-website-id": "91a88508-9cdc-441f-b1df-37aa9329e6bc",
       "data-project-name": "Temporal",
       "data-project-color": "#000000",
-      "data-project-logo": "https://avatars.githubusercontent.com/u/56493103?s=280&v=4",
+      "data-project-logo":
+        "https://avatars.githubusercontent.com/u/56493103?s=280&v=4",
       "data-modal-title": "Temporal's AI developer assistant",
       "data-modal-disclaimer":
         "I am Temporal's AI developer assistant. I can access developer docs, forum posts, product blogs, and SDK references. Responses are generated by combining various sources to provide the best possible answer, however I may not be fully accurate, so please use your best judgement. If you have feedback please give a thumbs up or down as I continue to improve.",
