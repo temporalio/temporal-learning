@@ -4,7 +4,7 @@ sidebar_position: 3
 keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
 last_update:
-  date: 2024-07-10
+  date: 2024-07-11
 title: Build a Recuring Billing Subscription Workflow with TypeScript
 description: Implement a subscription application using Temporal's Workflows, Activities, Signals, and Queries, enabling the payment workflow to be canceled or modified during execution.
 image: /img/temporal-logo-twitter-card.png
@@ -136,6 +136,36 @@ npm install
 
 Downloading the dependencies can take a few minutes to complete. Once the download is done, you will have new a `package-lock.json` file and a `node_modules` directory.
 
+Temporal doesn't prescribe folder structure; feel free to set up your folders however you wish. In this tutorial, you will create a `src` folder for your code that holds the subscription logic:
+
+```command
+mkdir -p src
+touch src/worker.ts src/workflows.ts src/activities.ts # create folder, recursively
+```
+
+Configure TypeScript by adding a new `tsconfig.json` in the root directory:
+
+```command
+touch tsconfig.json
+```
+
+Add the following configuration to the file:
+
+```js
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "version": "4.9.5",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": ["src/**/*.ts"],
+}
+```
+
 Your project workspace is configured, so you're ready to start creating your application.
 
 ## Define external interactions
@@ -163,6 +193,8 @@ export async function sendCancellationEmailDuringTrialPeriod(
 ```
 
 <!--SNIPEND-->
+
+Cre
 
 ## Define your application logic
 
@@ -306,7 +338,7 @@ To test the fault tolerance of this feature, you can intentionally shut down you
 
 :::
 
-In the following example, after sending the welcome email, the Workflow waits for the duration of the trial period before proceeding to the next steps. This is achieved using the `sleep` function, which pauses the Workflow Execution for the specified period.
+In the following example, after sending the welcome email, the Workflow waits for the duration of the trial period before proceeding to the next steps. This is achieved using the `sleep` function, which pauses the Workflow Execution until the subscription has ended.
 
 <!--SNIPSTART subscription-ts-workflow-definition {"selectedLines": ["58-59"]}-->
 
