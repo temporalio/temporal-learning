@@ -3,12 +3,12 @@
   "redirects": [
     {
       "source": "/tutorials/go/ecommerce/",
-      "destination": "/tutorials/go/build-ecommerce-app/",
+      "destination": "/tutorials/go/build-an-ecommerce-app/",
       "permanent": true
     },
     {
       "source": "/tutorials/go/subscriptions/",
-      "destination": "/tutorials/go/build-an-email_drip_campaign/",
+      "destination": "/tutorials/go/build-an-email-drip-campaign/",
       "permanent": true
     },
     {
@@ -17,7 +17,7 @@
       "permanent": true
     },
     {
-      "source": "/tutorials/php/subscriptiosn/",
+      "source": "/tutorials/php/subscriptions/",
       "destination": "/tutorials/php/build-a-recurring-billing-app/",
       "permanent": true
     },
