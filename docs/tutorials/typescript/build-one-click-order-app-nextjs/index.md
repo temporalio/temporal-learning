@@ -5,8 +5,6 @@ sidebar_position: 2
 keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
 tags:
   - TypeScript
-title: Integrating Temporal into an existing Next.js application
-description: Explore how Temporal integrates into an existing Next.js application using Next.js API routes. This gives you the ability to write full-stack, long-running applications end to end in TypeScript.
 last_update:
   date: 2024-06-28
 description: Build a One-Click Buy application with Next.js and integrate Temporal using Next.js API routes to create a durable order processing backend.
