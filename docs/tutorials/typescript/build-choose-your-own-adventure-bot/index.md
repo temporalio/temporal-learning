@@ -1,14 +1,14 @@
 ---
 id: build-choose-your-own-adventure-bot-ts
+title: Build a Choose Your Own Adventure Bot in TypeScript
 sidebar_position: 4
-keywords: [TypeScript, temporal, sdk, tutorial]
+description: In this tutorial, we'll integrate all the knowledge gained from Core and Production APIs in an end-to-end, complete demo application.
 tags:
 - TypeScript
+keywords: [TypeScript, temporal, sdk, tutorial]
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-10-01
-title: Build a Choose Your Own Adventure Bot in TypeScript
-description: In this tutorial, we'll integrate all the knowledge gained from Core and Production APIs in an end-to-end, complete demo application.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)

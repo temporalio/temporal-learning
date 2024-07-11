@@ -41,6 +41,7 @@
       "destination": "/tutorials/typescript/build-one-click-order-app-nextjs",
       "permanent": true
     },
+    {
       "source": "/tutorials/typescript/chatbot",
       "destination": "/tutorials/typescript/build-choose-your-own-adventure-bot",
       "permanent": true

@@ -6,10 +6,10 @@ tags:
   - tutorial
 keywords: [go, golang, temporal, sdk, tutorial, workflows, ecommerce]
 slug: build-an-ecommerce-app-with-temporal-part-1
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-05-18
   author: Valeri Karpov
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)

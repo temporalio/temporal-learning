@@ -1,14 +1,14 @@
 ---
 id: build-a-recurring-billing-app-php
+title: Build a recurring billing subscription system with PHP
 sidebar_position: 1
+description: In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
 keywords: [PHP, temporal, sdk, tutorial, subscriptions, signals]
 tags:
 - PHP
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-10-01
-title: Build a recurring billing subscription system with PHP
-description: In this tutorial you'll build a realistic monthly subscription payments workflow that can be canceled while it runs.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal PHP SDK](/img/sdk_banners/banner_php.png)

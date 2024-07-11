@@ -1,13 +1,14 @@
 ---
-title: Build a data pipeline with Python
 id: build-a-data-pipeline-python
+title: Build a data pipeline with Python
 sidebar_position: 3
+description: You'll implement a data pipeline application in Python, using Temporal's Workflows, Activities, and Schedules to orchestrate and run the steps in your pipeline.
 keywords: [Python, temporal, sdk, tutorial]
-tags: [Python, SDK]
+tags:
+- Python
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2023-05-01
-description: You'll implement a data pipeline application in Python, using Temporal's Workflows, Activities, and Schedules to orchestrate and run the steps in your pipeline.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal Python SDK](/img/sdk_banners/banner_python.png)

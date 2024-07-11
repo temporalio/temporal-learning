@@ -2,13 +2,13 @@
 id: build-an-email-drip-campaign-go
 title: Build an email drip campaign with Go
 sidebar_position: 3
-keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
 description: Implement an email subscription application in Go with Temporal's Workflows, Activities, and Queries, using the Temporal Client in a web API.
-last_update:
-  date: 2023-09-28
-image: /img/temporal-logo-twitter-card.png
+keywords: [Go,tutorial,temporal,workflows,SDK,subscription]
 tags:
 - Go
+image: /img/temporal-logo-twitter-card.png
+last_update:
+  date: 2023-09-28
 ---
 
 ### Introduction

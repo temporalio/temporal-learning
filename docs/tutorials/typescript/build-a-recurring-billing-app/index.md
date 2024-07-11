@@ -2,13 +2,13 @@
 id: build-a-recurring-billing-app-ts
 title: Build a recurring billing subscription system with TypeScript
 sidebar_position: 3
+description: In this tutorial, we will tour all of the Workflow APIs you should know, primarily Signals, Queries, `condition`, and `sleep`, by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
 keywords: [TypeScript, temporal, sdk, tutorial]
 tags:
 - TypeScript
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-10-01
-description: In this tutorial, we will tour all of the Workflow APIs you should know, primarily Signals, Queries, `condition`, and `sleep`, by building a realistic monthly subscription payments workflow that can be canceled and changed while it runs.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)

@@ -2,14 +2,14 @@
 id: build_a_trip_booking_app-php
 title: Build a trip booking system with PHP
 sidebar_position: 1
+description: In this tutorial, you'll explore the different components that make up the Temporal Booking Saga code sample.
 keywords: [PHP, temporal, sdk, tutorial, saga pattern, transactions, compensations]
 tags:
 - php
 - saga
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-10-01
-description: In this tutorial, you'll explore the different components that make up the Temporal Booking Saga code sample.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
