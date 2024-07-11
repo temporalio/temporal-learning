@@ -32,11 +32,6 @@
       "permanent": true
     },
     {
-      "source": "/tutorials/typescript/subscriptions/",
-      "destination": "/tutorials/typescript/build-a-recurring-billing-app/",
-      "permanent": true
-    },
-    {
       "source": "/tutorials/typescript/nextjs/",
       "destination": "/tutorials/typescript/build-one-click-order-app-nextjs/",
       "permanent": true
