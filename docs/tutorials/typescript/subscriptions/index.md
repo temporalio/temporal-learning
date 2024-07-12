@@ -193,6 +193,8 @@ export async function sendCancellationEmailDuringTrialPeriod(
 
 <!--SNIPEND-->
 
+You will now take these encapsulated functions that defines the external interactions and will incorporate them into the subscription workflow.
+
 ## Define your application logic
 
 We now want to take our external interactions and tie them in with the rest of our application logic. This is where a Workflow comes in.
@@ -346,15 +348,11 @@ export async function subscriptionWorkflow(
 }
 ```
 
-Notice that in the above code, you are using the [`sleep`](https://typescript.temporal.io/api/namespaces/workflow#sleep) API for the first time.
-
-:::note The importance of deferred execution
+Notice that in the code, you are using the [`sleep`](https://typescript.temporal.io/api/namespaces/workflow#sleep) function for the first time.
 
 The `sleep` function is a simple yet powerful **durable timer** provided by Temporal. When you call `sleep` in a Workflow, the Temporal Server persists the sleep details in its database. This ensures that the Workflow can be resumed accurately after the specified duration, even if the Temporal Server or Worker experiences downtime.
 
 To test the fault tolerance of this feature, you can intentionally shut down your Worker or Temporal Server during the sleep period. When the system is back up, you will notice that the Workflow continues from where it left off, demonstrating Temporal's resilience.
-
-:::
 
 In the following example, after sending the welcome email, the Workflow waits for the duration of the trial period before proceeding to the next steps. This is achieved using the `sleep` function, which pauses the Workflow Execution until the trial period has ended.
 
@@ -370,7 +368,11 @@ await sleep(customer.subscription.trialPeriod);
 
 <!--SNIPEND-->
 
-Now, you will look into how to query your Workflow to retrieve information such as the Workflow ID, the billing period, and the total amount charged. This allows you to interact with the Workflow while it is running and get real-time updates on its status and progress.
+:::note Production Consideration: Managing Long-Running Workflows
+There may be a possibility of a large value for `maxBillingPeriods`. In production code, Temporal recommends using the [`continue-as-new`](https://docs.temporal.io/workflows#continue-as-new) feature to manage long-running Workflows and prevent excessively large [Event Histories](https://docs.temporal.io/workflows#event-history). This helps maintain performance and reliability. You can learn more about Event History in Temporal's 102 [free course](https://learn.temporal.io/courses/temporal_102/).
+:::
+
+Now, you will look into how to query your Workflow to retrieve information such as the the billing period and the total amount charged. This allows you to interact with the Workflow while it is running and get real-time updates on its status and progress.
 
 ## Retrieve subscription details
 
@@ -463,7 +465,7 @@ However, just defining a Signal is just the first step. You also need to let the
 
 In order to implement a Signal handler, you will need to use the [`setHandler`](https://typescript.temporal.io/api/namespaces/workflow/#sethandler) function provided by the TypeScript SDK API. This function associates each Signal with its corresponding handler logic.
 
-Within the `workflows.ts` file, implement the Signal handlers as shown below:
+Within the `workflows.ts` file, implement the Signal handlers as shown:
 
 <!--SNIPSTART subscription-ts-workflow-definition {"selectedLines": ["45-53"]}-->
 
@@ -524,7 +526,7 @@ if (
 
 <!--SNIPEND-->
 
-In the above code, the condition method pauses the Workflow until either the `subscriptionCancelled` Signal is received or the trial period expires. Once the condition is met, the Workflow invokes the Activity to send a cancellation email. 
+In the code, the condition method pauses the Workflow until either the `subscriptionCancelled` Signal is received or the trial period expires. Once the condition is met, the Workflow invokes the Activity to send a cancellation email. 
 
 To test this functionality, run your `cancel-subscription` script. You should see that the cancellation happens immediately when the Signal is received.
 
@@ -561,7 +563,7 @@ const handle = await client.workflow.getHandle(`subscription-${customer.id}`);
 
 <!--SNIPEND-->
 
-In the above example, the `handle` variable is now set to the Workflow instance of `subscription-${customer.id}`, defined in the Client when you start the Workflow Execution.
+In the example, the `handle` variable is now set to the Workflow instance of `subscription-${customer.id}`, defined in the Client when you start the Workflow Execution.
 
 Next, use the handle to send the `cancelSubscription` Signal to the Workflow, instructing it to cancel the subscription:
 
@@ -614,7 +616,7 @@ console.log("Total Charged Amount", totalChargedAmount);
 
 <!--SNIPEND-->
 
-In the above code, the `WorkflowHandle.query` method is used to request the `billingPeriodNumber` and `totalChargedAmount` from the running Workflow Execution. The results are then printed to the console, providing insight into the Workflow's current state or final details without affecting its ongoing processes.
+In the code, the `WorkflowHandle.query` method is used to request the `billingPeriodNumber` and `totalChargedAmount` from the running Workflow Execution. The results are then printed to the console, providing insight into the Workflow's current state or final details without affecting its ongoing processes.
 
 ## Conclusion
 
