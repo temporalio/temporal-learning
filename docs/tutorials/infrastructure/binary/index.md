@@ -199,7 +199,7 @@ Using your favorite text editor, open a new file called `/etc/systemd/system/tem
 sudo vim /etc/systemd/system/temporal.service
 ```
 
-Your unit file needs, at minimum, a [Unit] section, a [Service] section, and an [Install] section:
+Your unit file needs, at minimum, a `[Unit]` section, a `[Service]` section, and an `[Install]` section:
 
 ```
 [Unit]
