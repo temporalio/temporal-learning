@@ -228,7 +228,7 @@ sudo systemctl start temporal
 sudo systemctl enable temporal
 ```
 
-Use systemctl status temporal to verify that it started successfully. You should receive similar output to when you first ran the command in a terminal.
+Use the `systemctl` command to verify that `temporal` started successfully. You should receive similar output to when you first ran the command in a terminal.
 
 ```bash
 sudo systemctl status temporal
