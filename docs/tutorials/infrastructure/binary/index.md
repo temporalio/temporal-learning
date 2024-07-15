@@ -288,7 +288,7 @@ Both services should now be running in the background.
 
 ## Deploying an Nginx Reverse Proxy with an SSL Certificate
 
-To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).
+*To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).*
 
 When `certbot` retrieves certificates, by default, it stores them in `/etc/letsencrypt/live/your_domain`. Check to make sure that you have them:
 
