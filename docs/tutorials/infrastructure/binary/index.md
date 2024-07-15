@@ -402,7 +402,7 @@ Navigate to **your_domain** in a web browser, and you should receive the Tempora
 
 ## Interacting with the Temporal Service
 
-In the last step, when you configured your Nginx reverse proxy, you added logging to `access_log /var/log/nginx/temporal.access.log;`. You can check this file if you ever need to review access logs to the Temporal Web UI.
+In the last step, when you configured your Nginx reverse proxy, you enabled logging to `/var/log/nginx/temporal.access.log;` when you set the `access_log` parameter. Check this file if you ever need to review access logs to the Temporal Web UI.
 
 You can also use `journalctl` to access logs from the Temporal Server itself. `journalctl -u service-name.service` allows you to view the full logs of any service running through `systemd`.
 
