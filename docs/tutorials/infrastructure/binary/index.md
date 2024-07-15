@@ -185,7 +185,7 @@ sudo su temporal -c `temporal-server -c /etc -e temporal-server start`
 sudo su temporal -c `temporal-ui-server -c /etc -e temporal-ui-server start`
 ```
 
-However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not very scalable or accessible. Use `Ctrl+C` in each terminal to stop the running process. In the remainder of this tutorial, you'll configure this server for production use.
+However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network. Use `Ctrl+C` in each terminal to stop the running process. In the remainder of this tutorial, you'll configure this server for production use.
 
 ## Creating and Registering System Services
 
