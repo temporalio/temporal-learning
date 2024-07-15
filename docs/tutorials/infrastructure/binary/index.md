@@ -27,7 +27,7 @@ In this tutorial, you'll learn how to configure and deploy the two binaries need
 
 You'll begin by downloading and configuring the Temporal Server binaries.
 
-The Temporal Core Server can be obtained from its [Github Releases Page](https://github.com/temporalio/temporal/releases/). Download the newest binary for your operating system (probably `linux_amd64`) and extract it on the command line using `curl` and `tar`:
+The Temporal Core Server can be obtained from its [Github Releases Page](https://github.com/temporalio/temporal/releases/). The Temporal Core Server is responsible for orchestrating all tasks regarding the execution of Temporal Workflows, such as maintaining the Event History, maintaining Task Queues, responding to commands and more. Download the newest binary for your operating system (probably `linux_amd64`) and extract it on the command line using `curl` and `tar`:
 
 ```bash
 curl -OL https://github.com/temporalio/temporal/releases/download/v1.24.2/temporal_1.24.2_linux_amd64.tar.gz
