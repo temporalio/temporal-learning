@@ -278,7 +278,7 @@ sudo systemctl start temporal-ui
 sudo systemctl enable temporal-ui
 ```
 
-Use systemctl status temporal to verify that it started successfully:
+Use the `systemctl` command to verify that `temporal-ui` started successfully:
 
 ```bash
 sudo systemctl status temporal-ui
