@@ -189,7 +189,7 @@ However, you aren't ready to handle external connections yet -- at this point, y
 
 ## Creating and Registering System Services
 
-Because you installed Temporal directly from binaries, it will not automatically run in the background, and you need to run it manually from the command line. To avoid this, you'll set up your own background services.
+Because you installed Temporal directly from binaries, you need to run it manually from the command line. To run them automatically, you'll need to set up your own background services.
 
 To do this, you’ll create *unit* files that can be used by your server’s *init* system. On nearly all modern Linux distros, the init system is called **Systemd**, and you can interact with it by using the `systemctl` command.
 
