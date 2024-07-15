@@ -41,7 +41,7 @@ sudo mv temporal-server /usr/bin/temporal-server
 sudo chmod +x /usr/bin/temporal-server
 ```
 
-You'll also need the Temporal UI server. The Temporal UI Server is a standalone binary that can also be obtained from its [Github Releases page](https://github.com/temporalio/ui-server/releases). Download the newest binary for your operating system and extract it on the command line using `curl` and `tar`:
+You'll also need the Temporal UI server. The Temporal UI Server hooks in to a Temporal Core Server and provides a web-based UI for displaying information about Workflow Executions. It is a standalone binary that can also be obtained from its [Github Releases page](https://github.com/temporalio/ui-server/releases). Download the latest binary for your operating system and extract it on the command line using `curl` and `tar`:
 
 ```bash
 curl -OL https://github.com/temporalio/ui-server/releases/download/v2.28.0/ui-server_2.28.0_linux_amd64.tar.gz
