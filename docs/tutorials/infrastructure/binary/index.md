@@ -55,7 +55,7 @@ sudo mv ui-server /usr/bin/temporal-ui-server
 sudo chmod +x /usr/bin/temporal-ui-server
 ```
 
-At this point, you've downloaded everything you need. The last thing to do is create a `temporal` user on your server that has the appropriate permissions to run the Temporal Service, and directory accessible to this user to store your data in. Run the following commands:
+At this point, you've downloaded everything you need. The last thing to do is create a `temporal` user on your server that has the appropriate permissions to run the Temporal Service, and a directory accessible to this user to store your data in. Run the following commands:
 
 ```bash
 sudo useradd temporal
