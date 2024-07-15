@@ -34,7 +34,7 @@ curl -OL https://github.com/temporalio/temporal/releases/download/v1.24.2/tempor
 tar -xzf temporal_1.24.2_linux_amd64.tar.gz
 ```
 
-The extracted binary will be called `temporal-server`. Move it to a directory on your path like `/usr/bin` and make it executable:
+The extracted binary will be called `temporal-server`. Move it to the `/usr/bin/` directory on your path and make it executable:
 
 ```bash
 sudo mv temporal-server /usr/bin/temporal-server
