@@ -300,7 +300,7 @@ sudo ls /etc/letsencrypt/live/your_domain
 README  cert.pem  chain.pem  fullchain.pem  privkey.pem
 ```
 
-Now, you can configure an Nginx *reverse proxy* to expose your Temporal Service to external connections. Putting a web server such as Nginx in front of other web-facing applications can improve performance and make it much more straightforward to secure a site. Nginx can take care of restricting access and securely handling requests from your clients to Temporal. This time, you'll configure the UI server first, which uses regular HTTP (web) traffic:
+Now, you can configure an Nginx *reverse proxy* to expose your Temporal Service to external connections. Putting a web server such as Nginx in front of other web-facing applications can improve performance and reduce the complexity of securing a site. Nginx can take care of restricting access and securely handling requests from your clients to Temporal. You'll configure the UI server first, which uses regular HTTP (web) traffic:
 
 Nginx allows you to add per-site configurations to individual files in a subdirectory called `sites-available/`. Using your favorite text editor, create a new Nginx configuration at `/etc/nginx/sites-available/temporal-ui`:
 
