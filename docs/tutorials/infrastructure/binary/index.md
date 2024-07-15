@@ -217,7 +217,7 @@ WantedBy=multi-user.target
 
 This file can be broken down as follows:
 
-- The `[Unit]` section contains a plaintext description of your new service, as well as an `After` hook that specifies when it should be run at system startup, in this case after your server’s networking interfaces have come up.
+- The `[Unit]` section contains a plaintext `Description` of your new service, as well as an `After` hook that specifies when it should be run at system startup, in this case, it will be run after your server’s networking interfaces have come up.
 - The `[Service]` section specifies which command should actually be run, as well as which user should be running it. In this case, `temporal` is the user you created, and `temporal-server` is the command from the last step.
 - The `[Install]` section contains only the `WantedBy=multi-user.target` line, which works together with the `After` line in the `[Unit]` section to ensure that the service is started when the server is ready to accept user logins.
 
