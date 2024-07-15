@@ -792,7 +792,7 @@ Try it out by following these steps:
 
 
 1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Verify the Workflow is running in the [Web UI](http://localhost:8080).
+2. Verify the Workflow is running in the [Web UI](http://localhost:8080). If finished, restart it using the Maven command.
 3. Shut down the Temporal Server with `CTRL+C` in the terminal window running the server.
 4. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8080](http://localhost:8080/).
 
