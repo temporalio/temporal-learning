@@ -48,7 +48,7 @@ curl -OL https://github.com/temporalio/ui-server/releases/download/v2.28.0/ui-se
 tar -xzf ui-server_2.28.0_linux_amd64.tar.gz
 ```
 
-The extracted binary will be called `ui-server`. Move it to a directory on your path like `/usr/bin`:
+The extracted binary will be called `ui-server`. Move it to the `/usr/bin` directory on your path:
 
 ```bash
 sudo mv ui-server /usr/bin/temporal-ui-server
