@@ -814,15 +814,18 @@ This demo application makes a call to an external service in an Activity. If tha
 To test this out and see how Temporal responds, you'll simulate a bug in the `deposit` Activity method.
 
 
-Let your Workflow continue to run but don't start the Worker yet.
+Try it out by following these steps:
+
+1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
+
+2. Open the `AccountActivityImpl` file and modify the `deposit` method so `activityShouldSucceed` is set to false.
 
 
-1. Open the `AccountActivityImpl` file and modify the `deposit` method so `activityShouldSucceed` is set to false.
+3. Save your changes and switch to the terminal that was running your Worker.
 
+4. Verify the Workflow is running in the [Web UI](http://localhost:8080). If finished, restart it using the Maven command.
 
-2. Save your changes and switch to the terminal that was running your Worker.
-
-3. Start the Worker again:
+5. Start the Worker again:
 
 ```bash
 mvn clean install \
