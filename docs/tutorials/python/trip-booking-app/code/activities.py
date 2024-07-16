@@ -53,9 +53,6 @@ async def book_hotel(book_input: BookVacationInput) -> str:
     print(f"Booking hotel: {book_input.book_hotel_id}")
     return f"{book_input.book_hotel_id}"
 
-
-# @@@SNIPEND
-# @@@SNIPSTART saga-py-activities-book-flight
 @activity.defn
 async def book_flight(book_input: BookVacationInput) -> str:
     """

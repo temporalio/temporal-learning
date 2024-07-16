@@ -120,26 +120,6 @@ async def book_car(book_input: BookVacationInput) -> str:
 
 ```
 <!--SNIPEND-->
-<!--SNIPSTART saga-py-activities-book-flight-->
-[docs/tutorials/python/sagas/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/sagas/code/activities.py)
-```py
-@activity.defn
-async def book_flight(book_input: BookVacationInput) -> str:
-    """
-    Books a flight.
-
-    Args:
-        book_input (BookVacationInput): Input data for booking the flight.
-
-    Returns:
-        str: Confirmation message.
-    """
-    print(f"Booking flight: {book_input.book_flight_id}")
-    return f"{book_input.book_flight_id}"
-
-
-```
-<!--SNIPEND-->
 
 With the main booking Activities in place, it's time to define the compensation Activities.
 These undo actions are crucial for maintaining data consistency by rolling back successful steps if a subsequent step fails.
