@@ -46,6 +46,15 @@ This file will contain the definitions of the Activities needed for the booking 
 Import the necessary modules:
 
 <!--SNIPSTART saga-py-activities-import-->
+[docs/tutorials/python/trip-booking-app/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/activities.py)
+```py
+import asyncio
+
+from temporalio import activity
+
+from shared import BookVacationInput
+
+```
 <!--SNIPEND-->
 
 The `asyncio` library is used for asynchronous operations.
@@ -59,11 +68,95 @@ For brevity, these Activities will print a message indicating that they were inv
 The function will return a success message if no errors occur.
 
 <!--SNIPSTART saga-py-activities-book-hotel-->
+[docs/tutorials/python/trip-booking-app/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/activities.py)
+```py
+@activity.defn
+async def book_hotel(book_input: BookVacationInput) -> str:
+    """
+    Books a hotel.
+
+    Args:
+        book_input (BookVacationInput): Input data for booking the hotel.
+
+    Returns:
+        str: Confirmation message.
+    """
+    await asyncio.sleep(1)
+    attempt_info = f"Invoking activity, attempt number {activity.info().attempt}"
+    if activity.info().attempt < 2:
+        activity.heartbeat(attempt_info)
+        await asyncio.sleep(1)
+        raise RuntimeError("Hotel service is down. Retrying...")
+
+    if "invalid" in book_input.book_hotel_id:
+        raise ValueError("Invalid hotel booking, rolling back!")
+
+    print(f"Booking hotel: {book_input.book_hotel_id}")
+    return f"{book_input.book_hotel_id}"
+
+@activity.defn
+async def book_flight(book_input: BookVacationInput) -> str:
+    """
+    Books a flight.
+
+    Args:
+        book_input (BookVacationInput): Input data for booking the flight.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Booking flight: {book_input.book_flight_id}")
+    return f"{book_input.book_flight_id}"
+
+
+```
 <!--SNIPEND-->
 
 The `book_car` and `book_flight` functions follow a similar structure:
 
 <!--SNIPSTART saga-py-activities-book-hotel-->
+[docs/tutorials/python/trip-booking-app/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/activities.py)
+```py
+@activity.defn
+async def book_hotel(book_input: BookVacationInput) -> str:
+    """
+    Books a hotel.
+
+    Args:
+        book_input (BookVacationInput): Input data for booking the hotel.
+
+    Returns:
+        str: Confirmation message.
+    """
+    await asyncio.sleep(1)
+    attempt_info = f"Invoking activity, attempt number {activity.info().attempt}"
+    if activity.info().attempt < 2:
+        activity.heartbeat(attempt_info)
+        await asyncio.sleep(1)
+        raise RuntimeError("Hotel service is down. Retrying...")
+
+    if "invalid" in book_input.book_hotel_id:
+        raise ValueError("Invalid hotel booking, rolling back!")
+
+    print(f"Booking hotel: {book_input.book_hotel_id}")
+    return f"{book_input.book_hotel_id}"
+
+@activity.defn
+async def book_flight(book_input: BookVacationInput) -> str:
+    """
+    Books a flight.
+
+    Args:
+        book_input (BookVacationInput): Input data for booking the flight.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Booking flight: {book_input.book_flight_id}")
+    return f"{book_input.book_flight_id}"
+
+
+```
 <!--SNIPEND-->
 
 With the main booking Activities in place, it's time to define the compensation Activities.
@@ -76,6 +169,54 @@ These Activities will log the undo action and return a success message.
 
 
 <!--SNIPSTART saga-py-activities-undo-book-->
+[docs/tutorials/python/trip-booking-app/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/activities.py)
+```py
+@activity.defn
+async def undo_book_car(book_input: BookVacationInput) -> str:
+    """
+    Undoes the car booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the car booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of car: {book_input.book_car_id}")
+    return f"{book_input.book_car_id}"
+
+
+@activity.defn
+async def undo_book_hotel(book_input: BookVacationInput) -> str:
+    """
+    Undoes the hotel booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the hotel booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of hotel: {book_input.book_hotel_id}")
+    return f"{book_input.book_hotel_id}"
+
+
+@activity.defn
+async def undo_book_flight(book_input: BookVacationInput) -> str:
+    """
+    Undoes the flight booking.
+
+    Args:
+        book_input (BookVacationInput): Input data for undoing the flight booking.
+
+    Returns:
+        str: Confirmation message.
+    """
+    print(f"Undoing booking of flight: {book_input.book_flight_id}")
+    return f"{book_input.book_flight_id}"
+
+
+```
 <!--SNIPEND-->
 
 For this example, if the number of attempts is less than the allowed number of attempts or if the booking ID is invalid, the Activity will raise exceptions to simulate failures, then run the corresponding undo action.
@@ -93,6 +234,22 @@ Also, Task Queues are shared resources that can be used by multiple Workflows an
 Create a new file named `shared.py`:
 
 <!--SNIPSTART saga-py-shared-->
+[docs/tutorials/python/trip-booking-app/code/shared.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/shared.py)
+```py
+from dataclasses import dataclass
+
+
+@dataclass
+class BookVacationInput:
+    attempts: int
+    book_user_id: str
+    book_car_id: str
+    book_hotel_id: str
+    book_flight_id: str
+
+
+TASK_QUEUE_NAME = "saga-task-queue"
+```
 <!--SNIPEND-->
 
 
@@ -114,6 +271,26 @@ This file will define your Workflow, which is responsible for executing your Act
 First, import the necessary modules:
 
 <!--SNIPSTART saga-py-workflows-import-->
+[docs/tutorials/python/trip-booking-app/code/workflows.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/workflows.py)
+```py
+from datetime import timedelta
+
+from temporalio import workflow
+from temporalio.common import RetryPolicy
+
+with workflow.unsafe.imports_passed_through():
+    from activities import (
+        BookVacationInput,
+        book_car,
+        book_flight,
+        book_hotel,
+        undo_book_car,
+        undo_book_flight,
+        undo_book_hotel,
+    )
+
+
+```
 <!--SNIPEND-->
 
 Next, create the `BookWorkflow` class and define the compensation actions, as well as the functions that execute your core logic: `book_car`, `book_hotel`, and `book_flight`.
@@ -121,6 +298,73 @@ Next, create the `BookWorkflow` class and define the compensation actions, as we
 These executions are wrapped in a `try` and `except` block to handle any exceptions and trigger compensations.
 
 <!--SNIPSTART saga-py-workflows-run-->
+[docs/tutorials/python/trip-booking-app/code/workflows.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/workflows.py)
+```py
+@workflow.defn
+class BookingWorkflow:
+    """
+    Workflow class for booking a vacation.
+    """
+
+    @workflow.run
+    async def run(self, book_input: BookVacationInput):
+        """
+        Executes the booking workflow.
+
+        Args:
+            book_input (BookVacationInput): Input data for the workflow.
+
+        Returns:
+            str: Workflow result.
+        """
+        compensations = []
+        results = {}
+        try:
+            compensations.append(undo_book_car)
+            car_result = await workflow.execute_activity(
+                book_car,
+                book_input,
+                start_to_close_timeout=timedelta(seconds=10),
+            )
+            results["booked_car"] = car_result
+
+            # Book hotel
+            compensations.append(undo_book_hotel)
+            hotel_result = await workflow.execute_activity(
+                book_hotel,
+                book_input,
+                start_to_close_timeout=timedelta(seconds=10),
+                maximum_attempts=book_input.attempts,
+                retry_policy=RetryPolicy(non_retryable_error_types=["ValueError"]),
+            )
+            results["booked_hotel"] = hotel_result
+
+            # Book flight
+            compensations.append(undo_book_flight)
+            flight_result = await workflow.execute_activity(
+                book_flight,
+                book_input,
+                start_to_close_timeout=timedelta(seconds=10),
+                retry_policy=RetryPolicy(
+                    initial_interval=timedelta(seconds=1),
+                    maximum_interval=timedelta(seconds=1),
+                ),
+            )
+            results["booked_flight"] = flight_result
+
+            return {"status": "success", "message": results}
+
+        except Exception as ex:
+            for compensation in reversed(compensations):
+                await workflow.execute_activity(
+                    compensation,
+                    book_input,
+                    start_to_close_timeout=timedelta(seconds=10),
+                )
+            return {"status": "failure", "message": str(ex)}
+
+
+```
 <!--SNIPEND-->
 
 The `compensations` list keeps track of the actions that need to be undone in case of a failure.
@@ -143,12 +387,72 @@ Import the necessary modules, including the `asyncio` library, Temporal `Client`
 You will also import the Activities declared in the `activities.py` file.
 
 <!--SNIPSTART saga-py-worker-import-->
+[docs/tutorials/python/trip-booking-app/code/run_worker.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/run_worker.py)
+```py
+import asyncio
+
+from temporalio.client import Client
+from temporalio.worker import Worker
+
+from activities import (
+    book_car,
+    book_flight,
+    book_hotel,
+    undo_book_car,
+    undo_book_flight,
+    undo_book_hotel,
+)
+from shared import TASK_QUEUE_NAME
+from workflows import BookingWorkflow
+
+```
 <!--SNIPEND-->
 
 In the `main()` function, you will specify how to connect to the Temporal server, create a Worker, and run it.
 This Worker will listen to the specified Task Queue and execute the defined Workflows and Activities.
 
 <!--SNIPSTART saga-py-worker-loop-->
+[docs/tutorials/python/trip-booking-app/code/run_worker.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/run_worker.py)
+```py
+interrupt_event = asyncio.Event()
+
+
+async def main():
+    """
+    Main function to start the worker.
+    """
+    client = await Client.connect("localhost:7233")
+
+    worker = Worker(
+        client,
+        task_queue=TASK_QUEUE_NAME,
+        workflows=[BookingWorkflow],
+        activities=[
+            book_car,
+            book_hotel,
+            book_flight,
+            undo_book_car,
+            undo_book_hotel,
+            undo_book_flight,
+        ],
+    )
+    print("\nWorker started, ctrl+c to exit\n")
+    await worker.run()
+    try:
+        await interrupt_event.wait()
+    finally:
+        print("\nShutting down the worker\n")
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    except KeyboardInterrupt:
+        print("\nInterrupt received, shutting down...\n")
+        interrupt_event.set()
+        loop.run_until_complete(loop.shutdown_asyncgens())
+```
 <!--SNIPEND-->
 
 The `Client.connect()` line connects to the Temporal server running on `localhost` at port `7233`.
@@ -181,6 +485,17 @@ Create a new file named `starter.py`.
 Import the necessary modules, including `uuid`, Flask, and Temporal `Client`.
 
 <!--SNIPSTART saga-py-starter-import-->
+[docs/tutorials/python/trip-booking-app/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/starter.py)
+```py
+import asyncio
+import uuid
+
+from flask import Flask, jsonify, request
+from temporalio.client import Client
+
+from shared import TASK_QUEUE_NAME, BookVacationInput
+from workflows import BookingWorkflow
+```
 <!--SNIPEND-->
 
 The `uuid` module is used to generate a unique ID for each booking.
@@ -190,6 +505,14 @@ The `Client` module is used to connect to the Temporal Service.
 Next, initialize the Flask app and set up the Temporal Client.
 
 <!--SNIPSTART saga-py-starter-initialize-->
+[docs/tutorials/python/trip-booking-app/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/starter.py)
+```py
+def create_app(temporal_client: Client):
+    app = Flask(__name__)
+
+    def generate_unique_username(name):
+        return f'{name.replace(" ", "-").lower()}-{str(uuid.uuid4().int)[:6]}'
+```
 <!--SNIPEND-->
 
 The `generate_unique_username` function takes a name as input, replaces spaces with hyphens, converts the string to lowercase, and appends a unique identifier generated by `uuid`.
@@ -210,6 +533,46 @@ This function expects to receive a POST request with the following JSON body:
 This route will accept a `POST` request, extract the necessary data from the request, initiate the Workflow, and return the result.
 
 <!--SNIPSTART saga-py-starter-post-->
+[docs/tutorials/python/trip-booking-app/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/starter.py)
+```py
+    @app.route("/book", methods=["POST"])
+    async def book_vacation():
+        """
+        Endpoint to book a vacation.
+
+        Returns:
+            Response: JSON response with booking details or error message.
+        """
+        user_id = generate_unique_username(request.json.get("name"))
+        attempts = request.json.get("attempts")
+        car = request.json.get("car")
+        hotel = request.json.get("hotel")
+        flight = request.json.get("flight")
+
+        input_data = BookVacationInput(
+            attempts=int(attempts),
+            book_user_id=user_id,
+            book_car_id=car,
+            book_hotel_id=hotel,
+            book_flight_id=flight,
+        )
+
+        result = await temporal_client.execute_workflow(
+            BookingWorkflow.run,
+            input_data,
+            id=user_id,
+            task_queue=TASK_QUEUE_NAME,
+        )
+
+        response = {"user_id": user_id, "result": result}
+
+        if result == "Voyage cancelled":
+            response["cancelled"] = True
+
+        return jsonify(response)
+
+    return app
+```
 <!--SNIPEND-->
 
 The route extracts the username, number of attempts, car, hotel, and flight information from the request JSON.
@@ -225,6 +588,17 @@ If the booking process is cancelled, the response indicates this. Otherwise, it 
 Next, create an async function to start the Flask app and connect to the Temporal service.
 
 <!--SNIPSTART saga-py-starter-main-->
+[docs/tutorials/python/trip-booking-app/code/starter.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/starter.py)
+```py
+async def main():
+    temporal_client = await Client.connect("localhost:7233")
+    app = create_app(temporal_client)
+    app.run(host="0.0.0.0", debug=True)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 <!--SNIPEND-->
 The `main` function connects to the Temporal service and starts the Flask app.
 

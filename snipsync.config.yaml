@@ -74,7 +74,7 @@ origins:
       repo: 'temporal-learning'
       ref: 'main'
   - files:
-      pattern: './docs/tutorials/python/sagas/code/*.py'
+      pattern: './docs/tutorials/python/trip-booking-app/code/*.py'
       owner: 'temporalio'
       repo: 'temporal-learning'
 

@@ -444,7 +444,7 @@ That policy, along with time-out settings, is defined in the following Workflow 
         .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
         .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
         .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
-        .setMaximumAttempts(5) // Fail after 5 attempts
+        .setMaximumAttempts(5000) // Fail after 5000 attempts
         .build();
 
     // ActivityOptions specify the limits on how long an Activity can execute before
@@ -452,7 +452,7 @@ That policy, along with time-out settings, is defined in the following Workflow 
     private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
         .setRetryOptions(retryoptions) // Apply the RetryOptions defined above
         .setStartToCloseTimeout(Duration.ofSeconds(2)) // Max execution time for single Activity
-        .setScheduleToCloseTimeout(Duration.ofSeconds(5)) // Entire duration from scheduling to completion including queue time
+        .setScheduleToCloseTimeout(Duration.ofSeconds(5000)) // Entire duration from scheduling to completion including queue time
         .build();
 
     private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
@@ -569,7 +569,7 @@ Here is the code that performs this work:
         // WorkflowStubs enable calls to methods as if the Workflow object is local
         // but actually perform a gRPC call to the Temporal Service.
         MoneyTransferWorkflow workflow = client.newWorkflowStub(MoneyTransferWorkflow.class, options);
-
+        
         // Configure the details for this money transfer request
         String referenceId = UUID.randomUUID().toString().substring(0, 18);
         String fromAccount = randomAccountIdentifier();
