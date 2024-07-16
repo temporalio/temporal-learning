@@ -6,7 +6,7 @@ description: In this tutorial, you'll run your first Temporal app using the Pyth
 keywords: [python, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [Python, SDK]
 last_update:
-  date: 2024-01-22
+  date: 2024-06-24
 code_repo: https://github.com/temporalio/money-transfer-project-template-python
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -21,7 +21,7 @@ image: /img/temporal-logo-twitter-card.png
   - Explore Temporal's core terminology and concepts.
   - Complete several runs of a Temporal Workflow application using a Temporal Cluster and the [Python SDK](https://github.com/temporalio/sdk-python).
   - Practice reviewing the state of the Workflow.
-  - Understand the inherent reliability of Workflow functions.
+  - Understand the inherent reliability of Workflow methods.
 
 :::
 
@@ -82,12 +82,12 @@ Now that you've downloaded the project, let's dive into the code.
 The Temporal Application will consist of the following pieces:
 
 1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application.
-2. An [Activity](https://docs.temporal.io/activities) is a function that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
+2. An [Activity](https://docs.temporal.io/activities) is a method that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
 3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently.
 
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity functions](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity methods](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
 
 The following diagram illustrates what happens when you start the Workflow:
 
@@ -168,13 +168,13 @@ class MoneyTransfer:
 ```
 <!--SNIPEND-->
 
-- The `MoneyTransferWorkflow` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
+- The `MoneyTransfer` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
 
-- The `MoneyTransfer` function accepts an `input` variable of the type `PaymentDetails`. This is a data structure holding details that the Workflow uses to perform the money transfer.
+- The asynchronous `run` method signature includes an `input` variable typed as `PaymentDetails`. This class stores details that the Workflow uses to perform the money transfer.
 
 This type is defined in the file `shared.py`:
 
-<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-10"]}-->
+<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-12"]}-->
 [shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/shared.py)
 ```py
 from dataclasses import dataclass
@@ -184,6 +184,7 @@ class PaymentDetails:
     source_account: str
     target_account: str
     amount: int
+    reference_id: str
 ```
 <!--SNIPEND-->
 
@@ -194,15 +195,16 @@ It's a good practice to send a single data class object into a Workflow as its i
 :::
 
 :::note
-Notice that the `MoneyTransfer` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
+
+Notice that the `PaymentDetails` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
 
 :::
 
 ### Activity Definition
 
-In the Temporal Python SDK, you define an Activity by decorating a function with **`@activity.defn`**.
+In the Temporal Python SDK, you define an Activity by decorating a method with **`@activity.defn`**.
 
-[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity functions, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
+[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
 
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
@@ -216,7 +218,7 @@ First, the `withdraw()` Activity takes the details about the transfer and calls 
         reference_id = f"{data.reference_id}-withdrawal"
         try:
             confirmation = await asyncio.to_thread(
-                self.bank.withdraw, data.source_account, data.amount, reference_id
+                self.bank.withdraw, data.source_account, data.amount, 
             )
             return confirmation
         except InvalidAccountError:
@@ -228,9 +230,9 @@ First, the `withdraw()` Activity takes the details about the transfer and calls 
 ```
 <!--SNIPEND-->
 
-Second, if the transfer succeeded, the `withdraw()` function returns the confirmation.
+Second, if the transfer succeeded, the `withdraw()` method returns the confirmation.
 
-Lastly, the `deposit()` Activity function looks almost identical to the `withdraw()` function. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
+Lastly, the `deposit()` Activity method looks almost identical to the `withdraw()` method. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
 
 <!--SNIPSTART python-money-transfer-project-template-deposit-->
 [activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
@@ -304,7 +306,7 @@ Transferring money is a tricky subject, and this tutorial's example doesn't cove
 This example only shows some core features of Temporal and is not intended for production use.
 :::
 
-When you _start_ a Workflow, you are telling the Temporal Server, "Track the state of the Workflow with this function signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
+When you _start_ a Workflow, you are telling the Temporal Server, "Track the state of the Workflow with this method signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
 
 Let's see that in action.
 
@@ -464,7 +466,7 @@ Check the Temporal Web UI again. You will see one Worker registered where previo
 
 Here's what happens when the Worker runs and connects to the Temporal Cluster:
 
-- The first Task the Worker finds is the one that tells it to execute the Workflow function.
+- The first Task the Worker finds is the one that tells it to execute the Workflow method.
 - The Worker communicates the event back to the Server.
 - This causes the Server to send Activity Tasks to the Task Queue.
 - The Worker then grabs each of the Activity Tasks in sequence from the Task Queue and executes each of the corresponding Activities.
@@ -507,11 +509,11 @@ If the Temporal Cluster goes offline, you can pick up where you left off when it
 
 This demo application makes a call to an external service in an Activity. If that call fails due to a bug in your code, the Activity produces an error.
 
-To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity function.
+To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity method.
 
 Let your Workflow continue to run but don't start the Worker yet.
 
-1. Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` function returns an error:
+1. Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` method returns an error:
 
 <!--SNIPSTART  python-money-transfer-project-template-deposit-->
 [activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
@@ -549,9 +551,9 @@ Let your Workflow continue to run but don't start the Worker yet.
 python run_worker.py
 ```
 
-Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity function, but it errors when it attempts the `deposit()` Activity function.
+Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity method, but it errors when it attempts the `deposit()` Activity method.
 
-The important thing to note here is that the Worker keeps retrying the `deposit()` function:
+The important thing to note here is that the Worker keeps retrying the `deposit()` method:
 
 ```output
 2024/02/12 10:59:09 INFO  No logger configured for temporal client. Created default one.
@@ -635,11 +637,11 @@ if __name__ == "__main__":
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
 
-Your Workflow is running, but only the `withdraw()` Activity function has succeeded. In any other application, you would likely have to abandon the entire process and perform a rollback.
+Your Workflow is running, but only the `withdraw()` Activity method has succeeded. In any other application, you would likely have to abandon the entire process and perform a rollback.
 
 With Temporal, you can debug and resolve the issue while the Workflow is running.
 
-6. Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` function in the `activities.py` file and save your changes.
+6. Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` method in the `activities.py` file and save your changes.
 
 How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
 
@@ -667,7 +669,7 @@ How can you possibly update a Workflow that's already halfway complete? You rest
 python run_worker.py
 ```
 
-The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `deposit()` Activity function.
+The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `deposit()` Activity method.
 
 9. Switch back to the terminal where your `run_workflow.py` program is running, and you'll see it complete:
 
@@ -700,7 +702,7 @@ Exploring the key advantages Temporal offers:
 
 Try the following things before moving on to get more practice working with a Temporal application:
 
-- Change the Retry Policy in `workflows.py` so it only retries 1 time. Then change the `deposit()` Activity in `activities.py`, so it uses the `refund()` function.
+- Change the Retry Policy in `workflows.py` so it only retries 1 time. Then change the `deposit()` Activity in `activities.py`, so it uses the `refund()` method.
   - Does the Workflow place the money back into the original account?
 
 ### Review

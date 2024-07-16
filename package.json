@@ -17,7 +17,8 @@
     "scan": "npm-run-all -c --serial build check_links_in_build clearsnips",
     "get_courses": "node get_course_pages_from_lms.js",
     "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "vale": "vale docs/**/*.md*"
   },
   "dependencies": {
     "@docusaurus/core": "^2.4.3",
