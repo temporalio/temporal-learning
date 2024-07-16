@@ -446,7 +446,7 @@ The `await worker.run()` line starts the Worker, making it ready to receive task
 
 To start the Worker, run the following command in your terminal:
 
-```bash
+```command
 # terminal one
 python run_worker.py
 ```
@@ -589,7 +589,7 @@ This approach improves performance and resource management by maintaining a sing
 
 Now to start the Client, create a new terminal and run the following command in your new terminal:
 
-```bash
+```command
 # terminal two
 python3 run_workflow.py
 ```
@@ -601,7 +601,7 @@ Once the Client is set up, you can start the booking process and see the Saga pa
 To run the booking process, you can use the following `curl` command to send a `POST` request to the `/book` endpoint.
 This request will trigger the Workflow, and you will receive a response with the booking details or a cancellation message.
 
-```bash
+```command
 # terminal three
 curl -X POST http://localhost:3000/book \
     -H "Content-Type: application/json" \
@@ -640,7 +640,7 @@ This step will demonstrate how the Saga pattern with Temporal manages to roll ba
 To simulate a booking failure, you can use the following `curl` command.
 This request includes an invalid hotel booking ID, which will cause the booking process to fail and trigger the rollback process.
 
-```bash
+```command
 # terminal three
 curl -X POST http://localhost:3000/book \
     -H "Content-Type: application/json" \
