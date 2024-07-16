@@ -35,7 +35,7 @@ Before you begin, ensure you have the following:
 
 ## Create the booking functions
 
-You will start by creating the Activities for the booking process.
+You will start by creating the individual components for the booking process. You'll create a Temporal Workflow and a set of Activities. Activities let you interact with services, and Workflows orchestrate the Activities.
 These Activities form the core tasks your Workflow will perform, including interacting with external services and handling potential failures.
 Specifically, you'll create the booking Activities for cars, hotels, and flights.
 These Activities are used to interact with external services, but for this tutorial, you will not be making any actual service calls.
@@ -59,7 +59,7 @@ from shared import BookVacationInput
 
 The `asyncio` library is used for asynchronous operations.
 The `activity` module from the `temporalio` library provides decorators and functions for defining Activities.
-The `BookVacationInput` data class will be used to pass input data to the Activities.
+You'll use the `BookVacationInput` data class to pass input data to the Activities. You'll define this data class later in this tutorial.
 
 
 Next, define the `book_car`, `book_hotel`, and `book_flight` Activities.
@@ -144,7 +144,7 @@ async def book_flight(book_input: BookVacationInput) -> str:
 With the main booking Activities in place, it's time to define the compensation Activities.
 These undo actions are crucial for maintaining data consistency by rolling back successful steps if a subsequent step fails.
 
-## Define compensation actions
+## Define compensating actions
 
 For every action (`book_car`, `book_hotel`, and `book_flight`), you will create a corresponding undo action.
 These Activities will log the undo action and return a success message.
@@ -589,7 +589,7 @@ This approach improves performance and resource management by maintaining a sing
 
 Now to start the Client, run the following command in your new terminal:
 
-```bash
+```command
 # terminal two
 python3 run_workflow.py
 ```
@@ -630,9 +630,9 @@ You'll see a JSON response similar to the following:
 
 
 You've successfully initiated and completed your booking process using the Saga pattern with Temporal in Python.
-Next, you'll learn how to simulate errors to test the robustness of your implementation.
+Next, you'll ensure that you can roll back transactions that fail by simulating a failure.
 
-## Simulate an error
+## Verify compensations work properly
 
 To ensure your implementation can handle failures gracefully, you will simulate a booking failure.
 This step will demonstrate how the Saga pattern with Temporal manages to roll back in case of errors.
@@ -688,6 +688,6 @@ This demonstrates how the Saga pattern with Temporal handles both successful and
 
 ## Conclusion
 
-With this guide, you have implemented the Saga pattern using Temporal in Python to handle distributed transactions for booking services.
-By following this guide, you now have a framework for your applications that can gracefully handle failures and ensure data consistency across multiple services.
+You've built a basic trip booking API by using the Saga pattern and Temporal to handle distributed transactions for booking services.
+You now have a framework for your applications that can gracefully handle failures and ensure data consistency across multiple services.
 You can extend this implementation to other use cases where multi-step processes need reliable and scalable orchestration.
