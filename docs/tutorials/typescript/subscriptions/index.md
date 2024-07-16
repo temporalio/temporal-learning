@@ -20,40 +20,12 @@ In this tutorial, you'll build a phone subscription management application using
 
 To achieve this, you will leverage Temporal, an open-source platform that ensures the successful completion of long-running processes despite failures or network issues. Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a power outage. It offers scalability to handle high volumes of Workflows concurrently, making it ideal for cases like the subscription service if it had thousands of customers.
 
+You'll find the code for this tutorial on GitHub in the [subscription-workflow-project-template-typescript](https://github.com/temporalio/subscription-workflow-project-template-typescript) repository.
+
 ## Prerequisites
 
 - [Set up a local development environment for Temporal and TypeScript](https://learn.temporal.io/getting_started/typescript/dev_environment/).
 - Complete the [Hello World](https://learn.temporal.io/getting_started/typescript/hello_world_in_typescript/) tutorial to ensure you understand the basics of creating Workflows and Activities with Temporal.
-
-## Tutorial objectives
-
-Your task is to write a Workflow for a limited time subscription (e.g., a 36-month Phone plan) that satisfies these conditions:
-
-1. When the user signs up:
-
-    - Send a welcome email.
-    - Start a free trial for `trialPeriod`.
-
-2. During the trial period:
-
-    - If the user cancels during the trial, **send a trial cancellation email** and complete the Workflow.
-    - If the `trialPeriod` expires without cancellation, start the billing process.
-
-3. Billing Process:
-   - As long as you have not exceeded `maxBillingPeriods`,
-    - **Charge the customer** for the `billingPeriodChargeAmount`.
-    - Wait for the next `billingPeriod`.
-    - If the customer cancels during a billing period, **send a subscription cancellation email**.
-    - If the subscription ends normally (exceeded `maxBillingPeriods` without cancellation), **send a subscription ended email** and complete the Workflow Execution.
-4. At any point while subscriptions are ongoing, you should be able to:
-   - Look up and change any customer's amount charged.
-   - Adjust the period number for manual adjustments (e.g., refunds).
-
-All of this has to be fault tolerant, scalable to millions of customers, testable, maintainable!
-
-By the end of this tutorial, you will have a clear understanding of how to create and manage a long-running Workflow for your subscription application. You will also be able to enable real-time updates to ongoing Workflows to retrieve subscription details such as users' billing information, update billing amounts, and cancel users' subscriptions at any time.
-
-You'll find the code for this tutorial on GitHub in the [subscription-workflow-project-template-typescript](https://github.com/temporalio/subscription-workflow-project-template-typescript) repository.
 
 ## Create your project
 
