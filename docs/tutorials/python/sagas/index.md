@@ -601,7 +601,7 @@ Once the Client is set up, you can start the booking process and see the Saga pa
 To run the booking process, you can use the following `curl` command to send a `POST` request to the `/book` endpoint.
 This request will trigger the Workflow, and you will receive a response with the booking details or a cancellation message.
 
-```bash
+```command
 # terminal three
 curl -X POST http://localhost:3000/book \
     -H "Content-Type: application/json" \
