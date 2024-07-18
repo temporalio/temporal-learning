@@ -63,14 +63,14 @@ sudo mkdir /etc/temporal
 sudo chown temporal /etc/temporal
 ```
 
-Next, you'll create configuration files for both the Temporal Server and the UI Server in the `/etc` directory.
+Next, you'll create configuration files for both the Temporal Server and the UI Server in the `/etc/temporal/` directory.
 
 ## Configuring the Temporal Binaries
 
-In this tutorial, you'll configure a connection to a SQLite database, since it doesn't require any additional dependencies. Using your favorite text editor, open a new file called `/etc/temporal-server.yaml`:
+In this tutorial, you'll configure a connection to a SQLite database, since it doesn't require any additional dependencies. Using your favorite text editor, open a new file called `/etc/temporal/temporal-server.yaml`:
 
 ```bash
-sudo vim /etc/temporal-server.yaml
+sudo vim /etc/temporal/temporal-server.yaml
 ```
 
 Paste the following contents into the file for a starting configuration. You can update any of these values later.
@@ -155,10 +155,10 @@ dcRedirectionPolicy:
   policy: "noop"
 ```
 
-Save and close the file. Next, you'll create the configuration file for the UI Server. Using your favorite text editor, open a new file called `/etc/temporal-ui-server.yaml`:
+Save and close the file. Next, you'll create the configuration file for the UI Server. Using your favorite text editor, open a new file called `/etc/temporal/temporal-ui-server.yaml`:
 
 ```bash
-sudo vim /etc/temporal-ui-server.yaml
+sudo vim /etc/temporal/temporal-ui-server.yaml
 ```
 
 Paste the following contents into the file.
@@ -178,11 +178,11 @@ Save and close the file.
 You can now run a Temporal Service on this server by running the following commands in two separate terminals, to start the Core Server and the UI Server:
 
 ```bash
-sudo su temporal -c `temporal-server -c /etc -e temporal-server start`
+sudo su temporal -c `temporal-server -r / -c etc/temporal/ -e temporal-server start`
 ```
 
 ```bash
-sudo su temporal -c `temporal-ui-server -c /etc -e temporal-ui-server start`
+sudo su temporal -c `temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start`
 ```
 
 However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network. Use `Ctrl+C` in each terminal to stop the running process. In the remainder of this tutorial, you'll configure this server for production use.
@@ -209,7 +209,7 @@ After=network.target
 [Service]
 User=temporal
 Group=temporal
-ExecStart=temporal-server -c /etc -e temporal-server start
+ExecStart=temporal-server -r / -c etc/temporal/ -e temporal-server start
 
 [Install]
 WantedBy=multi-user.target
@@ -242,7 +242,7 @@ sudo systemctl status temporal
       Tasks: 22 (limit: 18707)
      Memory: 62.7M
      CGroup: /system.slice/temporal.service
-             └─19925 temporal-server -c /etc -e temporal-server start
+             └─19925 temporal-server -r / -c etc/temporal/ -e temporal-server
 
 Jul 08 11:24:42 Omelas temporal-server[19925]: {"level":"info","ts":"2024->
 Jul 08 11:24:42 Omelas temporal-server[19925]: {"level":"info","ts":"2024->
@@ -265,7 +265,7 @@ After=network.target
 [Service]
 User=temporal
 Group=temporal
-ExecStart=temporal-ui-server -c /etc -e temporal-ui-server start
+ExecStart=temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start
 
 [Install]
 WantedBy=multi-user.target
