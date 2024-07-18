@@ -165,6 +165,7 @@ Paste the following contents into the file.
 
 ```
 temporalGrpcAddress: 127.0.0.1:7233
+host: 127.0.0.1
 port: 8233
 enableUi: true
 cors:
