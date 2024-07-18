@@ -56,6 +56,9 @@ origins:
   - owner: temporalio
     repo: nextjs-temporal-one-click-template
     ref: main
+  - owner: temporalio
+    repo: build-audiobook-java
+    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'

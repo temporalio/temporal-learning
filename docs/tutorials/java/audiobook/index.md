@@ -12,51 +12,85 @@ image: /img/temporal-logo-twitter-card.png
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
-### Introduction
+## Introduction
 
-For many folk, audiobooks are a staple in their daily lives.
-Whether stuck in traffic, out jogging, or just tidying up at home, listening to audio helps pass the time, letting you enjoy stories, learn new things, and keep you entertained without being tied to a screen or a book.
-The demand for fluent and well-narrated audio experiences led to the rise of companies like Audible.
-At the same time, both individuals and authors have looked for more flexible ways to bring text to life.
+For many people, audiobooks provide a staple of daily life.
+Whether stuck in traffic, out jogging, or tidying up at home, listening to audio helps people pass the time.
+You can learn new things, enjoy stories, and stay entertained without being tied to a screen or a book.
+There's a real demand for fluent and well-narrated audio experiences.
+Despite the availability of podcasts and commercial audiobooks, people are still looking for flexible ways to bring all kinds of text to life.
 
-Text-to-speech isn't new.
-For years, it's served the assistive community in transforming words on the page into an immersive and accessible experience.
+Text-to-speech (TTS) isn't new.
+For years, TTS has served the assistive community, transforming words on the page into an immersive and accessible engagement.
 Unfortunately, the user experience hasn't been the best.
-Voices that sounded like robots, unnatural rhythms and odd ways of speaking (should "bow" be pronounced like the weapon or the courtesy) meant that if you didn't _need_ text-to-speech, you probably wouldn't _use_ text-to-speech.
+A heteronym means a word that with one spelling and different meanings and pronunciation.
+The word 'bow' is both a weapon and bending at the waist or neck.
+TTS apps struggled with these kinds of words.
+From robotic voices and unnatural rhythms to odd ways of speaking, if you didn't need text-to-speech, you probably wouldn't have used text-to-speech.
 
 That changed when companies like [OpenAI](https://openai.com/api/) developed state-of-the-art speech synthesis that sounded like humans speaking.
-The results were realistic voices that feel warm and nuanced
-They could be localized by language and region to pick up the rhythms and inflections that allowed people to lose themselves in spoken content and not think about about the delivery technology.
+Large language models (LLMs) produced realistic voices that felt warm and nuanced.
+Voices could be localized by language and region for the right rhythms and inflections.
+LLMs allowed people to lose themselves in spoken content and not think about about the delivery technology.
+In a nutshell, "digital assistant"-style voices are yesterday's tech and high-quality narration is ready.
 
-Because OpenAI offers easy-to-use APIs, transforming text into speech has reached new heights.
-Old digital assistant voices are out and high-quality narration is ready for you to use.
+### Build something great
+
 Wouldn't it be great if you could turn any text into an audiobook?
-By combining OpenAI text processing with Temporal error mitigation, you can build your own audiobook content.
-There's minimum overhead and maximum reliability.
-Temporal's open source fault tolerant SDKs mean you can just break down text files, convert them to speech, and build up your narrated results.
-
+There's so much text to choose from: a webpage, an email, a work report, and books on sites like [Project Gutenberg](https://gutenberg.org).
+Combine text-to-speech APIs with Temporal error mitigation, and you can build great solutions that focus on your data and API calls.
+Temporal's open source fault tolerant SDKs means hassle-free reliable results.
 You don't have to perform the traditional "check-the-status", "check-for-errors", "check-for-data", "pass completion closures" dance.
-If your Web connection goes down or you experience a power outage, Temporal will persist your progress and retry your work until more favorable conditions prevail.
+And if your Web connection goes down or you experience a power outage, Temporal persists your progress, ready to resume working when more favorable conditions prevail.
 
-This tutorial shows how to use OpenAI Web APIs and Temporal's "just focus on the business logic" tooling to effortlessly create MP3 files from text files.
-Build the project by following this tutorial or grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java) and you're set to listen to whatever you want, whenever you want.
+This tutorial shows how to use OpenAI Web APIs and Temporal's "just focus on your business logic" tooling to effortlessly create MP3 files from text files.
+You can build the project by following this tutorial or grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java).
+You'll be set to listen to whatever you want, whenever you want.
 
 ## Prerequisites
 
 Before starting this tutorial:
 
-- **Install**: [Set up a local development environment](/getting_started/java/dev_environment/index.md) for developing Temporal applications using Java. Ensure a local Temporal Service is running, and that you can access the Temporal Web UI from port `8233`.
-- **Review**: Review the [Hello World in Java tutorial](/getting_started/java/hello_world_in_java/index.md) to understand the basics of getting a Temporal Java SDK project up and running.
+- **Install**: [Set up a local development environment](/getting_started/java/dev_environment/index.md) for developing Temporal applications using Java.
+  Ensure a local Temporal Service is running, and that you can access the Temporal Web UI from port `8233`.
+- **Review**: Review the [Hello World in Java](/getting_started/java/hello_world_in_java/index.md) tutorial to understand the basics of getting a Temporal Java SDK project up and running.
 - **Get credentialed**: You'll need an active [OpenAI API developer account](https://openai.com/api/) and bearer token to use the OpenAI services with this project.
-- **Refer**: The already-built [GitHub repo](https://github.com/temporalio/build-audiobook-java) for this project is at [https://github.com/temporalio/build-audiobook-java](https://github.com/temporalio/build-audiobook-java).
+- **Peek**: We placed a full [reference repo](https://github.com/temporalio/build-audiobook-java) on GitHub if you want to skip straight to the good stuff.
 
-## Create your project
+## Overview
 
-This project uses Gradle because it's fast and easy and simple.
-You can easily port to Maven if that works better for you.
+In this tutorial, you will:
 
-Create a new project folder and then build the following folder structure inside it.
-During this tutorial, you'll add your build file to the main folder and your Java sources to the TTSProject subfolders.
+- [Create a project structure and your build file](#create-your-project).
+  This project uses Gradle because it's quick and simple to use.
+  Feel free to use Maven if you prefer.
+- [Build two data types](#build-data-types). You'll add a payload to help kick off the conversion and a status that tracks your progress.
+- [Build your Workflow](#build-your-workflow). Your Workflow sets the steps that process text into audio.
+  You'll add some policies to make sure your app knows how to handle errors and a query method to peek at the current task status.
+- [Code up the conversion logic](#code-the-conversion).
+  This is the heart of your project and it's the fun part.
+  You'll be amazed at how much this code _doesn't_ worry about errors.
+- [Add basic file and data handling](#add-file-and-data-handling).
+  You'll want to make sure your input file exists, isn't empty, and can be read -- and other file basics.
+  This is the part that reads your input file and breaks it down into chunks.
+  As your conversion works, you'll be able to check in and see which chunk is currently being processed.
+- [Implement the conversion Activity](#implement-the-conversion-activity).
+  Automatically retry your work when it encounters API availability issues by embedding it into a Temporal Activity.
+- [Add an file and data manipulation activity](#implement-the-file-activity).
+  This Activity brings your file and data handling into compliance with the Temporal system.
+- [Code up your Worker](#code-your-worker).
+  A Temporal Worker handles the processing of your Workflow tasks and initiating the execution of your code.
+
+And, that's it! 
+By the end of this tutorial you'll have learned how to use OpenAI and Temporal to create audio from text.
+You'll discover how Temporal abstracts away error management and retries for remote services and you'll see how to integrate non-retryable local system tasks into your Temporal work. 
+
+Now that you know what you'll be doing, it's time to build your personal audio narration system.
+Start by building your project structure and create your Gradle build file.
+
+## Create your project {#create-your-project}
+
+Create a new project folder and set up the following folder structure inside it.
 
 ```
 src
@@ -68,13 +102,16 @@ src
             └── utility
 ```
 
-### Add a Gradle build file
+For this tutorial, you'll add your build file to the main folder and your Java sources to the TTSProject subfolders.
 
-Create 'TTSProject/build.gradle' and add these contents.
-This build file is simple because the project is simple.
-You use Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few dependencies to handle calling APIs.
+Go ahead and create your Gradle build file (or Maven if that's your preferred approach) in the TTSProject folder.
+With this, you can `gradle build` your project and `gradle run` your Temporal Worker app.
+This build file is minimal because the project is simple.
+You use Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few dependencies to handle calling APIs:
 
-```groovy
+<!--SNIPSTART audiobook-project-java-Gradle-build-file-->
+[build.gradle](https://github.com/temporalio/build-audiobook-java/blob/main/build.gradle)
+```gradle
 group 'ttspackage'; version '0.0.1'
 repositories { mavenCentral() }
 apply plugin: 'java'
@@ -95,15 +132,14 @@ task run(type: JavaExec) {
     standardOutput = System.out
 }
 ```
+<!--SNIPEND-->
 
-With this, you can `gradle build` your project and `gradle run` your Temporal Worker app.
+### Create an optional bearer.sh file
 
-### (Optional) Create a bearer.sh file
-
-A 'bearer.sh' scripts sets your OpenAI bearer token as an environment variable.
-Remember: if you use a script like this, you must `source /path/to/bearer.sh` for the variable to be passed to your current shell.
-Using an environment variable means you don't have to hard code your bearer token into your project.
-You can store the shell script wherever you keep similar secure items:
+This 'bearer.sh' script sets your OpenAI bearer token as an environment variable.
+When you use a script like this, you must `source /path/to/bearer.sh` to set the variable in your current shell.
+Environment variables let you skip hard coding your bearer token into projects.
+Store the shell script wherever you keep similar secure items:
 
 ```
 #! /bin/sh
@@ -111,118 +147,163 @@ You can store the shell script wherever you keep similar secure items:
 setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
 ```
 
-You must set this token in the same shell as the Temporal Worker, which you'll build in this tutorial.
-The Worker checks for the token.
-If it's not set, it will error.
+:::note Important
 
-## Define your business logic with Temporal
+You must add your bearer environment variable in the _same_ shell as your Temporal Worker.
+The Worker checks for the token and if it's not set, it will error.
 
-You'll use Temporal to power a one-step text-to-speech operation.
-A Temporal Workflow will process each conversion.
+:::
 
-[Workflows](https://docs.temporal.io/workflows) define the overall flow of your business process.
-Conceptually, a Workflow is a sequence of steps written in your programming language.
 
-Workflows orchestrate [Activities](https://docs.temporal.io/activities), which is how you interact with the outside world in Temporal.
-You use Activities to make API requests, access the file system, or perform other non-deterministic operations.
+## Build data types {#build-data-types}
 
-The Workflow you'll create in this tutorial uses three activities:
+This project uses two data type classes: a payload and a conversion status.
+These classes store the data needed to kick off the conversion and track your work progress.
+The `InputPayload` is a deserialized version of data that's passed to this project's Workload as its created.
+It has one field, a string `path`.
 
-- `setupStatus`: Initializes a process status data type and prepares the data to begin the process.
-- `process`: Processes a single chunk of text into audio.
-- `moveAudio`: Moves audio from your system's temporary work directory to its destination.
-
-### Explore the Workflow code
-
-Here is the main Workflow code. It creates the status data type using the payload passed to the Workflow. It then converts each chunk and finishes by moving the new audio file into place.
-
+<!--SNIPSTART audiobook-project-java-InputPayload-data-type {"selectedLines": ["6-8", "14-14"]}-->
+[src/main/java/ttsworker/model/InputPayload.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/InputPayload.java)
 ```java
-// Workflow entry point
-public String startWorkflow(InputPayload payload) {
-    // Create the conversion elements
-    ConversionStatus status = fileStub.setupStatus(payload.path);
+// ...
+public class InputPayload {
+    public String path;
 
-    // Process them
-    for (int index = 0; index < status.chunkCount; index += 1) {
-        status.count = index;
-        status.message = "Processing part " + (index + 1) + " of " + status.chunkCount; // for Queries
-        logger.info(status.message);
-        encodingStub.process(status.chunks.get(index), status.tempOutputPath);
-    }
-
-    // Move the results into place from the temporary folder
-    status = fileStub.moveAudio(status);
-    logger.info("Output file: " + status.outputPath.toString());
-    return status.outputPath.toString();
+// ...
 }
 ```
+<!--SNIPEND-->
 
-### Set the Retry Policy
+The `ConversionStatus` class has three groups of fields:
 
-Because this is a Temporal solution, each Activity uses a stub (a Temporal-controlled dynamic point of invocation) to run its code. This Workflow creates two stubs, `encodingStub` and `fileStub`.
-
-- `encodingStub`: responsible for handling retryable API requests.
-- `fileStub`: responsible for handling non-retryable local file system requests.
-
+<!--SNIPSTART audiobook-project-java-Conversion-Status-data-type {"selectedLines": ["9-16"]}-->
+[src/main/java/ttsworker/model/ConversionStatus.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/ConversionStatus.java)
 ```java
-// Allow up to two minutes for each chunk to process.
-private TTSActivities encodingStub = TemporalUtility.buildActivityStub(TTSActivities.class, 0, Duration.ofSeconds(120));
-
-// Local utility work requires very little time so it uses a shorter timeout
-private FileActivities fileStub = TemporalUtility.buildActivityStub(FileActivities.class, 0, Duration.ofSeconds(10));
+// ...
+    public String inputPathString; // Provided by Workflow input
+    public Path inputPath; // Source file path
+    public Path tempOutputPath; // Work file Path
+    public Path outputPath; // Results file Path
+    public List<String> chunks; // Batched input text
+    public int chunkCount; // Number of text chunks
+    public int count; // Number of chunks processed
+    public String message; // User-facing Query text
 ```
+<!--SNIPEND-->
 
-As you see here, these two stubs implement different policies, which are set with a utility class called `TemporalUtility`.
-These calls set a maximum activity time of 2 minutes for outbound API calls and 10 seconds for local file work.
-The time it takes to convert your text varies by the size of your text content.
-The project "chunk" size is fairly small and under normal circumstances only takes a fraction of a minute to process.
-Using a higher duration allows "spike" processing when the API is busy and responses are slower.
-The local file system turn-around is very short and doesn't need a long watchdog timeout.
+The first group stores several path items.
+These allow the Workflow to retain references to each file path, even if work is interrupted or processing changes from one Worker process to another.
+The second group includes the data related to processing text, specifically the text chunks.
+Finally, the third is a String message.
+This provides a user-facing message for Temporal [Queries](https://docs.temporal.io/encyclopedia/workflow-message-passing#queries).
+The Workflow updates this message during its lifetime, providing progress snapshots.
 
-Having seen the invocation of `TemporalUtility.buildActivityStub`, next you'll look at its implementation.
-
-### Create 'TemporalUtility.java'
-
-Create a file and add the following code to 'src/main/java/ttsworker/utility/TemporalUtility.java':
-
-<!--snipstart audiobook-project-java-Temporal-utility-class-->
-<!--snipend-->
-
-The `TemporalUtility` class moves some boilerplate code into its own file and out of the Workflow, mainly for readability.
-Here you see how the [maximum attempts](https://docs.temporal.io/encyclopedia/retry-policies#maximum-attempts) and ['schedule-to-close' limits](https://docs.temporal.io/glossary#schedule-to-close-timeout) are set and a new Activity stub is returned.
-
-Next, you'll create your Activities.
-
-### Create the text-to-speech Activity
-
-
-
-### Create the text-to-speech Workflow
-
-Create 'TTSWorkflow.java' and 'TTSWorkflowImpl.java' in the 'src/main/java/ttsworker/temporal' folder.
+**![](/img/icons/download.png) Build It**
+Create two files in src/main/java/ttsworker/model named 'InputPayload.java' and 'ConversionStatus.java`.
+Add the sources here to each file.
 
 <details>
+
 <summary>
-Workflow Source
+Data Type Sources
 </summary>
-<Tabs groupId="workflow-sources" queryString>
-  <TabItem value="interface" label="Interface">
 
-### Source Interface
+<Tabs groupId="datatypesources" queryString>
+  <TabItem value="conversionstatus" label="ConversionStatus.java">
 
-<!--SNIPSTART audiobook-project-java-Workflow-interface-->
+### Conversion Status data type
+
+<!--SNIPSTART audiobook-project-java-Conversion-Status-data-type-->
+[src/main/java/ttsworker/model/ConversionStatus.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/ConversionStatus.java)
+```java
+package ttspackage;
+
+import java.nio.file.Path;
+import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = ConversionStatus.class)
+public class ConversionStatus {
+    public String inputPathString; // Provided by Workflow input
+    public Path inputPath; // Source file path
+    public Path tempOutputPath; // Work file Path
+    public Path outputPath; // Results file Path
+    public List<String> chunks; // Batched input text
+    public int chunkCount; // Number of text chunks
+    public int count; // Number of chunks processed
+    public String message; // User-facing Query text
+
+    public ConversionStatus() {} // Jackson
+
+    public ConversionStatus(String inputPath) {
+        this.inputPathString = inputPath;
+        this.tempOutputPath = null;
+        this.inputPath = null;
+        this.outputPath = null;
+        this.chunks = null;
+        this.chunkCount = 1;
+        this.count = 0;
+        this.message = "Text to speech request received";
+    }
+
+}
+```
 <!--SNIPEND-->
 
   </TabItem>
-  <TabItem value="interface" label="Implementation">
+  <TabItem value="inputpayload" label="InputPayload.java">
 
-### Source Implementation
+### Input Payload data type
 
-<!--SNIPSTART audiobook-project-java-Workflow-implementation-->
+<!--SNIPSTART audiobook-project-java-InputPayload-data-type-->
+[src/main/java/ttsworker/model/InputPayload.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/InputPayload.java)
+```java
+package ttspackage;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = InputPayload.class)
+public class InputPayload {
+    public String path;
+
+    public InputPayload() { } // support Jackson deserialization
+
+    public InputPayload(String path) {
+        this.path = path;
+    }
+}
+```
 <!--SNIPEND-->
 
   </TabItem>
 </Tabs>
 
+</details>
 
+## Build your Workflow {#build-your-workflow}
 
+a
+
+## Code the conversion {#code-the-conversion}
+
+b
+
+## Add file and data handling {#add-file-and-data-handling}
+
+c
+
+## Implement the conversion Activity {#implement-the-conversion-activity}
+
+d
+
+## Implement the file Activity {#implement-the-file-activity}
+
+e
+
+## Code your Worker {#code-your-worker}
+
+f
+
+## Conclusions {#wrap-up}
+
+g
