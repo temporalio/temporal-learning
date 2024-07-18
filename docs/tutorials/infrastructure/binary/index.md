@@ -115,7 +115,7 @@ global:
 services:
   frontend:
     rpc:
-      grpcPort: 7233
+      grpcPort: 7236
       membershipPort: 6933
       bindOnLocalHost: true
       httpPort: 7243
@@ -148,7 +148,7 @@ clusterMetadata:
       enabled: true
       initialFailoverVersion: 1
       rpcName: "frontend"
-      rpcAddress: "localhost:7233"
+      rpcAddress: "localhost:7236"
       httpAddress: "localhost:7243"
 
 dcRedirectionPolicy:
@@ -164,7 +164,7 @@ sudo vim /etc/temporal/temporal-ui-server.yaml
 Paste the following contents into the file.
 
 ```
-temporalGrpcAddress: 127.0.0.1:7233
+temporalGrpcAddress: 127.0.0.1:7236
 host: 127.0.0.1
 port: 8233
 enableUi: true
@@ -387,14 +387,14 @@ server {
     http2 on;
 
     location / {
-        grpc_pass localhost:7233;
+        grpc_pass localhost:7236;
         allow your_client_ip_address;
         deny all;
     }
 }
 ```
 
-This configuration is shorter than the previous one, because Nginx only needs to use the `grpc_pass` directive to send gRPC traffic to the server using the same external port (7233) that Temporal's gRPC API runs on. Again, don't forget the the `allow your_client_ip_address;` line. In this case, you'll need an `allow` statement or IP range for everywhere that you plan to run your Temporal Workers, or any other Temporal Client, or connect via the `temporal` CLI.
+This configuration is shorter than the previous one, because Nginx only needs to use the `grpc_pass` directive to send gRPC traffic to the server. Again, don't forget the the `allow your_client_ip_address;` line. In this case, you'll need an `allow` statement or IP range for everywhere that you plan to run your Temporal Workers, or any other Temporal Client, or connect via the `temporal` CLI.
 
 Save and close the file, and create a symbolic link as before:
 
