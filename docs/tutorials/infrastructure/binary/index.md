@@ -185,7 +185,16 @@ sudo su temporal -c `temporal-server -r / -c etc/temporal/ -e temporal-server st
 sudo su temporal -c `temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start`
 ```
 
-However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network. Use `Ctrl+C` in each terminal to stop the running process. In the remainder of this tutorial, you'll configure this server for production use.
+However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network.
+
+Use `Ctrl+C` in each terminal to stop the running process, then delete the temporary DBs that were created:
+
+```bash
+sudo rm /etc/temporal/default.db
+sudo rm /etc/temporal/visibility.db
+```
+
+In the remainder of this tutorial, you'll configure this server for production use.
 
 ## Creating and Registering System Services
 
