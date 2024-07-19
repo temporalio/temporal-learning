@@ -80,6 +80,10 @@ origins:
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'
+  - files:
+      pattern: './docs/tutorials/python/trip-booking-app/code/*.py'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
 
 targets:
   - docs/tutorials
