@@ -315,7 +315,7 @@ Now, you can configure an Envoy *edge proxy* to expose your Temporal Service to 
 Using your favorite text editor, create an Envoy configuration file at `/etc/envoy-temporal.yaml`:
 
 ```bash
-sudo vim /etc/envoy-temporal.yaml`
+sudo vim /etc/envoy-temporal.yaml
 ```
 
 Paste the following into the new configuration file:

@@ -300,10 +300,10 @@ Both services should now be running in the background.
 
 *To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).*
 While your Temporal Service is currently running, it is still only available on the internal `localhost` network. Next you should make it available externally and secure connections to it.
-When `certbot` retrieves certificates, by default, it stores them in `/etc/letsencrypt/live/your_domain`. Check to make sure that you have them:
+When `certbot` retrieves certificates, by default, it stores them in `/etc/letsencrypt/live/YOUR_DOMAIN`. Check to make sure that you have them:
 
 ```bash
-sudo ls /etc/letsencrypt/live/your_domain
+sudo ls /etc/letsencrypt/live/YOUR_DOMAIN
 ```
 
 ```
@@ -318,13 +318,13 @@ Nginx allows you to add per-site configurations to individual files in a subdire
 sudo vim /etc/nginx/sites-available/temporal-ui
 ```
 
-Paste the following into the new configuration file, being sure to replace `your_domain` with your domain name.
+Paste the following into the new configuration file, being sure to replace `YOUR_DOMAIN` with your domain name.
 
 ```
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name your_domain www.your_domain
+    server_name YOUR_DOMAIN www.YOUR_DOMAIN
 
     access_log /var/log/nginx/temporal.access.log;
     error_log /var/log/nginx/temporal.error.log;
@@ -338,14 +338,14 @@ server {
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Real-PORT $remote_port;
-        allow your_ip_addresses;
+        allow YOUR_IP_ADDRESSES;
         deny all;
     }
 
     listen 443 ssl;
     # RSA certificate
-    ssl_certificate /etc/letsencrypt/live/your_domain/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your_domain/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/YOUR_DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/YOUR_DOMAIN/privkey.pem;
 
     # Redirect non-https traffic to https
     if ($scheme != "https") {
@@ -356,7 +356,7 @@ server {
 
 You can read this configuration as having three main “blocks” to it. The first block, coming before the `location /` line, contains a boilerplate Nginx configuration for serving a website on the default HTTP port, 80. The `location /` block contains a configuration for proxying incoming connections to the Temporal Web UI, running on port 8233 internally, while preserving SSL. The configuration at the end of the file, after the `location /` block, loads your LetsEncrypt SSL keypairs and redirects HTTP connections to HTTPS.
 
-Note the `allow your_ip_address;` line. You should replace this with the IP address that you'll need to access the Temporal Web UI from. You can add additional addresses in the same range using [CIDR notation](https://www.digitalocean.com/community/tutorials/understanding-ip-addresses-subnets-and-cidr-notation-for-networking), or add additional consecutive `allow` lines for multiple IPs. The `deny all;` on the following line will block traffic to all but the specified IPs. Because Temporal does not use any kind of authentication by default, restricting traffic by IP address is the least complex way of providing secure access.
+Note the `allow YOUR_IP_ADDRESSES;` line. You should replace this with the IP address that you'll need to access the Temporal Web UI from. You can add additional addresses in the same range using [CIDR notation](https://www.digitalocean.com/community/tutorials/understanding-ip-addresses-subnets-and-cidr-notation-for-networking), or add additional consecutive `allow` lines for multiple IPs. The `deny all;` on the following line will block traffic to all but the specified IPs. Because Temporal does not use any kind of authentication by default, restricting traffic by IP address is the least complex way of providing secure access.
 
 Save and close the file. Next, you’ll need to activate this new configuration. Nginx’s convention is to create symbolic links (like shortcuts) from files in `sites-available/` to another folder called `sites-enabled/` as you decide to enable or disable them. Using full paths for clarity, make that link:
 
@@ -376,25 +376,25 @@ Before reloading Nginx with this new configuration, you'll create another revers
 sudo vim /etc/nginx/sites-available/temporal
 ```
 
-Paste the following into the new configuration file, being sure to replace `your_domain` with your domain name.
+Paste the following into the new configuration file, being sure to replace `YOUR_DOMAIN` with your domain name.
 
 ```
 server {
     listen 7233 http2;
     listen [::]:7233 http2;
-    server_name your_domain
+    server_name YOUR_DOMAIN
 
     http2 on;
 
     location / {
         grpc_pass localhost:7236;
-        allow your_client_ip_address;
+        allow YOUR_CLIENT_IP_ADDRESS;
         deny all;
     }
 }
 ```
 
-This configuration is shorter than the previous one, because Nginx only needs to use the `grpc_pass` directive to send gRPC traffic to the server. Again, don't forget the the `allow your_client_ip_address;` line. In this case, you'll need an `allow` statement or IP range for everywhere that you plan to run your Temporal Workers, or any other Temporal Client, or connect via the `temporal` CLI.
+This configuration is shorter than the previous one, because Nginx only needs to use the `grpc_pass` directive to send gRPC traffic to the server. Again, don't forget the the `allow YOUR_CLIENT_IP_ADDRESS;` line. In this case, you'll need an `allow` statement or IP range for everywhere that you plan to run your Temporal Workers, or any other Temporal Client, or connect via the `temporal` CLI.
 
 Save and close the file, and create a symbolic link as before:
 
@@ -408,7 +408,7 @@ Now you can restart your Nginx service, so it will reflect your new configuratio
 sudo systemctl restart nginx
 ```
 
-Navigate to **your_domain** in a web browser, and you should receive the Temporal Web UI. At this point, you're finished with configuration. In the final step, you'll review the logs generated by your Temporal Service, as well as your options for connecting to it from the Temporal CLI or SDK.
+Navigate to **YOUR_DOMAIN** in a web browser, and you should receive the Temporal Web UI. At this point, you're finished with configuration. In the final step, you'll review the logs generated by your Temporal Service, as well as your options for connecting to it from the Temporal CLI or SDK.
 
 ## Interacting with the Temporal Service
 
