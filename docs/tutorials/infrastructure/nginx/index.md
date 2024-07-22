@@ -5,7 +5,7 @@ keywords: [sqlite, nginx, binary, systemd, https, certbot, hosting, deploy, conf
 tags: [Server, Binary]
 last_update:
   date: 2024-07-08
-title: How to Deploy a Temporal Service using an SQLite Backend without Docker or Kubernetes
+title: How to Deploy a Temporal Service using an SQLite Backend with Nginx
 description: Deploy a Temporal Service from scratch using our Server Binaries without requiring any additional dependencies.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -380,8 +380,8 @@ Paste the following into the new configuration file, being sure to replace `your
 
 ```
 server {
-    listen 7233;
-    listen [::]:7233;
+    listen 7233 http2;
+    listen [::]:7233 http2;
     server_name your_domain
 
     http2 on;
@@ -438,4 +438,4 @@ Refer to the [Temporal documentation](https://docs.temporal.io/) for more.
 
 ## Conclusion
 
-In this tutorial, you configured and deployed a baseline Temporal Service. Next, you can read about Temporal's [Visiblity features](https://docs.temporal.io/visibility) which require adding ElasticSearch to your deployment. You can also [learn more about the Temproal platform by following our self-paced online courses](https://learn.temporal.io/courses/), or talk to an expert about [Temporal Cloud](https://temporal.io/cloud). 
+In this tutorial, you configured and deployed a baseline Temporal Service. Next, you can read about Temporal's [Visiblity features](https://docs.temporal.io/visibility) which require adding ElasticSearch to your deployment. You can also [learn more about the Temporal platform by following our self-paced online courses](https://learn.temporal.io/courses/), or talk to an expert about [Temporal Cloud](https://temporal.io/cloud). 
