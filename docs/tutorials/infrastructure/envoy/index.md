@@ -83,7 +83,7 @@ log:
 persistence:
   defaultStore: sqlite-default
   visibilityStore: sqlite-visibility
-  numHistoryShards: 1
+  numHistoryShards: 4
   datastores:
     sqlite-default:
       sql:
@@ -134,9 +134,7 @@ services:
 
   worker:
     rpc:
-      grpcPort: 7239
       membershipPort: 6939
-      bindOnLocalHost: true
 
 clusterMetadata:
   enableGlobalNamespace: false
@@ -174,7 +172,7 @@ cors:
 defaultNamespace: default
 ```
 
-Save and close the file.
+If you are using your own domain name, replace `localhost` in the `allowOrigins` property. Then save and close the file.
 
 You can now run a Temporal Service on this server by running the following commands in two separate terminals, to start the Core Server and the UI Server:
 
