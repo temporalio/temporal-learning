@@ -1,6 +1,6 @@
 ---
 id: envoy-binary-tutorial
-sidebar_position: 1
+sidebar_position: 2
 keywords: [sqlite, envoy, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
 tags: [Server, Binary, Envoy]
 last_update:

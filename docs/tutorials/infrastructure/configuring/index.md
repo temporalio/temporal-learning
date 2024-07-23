@@ -1,6 +1,6 @@
 ---
 id: configuring-binary-tutorial
-sidebar_position: 1
+sidebar_position: 3
 keywords: [sqlite, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
 tags: [Server, Binary]
 last_update:
@@ -159,7 +159,7 @@ Note `YOUR_DOMAIN:PORT` in the `rpcAddress` parameter. You should update this to
 
 :::note External access to the Temporal Service
 
-The gRPC API frontend configuration in this tutorial uses a default value of `bindOnIP: '0.0.0.0'`, meaning that the Temporal API will be available globally, without authentication, to anyone who can access this server. This is generally only appropriate if you are otherwise controlling access to this server (e.g. through Kubernetes or by using an external proxy). If you need a self-contained access control solution, refer to our tutorials on [Deploying Temporal with Nginx](/tutorials/infrastructure/nginx/index.md) or [Deploying Temporal with Envoy](/tutorials/infrastrucure/envoy/index.md).
+The gRPC API frontend configuration in this tutorial uses a default value of `bindOnIP: '0.0.0.0'`, meaning that the Temporal API will be available globally, without authentication, to anyone who can access this server. This is generally only appropriate if you are otherwise controlling access to this server (e.g. through Kubernetes or by using an external proxy). If you need a self-contained access control solution, refer to our tutorials on [Deploying Temporal with Nginx](/tutorials/infrastructure/nginx/index.md) or [Deploying Temporal with Envoy](/tutorials/infrastructure/envoy/index.md).
 
 :::
 
