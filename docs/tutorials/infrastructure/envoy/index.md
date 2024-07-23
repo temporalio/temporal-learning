@@ -1,12 +1,12 @@
 ---
-id: server-binary-tutorial
+id: envoy-binary-tutorial
 sidebar_position: 1
 keywords: [sqlite, envoy, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
-tags: [Server, Binary]
+tags: [Server, Binary, Envoy]
 last_update:
-  date: 2024-07-08
+  date: 2024-07-22
 title: How to Deploy a Temporal Service using an SQLite Backend with Envoy
-description: Deploy a Temporal Service from scratch using our Server Binaries without requiring any additional dependencies.
+description: Deploy a Temporal Service from scratch using our Server Binaries using an Envoy edge proxy.
 image: /img/temporal-logo-twitter-card.png
 ---
 
