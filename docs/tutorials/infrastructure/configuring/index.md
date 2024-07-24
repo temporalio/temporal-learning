@@ -203,11 +203,11 @@ As with the gRPC API, this will make the Web UI available over HTTPS to anyone w
 You can now run a Temporal Service on this server by running the following commands in two separate terminals, to start the Core Server and the UI Server:
 
 ```bash
-sudo su temporal -c `temporal-server -r / -c etc/temporal/ -e temporal-server start`
+sudo su temporal -c "temporal-server -r / -c etc/temporal/ -e temporal-server start"
 ```
 
 ```bash
-sudo su temporal -c `temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start`
+sudo su temporal -c "temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start"
 ```
 
 However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network.
