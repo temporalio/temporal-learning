@@ -359,7 +359,7 @@ static_resources:
                       permissions:
                         - any: true
                       principals:
-                        - remote_ip: {"address_prefix": 1.1.1.1} # Update to your allowed Web UI IP addresses
+                        - remote_ip: {"address_prefix": 1.1.1.1, "prefix_len": 32} # Update to your allowed Web UI IP addresses
             - name: envoy.filters.http.router
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -372,8 +372,8 @@ static_resources:
     #        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
     #        common_tls_context:
     #          tls_certificates:
-    #          - certificate_chain: {filename: "/ets/letsencrypt/live/your_domain/cert.pem"}
-    #            private_key: {filename: "/ets/letsencrypt/live/your_domain/privkey.pem"}
+    #          - certificate_chain: {filename: "/etc/letsencrypt/live/your_domain/cert.pem"}
+    #            private_key: {filename: "/etc/letsencrypt/live/your_domain/privkey.pem"}
     #          alpn_protocols: ["h2,http/1.1"]
     #  listener_filters:
     #  - name: "envoy.filters.listener.tls_inspector"
@@ -419,7 +419,7 @@ static_resources:
                             permissions:
                               - any: true
                             principals:
-                              - remote_ip: {"address_prefix": 1.1.1.1} # Update to your allowed client IP addresses
+                              - remote_ip: {"address_prefix": 1.1.1.1, "prefix_len": 32} # Update to your allowed client IP addresses
                   - name: envoy.filters.http.grpc_web
                   - name: envoy.filters.http.cors
                   - name: envoy.filters.http.router
