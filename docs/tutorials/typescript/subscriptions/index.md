@@ -682,7 +682,6 @@ You will now modify your Workflow Execution code to wait for the subscription to
 
 ```ts
 // Check if the subscription was cancelled during the trial period
-// Check if the subscription was cancelled during the trial period
 if (subscriptionCancelled) {
   await sendCancellationEmailDuringTrialPeriod(customer);
   return `Subscription finished for: ${customer.id}`;
