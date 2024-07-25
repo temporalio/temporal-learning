@@ -14,100 +14,71 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Introduction
 
-For many people, audiobooks provide a staple of daily life.
-Whether stuck in traffic, out jogging, or tidying up at home, listening to audio helps people pass the time.
-You can learn new things, enjoy stories, and stay entertained without being tied to a screen or a book.
-There's a real demand for fluent and well-narrated audio experiences.
-Despite the availability of podcasts and commercial audiobooks, people are still looking for flexible ways to bring all kinds of text to life.
+For many people, audiobooks are a staple of their daily life.
+Spoken content helps people pass the time when they're stuck in traffic, out jogging, or tidying up at home, .
+You can learn new things or just stay entertained without being tied to a screen or a book.
 
-Text-to-speech (TTS) isn't new.
-For years, TTS has served the assistive community, transforming words on the page into an immersive and accessible engagement.
-Unfortunately, the user experience hasn't been the best.
-A heteronym means a word that with one spelling and different meanings and pronunciation.
-The word 'bow' is both a weapon and bending at the waist or neck.
-TTS apps struggled with these kinds of words.
-From robotic voices and unnatural rhythms to odd ways of speaking, if you didn't need text-to-speech, you probably wouldn't have used text-to-speech.
+For years, text-to-speech solutions (TTS) served the assistive community, transforming words on the page into an immersive and accessible engagement.
+Until recently, robotic voices and unnatural rhythms meant that if you didn't need TTS, you probably wouldn't use TTS.
+Now companies like [OpenAI](https://openai.com/api/) have developed speech synthesis that sound like humans.
+Their large language models (LLMs) produce realistic voices with warm and nuanced narration.
+So, wouldn't it be great if you could use this kind of tech to transform any text to an audiobook?
 
-That changed when companies like [OpenAI](https://openai.com/api/) developed state-of-the-art speech synthesis that sounded like humans speaking.
-Large language models (LLMs) produced realistic voices that felt warm and nuanced.
-Voices could be localized by language and region for the right rhythms and inflections.
-LLMs allowed people to lose themselves in spoken content and not think about about the delivery technology.
-In a nutshell, "digital assistant"-style voices are yesterday's tech and high-quality narration is ready.
+In this tutorial, you'll build a text-to-speech system using OpenAI APIs.
+You'll create tooling that works with plain text input files, breaking your text source down into batches, and converting them sequentially.
+Your project uses Temporal error mitigation so you can focus on input, conversion, and output, and not on handling error conditions.
+You won't have to perform the traditional "check-the-status", "check-for-errors", "check-for-data", "pass completion closures" dance.
 
-### Build something great
-
-Wouldn't it be great if you could turn any text into an audiobook?
-There's so much text to choose from: a webpage, an email, a work report, and books on sites like [Project Gutenberg](https://gutenberg.org).
-Combine text-to-speech APIs with Temporal error mitigation, and you can build great solutions that focus on your data and API calls.
-Temporal's open source fault tolerant SDKs means hassle-free reliable results.
-You don't have to perform the traditional "check-the-status", "check-for-errors", "check-for-data", "pass completion closures" dance.
-And if your Web connection goes down or you experience a power outage, Temporal persists your progress, ready to resume working when more favorable conditions prevail.
-
-This tutorial shows how to use OpenAI Web APIs and Temporal's "just focus on your business logic" tooling to effortlessly create MP3 files from text files.
-You can build the project by following this tutorial or grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java).
+After completing this project, your new tool lets you create plain text files and transform them to audiobooks in minutes. 
+You can grab text from emails, from the web, from [Project Gutenberg](https://gutenberg.org), or even that report you need to "read" for work.
+Temporal's open source fault tolerant SDKs means hassle-free reliable audio output.
 You'll be set to listen to whatever you want, whenever you want.
 
+Ready to get started? Preflight the requirements for this tutorial.
+
 ## Prerequisites
+
+You can build the project by following this tutorial or grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java).
 
 Before starting this tutorial:
 
 - **Install**: [Set up a local development environment](/getting_started/java/dev_environment/index.md) for developing Temporal applications using Java.
   Ensure a local Temporal Service is running, and that you can access the Temporal Web UI from port `8233`.
 - **Review**: Review the [Hello World in Java](/getting_started/java/hello_world_in_java/index.md) tutorial to understand the basics of getting a Temporal Java SDK project up and running.
-- **Get credentialed**: You'll need an active [OpenAI API developer account](https://openai.com/api/) and bearer token to use the OpenAI services with this project.
-- **Peek**: We placed a full [reference repo](https://github.com/temporalio/build-audiobook-java) on GitHub if you want to skip straight to the good stuff.
+- **Get credentialed**: You'll need an active [OpenAI API developer account](https://openai.com/api/) and bearer token to use OpenAI services for this project.
+- **Peek**: You'll find a full [reference repo](https://github.com/temporalio/build-audiobook-java) on GitHub if you want to skip straight to the good stuff.
 
-## Overview
+If you're good on the prerequisites, it's time to build out your Java project directory.
 
-In this tutorial, you will:
+## Create your Java project structure
 
-- [Create a project structure and your build file](#create-your-project).
-  This project uses Gradle because it's quick and simple to use.
-  Feel free to use Maven if you prefer.
-- [Build two data types](#build-data-types). You'll add a payload to help kick off the conversion and a status that tracks your progress.
-- [Build your Workflow](#build-your-workflow). Your Workflow sets the steps that process text into audio.
-  You'll add some policies to make sure your app knows how to handle errors and a query method to peek at the current task status.
-- [Code up the conversion logic](#code-the-conversion).
-  This is the heart of your project and it's the fun part.
-  You'll be amazed at how much this code _doesn't_ worry about errors.
-- [Add basic file and data handling](#add-file-and-data-handling).
-  You'll want to make sure your input file exists, isn't empty, and can be read -- and other file basics.
-  This is the part that reads your input file and breaks it down into chunks.
-  As your conversion works, you'll be able to check in and see which chunk is currently being processed.
-- [Implement the conversion Activity](#implement-the-conversion-activity).
-  Automatically retry your work when it encounters API availability issues by embedding it into a Temporal Activity.
-- [Add an file and data manipulation activity](#implement-the-file-activity).
-  This Activity brings your file and data handling into compliance with the Temporal system.
-- [Code up your Worker](#code-your-worker).
-  A Temporal Worker handles the processing of your Workflow tasks and initiating the execution of your code.
-
-And, that's it! 
-By the end of this tutorial you'll have learned how to use OpenAI and Temporal to create audio from text.
-You'll discover how Temporal abstracts away error management and retries for remote services and you'll see how to integrate non-retryable local system tasks into your Temporal work. 
-
-Now that you know what you'll be doing, it's time to build your personal audio narration system.
-Start by building your project structure and create your Gradle build file.
-
-## Create your project {#create-your-project}
-
-Create a new project folder and set up the following folder structure inside it.
+Set up your source code folder hierarchy by issuing these directory creation commands:  
 
 ```
-src
-└── main
-    └── java
-        └── TTSProject
-            ├── model
-            ├── temporal
-            └── utility
+mkdir -p TTSWorker/src/main/java/ttsworker/model
+mkdir -p TTSWorker/src/main/java/ttsworker/utility
+mkdir -p TTSWorker/src/main/java/ttsworker/temporal
+``` 
+
+Your directory structure should now look like this:
+
+```
+TTSWorker
+└── src
+    └── main
+        └── java
+            └── ttsworker
+                ├── model
+                ├── temporal
+                └── utility
 ```
 
-For this tutorial, you'll add your build file to the main folder and your Java sources to the TTSProject subfolders.
+In your root folder, create a Gradle build file.
+This project chose Gradle because it's quick and uncomplicated to use.
+Feel free to swap in Maven if you prefer.
+This is a also good time to set up your version control if you want to use it with this project.
 
-Go ahead and create your Gradle build file (or Maven if that's your preferred approach) in the TTSProject folder.
-With this, you can `gradle build` your project and `gradle run` your Temporal Worker app.
-This build file is minimal because the project is simple.
-You use Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few dependencies to handle calling APIs:
+Create build.gradle and add these contents.
 
 <!--SNIPSTART audiobook-project-java-Gradle-build-file-->
 [build.gradle](https://github.com/temporalio/build-audiobook-java/blob/main/build.gradle)
@@ -134,12 +105,18 @@ task run(type: JavaExec) {
 ```
 <!--SNIPEND-->
 
-### Create an optional bearer.sh file
+This build file is minimal because the project is minimal.
+The `run` task starts your TTS application (`gradle run`).  
+Your dependencies include Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few basic libraries:
 
-This 'bearer.sh' script sets your OpenAI bearer token as an environment variable.
-When you use a script like this, you must `source /path/to/bearer.sh` to set the variable in your current shell.
-Environment variables let you skip hard coding your bearer token into projects.
-Store the shell script wherever you keep similar secure items:
+- **com.squareup.okhttp3:okhttp:4.9.3**: OkHttp is a basic HTTP client for network requests.
+- **org.json:json:20210307**: Parse and manipulate JSON data.
+- **commons-io:commons-io:2.11.0**: Perform file tasks with common input/output routines.
+- **org.slf4j:slf4j-nop:2.0.6**: Minimizes unnecessary output with logging suppression.
+- **io.temporal:temporal-sdk:1.22.2**: Add error mitigation.
+
+Optionally create a `bearer.sh` utility and make it executable with `chmod +x`.
+Store this wherever you keep similar secure items:
 
 ```
 #! /bin/sh
@@ -147,103 +124,304 @@ Store the shell script wherever you keep similar secure items:
 setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
 ```
 
-:::note Important
+This 'bearer.sh' script sets your OpenAI bearer token as an environment variable.
+You must `source /path/to/bearer.sh` to set the variable into your current shell.
+Environment variables let you skip hard coding your bearer token into projects.
 
-You must add your bearer environment variable in the _same_ shell as your Temporal Worker.
-The Worker checks for the token and if it's not set, it will error.
+:::note Your Bearer Token
+
+When using your application, you must set your `OPEN_AI_BEARER_TOKEN` environment variable in the same shell before execution.
+The application checks for the token and if it's not set, it will error.
 
 :::
 
+## Create your OpenAI conversion code
 
-## Build data types {#build-data-types}
+Your TTSUtility.java file will live in 'src/main/java/ttsworker/utility'.
+Its job is to perform conversion from strings to audio.
+Create the file and add the following code:
 
-This project uses two data type classes: a payload and a conversion status.
-These classes store the data needed to kick off the conversion and track your work progress.
-The `InputPayload` is a deserialized version of data that's passed to this project's Workload as its created.
-It has one field, a string `path`.
-
-<!--SNIPSTART audiobook-project-java-InputPayload-data-type {"selectedLines": ["6-8", "14-14"]}-->
-[src/main/java/ttsworker/model/InputPayload.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/InputPayload.java)
+<!--SNIPSTART audiobook-project-java-tts-utility-class-->
+[src/main/java/ttsworker/utility/TTSUtility.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/utility/TTSUtility.java)
 ```java
-// ...
-public class InputPayload {
-    public String path;
+package ttspackage;
 
-// ...
+import okhttp3.*;
+import org.json.JSONObject;
+import java.io.IOException;
+
+/**
+ * Utility class to convert text to speech using the OpenAI API.
+ */
+public class TTSUtility {
+    private static final String TTS_API_URL = "https://api.openai.com/v1/audio/speech";
+
+    /**
+     * Converts the given text to speech and returns the audio as a byte array.
+     *
+     * @param text the text to convert to speech.
+     * @return a byte array containing the audio data in MP3 format.
+     * @throws IOException if an error occurs while making the API request or processing the response.
+     * @throws IllegalArgumentException if the Bearer token is not set in the environment variables.
+     */
+    public static byte[] textToSpeech(String text) throws IOException {
+
+        // Fetch and clean up Bearer token from environment
+        String bearerToken = System.getenv("OPEN_AI_BEARER_TOKEN");
+        if (bearerToken != null) {
+            bearerToken = bearerToken.trim();
+            bearerToken = bearerToken.replaceAll("[\\P{Print}]", "");
+        } else {
+            throw new IllegalArgumentException("Bearer token is not set");
+        }
+
+        OkHttpClient client = new OkHttpClient();
+
+        // Create API request payload
+        JSONObject json = new JSONObject();
+        json.put("model", "tts-1");
+        json.put("input", text);
+        json.put("voice", "nova"); // see https://platform.openai.com/docs/guides/text-to-speech/voice-options
+        json.put("response_format", "mp3");
+
+        RequestBody body = RequestBody.create(
+                json.toString(), MediaType.get("application/json; charset=utf-8"));
+
+        Request request = new Request.Builder()
+                .url(TTS_API_URL)
+                .post(body)
+                .addHeader("Authorization", "Bearer " + bearerToken)
+                .build();
+
+        // Fetch and return response body
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().bytes();
+        }
+    }
 }
 ```
 <!--SNIPEND-->
 
-The `ConversionStatus` class has three groups of fields:
+This class uses Open AI to convert text to audio.
+Your request won't work without your OpenAI bearer token so make sure to set your environment variable before running this app.
 
-<!--SNIPSTART audiobook-project-java-Conversion-Status-data-type {"selectedLines": ["9-16"]}-->
-[src/main/java/ttsworker/model/ConversionStatus.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/ConversionStatus.java)
-```java
-// ...
-    public String inputPathString; // Provided by Workflow input
-    public Path inputPath; // Source file path
-    public Path tempOutputPath; // Work file Path
-    public Path outputPath; // Results file Path
-    public List<String> chunks; // Batched input text
-    public int chunkCount; // Number of text chunks
-    public int count; // Number of chunks processed
-    public String message; // User-facing Query text
-```
-<!--SNIPEND-->
+Your `textToSpeech` method calls out to OpenAI to convert a `String` into a `byte[]` array.
+It creates the request body, and performs a POST operation to the OpenAI endpoint defined at the class level.   
 
-The first group stores several path items.
-These allow the Workflow to retain references to each file path, even if work is interrupted or processing changes from one Worker process to another.
-The second group includes the data related to processing text, specifically the text chunks.
-Finally, the third is a String message.
-This provides a user-facing message for Temporal [Queries](https://docs.temporal.io/encyclopedia/workflow-message-passing#queries).
-The Workflow updates this message during its lifetime, providing progress snapshots.
+When creating the HTTP request body, customizable [endpoint options](https://platform.openai.com/docs/api-reference/audio/createSpeech) shape the way your audio is built:
 
-**![](/img/icons/download.png) Build It**
-Create two files in src/main/java/ttsworker/model named 'InputPayload.java' and 'ConversionStatus.java`.
-Add the sources here to each file.
+- **model** (required): You use the basic low-latency 'tts-1' model in this project.
+  Visit [OpenAI TTS](https://platform.openai.com/docs/models/tts) to read about the currently available models, which include both standard and high quality options.
+- **input** (required): The maximum length of this string is set at 4096 characters.
+- **voice** (required): The 'nova' voice has a high energy "lively tone".
+  You can listen to samples of other voices at the [OpenAI Voice Options](https://platform.openai.com/docs/guides/text-to-speech/voice-options) page.
+- **response_format**: You'll use the highly portable mp3 output format.
+
+You may want to tweak the request body further.
+Some people like to speed up their audio so they get through it quicker.
+An optional **speed** parameter (from 0.5 to 4.0, defaults to 1) lets you speed up or slow down the output.
+To tune the results to a specific languge so the model takes advantage of native inflections.
+Set **language** to an [ISO-639](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) code.
+OpenAI offers over fifty [supported languages](https://platform.openai.com/docs/guides/text-to-speech/supported-languages).   
+
+With the conversion class created, next you'll build two support classes for managing file access and reading and writing data.
+
+## Create file and data handling utility classes
+
+To use your TTS class, you'll need to manage routine tasks of reading and writing data.
+For example, you'll want to make sure your input file exists, isn't empty, and can be read.
+Also, your project will build your output in a temporary folder using a system-supplied temporary file.
+These and other kinds of basic file and data management are handled by your project utility classes.
+
+Create two utility files named FileUtility.java and DataUtility.java in 'src/main/java/ttsworker/utility' and add the content below in the folded Utility Sources.
 
 <details>
 
 <summary>
-Data Type Sources
+Utility Sources
 </summary>
 
-<Tabs groupId="datatypesources" queryString>
-  <TabItem value="conversionstatus" label="ConversionStatus.java">
+<Tabs groupId="utiltysources" queryString>
+  <TabItem value="fileutilityjava" label="FileUtility.java">
 
-### Conversion Status data type
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
 
-<!--SNIPSTART audiobook-project-java-Conversion-Status-data-type-->
-[src/main/java/ttsworker/model/ConversionStatus.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/ConversionStatus.java)
+<!--SNIPSTART audiobook-project-java-file-utility-class-->
+[src/main/java/ttsworker/utility/FileUtility.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/utility/FileUtility.java)
 ```java
 package ttspackage;
 
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.List;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
-@JsonDeserialize(as = ConversionStatus.class)
-public class ConversionStatus {
-    public String inputPathString; // Provided by Workflow input
-    public Path inputPath; // Source file path
-    public Path tempOutputPath; // Work file Path
-    public Path outputPath; // Results file Path
-    public List<String> chunks; // Batched input text
-    public int chunkCount; // Number of text chunks
-    public int count; // Number of chunks processed
-    public String message; // User-facing Query text
+import java.util.Optional;
 
-    public ConversionStatus() {} // Jackson
+import org.apache.commons.io.FilenameUtils;
 
-    public ConversionStatus(String inputPath) {
-        this.inputPathString = inputPath;
-        this.tempOutputPath = null;
-        this.inputPath = null;
-        this.outputPath = null;
-        this.chunks = null;
-        this.chunkCount = 1;
-        this.count = 0;
-        this.message = "Text to speech request received";
+public class FileUtility {
+
+    /**
+     * Validate the input file path as a readable text file.
+     *
+     * - Creates a canonical path, bypassing symbolic links and file system shortcut symbols.
+     * - Checks for `.txt` file extension.
+     * - Checks that the file exists and is readable.
+     * - Checks that the file is not empty.
+     *
+     * @param inputPath A String pointing to a text input file.
+     * @return An `Optional<Path>` with the validated path, otherwise empty
+     */
+    public static Optional<Path> validateInputFile(String inputPath) {
+        Path filePath;
+
+        if (inputPath == null || inputPath.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Resolve ~ and symbolic links if used
+        try {
+            if (inputPath.startsWith("~")) {
+                String home = System.getProperty("user.home");
+                inputPath = home + inputPath.substring(1);
+            }
+
+            filePath = Paths.get(inputPath)
+            .toAbsolutePath().normalize()
+            .toRealPath(LinkOption.NOFOLLOW_LINKS);
+
+        } catch (InvalidPathException | IOException e) {
+            return Optional.empty();
+        }
+
+        // Ensure this is a 'txt' file, exists, and can be read
+        if (!inputPath.endsWith(".txt") ||
+            !Files.exists(filePath) ||
+            !Files.isReadable(filePath)) {
+            return Optional.empty();
+        }
+
+        // Don't process empty files
+        try {
+            if (Files.size(filePath) == 0) {
+                return Optional.empty();
+            }
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+
+        return Optional.of(filePath);
+    }
+
+    /**
+     * Fetch the content of a text file.
+     *
+     * - Reads and returns the file contents as a `String`.
+     *
+     * @param inputPath A `Path` pointing to a text input file.
+     * @return An `Optional<String>` with the file contents, otherwise empty.
+     */
+    public static Optional<String> fetchFileContent(Path inputPath) {
+        try {
+            String content = Files.readString(inputPath);
+            return Optional.of(content);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Create a temporary file
+     *
+     * - Uses the System's default temporary-file directory.
+     *
+     * @return If successful, an `Optional<Path>`, otherwise an empty `Optional`.
+     */
+    public static Optional<Path> createTemporaryFile() {
+        try {
+            Path tempFile = Files.createTempFile(null, null);
+            return Optional.of(tempFile);
+        } catch (IOException e) {
+            e.printStackTrace(); // Log the exception if needed
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Replace a `Path` extension with a new extension
+     *
+     * - Assumes a pre-normalized path.
+     *
+     * @param inputPath The source file path.
+     * @param newExtension The new extension to use.
+     * @return An `Optional<Path>` pointing to the updated file, otherwise empty.
+     */
+    public static Optional<Path> replaceExtension(Path inputPath, String newExtension) {
+        try {
+            // Get the parent directory
+            Path parentDir = inputPath.getParent();
+
+            // Extract the file name without extension
+            String baseName = FilenameUtils.getBaseName(inputPath.toString());
+
+            // Create the new file name with the new extension
+            String newFileName = baseName + newExtension;
+
+            // Create the new path
+            Path newPath = parentDir.resolve(newFileName);
+            return Optional.of(newPath);
+        } catch (InvalidPathException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns a unique file name by appending a numeric suffix if the proposed path already exists.
+     *
+     * @param proposedPath The proposed file path as a Path object.
+     * @param extension The file extension to use.
+     * @return An Optional containing the unique Path if successful, otherwise an empty Optional.
+     */
+    public static Optional<Path> findUniqueName(Path proposedPath, String extension) {
+        if (proposedPath == null || extension == null) {
+            return Optional.empty();
+        }
+
+        try {
+            int suffixCounter = 1;
+            String baseName = FilenameUtils.getBaseName(proposedPath.toString());
+            Path parentDir = proposedPath.getParent();
+            Path newPath = parentDir.resolve(Paths.get(baseName + extension));
+
+            while (Files.exists(newPath)) {
+                String newFileName = baseName + "-" + suffixCounter + extension;
+                newPath = parentDir.resolve(newFileName);
+                suffixCounter += 1;
+            }
+
+            return Optional.of(newPath);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Move a file from the source path to the destination path.
+     *
+     * @param source the `Path` of the file to be moved.
+     * @param destination the `Path` where the file should be moved to.
+     * @throws IOException if an error occurs while moving the file.
+     */
+    public static void moveFile(Path source, Path destination) throws IOException {
+        Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
 
 }
@@ -251,9 +429,166 @@ public class ConversionStatus {
 <!--SNIPEND-->
 
   </TabItem>
-  <TabItem value="inputpayload" label="InputPayload.java">
+  <TabItem value="datautilityjava" label="DataUtility.java">
 
-### Input Payload data type
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+
+<!--SNIPSTART audiobook-project-java-data-utility-class-->
+[src/main/java/ttsworker/utility/DataUtility.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/utility/DataUtility.java)
+```java
+package ttspackage;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
+
+/**
+ * Utility class for chunking and appending data.
+ */
+public class DataUtility {
+    /**
+     * The maximum number of tokens allowed in a single text chunk for OpenAI text-to-speech processing.
+     *
+     * This constant defines the upper limit on the number of tokens that a single chunk of text can contain.
+     * This relatively low value reduces the size of the returned audio data.
+     */
+    private static final int MAX_TOKENS = 512;
+
+    /**
+     * The average number of tokens per word used for estimating the size of text chunks.
+     *
+     * This constant provides an estimate of the average number of tokens per word in the text.
+     * This approximates the number of tokens in a given text chunk, helping to split the text efficiently
+     * without exceeding the token limit defined by {@code MAX_TOKENS}.
+     */
+    private static final float AVERAGE_TOKENS_PER_WORD = 1.33f;
+
+    /**
+     * Splits the given text into chunks, each chunk not exceeding the max token limit.
+     *
+     * - Uses an average token per word estimate to split text appropriately.
+     * - Ensures that no chunk exceeds the specified max tokens limit.
+     *
+     * @param text The text to be split into chunks.
+     * @return A list of text chunks.
+     */
+    public static List<String> splitText(String text) {
+        List<String> chunks = new ArrayList<>();
+        String[] words = text.split("\\s+");
+        StringJoiner chunk = new StringJoiner(" ");
+
+        for (String word : words) {
+            if ((chunk.length() + word.length()) * AVERAGE_TOKENS_PER_WORD <= MAX_TOKENS) {
+                chunk.add(word);
+            } else {
+                chunks.add(chunk.toString());
+                chunk = new StringJoiner(" ");
+                chunk.add(word);
+            }
+        }
+
+        if (chunk.length() > 0) {
+            chunks.add(chunk.toString());
+        }
+
+        return chunks;
+    }
+
+    /**
+     * Appends the given data to the specified file.
+     *
+     * - Uses Path and Files classes for file handling.
+     * - Ensures that data is appended to the file.
+     *
+     * @param data The data to append to the file.
+     * @param filePath The path of the file to append to.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void appendToFile(byte[] data, Path filePath) throws IOException {
+        Files.write(filePath, data, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+    }
+}
+```
+<!--SNIPEND-->
+
+  </TabItem>
+</Tabs>
+
+</details>
+
+The two utility classes have different responsibilities. 
+
+- `FileUtility` manages file-system specific tasks. It can:
+  - Check if a file exists and can be read
+  - Fetch a file's contents
+  - Create a temporary system file to store intermediate results
+  - Work with file extensions so the input file and the output file share the same base name, such as mytext.txt and mytext.mp3
+  - Apply name versioning so you don't overwrite files when you move them
+  - Move files so you can take the temporary file and move it next to the input file 
+- `DataUtility` handles task-specific chores:
+  - It breaks down a source string into a list of string chunks of smaller size 
+  - It knows how to append binary data to an output file
+
+Each of these methods plays into the cycle of processing the text into audio.
+Here's an overview of what that process looks like:
+
+![Read a text file, break it into chunks, send each chunk to OpenAI to be processed into audio, and append each result to the output file](images/process.png) 
+
+The routines in the classes you just created help you read in a text file, divide it into chunks, send them to OpenAI, and append the audio data results to a file.
+
+As a rule-of-thumb, a typical English word uses 1.33 OpenAI tokens, which is why your code defines that constant.
+When working with other languages, you'll want to adjust that value.
+Tokens quantify the data processed by OpenAI requests.
+All OpenAI endpoints have token limits.
+The `DataUtility` class's `splitText` method creates chunks with approximately 512 token for each API request.
+Although the OpenAI token limit is higher than this, a conservative approach helps reduce risk:
+
+```java
+private static final float AVERAGE_TOKENS_PER_WORD = 1.33f;
+
+public static List<String> splitText(String text) {
+    List<String> chunks = new ArrayList<>();
+    String[] words = text.split("\\s+");
+    StringJoiner chunk = new StringJoiner(" ");
+
+    for (String word : words) {
+        if ((chunk.length() + word.length()) * AVERAGE_TOKENS_PER_WORD <= MAX_TOKENS) {
+            chunk.add(word);
+        } else {
+            chunks.add(chunk.toString());
+            chunk = new StringJoiner(" ");
+            chunk.add(word);
+        }
+    }
+
+    if (chunk.length() > 0) {
+        chunks.add(chunk.toString());
+    }
+
+    return chunks;
+}
+```
+
+Although you haven't yet built the actual flow, all the pieces that power your business logic are in place and ready to be used.
+Before you create that flow, you'll need to build two small data classes for your input payload and your process status.
+You'll start with the payload.
+
+## Create your input payload data type
+
+Your "payload" for this project is the path to a text file.
+This simple datatype is used to start your conversion tasks. 
+Create InputPayload.java in 'src/main/java/ttsworker/model' and add the following contents:
 
 <!--SNIPSTART audiobook-project-java-InputPayload-data-type-->
 [src/main/java/ttsworker/model/InputPayload.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/model/InputPayload.java)
@@ -273,37 +608,5 @@ public class InputPayload {
     }
 }
 ```
-<!--SNIPEND-->
+<!--SNIPEND--> 
 
-  </TabItem>
-</Tabs>
-
-</details>
-
-## Build your Workflow {#build-your-workflow}
-
-a
-
-## Code the conversion {#code-the-conversion}
-
-b
-
-## Add file and data handling {#add-file-and-data-handling}
-
-c
-
-## Implement the conversion Activity {#implement-the-conversion-activity}
-
-d
-
-## Implement the file Activity {#implement-the-file-activity}
-
-e
-
-## Code your Worker {#code-your-worker}
-
-f
-
-## Conclusions {#wrap-up}
-
-g
