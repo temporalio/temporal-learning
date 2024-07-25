@@ -1,7 +1,7 @@
 ---
 id: configuring-binary-tutorial
 sidebar_position: 3
-keywords: [sqlite, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
+keywords: [sqlite, binary, systemd, certbot, hosting, deploy, config, minimal, baseline]
 tags: [Server, Binary]
 last_update:
   date: 2024-07-08
@@ -21,7 +21,6 @@ In this tutorial, you'll configure and deploy the two binaries needed for a comp
 ## Prerequisites
 
 - A Linux server with SSH access. This can be a new Ubuntu server instance with no additional configuration performed.
-- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server.
 
 ## Obtaining the Temporal Binaries
 
@@ -66,8 +65,6 @@ sudo chown temporal /etc/temporal
 Next, you'll create configuration files for both the Temporal Server and the UI Server in the `/etc/temporal/` directory.
 
 ## Configuring the Temporal Binaries
-
-*To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).*
 
 In this tutorial, you'll configure a connection to a SQLite database, since it doesn't require any additional dependencies. Using your favorite text editor, open a new file called `/etc/temporal/temporal-server.yaml`:
 
@@ -148,14 +145,14 @@ clusterMetadata:
       enabled: true
       initialFailoverVersion: 1
       rpcName: "frontend"
-      rpcAddress: YOUR_DOMAIN:PORT
+      rpcAddress: "localhost:7233"
       httpAddress: "localhost:7243"
 
 dcRedirectionPolicy:
   policy: "noop"
 ```
 
-Note `YOUR_DOMAIN:PORT` in the `rpcAddress` parameter. You should update this to reflect the URL that the Temporal gRPC API will be available on. You may use a subdomain like `rpc.my_domain:7233`. If you use a port other than 7233, you should also update the `grpcPort: 7233` parameter of the frontend service.
+Note `localhost:7233` in the `rpcAddress` parameter. If you are using a domain name, you should update this to reflect the URL that the Temporal gRPC API will be available on. You may use a subdomain like `rpc.my_domain:7233`. If you use a port other than 7233, you should also update the `grpcPort: 7233` parameter of the frontend service.
 
 :::note External access to the Temporal Service
 
@@ -165,7 +162,7 @@ The gRPC API frontend configuration in this tutorial uses a default value of `bi
 
 :::tip 
 
-Temporal's gRPC API does not use TLS by default. Unlike HTTP/S connections, TLS is not always necessary for gRPC endpoints, depending on your security envelope. To configure TLS for your gRPC endpoint, refer to the [Temporal documentation](https://docs.temporal.io/references/configuration#tls).
+Temporal's gRPC API does not use TLS by default; depending your security envelope, TLS is not always necessary for gRPC endpoints. To configure TLS for your gRPC endpoint, refer to the [Temporal documentation](https://docs.temporal.io/references/configuration#tls).
 
 :::
 
@@ -187,18 +184,9 @@ cors:
   allowOrigins:
     - http://YOUR_DOMAIN:8233
 defaultNamespace: default
-tls:
-  certFile: /etc/letsencrypt/live/YOUR_DOMAIN/cert.pem
-  keyFile: /etc/letsencrypt/live/YOUR_DOMAIN/privkey.pem
-  enableHostVerification: true
-
 ```
 
-If you are using your own domain name, replace `YOUR_DOMAIN` in the `host` and `allowOrigins`.
-
-To enable HTTPS, you also need to provide the paths to your `certFile` and `keyFile`. If you are using LetsEncrypt, these will be located in `/etc/letsencrypt/live/YOUR_DOMAIN/cert.pem` and `/etc/letsencrypt/live/YOUR_DOMAIN/privkey.pem`. Make these changes, then save and close the file.
-
-As with the gRPC API, this will make the Web UI available over HTTPS to anyone who can access this server -- ensure that you do not need a local proxy solution before proceeding.
+As with the gRPC API, this will make the Web UI available over HTTP to anyone who can access this server -- ensure that you do not need a local proxy solution before proceeding.
 
 You can now run a Temporal Service on this server by running the following commands in two separate terminals, to start the Core Server and the UI Server:
 
@@ -318,7 +306,7 @@ Use the `systemctl` command to verify that `temporal-ui` started successfully:
 sudo systemctl status temporal-ui
 ```
 
-Both services should now be running in the background. Navigate to **YOUR_DOMAIN:8233** in a web browser, and you should receive the Temporal Web UI. You now have a working Temporal Service. In the next step, you'll review some additional configuration options.
+Both services should now be running in the background. Navigate to **YOUR_SERVER_IP:8233** in a web browser, and you should receive the Temporal Web UI. You now have a working Temporal Service. In the next step, you'll review some additional configuration options.
 
 ## Additional Configuration Options
 
