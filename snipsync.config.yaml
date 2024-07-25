@@ -54,6 +54,9 @@ origins:
     repo: money-transfer-project-template-go
     ref: cloud
   - owner: temporalio
+    repo: email-drip-campaign-project-java
+    ref: main
+  - owner: temporalio
     repo: nextjs-temporal-one-click-template
     ref: main
   # Background Check tutorial code in the learn repo
