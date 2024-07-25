@@ -1,0 +1,2 @@
+flask[async]==3.0.1
+temporalio==1.6.0

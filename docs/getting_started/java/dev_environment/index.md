@@ -55,7 +55,7 @@ Add the following dependencies to your Maven Project Object Model (POM) configur
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-sdk</artifactId>
-      <version>1.22.4</version>
+      <version>1.24.1</version>
     </dependency>
 
     <dependency>
@@ -64,7 +64,7 @@ Add the following dependencies to your Maven Project Object Model (POM) configur
       -->
       <groupId>io.temporal</groupId>
       <artifactId>temporal-testing</artifactId>
-      <version>1.22.4</version>
+      <version>1.24.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -81,8 +81,8 @@ Add the following lines to `build.gradle`, your Gradle configuration file. This 
 
 
 ```groovy
-implementation 'io.temporal:temporal-sdk:1.22.4'
-testImplementation 'io.temporal:temporal-testing:1.22.4'
+implementation 'io.temporal:temporal-sdk:1.24.1'
+testImplementation 'io.temporal:temporal-testing:1.24.1'
 ```
 
   </TabItem>
