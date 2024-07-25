@@ -53,7 +53,7 @@ Next, install [Nodemon](https://nodemon.io/) which you'll use to watch your file
 npm install --save-dev nodemon
 ```
 
-The last step you need in your `devDependencies` is `ts-node``:
+The last step you need in your `devDependencies` is `ts-node`:
 
 ```command
 npm install --save-dev ts-node
