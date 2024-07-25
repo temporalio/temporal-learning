@@ -341,6 +341,14 @@ Change directory into your project and run your Temporal Worker with `pm2`.
 pm2 start <your-app-entry>.ts --interpreter ts-node
 ```
 
+:::tip Use the `pm2` startup script to ensure your application starts on boot
+
+You can use [the `pm2 startup` command](https://pm2.keymetrics.io/docs/usage/startup/) to generate a script that will start `pm2` on boot.
+
+This will ensure that your application starts if your Droplet restarts.
+
+:::
+
 You can review your application logs with the `pm2 logs` command.
 
 ## Optional - Automate your deployment with a Shell script {#automate-deployment}
