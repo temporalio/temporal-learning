@@ -30,9 +30,12 @@ keywords:
 When you are ready to deploy your TypeScript based Slack App to production, you need a server to host it.
 You will also need to connect to a Temporal Service to orchestrate and supervise your Temporal Application.
 
+In development, you can use a local Temporal Service to orchestrate your Temporal Application.
+However, in production, you will want to use a Temporal Service that can handle scale, like Temporal Cloud.
+
 ![Temporal development vs production](../build/images/temporal-slack-app-dev-vs-prod.svg)
 
-DigitalOcean provides flexible Cloud servers called Droplets that you can use to host your Slack application.
+DigitalOcean provides flexible Cloud servers called Droplets that you can use to host your Slack bot and Temporal Application.
 You can then use Temporal Cloud to orchestrate your Temporal Application.
 
 In this tutorial you'll deploy your Temporal backed Slack App to a DigitalOcean Droplet while using Temporal Cloud as your Temporal Application's orchestrator.
@@ -43,34 +46,38 @@ Before you begin, you will need the following:
 
 - **Complete the [Build a Work Queue Slack App with TypeScript and Temporal](/tutorials/typescript/work-queue-slack-app/build) tutorial:** This tutorial builds on the previous tutorial, so you need to have completed it.
   However, you should be able to refer to these steps generically for any TypeScript Temporal Application you have built.
-- **A DigitalOcean account:** You need a DigitalOcean account to create a Droplet.
+- **A DigitalOcean account:** You need a [DigitalOcean account](https://cloud.digitalocean.com/login) to create a Droplet.
 - **A domain name:** You need a domain, because you need to have a valid SSL certificate for the Temporal Application to communicate with Temporal Cloud.
-- **A Temporal Cloud account** You need a [Temporal Cloud account](https://cloud.temporal.io) from which to create a Namespace.
+- **A Temporal Cloud account:** You need a [Temporal Cloud account](https://cloud.temporal.io) from which to create a Namespace.
 - **A Temporal Cloud Namespace:** You need a [Namepsace](https://docs.temporal.io/cloud/namespaces#create-a-namespace) in which to register a certificate for your Temporal Application to communicate with Temporal Cloud.
+- **A Temporal Cloud Namespace Certificate:** You will need a certificate to authenticate the communication between your Temporal Client, Temporal Workers, and Temporal Cloud.
+  You can use tcld to generate the certificate.
+  Follow the [steps to install tcld](https://docs.temporal.io/cloud/tcld#install-tcld).
+  Then, follow the [steps to generate a Temporal Cloud certificate using tcld](https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates).
+  Make sure you have saved your certificate to your Temporal Cloud Namespace.
 
-## Create a Temporal Cloud Namespace certificate {#create-temporal-cloud-cert}
+## Prepare your app for Temporal Cloud {#prepare-app}
 
-You will need a certificate to authenticate the communication between your Temporal Client, Temporal Workers, and Temporal Cloud.
+First, you need to update each of your `.env` files with your Temporal Cloud credentials so you can test your application locally to ensure it works with Temporal Cloud.
+You should have a `.env` file in the root of your `temporal-application` and `bot` directories.
 
-You can use tcld to generate the certificate.
+Add your PEM (certificate), Private Key, Temporal Address, and Temporal Cloud Namespace to your `.env` file as environment variables.
 
-Follow the [steps to install tcld](https://docs.temporal.io/cloud/tcld#install-tcld).
+Example:
 
-Then, follow the [steps to generate a Temporal Cloud certificate using tcld](https://docs.temporal.io/cloud/certificates#use-tcld-to-generate-certificates).
+```shell
+TEMPORAL_CLOUD_ADDRESS="<your-temporal-cloud-address>"
+TEMPORAL_CLOUD_NAMESPACE="<your-temporal-cloud-namespace>"
+# Note that you will want to retain the multiline format for the PEM and Private Key
+TEMPORAL_CLOUD_PEM="<your-temoral-cloud-namespace-pem>"
+TEMPORAL_CLOUD_PRIVATE_KEY="<your-temporal-cloud-namespace-key>"
+```
 
-In the following steps you will add your PEM (certificate) and Private Key to your `.env` file as environment variables.
-
-You also need to save the PEM (certificate) to your Temporal Cloud Namespace.
-In your Temporal Cloud Account, navigate to Namespaces, and select the Namespace you want to use.
-Then, scroll down to the "CA Certificates" section, and copy in the PEM (certificate) you generated.
-
-![Temporal Cloud Namespace CA Certificates](./images/save-cert-to-namespace.png)
-
-## Update code to use Temporal Cloud {#use-temporal-cloud}
+Then, update your code to use Temporal Cloud.
 
 Connecting to Temporal Cloud requires a few changes to your Temporal Client and Worker, using the environment variables you set in the `.env` file.
 
-First, you'll update your Temporal Client.
+You will need to update your Temporal Client and your Temporal Worker code.
 
 When developing locally, your Temporal Client, located in `bot/modules/temporal-client.ts`, looks like this:
 
@@ -96,7 +103,8 @@ export async function initializeTemporalClient() {
 
 <!--SNIPEND-->
 
-To use Temporal Cloud, change the Temporal Client code so it includes the namespace and certificate information:
+To use Temporal Cloud, change the Temporal Client code to read your Namespace certificate key and pem env variables.
+Then change the connection object to includes the Namespace and certificate information:
 
 <!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
 
@@ -166,6 +174,7 @@ run();
 <!--SNIPEND-->
 
 To use Temporal Cloud, you'll change the connection information for your Worker in the same way you changed your client.
+Read the certificate env variables and update the connection object to include the Namespace and certificate information.
 Alter the `worker.ts` file so it looks like the following:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
@@ -213,20 +222,6 @@ run();
 
 <!--SNIPEND-->
 
-Now update each of your `.env` files with your Temporal Cloud credentials so you can test your application locally to ensure it works with Temporal Cloud.
-
-You should have the following Temporal Cloud credentials to add to your `.env` files:
-
-```shell
-TEMPORAL_CLOUD_ADDRESS="<your-temporal-cloud-address>"
-TEMPORAL_CLOUD_NAMESPACE="<your-temporal-cloud-namespace>"
-# Note that you will want to retain the multiline format for the PEM and Private Key
-TEMPORAL_CLOUD_PEM="<your-temoral-cloud-namespace-pem>"
-TEMPORAL_CLOUD_PRIVATE_KEY="<your-temporal-cloud-namespace-key>"
-```
-
-You should have a `.env` file in the root of your `temporal-application` and `bot` directories.
-
 You can now run your application locally to ensure it works with Temporal Cloud.
 If it does, then you can move on to setting up your Droplet.
 
@@ -236,7 +231,7 @@ Create a new Droplet and choose the Ubuntu 20.04 image or Ubuntu 22.04 image.
 
 Once, created ensure the domain's A record points to the droplet's IP address.
 
-Then, set up the following on your Droplet:
+Then, set up the following things on your Droplet so you can run your app:
 
 - Configure SSH
 - Install Node.js
@@ -304,8 +299,6 @@ Now that you have your Droplet set up, and you have your Temporal Cloud certific
 
 ## Configure your Slack App on the Droplet {#configure-app}
 
-### Clone the repo {#clone-repo}
-
 Using Git, you can clone the droplet and install the dependencies.
 
 ```shell
@@ -319,20 +312,28 @@ npm install
 
 :::note Private repos require an access token
 
-If your repo is public then the above steps will work.
+If your repo is public then these steps will work.
 However, if your repo is private, you will need to use an access token to clone the repo.
 
 :::
 
-Then ensure you have the respective `.env` files in each of the project roots with the correct environment variables.
+Since your `.env` files should be in your `.gitignore`, you will need to create new ones on the Droplet.
+Copy and paste the information from your local `.env` files into the respective files that you have created on the Droplet.
 
+Now you can run your application on the Droplet.
+Start the slack bot and the Temporal Worker to make sure everything is running as expected.
+Go to your Slack workspace and test your Slack App.
+
+If everything is running as expected, then move on to starting everything with `pm2`.
+
+````shell
 ## Use `pm2` to run your Worker {#use-pm2}
 
 `pm2` is a process manager for Node.js applications, and will ensure that your TypeScript application runs continuously on your Droplet.
 
 ```shell
 sudo npm install -g pm2
-```
+````
 
 Change directory into your project and run your Temporal Worker with `pm2`.
 
@@ -340,7 +341,9 @@ Change directory into your project and run your Temporal Worker with `pm2`.
 pm2 start <your-app-entry>.ts --interpreter ts-node
 ```
 
-:::note Automate your deployment with a Shell script
+You can review your application logs with the `pm2 logs` command.
+
+## Optional - Automate your deployment with a Shell script {#automate-deployment}
 
 You can automate the deployment of your application to your Droplet by creating a shell script that will clone your repository, install dependencies, and start your application with `pm2`.
 
@@ -416,8 +419,8 @@ pm2 save
 echo "The repository has been cloned, .env files have been created successfully, and processes have been started."
 ```
 
-:::
+Run the script with `./<your-script>.sh`.
 
 ## Conclusion
 
-You should now have a TypeScript based Temporal Application running on a DigitalOcean Droplet using Temporal Cloud as your Temporal Application's orchestrator.
+You now have a TypeScript based Temporal Application and Slack bot running on a DigitalOcean Droplet using Temporal Cloud as your Temporal Application's orchestrator.
