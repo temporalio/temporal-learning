@@ -59,9 +59,9 @@ Sentence casing means that only the first letter of the first word and proper no
 - Correct: "How to get started with Temporal"
 - Incorrect: "How To Get Started With Temporal"
 
-### Use "You/your" or the Imperative instead of "We/our""
+### Use "You/your" or the Imperative instead of "We/our"
 
-Keep focus on the reader. 
+Keep focus on the reader.
 
 - Correct: In the next step you'll add the Workflow.
 - Incorrect: In the next step we'll add the Workflow.
@@ -71,12 +71,12 @@ In most cases when providing direct instruction, the imperative works better.
 - Correct: Next, add the following code:
 - Incorrect: Next, we add the following code:
 
-### Focus on specific outcomes rather than "Learn to/Learn how to" language.
+### Focus on specific outcomes rather than "Learn to/Learn how to" language
 
 Focus on the skill the learner will gain rather than the act of gaining the skill. Look for "learn to/learn how to" and remove them and you'll have tighter sentences.
 
-- Correct: In this tutorial you will build a Workflow..."
-- Incorrect: In this tutorial you will learn how to build a workflow...."
+- Correct: In this tutorial you will build a Workflow
+- Incorrect: In this tutorial you will learn how to build a workflow
 
 ## Tutorial structure
 
@@ -145,5 +145,3 @@ Follow these guidelines for your images:
 * Avoid showing dates when possible. Dates can make content look outdated quickly.
 * Crop your screenshots as tight to the subject as possible so learners focus only on the components that matter.
 * Include descriptive alternative text. Avoid using "screenshot of" or "image of" in the alternative text, as screen readers will identify these as images anyway.
-
-    

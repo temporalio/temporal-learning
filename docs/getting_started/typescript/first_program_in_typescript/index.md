@@ -169,7 +169,7 @@ It's a good practice to send a single, serializable data structure into a Workfl
 
 Notice that the `PaymentDetails` interface includes a `referenceId` field. Some APIs let you send a unique "idempotency key" along with the transaction details to guarantee that if you retry the transaction due to some kind of failure, the API you're calling will use the key to ensure it only executes the transaction once. 
 
-The Workflow Definition calls the Activities `withdraw` and `deposit` to handle the money transfers. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in Typescript by defining Typescript functions that receive some input values.
+The Workflow Definition calls the Activities `withdraw` and `deposit` to handle the money transfers. Activities are where you perform the business logic for your application. Like Workflows, you define Activities in TypeScript by defining TypeScript functions that receive some input values.
 
 The `withdraw` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
@@ -479,7 +479,7 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 
 The Worker continues running, waiting for more Tasks to execute. 
 
-Switch back to the terminal window where your `cllient.ts` program is running, and you'll see it's completed:
+Switch back to the terminal window where your `client.ts` program is running, and you'll see it's completed:
 
 ```
 ...
