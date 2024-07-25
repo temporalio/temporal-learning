@@ -143,7 +143,7 @@ Review the scripts. By prefixing any of the scripts with `npm run`, you will be 
 
 Your project workspace is now configured, so you're ready to start creating your application.
 
-## Define Your Customer
+## Define your customer
 
 The first step you will take in creating your application is defining your customer information that you need when signing a customer up for a subscription. Although a function in Temporal - known as a Workflow - can have multiple parameters, you should use a single object for parameters and return types. This approach allows you to change fields without breaking Workflow compatibility. You'll begin by defining the data object that defines the customer used by the Temporal Workflow.
 
