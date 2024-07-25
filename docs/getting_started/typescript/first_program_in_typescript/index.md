@@ -479,7 +479,7 @@ When you start the Worker, it begins polling the Task Queue for Tasks to process
 
 The Worker continues running, waiting for more Tasks to execute. 
 
-Switch back to the terminal window where your `cllient.ts` program is running, and you'll see it's completed:
+Switch back to the terminal window where your `client.ts` program is running, and you'll see it's completed:
 
 ```
 ...
