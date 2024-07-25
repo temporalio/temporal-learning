@@ -16,7 +16,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Managing subscription-based services requires precision and fault tolerance at every step. You need to reliably handle processes like user sign-ups, trial periods, billing cycles, and cancellations. This often involves making durable calls to external services such as databases, email servers, and payment gateways. These interactions need to be fault-tolerant to prevent data loss, ensure seamless user experiences, and support the integrity of your subscription management system, regardless of any failures or network issues.
 
-In this tutorial, you'll build a phone subscription management application using TypeScript. You'll handle the entire subscription lifecycle, from welcoming new users to managing billing and cancellations. You will ensure that your application remains reliable even during failures.
+In this tutorial, you'll build the backend processes of a phone subscription management application using TypeScript. You'll handle the entire subscription lifecycle, from welcoming new users to managing billing and cancellations through command-line programs. You will not be building a web app or API; instead, your focus will be on interacting with Temporal through command-line scripts that you will develop. While using command-line scripts for this tutorial simplifies the demonstration, note that in a real-world scenario, you would likely build a web interface or API to manage these interactions.
 
 To achieve this, you will leverage Temporal, an open source platform that ensures the successful completion of long-running processes despite failures or network issues. Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a power outage. It offers scalability to handle high volumes of Workflows concurrently, making it ideal for cases like the subscription service that may have thousands of customers.
 
@@ -41,7 +41,7 @@ Switch to the new directory:
 cd subscription-workflow-with-temporal
 ```
 
-Firstly, you will install the `@tsconfig/node20` package as a developer dependency. You'll use you'll use this for configuring your TypeScript project to target Node.js 20 features and settings.
+Firstly, you will install the `@tsconfig/node20` package as a developer dependency. You'll use this for configuring your TypeScript project to target Node.js 20 features and settings.
 
 ```command
 npm install --save-dev @tsconfig/node20
@@ -567,11 +567,11 @@ run().catch((err) => {
 });
 ```
 
-Save your file and run your Workflow again with `npm run workflow`. This time, after a brief pause due to the Timer in the Workflow Definition, you will see on your Temporal Service five more instance of the Subscription Workflow.
+Save your file and run your Workflow again with `npm run workflow`. This time, after a brief pause due to the Timer in the Workflow Definition, you will see on your Temporal Service five more instances of the Subscription Workflow.
 
 Also, notice in the command-line window that your Worker is running, the Activity logs are being output: `Sending welcome email to email-1@customer.com`, `Charging email-1@customer.com amount 130 for their billing period`, and the other logs.
 
-Now, that you know how to run your `subscriptionWorkflow`, you will look into how to query your Workflow to retrieve information such as the billing period and the total amount charged. This allows you to interact with the Workflow while it's running and get real-time updates on its status and progress. 
+Now that you know how to run your `subscriptionWorkflow`, you will look into how to query your Workflow to retrieve information such as the billing period and the total amount charged. This allows you to interact with the Workflow while it's running and get real-time updates on its status and progress. 
 
 ## Retrieve subscription details
 
@@ -1052,3 +1052,5 @@ You now know how to obtain a handle on a Workflow Execution and send a Query to 
 By using Temporal, you were able to build a fault-tolerant subscription Workflow that manages complex state transitions and interactions with external services. Temporal's durable execution and automatic state persistence ensured that your Workflow could reliably handle user sign-ups, trial periods, billing cycles, and cancellations, even in the face of failures or interruptions. 
 
 The ability to send Signals and Queries allowed for dynamic interaction with running Workflows, making real-time updates and state retrieval straightforward and maintainable. With Temporal, you can simplify the management of long-running business processes, and create scalable and fault-tolerant applications.
+
+As a next step, try using Express to build an API for your application. The code you used in the command-line scripts can be adapted for your API endpoints, enabling more seamless and user-friendly interactions with your Temporal Workflow Executions.
