@@ -1053,4 +1053,4 @@ By using Temporal, you were able to build a fault-tolerant subscription Workflow
 
 The ability to send Signals and Queries allowed for dynamic interaction with running Workflows, making real-time updates and state retrieval straightforward and maintainable. With Temporal, you can simplify the management of long-running business processes, and create scalable and fault-tolerant applications.
 
-As a next step, try using Express to build an API for your application. The code you used in the command-line scripts can be adapted for your API endpoints, enabling more seamless and user-friendly interactions with your Temporal Workflow Executions.
+As a next step, try using [Express.js](https://expressjs.com/) to build an API for your application. The code you used in the command-line scripts can be adapted for your API endpoints, enabling more seamless and user-friendly interactions with your Temporal Workflow Executions.
