@@ -4,10 +4,10 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-python
   - owner: temporalio
-    repo: money-transfer-project-template-java
-    ref: 4e1ca12d8d1c058c67d810efe8dcf68f7b318208
+    repo: money-transfer-project-java
   - owner: temporalio
     repo: hello-world-project-template-java
+    ref: main
   - owner: temporalio
     repo: money-transfer-project-template-ts
   - owner: temporalio
@@ -53,6 +53,9 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
     ref: cloud
+  - owner: temporalio
+    repo: nextjs-temporal-one-click-template
+    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: './docs/tutorials/go/background-check/code/**/*.go'
@@ -74,6 +77,10 @@ origins:
       owner: 'temporalio'
       repo: 'temporal-learning'
       ref: 'main'
+  - files:
+      pattern: './docs/tutorials/python/trip-booking-app/code/*.py'
+      owner: 'temporalio'
+      repo: 'temporal-learning'
 
 targets:
   - docs/tutorials
