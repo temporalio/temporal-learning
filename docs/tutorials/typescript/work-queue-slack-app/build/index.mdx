@@ -91,9 +91,7 @@ Then, your Temporal Application replaces an entire database with less than 70 li
 
 To use Temporal Cloud in production, see the [Deploy your application to DigitalOcean](/tutorials/typescript/work-queue-slack-app/deploy) part of the tutorial for more information.
 
-### Functional requirements {#functional-requirements}
-
-Here are the functional requirements of the application:
+Next, review the functional requirements for the application:
 
 1. A user can submit a work request with a Slash Command.
 2. A user can see all the work requests for the channel with a Slash Command.
@@ -263,7 +261,7 @@ In the `temporal-application` project, make sure you have a `.env` file in the r
 ENV="dev"
 ```
 
-### Define common types {#common-types}
+Next, define the common types used across the application.
 
 Create a file `types.ts` in the `common-types` directory and define a Work Item data object and its statuses:
 
