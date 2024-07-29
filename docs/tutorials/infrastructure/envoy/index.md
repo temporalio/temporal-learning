@@ -278,6 +278,17 @@ Both services should now be running in the background.
 ## Deploying an Envoy Edge Proxy
 
 *To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).*
+
+:::note Ensure your `temporal` user can access your certificates
+
+In this step, you'll configure an Envoy edge proxy to be run by the `temporal` user you created. If you used `certbot` to obtain your SSL certificates, the `temporal` user will not have access to them by default. To fix this, you can update permissions like so:
+
+```bash
+sudo chown -R temporal /etc/letsencrypt/
+```
+
+:::
+
 While your Temporal Service is currently running, it is still only available on the internal `localhost` network. Next you should make it available externally and secure connections to it.
 When `certbot` retrieves certificates, by default, it stores them in `/etc/letsencrypt/live/your_domain`. Check to make sure that you have them:
 
