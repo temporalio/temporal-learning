@@ -364,8 +364,6 @@ static_resources:
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
     # Uncomment the below lines and update with `your_domain` if using HTTPS
-    #  - filter_chain_match:
-    #      server_names: ["your_domain", "www.your_domain"]
     #    transport_socket:
     #      name: envoy.transport_sockets.tls
     #      typed_config:
