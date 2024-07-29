@@ -174,26 +174,7 @@ defaultNamespace: default
 
 If you are using your own domain name, replace `localhost` in the `allowOrigins` property. Then save and close the file.
 
-You can now run a Temporal Service on this server by running the following commands in two separate terminals, to start the Core Server and the UI Server:
-
-```bash
-sudo su temporal -c "temporal-server -r / -c etc/temporal/ -e temporal-server start"
-```
-
-```bash
-sudo su temporal -c "temporal-ui-server -r / -c etc/temporal/ -e temporal-ui-server start"
-```
-
-However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network.
-
-Use `Ctrl+C` in each terminal to stop the running process, then delete the temporary DBs that were created:
-
-```bash
-sudo rm /etc/temporal/default.db
-sudo rm /etc/temporal/visibility.db
-```
-
-In the remainder of this tutorial, you'll configure this server for production use.
+You can now run a Temporal Service on this server. However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network. In the remainder of this tutorial, you'll configure this server for production use.
 
 ## Creating and Registering System Services
 
