@@ -1,12 +1,12 @@
 ---
-id: ts-recurring-subscription-tutorial
+id: subscription-tutorial
 sidebar_position: 3
 keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
 last_update:
   date: 2024-07-24
-title: Build a Recurring Billing Subscription System with TypeScript
-description: Implement a subscription system in TypeScript using Temporal's Workflows, Activities, Signals, and Queries, and let the payment workflow be canceled or modified during execution.
+title: Build a Recurring Billing Subscription Workflow with TypeScript
+description: Implement a subscription application using Temporal's Workflows, Activities, Signals, and Queries, enabling the payment workflow to be canceled or modified during execution.
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -719,41 +719,41 @@ And replace it with:
 [src/workflows.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/workflows.ts)
 ```ts
 // ...
-  // Used to wait for the subscription to be cancelled or for a trial period timeout to elapse
-  if (
-    await condition(
-      () => subscriptionCancelled,
-      customer.subscription.trialPeriod
-    )
-  ) {
-    await sendCancellationEmailDuringTrialPeriod(customer);
-    return `Subscription finished for: ${customer.id}`;
-  } else {
-    // Trial period is over, start billing until we reach the max billing periods for the subscription or subscription has been cancelled
-    while (true) {
-      if (billingPeriodNumber > customer.subscription.maxBillingPeriods) break;
+// Used to wait for the subscription to be cancelled or for a trial period timeout to elapse
+if (
+  await condition(
+    () => subscriptionCancelled,
+    customer.subscription.trialPeriod
+  )
+) {
+  await sendCancellationEmailDuringTrialPeriod(customer);
+  return `Subscription finished for: ${customer.id}`;
+} else {
+  // Trial period is over, start billing until we reach the max billing periods for the subscription or subscription has been cancelled
+  while (true) {
+    if (billingPeriodNumber > customer.subscription.maxBillingPeriods) break;
 
-      if (subscriptionCancelled) {
-        await sendSubscriptionFinishedEmail(customer);
-        return `Subscription finished for: ${customer.id}, Total Charged: ${totalCharged}`;
-      }
-
-      log.info(`Charging ${customer.id} amount ${billingPeriodChargeAmount}`);
-
-      await chargeCustomerForBillingPeriod(customer, billingPeriodChargeAmount);
-      totalCharged += billingPeriodChargeAmount;
-      billingPeriodNumber++;
-
-      // Wait for the next billing period or until the subscription is cancelled
-      await sleep(customer.subscription.billingPeriod);
+    if (subscriptionCancelled) {
+      await sendSubscriptionFinishedEmail(customer);
+      return `Subscription finished for: ${customer.id}, Total Charged: ${totalCharged}`;
     }
 
-    // If the subscription period is over and not cancelled, notify the customer to buy a new subscription
-    await sendSubscriptionOverEmail(customer);
-    return `Completed ${
-      workflowInfo().workflowId
-    }, Total Charged: ${totalCharged}`;
+    log.info(`Charging ${customer.id} amount ${billingPeriodChargeAmount}`);
+
+    await chargeCustomerForBillingPeriod(customer, billingPeriodChargeAmount);
+    totalCharged += billingPeriodChargeAmount;
+    billingPeriodNumber++;
+
+    // Wait for the next billing period or until the subscription is cancelled
+    await sleep(customer.subscription.billingPeriod);
   }
+
+  // If the subscription period is over and not cancelled, notify the customer to buy a new subscription
+  await sendSubscriptionOverEmail(customer);
+  return `Completed ${
+    workflowInfo().workflowId
+  }, Total Charged: ${totalCharged}`;
+}
 ```
 <!--SNIPEND-->
 
@@ -827,15 +827,15 @@ Start by initiating the Workflow Execution and getting the handle:
 [src/scripts/cancel-subscription.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/scripts/cancel-subscription.ts)
 ```ts
 // ...
-  const subscriptionWorkflowExecution = await client.workflow.start(
-    subscriptionWorkflow,
-    {
-      args: [customer],
-      taskQueue: TASK_QUEUE_NAME,
-      workflowId: `subscription-${customer.id}`,
-    }
-  );
-  const handle = await client.workflow.getHandle(`subscription-${customer.id}`);
+const subscriptionWorkflowExecution = await client.workflow.start(
+  subscriptionWorkflow,
+  {
+    args: [customer],
+    taskQueue: TASK_QUEUE_NAME,
+    workflowId: `subscription-${customer.id}`,
+  }
+);
+const handle = await client.workflow.getHandle(`subscription-${customer.id}`);
 ```
 <!--SNIPEND-->
 
