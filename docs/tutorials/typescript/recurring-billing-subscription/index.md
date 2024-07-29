@@ -1,5 +1,5 @@
 ---
-id: subscription-tutorial
+id: ts-recurring-subscription-tutorial
 sidebar_position: 3
 keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
