@@ -5,8 +5,8 @@ keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
 last_update:
   date: 2024-07-24
-title: Build a Recurring Billing Subscription Workflow with TypeScript
-description: Implement a subscription application using Temporal's Workflows, Activities, Signals, and Queries, enabling the payment workflow to be canceled or modified during execution.
+title: Build a Recurring Billing Subscription System with TypeScript
+description: Implement a subscription system in TypeScript using Temporal's Workflows, Activities, Signals, and Queries, and let the payment workflow be canceled or modified during execution.
 image: /img/temporal-logo-twitter-card.png
 ---
 
