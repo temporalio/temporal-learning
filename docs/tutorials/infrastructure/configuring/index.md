@@ -177,12 +177,12 @@ Paste the following contents into the file.
 
 ```
 temporalGrpcAddress: 127.0.0.1:7233
-host: YOUR_DOMAIN
+host: 0.0.0.0
 port: 8233
 enableUi: true
 cors:
   allowOrigins:
-    - http://YOUR_DOMAIN:8233
+    - http://localhost:8233
 defaultNamespace: default
 ```
 
@@ -306,6 +306,18 @@ In this tutorial, you deployed a single, standalone server binary. For more info
 This tutorial actually creates two different SQLite databases -- one for persisting your Workflow Event Histories, and another to act as a Visibility store. A Visibility store is required in a Temporal Service setup because it is used for querying and filtering your Workflows. Like your primary data store, your Visibility store can be configured to use a different database backend, and does not need to use the same configuration as your primary data store.
 
 It is also possible to configure two Visibility stores, called [Dual Visibility](https://docs.temporal.io/visibility#dual-visibility). This can be useful when preparing to migrate databases, or if your deployment is optimized to read from one database and write to another. Refer to [How to set up Dual Visibility](https://docs.temporal.io/self-hosted-guide/visibility#dual-visibility) for more information.
+
+### CORS
+
+The Web UI configuration that you supplied in this tutorial contained this parameter:
+
+```
+cors:
+  allowOrigins:
+    - http://localhost:8233
+```
+
+This means that [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) will only work over localhost. If you eventually need to configure a [Codec Server](https://docs.temporal.io/production-deployment/data-encryption) for your Temporal instance, you will also need to update your `allowOrigins` list to include every IP that needs to perform decoding in the Web UI.
 
 ### Dev Ops
 
