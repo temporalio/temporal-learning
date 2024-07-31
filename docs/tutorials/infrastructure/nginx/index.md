@@ -21,7 +21,7 @@ In this tutorial, you'll configure and deploy the two binaries needed for a comp
 ## Prerequisites
 
 - A Linux server with SSH access and the Nginx web server installed. This can be a new Ubuntu server instance with no additional configuration performed. However, you will need a version of Nginx built with HTTP/2 support (at least version 1.25.1), which may not be available by default in some environments. On Ubuntu, you can use [this PPA](https://launchpad.net/~ondrej/+archive/ubuntu/nginx) to install a compatible Nginx.
-- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server.
+- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server. You can create a standalone certificate using [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-20-04)
 
 ## Obtaining the Temporal Binaries
 
