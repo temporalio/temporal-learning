@@ -156,7 +156,7 @@ Note `localhost:7233` in the `rpcAddress` parameter. If you are using a domain n
 
 :::note External access to the Temporal Service
 
-The gRPC API frontend configuration in this tutorial uses a default value of `bindOnIP: '0.0.0.0'`, meaning that the Temporal API will be available globally, without authentication, to anyone who can access this server. This is generally only appropriate if you are otherwise controlling access to this server (e.g. through Kubernetes or by using an external proxy). If you need a self-contained access control solution, refer to our tutorials on [Deploying Temporal with Nginx](/tutorials/infrastructure/nginx-sqlite-binary/index.md) or [Deploying Temporal with Envoy](/tutorials/infrastructure/envoy/index.md).
+The gRPC API frontend configuration in this tutorial uses a default value of `bindOnIP: '0.0.0.0'`, meaning that the Temporal API will be available globally, without authentication, to anyone who can access this server. This is generally only appropriate if you are otherwise controlling access to this server (e.g. through Kubernetes or by using an external proxy). If you need a self-contained access control solution, refer to our tutorials on [Deploying Temporal with Nginx](/tutorials/infrastructure/nginx-sqlite-binary/index.md) or [Deploying Temporal with Envoy](/tutorials/infrastructure/envoy-sqlite-binary/index.md).
 
 :::
 
