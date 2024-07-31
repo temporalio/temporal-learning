@@ -4,7 +4,7 @@ sidebar_position: 4
 keywords: [Python, temporal, sdk, tutorial, saga, saga pattern, rollback, compensating actions]
 tags: [Python, SDK]
 last_update:
-  date: 2024-03-06
+  date: 2024-07-17
 title: Build a trip booking application in Python
 description: Implement the Saga Pattern in Python using Temporal.
 image: /img/temporal-logo-twitter-card.png
