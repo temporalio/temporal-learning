@@ -1,5 +1,5 @@
 ---
-id: nginx-binary-tutorial
+id: nginx-sqlite-binary
 sidebar_position: 1
 keywords: [sqlite, nginx, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
 tags: [Server, Binary, Nginx]

@@ -1,5 +1,5 @@
 ---
-id: configuring-binary-tutorial
+id: configuring-sqlite-binary
 sidebar_position: 3
 keywords: [sqlite, binary, systemd, certbot, hosting, deploy, config, minimal, baseline]
 tags: [Server, Binary]
