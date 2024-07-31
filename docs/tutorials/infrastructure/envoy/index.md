@@ -21,7 +21,7 @@ In this tutorial, you'll configure and deploy the two binaries needed for a comp
 ## Prerequisites
 
 - A Linux server with SSH access and the Envoy proxy installed. This can be a new Ubuntu server instance with no additional configuration performed. To install Envoy, refer to [the Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/start/install#install-envoy-on-debian-gnu-linux)
-- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server.
+- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server. You can create a standalone certificate using [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-20-04)
 
 ## Obtaining the Temporal Binaries
 
