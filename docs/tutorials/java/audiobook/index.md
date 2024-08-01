@@ -20,7 +20,7 @@ Imagine turning your daily commute, workout sessions, or household chores into o
 You can grab text from emails, from the web, or even that report you need to "read" for work.
 With the rise of advanced text-to-speech (TTS) technology, it's not just possible, it's quick to build in Java with simple APIs.
 
-For years, text-to-speech solutions supported the assistive community by transforming words on the page into accessible engagement.
+For years, text-to-speech solutions have supported the assistive community by transforming words on the page into accessible engagement.
 However, until recently, robotic voices and unnatural rhythms made TTS unappealing for casual listeners.
 If you didn't need TTS, you probably wouldn't have used TTS.
 
