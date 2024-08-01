@@ -185,7 +185,6 @@ class PaymentDetails:
     target_account: str
     amount: int
     reference_id: str
-
 ```
 <!--SNIPEND-->
 
@@ -219,7 +218,7 @@ First, the `withdraw()` Activity takes the details about the transfer and calls 
         reference_id = f"{data.reference_id}-withdrawal"
         try:
             confirmation = await asyncio.to_thread(
-                self.bank.withdraw, data.source_account, data.amount, reference_id
+                self.bank.withdraw, data.source_account, data.amount, 
             )
             return confirmation
         except InvalidAccountError:

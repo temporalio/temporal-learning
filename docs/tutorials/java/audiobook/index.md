@@ -381,15 +381,15 @@ public class TTSActivitiesImpl implements TTSActivities {
 
 </details>
 
-Activities, like the `TTSActivities` class, handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
+[Activities](https://docs.temporal.io/activities), like the `TTSActivities` class, handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
 Temporal uses Activities for any action that might have to be retried.
 Imagine that the network goes down or your service provider (OpenAI in this case) is temporarily doing maintenance.
-Activities add check-in points for your application state, which are maintained in the Temporal system and become part of your conversion history.
-Activities let you try your call again in a few seconds, a few minutes, or even later.
-The work automatically picks up
+Your retry policy lets you perform "do-over"s.
+Activities add check-in points for your application state in your [Event History](https://docs.temporal.io/workflows#event-history).
+When retried, it picks up state from just before it was first called, so it's like the failed attempt never happened.
 
 The `TTSActivities` class reads strings from files and converts those strings to audio.
-The class has four activities:
+This class has four activities:
 
 - **`readFile`**: Pass an `inputPath` to a file, and it returns a chunked list of the contents for well-sized API calls.
 - **`createTemporaryFile`**:  Ask the system to build a temporary file for audio output in a safe folder that normally cleans itself on reboots.
