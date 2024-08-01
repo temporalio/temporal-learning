@@ -1,12 +1,12 @@
 ---
-id: nginx-binary-tutorial
-sidebar_position: 1
-keywords: [sqlite, nginx, binary, systemd, https, certbot, hosting, deploy, config, minimal, baseline]
-tags: [Server, Binary, Nginx]
+id: configuring-sqlite-binary
+sidebar_position: 3
+keywords: [sqlite, binary, systemd, certbot, hosting, deploy, config, minimal, baseline]
+tags: [Server, Binary]
 last_update:
-  date: 2024-07-22
-title: How to Deploy a Temporal Service using an SQLite Backend with Nginx
-description: Deploy a Temporal Service from scratch using our Server Binaries using an Nginx reverse proxy.
+  date: 2024-07-08
+title: How to Configure a Temporal Service without a Proxy
+description: Configure a Temporal Service from scratch using our Server Binaries without requiring any additional dependencies.
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -16,12 +16,11 @@ There are many ways of deploying a Temporal Service. For a large-scale deploymen
 
 If you need a deployment that fits in between these options -- for example, if you need to scale for multiple users, with fine-grained control over your deployment parameters, but without the overhead of Kubernetes -- you can deploy a Temporal Service using the official server binaries.
 
-In this tutorial, you'll configure and deploy the two binaries needed for a complete Temporal Service (the core server and the UI server). You'll create `systemd` unit files to gracefully run and restart the Temporal Service automatically upon server startup, and you'll deploy an Nginx reverse proxy to handle web traffic ingress. This will give you everything you need to run a production Temporal Service, and evaluate how to scale further or [migrate to Temporal Cloud](https://temporal.io/cloud). Let's get started.
+In this tutorial, you'll configure and deploy the two binaries needed for a complete Temporal Service (the core server and the UI server). You'll create `systemd` unit files to gracefully run and restart the Temporal Service automatically upon server startup, and you'll review additional configuration parameters for your Temporal Service. This will give you everything you need to run a production Temporal Service, and evaluate how to scale further or [migrate to Temporal Cloud](https://temporal.io/cloud). Let's get started.
 
 ## Prerequisites
 
-- A Linux server with SSH access and the Nginx web server installed. This can be a new Ubuntu server instance with no additional configuration performed. However, you will need a version of Nginx built with HTTP/2 support (at least version 1.25.1), which may not be available by default in some environments. On Ubuntu, you can use [this PPA](https://launchpad.net/~ondrej/+archive/ubuntu/nginx) to install a compatible Nginx.
-- To enable HTTPS in the browser, you will need SSL certificates and your own domain name pointing to the server. You can create a standalone certificate using [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-20-04)
+- A Linux server with SSH access. This can be a new Ubuntu server instance with no additional configuration performed.
 
 ## Obtaining the Temporal Binaries
 
@@ -115,9 +114,9 @@ global:
 services:
   frontend:
     rpc:
-      grpcPort: 7236
+      grpcPort: 7233
       membershipPort: 6933
-      bindOnLocalHost: true
+      bindOnIP: '0.0.0.0'
       httpPort: 7243
 
   matching:
@@ -146,12 +145,27 @@ clusterMetadata:
       enabled: true
       initialFailoverVersion: 1
       rpcName: "frontend"
-      rpcAddress: "localhost:7236"
+      rpcAddress: "localhost:7233"
       httpAddress: "localhost:7243"
 
 dcRedirectionPolicy:
   policy: "noop"
 ```
+
+Note `localhost:7233` in the `rpcAddress` parameter. If you are using a domain name, you should update this to reflect the URL that the Temporal gRPC API will be available on. You may use a subdomain like `rpc.my_domain:7233`. If you use a port other than 7233, you should also update the `grpcPort: 7233` parameter of the frontend service.
+
+:::note External access to the Temporal Service
+
+The gRPC API frontend configuration in this tutorial uses a default value of `bindOnIP: '0.0.0.0'`, meaning that the Temporal API will be available globally, without authentication, to anyone who can access this server. This is generally only appropriate if you are otherwise controlling access to this server (e.g. through Kubernetes or by using an external proxy). If you need a self-contained access control solution, refer to our tutorials on [Deploying Temporal with Nginx](/tutorials/infrastructure/nginx-sqlite-binary/index.md) or [Deploying Temporal with Envoy](/tutorials/infrastructure/envoy-sqlite-binary/index.md).
+
+:::
+
+:::tip 
+
+Temporal's gRPC API does not use TLS by default; depending your security envelope, TLS is not always necessary for gRPC endpoints. To configure TLS for your gRPC endpoint, refer to the [Temporal documentation](https://docs.temporal.io/references/configuration#tls).
+
+:::
+
 
 Save and close the file. Next, you'll create the configuration file for the UI Server. Using your favorite text editor, open a new file called `/etc/temporal/temporal-ui-server.yaml`:
 
@@ -162,8 +176,8 @@ sudo vim /etc/temporal/temporal-ui-server.yaml
 Paste the following contents into the file.
 
 ```
-temporalGrpcAddress: 127.0.0.1:7236
-host: 127.0.0.1
+temporalGrpcAddress: 127.0.0.1:7233
+host: 0.0.0.0
 port: 8233
 enableUi: true
 cors:
@@ -172,9 +186,9 @@ cors:
 defaultNamespace: default
 ```
 
-If you are using your own domain name, replace `localhost` in the `allowOrigins` property. Then save and close the file.
+As with the gRPC API, this will make the Web UI available over HTTP to anyone who can access this server -- ensure that you do not need a local proxy solution before proceeding.
 
-You can now run a Temporal Service on this server. However, you aren't ready to handle external connections yet -- at this point, your Temporal Service is only available on `localhost`, meaning it is not scalable or accessible outside the localhost network. In the remainder of this tutorial, you'll configure this server for production use.
+You can now run a Temporal Service on this server. In the remainder of this tutorial, you'll configure this server for production use.
 
 ## Creating and Registering System Services
 
@@ -273,129 +287,51 @@ Use the `systemctl` command to verify that `temporal-ui` started successfully:
 sudo systemctl status temporal-ui
 ```
 
-Both services should now be running in the background. 
+Both services should now be running in the background. Navigate to **YOUR_SERVER_IP:8233** in a web browser, and you should receive the Temporal Web UI. You now have a working Temporal Service. In the next step, you'll review some additional configuration options.
 
-## Deploying an Nginx Reverse Proxy with an SSL Certificate
+## Additional Configuration Options
 
-*To complete this step, you should have already obtained your own domain name and SSL certificates. One way to do that is by using [certbot](https://certbot.eff.org/instructions?ws=other&os=ubuntufocal).*
-While your Temporal Service is currently running, it is still only available on the internal `localhost` network. Next you should make it available externally and secure connections to it.
-When `certbot` retrieves certificates, by default, it stores them in `/etc/letsencrypt/live/YOUR_DOMAIN`. Check to make sure that you have them:
+### Other Database Backends
 
-```bash
-sudo ls /etc/letsencrypt/live/YOUR_DOMAIN
-```
+This tutorial provides an example of using Temporal with a SQLite database backend. Temporal also supports MySQL, PostgreSQL, and Cassandra as database backends. Refer to the [datasores](https://docs.temporal.io/references/configuration#datastores) documentation reference to make changes.
 
-```
-README  cert.pem  chain.pem  fullchain.pem  privkey.pem
-```
+### Load Balancing
 
-Now, you can configure an Nginx *reverse proxy* to expose your Temporal Service to external connections. Putting a web server such as Nginx in front of other web-facing applications can improve performance and reduce the complexity of securing a site. Nginx can take care of restricting access and securely handling requests from your clients to Temporal. You'll configure the UI server first, which uses regular HTTP (web) traffic:
+You may have noticed that the `temporal-server.yaml` configuration file that you edited earlier also contained several other port bindings -- for example, the History service and the Matching service. This is because most components of a Temporal Service can scale horizontally by adding additional nodes that can communicate and distribute load across a cluster.
 
-Nginx allows you to add per-site configurations to individual files in a subdirectory called `sites-available/`. Using your favorite text editor, create a new Nginx configuration at `/etc/nginx/sites-available/temporal-ui`:
+In this tutorial, you deployed a single, standalone server binary. For more information about adding additional nodes, refer to [Scaling Temporal: The Basics](https://temporal.io/blog/scaling-temporal-the-basics).
 
-```bash
-sudo vim /etc/nginx/sites-available/temporal-ui
-```
+### Visibility
 
-Paste the following into the new configuration file, being sure to replace `YOUR_DOMAIN` with your domain name.
+This tutorial actually creates two different SQLite databases -- one for persisting your Workflow Event Histories, and another to act as a Visibility store. A Visibility store is required in a Temporal Service setup because it is used for querying and filtering your Workflows. Like your primary data store, your Visibility store can be configured to use a different database backend, and does not need to use the same configuration as your primary data store.
+
+It is also possible to configure two Visibility stores, called [Dual Visibility](https://docs.temporal.io/visibility#dual-visibility). This can be useful when preparing to migrate databases, or if your deployment is optimized to read from one database and write to another. Refer to [How to set up Dual Visibility](https://docs.temporal.io/self-hosted-guide/visibility#dual-visibility) for more information.
+
+### CORS
+
+The Web UI configuration that you supplied in this tutorial contained this parameter:
 
 ```
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name YOUR_DOMAIN www.YOUR_DOMAIN
-
-    access_log /var/log/nginx/temporal.access.log;
-    error_log /var/log/nginx/temporal.error.log;
-
-    location / {
-        proxy_pass http://127.0.0.1:8233;
-        proxy_http_version 1.1;
-        proxy_read_timeout 300;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Real-PORT $remote_port;
-        allow YOUR_IP_ADDRESSES;
-        deny all;
-    }
-
-    listen 443 ssl;
-    # RSA certificate
-    ssl_certificate /etc/letsencrypt/live/YOUR_DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/YOUR_DOMAIN/privkey.pem;
-
-    # Redirect non-https traffic to https
-    if ($scheme != "https") {
-        return 301 https://$host$request_uri;
-    }
-}
+cors:
+  allowOrigins:
+    - http://localhost:8233
 ```
 
-You can read this configuration as having three main “blocks” to it. The first block, coming before the `location /` line, contains a boilerplate Nginx configuration for serving a website on the default HTTP port, 80. The `location /` block contains a configuration for proxying incoming connections to the Temporal Web UI, running on port 8233 internally, while preserving SSL. The configuration at the end of the file, after the `location /` block, loads your LetsEncrypt SSL keypairs and redirects HTTP connections to HTTPS.
+This means that [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) will only work over localhost. If you eventually need to configure a [Codec Server](https://docs.temporal.io/production-deployment/data-encryption) for your Temporal instance, you will also need to update your `allowOrigins` list to include every IP that needs to perform decoding in the Web UI.
 
-Note the `allow YOUR_IP_ADDRESSES;` line. You should replace this with the IP address that you'll need to access the Temporal Web UI from. You can add additional addresses in the same range using [CIDR notation](https://www.digitalocean.com/community/tutorials/understanding-ip-addresses-subnets-and-cidr-notation-for-networking), or add additional consecutive `allow` lines for multiple IPs. The `deny all;` on the following line will block traffic to all but the specified IPs. Because Temporal does not use any kind of authentication by default, restricting traffic by IP address is the least complex way of providing secure access.
+### Dev Ops
 
-Save and close the file. Next, you’ll need to activate this new configuration. Nginx’s convention is to create symbolic links (like shortcuts) from files in `sites-available/` to another folder called `sites-enabled/` as you decide to enable or disable them. Using full paths for clarity, make that link:
+For any parameters not covered in this tutorial, refer to the Temporal documentation reference for both the [Temporal Server](https://docs.temporal.io/references/configuration) (also referred to as a Temporal Cluster) and the [Web UI](https://docs.temporal.io/references/web-ui-configuration). There are also dedicated documentation pages for several other [self-hosting topics](https://docs.temporal.io/self-hosted-guide).
 
-```bash
-sudo ln -s /etc/nginx/sites-available/temporal-ui /etc/nginx/sites-enabled/temporal-ui
-```
+You can also refer to the [Docker configuation template](https://github.com/temporalio/temporal/blob/main/docker/config_template.yaml) used by Temporal's [Dockerhub images](https://hub.docker.com/r/temporalio/auto-setup). If you are using Kubernetes, Temporal's [helm-charts repo](https://github.com/temporalio/helm-charts) contains detailed documentation of the available options. You may also be interested in the [Temporal Kubernetes Operator](https://github.com/alexandrevilain/temporal-operator).
 
-By default, Nginx includes another configuration file at `/etc/nginx/sites-available/default`, linked to `/etc/nginx/sites-enabled/default`, which also serves its default index page. You’ll need to disable that rule by removing it from `/sites-enabled`, because it conflicts with your new Temporal configuration:
-
-```bash
-sudo rm /etc/nginx/sites-enabled/default
-```
-
-Before reloading Nginx with this new configuration, you'll create another reverse proxy for gRPC API connections to Temporal itself. Create another Nginx configuration at `/etc/nginx/sites-available/temporal`:
-
-```bash
-sudo vim /etc/nginx/sites-available/temporal
-```
-
-Paste the following into the new configuration file, being sure to replace `YOUR_DOMAIN` with your domain name.
-
-```
-server {
-    listen 7233 http2;
-    listen [::]:7233 http2;
-    server_name YOUR_DOMAIN
-
-    http2 on;
-
-    location / {
-        grpc_pass localhost:7236;
-        allow YOUR_CLIENT_IP_ADDRESS;
-        deny all;
-    }
-}
-```
-
-This configuration is shorter than the previous one, because Nginx only needs to use the `grpc_pass` directive to send gRPC traffic to the server. Again, don't forget the the `allow YOUR_CLIENT_IP_ADDRESS;` line. In this case, you'll need an `allow` statement or IP range for everywhere that you plan to run your Temporal Workers, or any other Temporal Client, or connect via the `temporal` CLI.
-
-Save and close the file, and create a symbolic link as before:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/temporal /etc/nginx/sites-enabled/temporal
-```
-
-Now you can restart your Nginx service, so it will reflect your new configuration:
-
-```bash
-sudo systemctl restart nginx
-```
-
-Navigate to **YOUR_DOMAIN** in a web browser, and you should receive the Temporal Web UI. At this point, you're finished with configuration. In the final step, you'll review the logs generated by your Temporal Service, as well as your options for connecting to it from the Temporal CLI or SDK.
+At this point, you're finished with configuration. In the final step, you'll review the logs generated by your Temporal Service, as well as your options for connecting to it from the Temporal CLI or SDK.
 
 ## Interacting with the Temporal Service
 
-In the last step, when you configured your Nginx reverse proxy, you enabled logging to `/var/log/nginx/temporal.access.log;` when you set the `access_log` parameter. Check this file if you ever need to review access logs to the Temporal Web UI.
+You can use `journalctl` to access logs from the Temporal Server. `journalctl -u service-name.service` allows you to view the full logs of any service running through `systemd`.
 
-You can also use `journalctl` to access logs from the Temporal Server itself. `journalctl -u service-name.service` allows you to view the full logs of any service running through `systemd`.
-
-If you ever need to restart the Temporal Service after making a configuration change, use `systemctl restart temporal` or `systemctl restart temporal-ui`. If you need to reload your Nginx configuration after adding additional IP addresses to your allow list, use `systemctl reload nginx` to reload without potentially disrupting network traffic with a restart.
+If you ever need to restart the Temporal Service after making a configuration change, use `systemctl restart temporal` or `systemctl restart temporal-ui`.
 
 Finally, you should now be able to interact with your Temporal Service as if it were running locally. Just include `--address your_server:7233` with your CLI commands as needed. The first thing you'll likely need to do is create a `default` namespace, since this is not done automatically:
 
