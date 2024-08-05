@@ -2,14 +2,14 @@
 id: build-one-click-order-app-nextjs
 title: Build a one-click order application with TypeScript and Next.js
 sidebar_position: 2
-keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
+description: Build a One-Click Buy application with Next.js and integrate Temporal using Next.js API routes to create a durable order processing backend.
 tags:
   - TypeScript
+keywords: [TypeScript, temporal, sdk, tutorial, NextJS]
+image: /img/temporal-logo-twitter-card.png
+code_repo: https://github.com/temporalio/nextjs-temporal-one-click-template/
 last_update:
   date: 2024-06-28
-description: Build a One-Click Buy application with Next.js and integrate Temporal using Next.js API routes to create a durable order processing backend.
-image: /img/temporal-logo-twitter-card.png
-repository: https://github.com/temporalio/nextjs-temporal-one-click-template/
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)

@@ -23,7 +23,7 @@ This reduces the complexity of the code you have to write and support.
 
 You'll create an endpoint for users to give their email address, and then create a new Workflow execution using that email address which will simulate sending an email message at certain intervals.
 The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution.
-You can view the user's entire process through Temporal's Web UI. 
+You can view the user's entire process through Temporal's Web UI.
 For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
 
 By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
@@ -71,7 +71,7 @@ Before writing the Workflow Definition, you'll define the data objects used by t
 You'll also define the Task Queue name you'll use in your Worker.
 
 Create the package directories for this project:
- 
+
 ```
 src
 ├── main
@@ -327,7 +327,7 @@ The `run` method executes the `sendEmail()` Activity with the following paramete
 
 A `start_to_close_timeout` parameter tells the Temporal Server to time out the Activity 10 seconds from when the Activity starts.
 
-The loop also includes a `Workflow.sleep()` statement that causes the Workflow to pause for a set amount of time between emails. 
+The loop also includes a `Workflow.sleep()` statement that causes the Workflow to pause for a set amount of time between emails.
 You can define this in seconds, days, months, or even years, depending on your business logic.
 
 If there's a cancellation request, the request throws a `CanceledFailure` error, which you can catch and respond.
@@ -491,7 +491,7 @@ In the `Controller.java` file, define a `/subscribe` endpoint so that users can 
 <!--SNIPEND-->
 
 In the `startSubscription()` method, use the `WorkflowClient` instance to start your Workflow Execution.
-The `WorkflowData` object is used to pass the email address given by the user to the Workflow Execution and sets the Workflow Id. 
+The `WorkflowData` object is used to pass the email address given by the user to the Workflow Execution and sets the Workflow Id.
 This ensures that the email is unique across all Workflows so that the user can't sign up multiple times, only receive the emails they've subscribed to, and when they cancel; they cancel the Workflow run.
 
 With this endpoint in place, you can now send a POST request to `/subscribe` with an email address in the request body to start a new Workflow that sends an email to that address.
@@ -600,7 +600,7 @@ Here's the relevant section as a reminder:
 With this endpoint in place, users can send a `DELETE` request to `unsubscribe` with an email address in the request body to cancel the Workflow associated with that email address.
 This allows users to unsubscribe from the email list and prevent any further emails from sending.
 
-Now that you've added the ability to unsubscribe from the email list, build your server app. 
+Now that you've added the ability to unsubscribe from the email list, build your server app.
 
 ## Build the server app
 

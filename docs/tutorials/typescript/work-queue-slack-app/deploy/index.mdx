@@ -81,9 +81,7 @@ You will need to update your Temporal Client and your Temporal Worker code.
 When developing locally, your Temporal Client, located in `bot/modules/temporal-client.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-dev-temporal-client-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/dev-temporal-client.ts)
-
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -99,16 +97,13 @@ export async function initializeTemporalClient() {
   });
 }
 ```
-
 <!--SNIPEND-->
 
 To use Temporal Cloud, change the Temporal Client code to read your Namespace certificate key and pem env variables.
 Then change the connection object to includes the Namespace and certificate information:
 
 <!--SNIPSTART typescript-slack-app-cloud-temporal-client-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/bot/modules/cloud-temporal-client.ts)
-
 ```ts
 import "dotenv/config";
 import {Client, Connection} from "@temporalio/client";
@@ -136,7 +131,6 @@ export async function initializeTemporalClient() {
   });
 }
 ```
-
 <!--SNIPEND-->
 
 Then update the code for the Temporal Worker to change how it connects.
@@ -144,9 +138,7 @@ Then update the code for the Temporal Worker to change how it connects.
 When developing locally, your Temporal Worker, located in `temporal-application/src/worker.ts`, looks like this:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-dev-worker-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/dev-worker.ts)
-
 ```ts
 import "dotenv/config";
 import path from "path";
@@ -169,7 +161,6 @@ async function run() {
 
 run();
 ```
-
 <!--SNIPEND-->
 
 To use Temporal Cloud, you'll change the connection information for your Worker in the same way you changed your client.
@@ -177,9 +168,7 @@ Read the certificate env variables and update the connection object to include t
 Alter the `worker.ts` file so it looks like the following:
 
 <!--SNIPSTART typescript-slack-app-temporal-application-cloud-worker-->
-
 [docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts](https://github.com/temporalio/temporal-learning/blob/edu-2636-workqueue-slackbot-tut/docs/tutorials/typescript/work-queue-slack-app/build/code/temporal-application/src/cloud-worker.ts)
-
 ```ts
 import "dotenv/config";
 import path from "path";
@@ -218,7 +207,6 @@ async function run() {
 
 run();
 ```
-
 <!--SNIPEND-->
 
 You can now run your application locally to ensure it works with Temporal Cloud.

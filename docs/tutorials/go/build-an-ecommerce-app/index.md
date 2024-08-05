@@ -1,11 +1,14 @@
 ---
-title: "Build an eCommerce App With Temporal and Go"
+id: build-ecommerce-app
+title: "Build an eCommerce App With Go"
 sidebar_position: 1
-keywords: [Go,tutorial,temporal,workflows, sending email,testing]
 description: "Four-part tutorial series on building an eCommerce application with Temporal and Go."
+keywords: [Go,tutorial,temporal,workflows, sending email,testing]
+tags:
+- Go
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-09-14
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)
