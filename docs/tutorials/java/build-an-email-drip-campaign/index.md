@@ -7,7 +7,6 @@ last_update:
   date: 2024-06-27
 title: Build an email drip campaign with Java and Spring Boot
 description: Implement an email drip campaign application with Temporal's Workflows, Activities, and Queries, and allow users to start your business logic through a web action.
-sidebar_label: Build an email drip campaign with Spring Boot and Java
 image: /img/temporal-logo-twitter-card.png
 ---
 
