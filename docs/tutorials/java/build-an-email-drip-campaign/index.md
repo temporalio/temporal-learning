@@ -1,13 +1,13 @@
 ---
 id: subscription-tutorial
 sidebar_position: 3
-keywords: [Java, temporal, sdk, tutorial, entity workflow, email drip campaign, email subscription, sending emails]
+keywords: [Java, Spring Boot, temporal, sdk, tutorial, entity workflow, email drip campaign, email subscription, sending emails]
 tags: [Java, SDK]
 last_update:
   date: 2024-06-27
-title: Build an email drip campaign with Temporal and Java
+title: Build an email drip campaign with Spring Boot and Java
 description: Implement an email drip campaign application with Temporal's Workflows, Activities, and Queries, and allow users to start your business logic through a web action.
-sidebar_label: Build an email drip campaign with Temporal and Java
+sidebar_label: Build an email drip campaign with Spring Boot and Java
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -15,8 +15,8 @@ image: /img/temporal-logo-twitter-card.png
 
 ### Introduction
 
-In this tutorial, you'll build an email drip campaign and a subscription web application using Temporal and Java.
-You'll create a web server using the Spring Boot framework to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application.
+In this tutorial, you'll build an email drip campaign and a subscription web application in Java.
+You'll create a web server using the [Spring Boot](https://spring.io/projects/spring-boot) framework to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application.
 Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process.
 Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or Task Queue.
 This reduces the complexity of the code you have to write and support.
