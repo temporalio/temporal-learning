@@ -1,13 +1,14 @@
 ---
-id: chatbot-tutorial
+id: build-choose-your-own-adventure-bot-ts
+title: Build a Choose Your Own Adventure Bot in TypeScript
 sidebar_position: 4
+description: In this tutorial, we'll integrate all the knowledge gained from Core and Production APIs in an end-to-end, complete demo application.
+tags:
+- TypeScript
 keywords: [TypeScript, temporal, sdk, tutorial]
-tags: [TypeScript, SDK]
+image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2021-10-01
-title: Choose Your Own Adventure Bot walkthrough in TypeScript
-description: In this tutorial, we'll integrate all the knowledge gained from Core and Production APIs in an end-to-end, complete demo application.
-image: /img/temporal-logo-twitter-card.png
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
@@ -51,15 +52,15 @@ import { ResponsivePlayer } from '@site/src/components'
 
 <ResponsivePlayer url='https://www.youtube.com/watch?v=hGIhc6m2keQ' />
 
-[00:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=0s) Project Intro and Demo  
-[03:30](https://youtube.com/watch?v=hGIhc6m2keQ&t=210s) Temporal Worker - Activity Dependency Injection  
-[07:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=420s) Temporal Sinks for Logging  
-[08:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=480s) Temporal Client  
-[10:50](https://youtube.com/watch?v=hGIhc6m2keQ&t=650s) RunGame Workflow and Game Logic  
-[13:45](https://youtube.com/watch?v=hGIhc6m2keQ&t=825s) Async Race Design Pattern: Timers vs Humans  
-[15:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=900s) Design Pattern: Polling  
-[18:05](https://youtube.com/watch?v=hGIhc6m2keQ&t=1085s) Signals  
-[20:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=1200s) HTTP Server for Signal  
+[00:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=0s) Project Intro and Demo
+[03:30](https://youtube.com/watch?v=hGIhc6m2keQ&t=210s) Temporal Worker - Activity Dependency Injection
+[07:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=420s) Temporal Sinks for Logging
+[08:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=480s) Temporal Client
+[10:50](https://youtube.com/watch?v=hGIhc6m2keQ&t=650s) RunGame Workflow and Game Logic
+[13:45](https://youtube.com/watch?v=hGIhc6m2keQ&t=825s) Async Race Design Pattern: Timers vs Humans
+[15:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=900s) Design Pattern: Polling
+[18:05](https://youtube.com/watch?v=hGIhc6m2keQ&t=1085s) Signals
+[20:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=1200s) HTTP Server for Signal
 [23:00](https://youtube.com/watch?v=hGIhc6m2keQ&t=1380s) ContinueAsNew
 
 

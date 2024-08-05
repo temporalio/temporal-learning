@@ -1,11 +1,11 @@
 ---
-id: subscription-tutorial
+id: ts-recurring-billing-subscription-tutorial
 sidebar_position: 3
 keywords: [TypeScript, temporal, sdk, tutorial, entity workflow]
 tags: [TypeScript, SDK]
 last_update:
   date: 2024-07-24
-title: Build a Recurring Billing Subscription Workflow with TypeScript
+title: Build a recurring billing subscription system with TypeScript
 description: Implement a subscription application using Temporal's Workflows, Activities, Signals, and Queries, enabling the payment workflow to be canceled or modified during execution.
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -139,7 +139,7 @@ Now that you know which directory will hold your Temporal files, you can set up 
 }
 ```
 
-Review the scripts. By prefixing any of the scripts with `npm run`, you will be able to run your application, query for subscription details, cancel your subscription, and update your charge amount. Save your file. 
+Review the scripts. By prefixing any of the scripts with `npm run`, you will be able to run your application, query for subscription details, cancel your subscription, and update your charge amount. Save your file.
 
 Your project workspace is now configured, so you're ready to start creating your application.
 
@@ -199,7 +199,7 @@ You will now define the functions that handle interactions with external systems
 
 Activities are the building blocks of a Temporal Workflow. They encapsulate the logic for tasks that interact with external services such as querying a database or calling a third-party API. One of the key benefits of using Activities is their built-in fault tolerance. If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
 
-For this tutorial, you'll define Activities for tasks like charging customers and sending emails, which typically interact with external services. To keep things focused on the Workflow logic, you will stub these Activities out with basic `log` statements. 
+For this tutorial, you'll define Activities for tasks like charging customers and sending emails, which typically interact with external services. To keep things focused on the Workflow logic, you will stub these Activities out with basic `log` statements.
 
 First, create the function that sends the Welcome email. Add the following code to `src/activities.ts`:
 
@@ -220,7 +220,7 @@ As you can see, an Activity in Temporal is just like writing your typical TypeSc
 
 The Temporal SDK also provides plenty of packages like a logging package which makes it easier to follow your code's execution path at runtime.
 
-Next, you will add a few more functions that sends e-mails that do the following: 
+Next, you will add a few more functions that sends e-mails that do the following:
 - Send a cancellation e-mail during the trial period.
 - Send a notification to the customer, letting the customer know that he or she will be charged for the billing period.
 - Send a cancellation e-mail during an active subscription.
@@ -313,9 +313,9 @@ Now that you have configured retries with your Activities, you can move onto wri
 
 1. Check if the subscription was canceled during the trial period. If so, you want to call your `sendCancellationEmailDuringTrialPeriod` Activity.
 
-2. If the subscription wasn't canceled during the trial period, you want to start billing the customer until you reach the max billing periods or the subscription is cancelled. 
+2. If the subscription wasn't canceled during the trial period, you want to start billing the customer until you reach the max billing periods or the subscription is cancelled.
 
-3. If the subscription is cancelled or the billing period is complete during this time, you want to call your `sendSubscriptionFinishedEmail` Activity. 
+3. If the subscription is cancelled or the billing period is complete during this time, you want to call your `sendSubscriptionFinishedEmail` Activity.
 
 4. Finally, if the subscription period is over and not canceled, notify the customer to buy a new subscription by calling the `sendSubscriptionOverEmail` Activity. Then return with a statement letting the subscription owner know that particular Workflow Execution is complete, and the total amount charged.
 
@@ -381,7 +381,7 @@ Now that you have your subscription Workflow, you will now run it.
 
 The first step to run anything in Temporal is to make sure you have a local Temporal Service running. Open a separate terminal window and start the service with `temporal server start-dev`.
 
-As you will see in the command line output, your Temporal Server should now be running on `http://localhost:8233`. When you first access this server, you should see zero Workflows running. 
+As you will see in the command line output, your Temporal Server should now be running on `http://localhost:8233`. When you first access this server, you should see zero Workflows running.
 
 The next step is to define your Worker program in `worker.ts`.
 
@@ -419,7 +419,7 @@ run().catch((err) => {
 ```
 <!--SNIPEND-->
 
-First, you register the Workflows and Activities with the Worker program. 
+First, you register the Workflows and Activities with the Worker program.
 Then, you start accepting the tasks that will route to the Task Queue that your Worker is registered with, which is `subscriptions-task-queue` defined in the `shared.ts` file.
 
 Run the Worker now with the script defined in `package.json` to run your `worker.ts` file and make sure that everything builds and there are no errors. You should run the Worker Program with a new terminal window:
@@ -571,7 +571,7 @@ Save your file and run your Workflow again with `npm run workflow`. This time, a
 
 Also, notice in the command-line window that your Worker is running, the Activity logs are being output: `Sending welcome email to email-1@customer.com`, `Charging email-1@customer.com amount 130 for their billing period`, and the other logs.
 
-Now that you know how to run your `subscriptionWorkflow`, you will look into how to query your Workflow to retrieve information such as the billing period and the total amount charged. This allows you to interact with the Workflow while it's running and get real-time updates on its status and progress. 
+Now that you know how to run your `subscriptionWorkflow`, you will look into how to query your Workflow to retrieve information such as the billing period and the total amount charged. This allows you to interact with the Workflow while it's running and get real-time updates on its status and progress.
 
 ## Retrieve subscription details
 
@@ -602,7 +602,7 @@ After defining a Query, the next step is to establish how the Workflow handles i
 
 Use the [`setHandler`](https://typescript.temporal.io/api/namespaces/workflow/#sethandler) function provided by the Temporal TypeScript SDK API. This function associates each Query with its corresponding handler logic.
 
-Within the `workflows.ts` file, add `setHandler` to your list of imports from `@temporalio/workflow`. 
+Within the `workflows.ts` file, add `setHandler` to your list of imports from `@temporalio/workflow`.
 
 Then, within your `subscriptionWorkflow` Workflow right before you call the `sendWelcomeEmail` Activity, use `setHandler` to handle your Queries as follows:
 
@@ -642,7 +642,7 @@ This code defines two Signals:
 
 However, like Queries, just defining a Signal is the first step. You also need to let the Workflow know what to do when it receives a Signal of that type. This is done using a Signal Handler, which is a function within the Workflow that listens for incoming Signals of a specified type and defines the Workflow's response.
 
-In order to implement a Signal handler, recall that the [`setHandler`](https://typescript.temporal.io/api/namespaces/workflow/#sethandler) function associates each Signal with its corresponding handler logic. 
+In order to implement a Signal handler, recall that the [`setHandler`](https://typescript.temporal.io/api/namespaces/workflow/#sethandler) function associates each Signal with its corresponding handler logic.
 
 Within the `workflows.ts` file and within the `subscriptionWorkflow` Workflow Definition, implement the Signal handlers as shown:
 
@@ -719,45 +719,45 @@ And replace it with:
 [src/workflows.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/workflows.ts)
 ```ts
 // ...
-// Used to wait for the subscription to be cancelled or for a trial period timeout to elapse
-if (
-  await condition(
-    () => subscriptionCancelled,
-    customer.subscription.trialPeriod
-  )
-) {
-  await sendCancellationEmailDuringTrialPeriod(customer);
-  return `Subscription finished for: ${customer.id}`;
-} else {
-  // Trial period is over, start billing until we reach the max billing periods for the subscription or subscription has been cancelled
-  while (true) {
-    if (billingPeriodNumber > customer.subscription.maxBillingPeriods) break;
+  // Used to wait for the subscription to be cancelled or for a trial period timeout to elapse
+  if (
+    await condition(
+      () => subscriptionCancelled,
+      customer.subscription.trialPeriod
+    )
+  ) {
+    await sendCancellationEmailDuringTrialPeriod(customer);
+    return `Subscription finished for: ${customer.id}`;
+  } else {
+    // Trial period is over, start billing until we reach the max billing periods for the subscription or subscription has been cancelled
+    while (true) {
+      if (billingPeriodNumber > customer.subscription.maxBillingPeriods) break;
 
-    if (subscriptionCancelled) {
-      await sendSubscriptionFinishedEmail(customer);
-      return `Subscription finished for: ${customer.id}, Total Charged: ${totalCharged}`;
+      if (subscriptionCancelled) {
+        await sendSubscriptionFinishedEmail(customer);
+        return `Subscription finished for: ${customer.id}, Total Charged: ${totalCharged}`;
+      }
+
+      log.info(`Charging ${customer.id} amount ${billingPeriodChargeAmount}`);
+
+      await chargeCustomerForBillingPeriod(customer, billingPeriodChargeAmount);
+      totalCharged += billingPeriodChargeAmount;
+      billingPeriodNumber++;
+
+      // Wait for the next billing period or until the subscription is cancelled
+      await sleep(customer.subscription.billingPeriod);
     }
 
-    log.info(`Charging ${customer.id} amount ${billingPeriodChargeAmount}`);
-
-    await chargeCustomerForBillingPeriod(customer, billingPeriodChargeAmount);
-    totalCharged += billingPeriodChargeAmount;
-    billingPeriodNumber++;
-
-    // Wait for the next billing period or until the subscription is cancelled
-    await sleep(customer.subscription.billingPeriod);
+    // If the subscription period is over and not cancelled, notify the customer to buy a new subscription
+    await sendSubscriptionOverEmail(customer);
+    return `Completed ${
+      workflowInfo().workflowId
+    }, Total Charged: ${totalCharged}`;
   }
-
-  // If the subscription period is over and not cancelled, notify the customer to buy a new subscription
-  await sendSubscriptionOverEmail(customer);
-  return `Completed ${
-    workflowInfo().workflowId
-  }, Total Charged: ${totalCharged}`;
-}
 ```
 <!--SNIPEND-->
 
-In the code, the `condition` method pauses the Workflow until either the `subscriptionCancelled` flag is true (meaning a `cancelSubscription` Signal was received) or the trial period expires. Once the condition is met, the Workflow invokes the Activity to send a cancellation email. 
+In the code, the `condition` method pauses the Workflow until either the `subscriptionCancelled` flag is true (meaning a `cancelSubscription` Signal was received) or the trial period expires. Once the condition is met, the Workflow invokes the Activity to send a cancellation email.
 
 In the loop that iterates through the billing period, the loop checks constantly as well for the `subscriptionCancelled` flag to be `true`.
 
@@ -827,15 +827,15 @@ Start by initiating the Workflow Execution and getting the handle:
 [src/scripts/cancel-subscription.ts](https://github.com/temporalio/subscription-workflow-project-template-typescript/blob/main/src/scripts/cancel-subscription.ts)
 ```ts
 // ...
-const subscriptionWorkflowExecution = await client.workflow.start(
-  subscriptionWorkflow,
-  {
-    args: [customer],
-    taskQueue: TASK_QUEUE_NAME,
-    workflowId: `subscription-${customer.id}`,
-  }
-);
-const handle = await client.workflow.getHandle(`subscription-${customer.id}`);
+  const subscriptionWorkflowExecution = await client.workflow.start(
+    subscriptionWorkflow,
+    {
+      args: [customer],
+      taskQueue: TASK_QUEUE_NAME,
+      workflowId: `subscription-${customer.id}`,
+    }
+  );
+  const handle = await client.workflow.getHandle(`subscription-${customer.id}`);
 ```
 <!--SNIPEND-->
 
@@ -957,7 +957,7 @@ You now know how to obtain a handle on a Workflow Execution and send a Signal to
 
 ## Retrieve billing period and total charged details
 
-You will now retrieve details about the billing period and total amount charged. You have already defined and handled your Query. You will now send a Query through the Client to retrieve information from a running or completed Workflow. The SDK provides the `WorkflowHandle.query` method to query a running or completed Workflow, allowing you to access details of the `subscriptionWorkflow`, without interrupting its execution. 
+You will now retrieve details about the billing period and total amount charged. You have already defined and handled your Query. You will now send a Query through the Client to retrieve information from a running or completed Workflow. The SDK provides the `WorkflowHandle.query` method to query a running or completed Workflow, allowing you to access details of the `subscriptionWorkflow`, without interrupting its execution.
 
 Since this Client code will focus on querying the billing info, in the `query-billinginfo.ts` file, first reuse the customer object:
 
@@ -1049,7 +1049,7 @@ You now know how to obtain a handle on a Workflow Execution and send a Query to 
 
 ## Conclusion
 
-By using Temporal, you were able to build a fault-tolerant subscription Workflow that manages complex state transitions and interactions with external services. Temporal's durable execution and automatic state persistence ensured that your Workflow could reliably handle user sign-ups, trial periods, billing cycles, and cancellations, even in the face of failures or interruptions. 
+By using Temporal, you were able to build a fault-tolerant subscription Workflow that manages complex state transitions and interactions with external services. Temporal's durable execution and automatic state persistence ensured that your Workflow could reliably handle user sign-ups, trial periods, billing cycles, and cancellations, even in the face of failures or interruptions.
 
 The ability to send Signals and Queries allowed for dynamic interaction with running Workflows, making real-time updates and state retrieval straightforward and maintainable. With Temporal, you can simplify the management of long-running business processes, and create scalable and fault-tolerant applications.
 
