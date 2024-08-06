@@ -12,6 +12,48 @@ image: /img/temporal-logo-twitter-card.png
 
 ![Temporal Java SDK](/img/sdk_banners/banner_java.png)
 
+## External to Temporal
+
+* YES <a href="https://github.com/temporalio/build-audiobook-go">HREF External Working</a>
+* YES <a href="https://github.com/temporalio/build-audiobook-go#setup">HREF External Working w anchor</a>
+* YES <a href="https://github.com/temporalio/build-audiobook-go?tab=readme-ov-file#setup">HREF External Working w anchor and query</a>
+* 404 <a href="https://github.com/temporalio/build-audiobook-nogo">HREF External Broken</a>
+* TOP OF PAGE <a href="https://github.com/temporalio/build-audiobook-go#setupdoesnotexist">HREF External w/ broken anchor</a>
+* TOP OF PAGE <a href="https://github.com/temporalio/build-audiobook-go?tab=readme-ov-file#setupdoesnotexist">HREF External w query and broken anchor</a>
+* YES [Markdown External Working](https://github.com/temporalio/build-audiobook-go)
+* YES [Markdown External Working w anchor](https://github.com/temporalio/build-audiobook-go#setup)
+* YES [Markdown External Working w anchor and query](https://github.com/temporalio/build-audiobook-go?tab=readme-ov-file#setup)
+* 404 [Markdown anchor External Broken](https://github.com/temporalio/build-audiobook-go-nogo)
+* TOP OF PAGE [Markdown External w broken anchor](https://github.com/temporalio/build-audiobook-go#setupdoesnotexist)
+* TOP OF PAGE [Markdown External w broken anchor and query](https://github.com/temporalio/build-audiobook-go?tab=readme-ov-file#setupdoesnotexist)
+
+## Internal to this page
+
+* YES [Relative anchor](#prerequisites)
+* YES [Page ref on page](/tutorials/java/build-an-email-drip-campaign/#prerequisites)
+* N/A Cannot test fully specified URL  as that will go to real site (https://learn.temporal.io/tutorials/java/build-an-email-drip-campaign/#prerequisites)
+
+### Broken versions
+
+* NO ACTION [Relative anchor](#prerequisitesxx)
+* NO ACTION [Page ref on page](/tutorials/java/build-an-email-drip-campaign/#prerequisitesxx)
+* Cannot test fully specified URL  as that will go to real site 
+
+## Internal to learn site
+
+* YES [Page ref on page](/tutorials/python/build-an-email-drip-campaign/#prerequisites)
+* N/A Cannot test fully specified URL  as that will go to real site (https://learn.temporal.io/tutorials/python/build-an-email-drip-campaign/#prerequisites)
+
+### Broken versions
+
+* RANDOM ON PAGE [Page ref on page](/tutorials/python/build-an-email-drip-campaign/#prerequisitesxx)
+* RANDOM ON PAGE [Page ref on page](/tutorials/python/build-an-email-drip-campaign/#doesntexist)
+* Cannot test fully specified URL  as that will go to real site 
+
+## External over to the docs site 
+
+We don't cross reference, so treated as external site like github.
+
 ### Introduction
 
 In this tutorial, you'll build an email drip campaign and a subscription web application in Java.
