@@ -22,7 +22,7 @@ Install Node.js via your package manager by following [the official Node.js inst
 
 ## Set up the Temporal TypeScript SDK
 
-You can create a new project with the Temporal SDK:.
+You can create a new project with the Temporal SDK:
 
 ```command
 npx @temporalio/create@latest ./my-app

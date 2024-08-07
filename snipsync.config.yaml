@@ -54,6 +54,9 @@ origins:
     repo: money-transfer-project-template-go
     ref: cloud
   - owner: temporalio
+    repo: email-drip-campaign-project-java
+    ref: main
+  - owner: temporalio
     repo: nextjs-temporal-one-click-template
     ref: main
   - owner: temporalio
@@ -61,29 +64,34 @@ origins:
     ref: main
   # Background Check tutorial code in the learn repo
   - files:
-      pattern: './docs/tutorials/go/background-check/code/**/*.go'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
+      pattern: "./docs/tutorials/go/background-check/code/**/*.go"
+      owner: "temporalio"
+      repo: "temporal-learning"
+      ref: "main"
   - files:
-      pattern: './docs/tutorials/java/background-check/code/**/*.java'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
+      pattern: "./docs/tutorials/java/background-check/code/**/*.java"
+      owner: "temporalio"
+      repo: "temporal-learning"
+      ref: "main"
   - files:
-      pattern: './docs/tutorials/python/background-check/code/**/*.py'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
+      pattern: "./docs/tutorials/python/background-check/code/**/*.py"
+      owner: "temporalio"
+      repo: "temporal-learning"
+      ref: "main"
   - files:
-      pattern: './docs/tutorials/typescript/background-check/code/**/*.ts'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
-      ref: 'main'
+      pattern: "./docs/tutorials/typescript/background-check/code/**/*.ts"
+      owner: "temporalio"
+      repo: "temporal-learning"
+      ref: "main"
   - files:
-      pattern: './docs/tutorials/python/trip-booking-app/code/*.py'
-      owner: 'temporalio'
-      repo: 'temporal-learning'
+      pattern: "./docs/tutorials/python/trip-booking-app/code/*.py"
+      owner: "temporalio"
+      repo: "temporal-learning"
+  - files:
+      pattern: "./docs/tutorials/typescript/work-queue-slack-app/build/code/**/*.ts"
+      owner: "temporalio"
+      repo: "temporal-learning"
+      ref: "edu-2636-workqueue-slackbot-tut"
 
 targets:
   - docs/tutorials
