@@ -39,7 +39,7 @@ Get started by checking that you have the necessary understanding, tools, and en
 
 ## Prerequisites
 
-You can build the project by following this tutorial or, if you're feeling impatient, just grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-go).
+You can build the project by following this tutorial, or just grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-go).
 This repository has the full source code and can serve as a guide or a fallback if you encounter issues when working through this tutorial.
 If you want to play first and explore later, you can come back and read through the how-to and background.
 Here's what you need to get going:
@@ -50,7 +50,7 @@ Here's what you need to get going:
    These services are necessary for you to build and run this project.
 
 1. **Basic understanding of the Temporal Go SDK**:
-   Work through the [Hello World in Go](/getting_started/Go/hello_world_in_Go/) tutorial.
+   Work through the [Hello World in Go](/getting_started/go/hello_world_in_go/) tutorial.
    This covers the basics of getting a Temporal Go SDK project up and running.
 
 1. **OpenAI API access**:
@@ -62,7 +62,7 @@ Once caught up with prerequisites, you can build out your Go project directory.
 :::info CAUTIONS
 
 This is a tutorial project and its implementation is suited for personal and hobbyist use.
-In production, you wouldn't read or write from a single database file, hard drive, or system.
+In production, you wouldn't read or write from a single database file or system.
 These aren't durable so you can't develop durable software with them.
 You must be able to rebuild your progress state or store information somewhere more durable.
 If you expand on this project, consider a API-based Cloud storage solution.
@@ -91,48 +91,21 @@ If you expand on this project, consider a API-based Cloud storage solution.
    cd TTSWorker
    ```
 
-3. Create your Makefile in the `TTSWorker/` project root directory.
-   Remember that Makefile uses tabs not spaces for indentation when creating this file:
-
-   ```makefile
-   # Go parameters
-   GOCMD = go
-   GOBUILD = $(GOCMD) build
-   GOCLEAN = $(GOCMD) clean
-   GORUN = $(GOCMD) run
-   GOGET = $(GOCMD) get
-   GOINSTALL = $(GOCMD) install
-   GOPATH ?= $(shell go env GOPATH)
-   BINARY_DIR = bin
-   BINARY_NAME_WORKER = $(BINARY_DIR)/worker
-
-   all: build
-
-   clean:
-       $(GOCLEAN)
-       rm -rf $(BINARY_DIR)
-
-   build: $(BINARY_DIR) build-worker
-
-   $(BINARY_DIR):
-       mkdir -p $(BINARY_DIR)
-
-   build-worker:
-       cd worker && $(GOBUILD) -o ../$(BINARY_NAME_WORKER)
-
-   run:
-       ./$(BINARY_NAME_WORKER)
-
-   .PHONY: all clean build build-worker clean-deps fetch-deps worker
-   ```
-
-4. Create `go.mod` by entering:
+3. Create `go.mod` by entering:
 
    ```
    go mod init audiobook/app
    ```
    
-   Edit your new `go.mod` file to add two requirements:
+   The file contents are initialized to:
+   
+   ```
+   module audiobook/app
+
+   go 1.22.2
+   ```
+   
+4. Edit your new `go.mod` file to add two requirements:
 
    ```
    module audiobook/app
@@ -149,42 +122,6 @@ If you expand on this project, consider a API-based Cloud storage solution.
    
    * **go.temporal.io/sdk v1.17.0**: Temporal's open source failure mitigation Go SDK.
    * **github.com/stretchr/testify v1.8.0**: Write tests with assertions and mocks.
-
-5. Establish your bearer token environment variable
-   Your application uses the environment variable to authenticate with the OpenAI service.
-   It needs to live in the same shell as  your running app.
-
-   This varies by shell, so you might use the following for tcsh:
-
-   ```sh
-   setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
-   ```
-
-   or bash:
-
-   ```
-   export OPEN_AI_BEARER_TOKEN='your-secret-bearer-token'
-   ```
-
-   Optionally, create a `bearer.sh` utility to reduce typing.
-   Make it executable with `chmod +x`.
-   Store this wherever you keep similar secure items:
-
-   ```sh
-   #! /bin/sh
-
-   setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
-   ```
-
-   You must `source /path/to/bearer.sh` to set the variable into your current shell.
-   Environment variables let you skip hard coding your bearer token into projects.
-
-:::note Your Bearer Token
-
-When using your application, set your `OPEN_AI_BEARER_TOKEN` environment variable in the same shell before execution.
-The application checks for the token and if it's not set, it will error.
-
-:::
 
 ## Create your OpenAI conversion code
 
@@ -414,6 +351,8 @@ func MoveOutputFileToPlace(ctx context.Context, tempPath, originalPath string) (
 
 </details>
 
+Now that you've built the Activities file, you'll explore some of its functionality and how these pieces work together.
+
 [Activities](https://docs.temporal.io/activities) handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
 Temporal uses Activities for any action that is prone to failure, allowing them to be retried.
 Imagine that the network goes down or your service provider (OpenAI in this case) is temporarily doing maintenance.
@@ -428,7 +367,7 @@ The `TTSActivities` interface handles text-to-speech operations with the followi
 - **`Process`**: Sends a text chunk to OpenAI for processing, retrieves the TTS audio segment, and appends it to an output file.
 - **`MoveOutputFileToPlace`**: Moves an audio file to a safe, versioned location in the same folder as the original text file.
 
-Here is how the activities help in the overall conversion process:
+Here is how the Activities help in the overall conversion process:
 ![After reading a text file and dividing it into chunks, each chunk is sent to OpenAI to be converted to audio and the results appended to the output file](images/highlevelprocess.png)
 
 ### Prepare your text with `ReadFile`
@@ -438,7 +377,7 @@ Before and during the read, it performs a series of safety checks, such as makin
 If it encounters any file system issues, it returns an application error.
 A corrupt file system can't be reasonably retried.
 
-The `ReadFile` activity reads and processes text from a file.
+The `ReadFile` Activity reads and processes text from a file.
 It performs safety checks to ensure the file exists and is readable.
 If file system issues are encountered, it returns an error.
 Errors related to file system issues indicate fundamental issues that can't be resolved through retries.
@@ -483,18 +422,18 @@ return chunks, nil
 
 ```
 
-As a rule-of-thumb, a typical English word uses 1.33 OpenAI tokens, which is how this code defines the `AVERAGE_TOKENS_PER_WORD` constant.
-When working with other languages, adjust that value to fit with typical word lengths.
-
 Tokens quantify the data processed by OpenAI requests and all OpenAI endpoints use token limits.
 This code creates chunks with approximately 512 token for each API request.
 Although the OpenAI token limit is higher than this, this code is conservative to reduce bandwidth for the returned audio bytes.
+
+As a rule-of-thumb, a typical English word uses 1.33 OpenAI tokens, which is how this code defines the `AVERAGE_TOKENS_PER_WORD` constant.
+When working with other languages, adjust that value to fit with typical word lengths.
 
 After building a method to process string data, you'll add code to build an output file in the next steps.
 
 ### Build a temporary file to store output with `CreateTemporaryFile`
 
-The `CreateTemporaryFile` activity requests that the system create a new temporary file.
+The `CreateTemporaryFile` Activity requests that the system create a new temporary file.
 This file stores intermediate results so your work won't affect the main file system:
 
 ```go
@@ -514,7 +453,7 @@ func CreateTemporaryFile(ctx context.Context) (string, error) {
 
 ### Convert text to audio with `Process`
 
-The `process` Activity handles text-to-speech work.
+The `Process` Activity handles text-to-speech work.
 Each time it's called, it sends a chunk of text to the `textToSpeech` method and appends those results to your output file.
 You call it with a `string` to process and the output destination.
 Should the text-to-speech conversion request fail, Temporal can retry the request:
@@ -664,7 +603,7 @@ Next, you'll create a Workflow, which sets the overall business logic for your a
 
 ## Define your Workflow with Temporal
 
-You've seen the pieces that perform the conversion work but you haven't tied them together.
+You've seen the pieces that perform the conversion work but you haven't tied the process together.
 In this section, you'll build a Temporal Workflow to process a text-to-speech conversion from start to finish.
 [Workflows](https://docs.temporal.io/workflows) create the overall flow of your application's business process.
 It's essentially a sequence of steps written in your programming language.
@@ -843,17 +782,15 @@ A few more things about this code:
 - The app starts by checking for an OpenAI bearer token and stores it as a static variable in the `app` package.
 - Next, it builds a [Client](https://docs.temporal.io/develop/go/temporal-clients), a class that can communicate with the Temporal service.
 - It uses the client and the Task Queue to create a new Worker, which registers the Workflow and Activities it can manage.
-- Finally, it runs the Worker, which starts polling the activity Queue for Tasks to perform.
+- Finally, it runs the Worker, which starts polling for Tasks.
 
 Your complete project structure will now look like this:
 
 ```sh
 .
-├── Makefile
 ├── TTSActivities.go
 ├── TTSWorkflow.go
 ├── go.mod
-├── go.sum
 └── worker
     └── main.go
 ```
@@ -878,36 +815,24 @@ temporal server start-dev \
 
 Once running, connect to the [Temporal Web UI](http://localhost:8080/) and verify that the server is working.
 
-### Instantiate Your Bearer Token
-
-Create an environment variable called OPEN_AI_BEARER_TOKEN to configure your OpenAI credentials.
-If you set this value using a shell script, make sure to `source` the script so the variable carries over past the script execution.
-The environment variable must be set in the same shell where you'll run your application.
-
 ### Run the Worker application
 
-1. Update your dependencies:
+Assuming you're running Bash, enter this at the command line.
+Substitute in your bearer token for YOUR-BEARER-TOKEN:
 
-   ```sh
-   go mod tidy
-   ```
+```
+OPEN_AI_BEARER_TOKEN=YOUR-BEARER-TOKEN go run worker/main.go
+```
 
-1. Build the Worker app:
-
-   ```sh
-   make
-   ```
-
-2. Start the app running:
-
-   ```sh
-   make run
-   ```
-
-If the Worker can't fetch a bearer token from the shell environment, it will fail loudly at launch.
-This early check prevents you from running jobs and waiting to find out that you forgot to set the bearer token until you're well into the Workflow process.
-
+Otherwise set the OPEN_AI_BEARER_TOKEN in your shell and run the app.
 Now that the Worker is running, you can submit jobs for text-to-speech processing.
+
+:::note Your Bearer Token
+
+The application checks for the OPEN_AI_BEARER_TOKEN token environment variable. 
+If not set, the application will error.
+
+:::
 
 ## Submit narration jobs
 
@@ -969,7 +894,7 @@ temporal workflow query \
     --workflow-id "your-workflow-id"
 ```
 
-The query returns a status reporting how many chunks have completed.
+The Query returns a status reporting how many chunks have completed.
 For example,
 
 ```
@@ -1021,6 +946,6 @@ With just a few source files, you created a complete working solution, building 
 :::info What's next?
 
 Now that you've completed this tutorial, check out some other great [Temporal Go projects](https://learn.temporal.io/tutorials/Go/) or learn more about Temporal by taking our [free courses](https://learn.temporal.io/courses).
-We provide hands-on projects for supported SDK languages including Go, Go, Python, TypeScript, and PHP.
+We provide hands-on projects for supported SDK languages including Go, Java, Python, TypeScript, and PHP.
 
 :::
