@@ -50,7 +50,7 @@ Here's what you need to get going:
    These services are necessary for you to build and run this project.
 
 1. **Basic understanding of the Temporal Java SDK**:
-   Review the "Hello World in Java" Tutorial. Work through the [Hello World in Java](/getting_started/java/hello_world_in_java/index.md) tutorial.
+   Work through the [Hello World in Java](/getting_started/java/hello_world_in_java/index.md) tutorial.
    This covers the basics of getting a Temporal Java SDK project up and running.
 
 1. **OpenAI API access**:
