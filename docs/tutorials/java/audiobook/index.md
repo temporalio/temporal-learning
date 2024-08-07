@@ -23,8 +23,7 @@ With the rise of advanced text-to-speech (TTS) technology, it's not just possibl
 For years, text-to-speech solutions have supported the assistive community by transforming words on the page into accessible engagement.
 However, until recently, robotic voices and unnatural rhythms made TTS unappealing for casual listeners.
 If you didn't need TTS, you probably wouldn't have used TTS.
-
-Now, companies like [OpenAI](https://openai.com/api/) revolutionized speech synthesis.
+Now, companies like [OpenAI](https://openai.com/api/) have revolutionized speech synthesis.
 They created voices that sound like humans and not androids and released affordable APIs.
 Using these large language models (LLMs), you can enjoy warm, nuanced narration.
 So, wouldn't it be great to use this kind of tech to transform any text into an audiobook?
@@ -47,7 +46,7 @@ Here's what you need to get going:
 
 1. **A local Java development environment**:
    Follow ["Set up a local development environment"](/getting_started/java/dev_environment/index.md) so you're ready to build Temporal applications with Java.
-   Ensure a local Temporal Service is running and that you can access the Temporal Web UI from port `8233`.
+   Ensure a local Temporal Service is running and that you can access the Temporal Web UI from port `8080`.
    These services are necessary for you to build and run this project.
 
 1. **Basic understanding of the Temporal Java SDK**:
@@ -58,13 +57,13 @@ Here's what you need to get going:
    Sign up for your [OpenAI API developer account](https://openai.com/api/) and create a bearer token.
    You need this token to access OpenAI services for text-to-speech conversion in your project.
 
-If you're all caught up with prerequisites, it's time to build out your Java project directory.
+Once caught up with prerequisites, you can build out your Java project directory.
 
 :::info CAUTIONS
 
 This is a tutorial project and its implementation is suited for personal and hobbyist use.
-In production, you wouldn't read or write from a single hard drive.
-A single disk isn't durable so you can't develop durable software with it.
+In production, you wouldn't read or write from a single database file, hard drive, or system.
+These aren't durable so you can't develop durable software with them.
 You must be able to rebuild your progress state or store information somewhere more durable.
 If you expand on this project, consider a API-based Cloud storage solution.
 
@@ -72,7 +71,7 @@ If you expand on this project, consider a API-based Cloud storage solution.
 
 ## Create your Java project structure
 
-1. **Set up your project directory**:
+1. Set up your project directory:
    Set up your source code folder hierarchy by issuing this directory creation command:
 
    ```sh
@@ -90,9 +89,9 @@ If you expand on this project, consider a API-based Cloud storage solution.
    ```
 
    You can check it with the Unix `tree` command.
-   If the command isn't native to your system, you can install it with standard package managers like Homebrew and apt-get.
+   If the command isn't native to your system, you can install it with standard package managers like Homebrew and apt.
 
-2. **Initialize version control**:
+2. Initialize version control:
    This is a good time to set up version control if you want to use it with this project.
    Using Git, you can initialize your repository:
 
@@ -104,7 +103,7 @@ If you expand on this project, consider a API-based Cloud storage solution.
    Version control helps you manage changes and collaborate with others efficiently.
    Just like Temporal, it provides check-in points so you can back up in time if needed to retry your project development without duplicating all your earlier work.
 
-3. **Create your build file**
+3. Create your build file
    In your root folder, create a build.gradle file and add the following contents.
    Feel free to swap in Maven if you prefer:
 
@@ -133,18 +132,34 @@ task run(type: JavaExec) {
 ```
 <!--SNIPEND-->
 
-4. **Review your dependencies and run task**:
+4. Review your dependencies and run task:
    Your dependencies include Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few basic libraries:
 
-   * com.squareup.okhttp3:okhttp:4.9.3: OkHttp is a basic HTTP client for network requests.
-   * org.json:json:20210307: Parse and manipulate JSON data.
-   * commons-io:commons-io:2.11.0: Perform file tasks with common input/output routines.
-   * org.slf4j:slf4j-nop:2.0.6: Minimizes unnecessary output with logging suppression.
-   * io.temporal:temporal-sdk:1.22.2: Add error mitigation.
+   * **com.squareup.okhttp3:okhttp:4.9.3**: OkHttp is a basic HTTP client for network requests.
+   * **org.json:json:20210307**: Parse and manipulate JSON data.
+   * **commons-io:commons-io:2.11.0**: Perform file tasks with common input/output routines.
+   * **org.slf4j:slf4j-nop:2.0.6**: Minimizes unnecessary output with logging suppression.
+   * **io.temporal:temporal-sdk:1.22.2**: Add error mitigation.
 
    The run task starts your TTS application.
 
-5. **Optionally, create a `bearer.sh` utility**:
+5. Establish your bearer token environment variable
+   Your application uses the environment variable to authenticate with the OpenAI service.
+   It needs to live in the same shell as  your running app.
+
+   This varies by shell, so you might use the following for tcsh:
+
+   ```sh
+   setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
+   ```
+
+   or bash:
+
+   ```
+   export OPEN_AI_BEARER_TOKEN='your-secret-bearer-token'
+   ```
+
+   Optionally, create a `bearer.sh` utility to reduce typing.
    Make it executable with `chmod +x`.
    Store this wherever you keep similar secure items:
 
@@ -154,9 +169,9 @@ task run(type: JavaExec) {
    setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
    ```
 
-   This 'bearer.sh' script sets your OpenAI bearer token as an environment variable.
    You must `source /path/to/bearer.sh` to set the variable into your current shell.
    Environment variables let you skip hard coding your bearer token into projects.
+
 
 :::note Your Bearer Token
 
@@ -167,8 +182,7 @@ The application checks for the token and if it's not set, it will error.
 
 ## Create your OpenAI conversion code
 
-Create an interface-implementation pair of files named `TTSActivities.java` and `TTSActivitiesImpl.java`.
-Add these to 'src/main/java/ttsworker' and include the following file contents.
+Create an interface-implementation pair of files named `TTSActivities.java` and `TTSActivitiesImpl.java` in `src/main/java/ttsworker` and include the following file contents.
 This class is responsible for the text-to-speech work in your project:
 
 <details>
@@ -382,19 +396,19 @@ public class TTSActivitiesImpl implements TTSActivities {
 </details>
 
 [Activities](https://docs.temporal.io/activities), like the `TTSActivities` class, handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
-Temporal uses Activities for any action that might have to be retried.
+Temporal uses Activities for any action that is prone to failure, allowing them to be retried.
 Imagine that the network goes down or your service provider (OpenAI in this case) is temporarily doing maintenance.
-Your retry policy lets you perform "do-over"s.
+Temporal provides a Retry Policy to support "do-overs" for error mitigation.
 Activities add check-in points for your application state in your [Event History](https://docs.temporal.io/workflows#event-history).
-When retried, it picks up state from just before it was first called, so it's like the failed attempt never happened.
+When retried, an Activity picks up state from just before it was first called, so it's like the failed attempt never happened.
 
-The `TTSActivities` class reads strings from files and converts those strings to audio.
+The `TTSActivities` class reads text from files and converts those strings to audio.
 This class has four activities:
 
-- **`readFile`**: Pass an `inputPath` to a file, and it returns a chunked list of the contents for well-sized API calls.
-- **`createTemporaryFile`**:  Ask the system to build a temporary file for audio output in a safe folder that normally cleans itself on reboots.
-- **`process`**: Send a text chunk to OpenAI, retrieve the TTS audio segment, and append it to the output file.
-- **`moveOutputFileToPlace`**: Find a safe, versioned location for the audio in the same folder as the original text, and move it there.
+- **`readFile`**: Accepts an `inputPath` to a file, and returns a chunked list of the contents for well-sized API calls.
+- **`createTemporaryFile`**: Creates a temporary file for audio output in a safe folder that normally cleans itself on reboots.
+- **`process`**: Sends a text chunk to OpenAI for processing, retrieve the TTS audio segment, and append it to the output file.
+- **`moveOutputFileToPlace`**: Finds a safe, versioned location for the audio in the same folder as the original text, and move it there.
 
 Here is how the activities help in the overall conversion process:
 ![After reading a text file and dividing it into chunks, each chunk is sent to OpenAI to be converted to audio and the results appended to the output file](images/highlevelprocess.png)
@@ -403,7 +417,7 @@ Here is how the activities help in the overall conversion process:
 
 The `readfile` Activity reads and processes text from a file.
 Before and during the read, it performs a series of safety checks, such as making sure the file exists and it's readable.
-If it encounters any file system error, the project assumes the situation is unrecoverable, throwing a non-retryable exception, ending the conversion process.
+If it encounters any file system error, the project assumes the situation is unrecoverable, throwing a non-retryable exception, and ending the conversion process.
 A corrupt file system can't be reasonably retried.
 
 The following code appears at the end of the Activity.
@@ -441,7 +455,7 @@ Tokens quantify the data processed by OpenAI requests and all OpenAI endpoints u
 This code creates chunks with approximately 512 token for each API request.
 Although the OpenAI token limit is higher than this, this code is conservative to reduce bandwidth for the returned audio bytes.
 
-After creating string data for your request stream, build an output file in the next steps.
+After building a method to process string data, you'll add code to build an output file in the next steps.
 
 ### Build a temporary file to store output with `createTemporaryFile`
 
@@ -470,7 +484,7 @@ With data and an output file, you can begin to create and store your audio.
 
 The `process` Activity handles text-to-speech work.
 Each time it's called, it sends a chunk of text to the `textToSpeech` method and appends those results to your output file.
-You call it with a string to process and the output destination.
+You call it with a `String` to process and the output destination.
 Should the text-to-speech conversion request fail, Temporal can retry the request:
 
 ```java
@@ -547,7 +561,7 @@ When creating the HTTP request body, customizable [endpoint options](https://pla
   You can listen to samples of other voices at the [OpenAI Voice Options](https://platform.openai.com/docs/guides/text-to-speech/voice-options) page.
 - **response_format**: You'll use the highly portable mp3 output format.
 
-You may want to tweak the request body further.
+You may want to set additional options by further tweaking the request body.
 An optional **speed** parameter (from 0.5 to 4.0, defaults to 1) lets you speed up or slow down the output so the results can be shorter to listen to or elongated for those with audio processing issues.
 To tune the results to a specific language so the model takes advantage of native inflections.
 Set **language** to an [ISO-639](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) code.
@@ -593,11 +607,10 @@ Next, you'll create a Workflow, which sets the overall business logic for your a
 You've seen the pieces that perform the conversion work but you haven't tied them together.
 In this section, you'll build a Temporal Workflow to process a text-to-speech conversion from start to finish.
 [Workflows](https://docs.temporal.io/workflows) create the overall flow of your application's business process.
-It's basically a sequence of steps written in your programming language.
+It's essentially a sequence of steps written in your programming language.
 
-Create an interface-implementation pair of files named `TTSWorkflow.java` and `TTSWorkflowImpl.java`.
-Add these to 'src/main/java/ttsworker' and include the following file contents.
-This class is responsible for the text-to-speech work in your project:
+Now, create an interface-implementation pair of files named `TTSWorkflow.java` and `TTSWorkflowImpl.java` in `src/main/java/ttsworker`.
+Include the following file contents, which are responsible for the text-to-speech work process in your project:
 
 <details>
 
@@ -741,7 +754,8 @@ public class TTSWorkflowImpl implements TTSWorkflow {
 This class creates `ActivityOptions`, which set the policies Temporal uses for retrying failed Activities.
 Then it builds the `encodingStub`, which allows your application to run Activities as they are managed by the Temporal system.
 Temporal management (called "orchestration") enables the Temporal Service to track Workflow and Activity progress and state, and to manage Activities when they encounter errors.
-This progress is stored centrally on the Temporal Server, so it can resume if interrupted.
+
+This progress is stored centrally on the Temporal Service, so it can resume if interrupted.
 That means you can always find ways to fix problems and keep going and reliably deliver your results.
 Temporal calls this Durable Execution.
 It allows your application to mitigate errors and keep going without repeating work you've already done.
@@ -753,19 +767,21 @@ After the options and encoding stub are two further methods:
   This is a Temporal Query method.
   Some conversion tasks take a while to complete.
   Queries can "peek" at running processes and fetch information about how that work is proceeding.
-  This method returns a shared `message`, which is updated at each stage of the conversion process.
+  This method returns the status, stored in the `message` instance variable.
+  This is updated at each stage of the conversion process.
+
 - **`startWorkflow`**:
-  Every Workflow has one entry point, which is marked by the `@WorkflowMethod` annotation in the Workflow interface.
+  Every Workflow has one entry point, which is annotated with `@WorkflowMethod` in the class interface.
   It defines a complete business logic flow, in this case transforming the text within a file pointed to by the `fileInputPath` parameter, into spoken audio.
   As you see, this code reads the source file, creates the temporary file, processes each chunk, and finally moves the output file into place.
-  The method returns another string, a file output path for the generated mp3 results.
+  The method returns another `String`, a file output path for the generated mp3 results.
 
 With your Workflows and Activities in place, you can now write a [Worker application](https://docs.temporal.io/workers#worker-program).
-A [Worker](https://docs.temporal.io/workers) hosts your Activities and Workflows and polls a Service-provided Task Queue to look for work to do.
+A [Worker](https://docs.temporal.io/workers) hosts your Activities and Workflows and polls a Temporal Service-provided Task Queue looking for work to do.
 
-## Build your Worker
+## Create your Worker
 
-Create `TTSWorkerApp.java` in 'src/main/java/ttsworker' and add the following file contents:
+Add `TTSWorkerApp.java` in `src/main/java/ttsworker` and add the following file contents:
 
 <!--SNIPSTART audiobook-project-java-Worker-app-->
 [src/main/java/ttsworker/TTSWorkerApp.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSWorkerApp.java)
@@ -812,9 +828,9 @@ Every Worker polls [Task Queues](https://docs.temporal.io/workers#task-queue) to
 The Task Queue for this project is named `tts-task-queue`.
 You'll use this queue to submit conversion requests.
 Normally you'd build a dedicated full stack solution that submits requests to the Temporal Service and retrieves the results when they're complete.
-For this project, you'll use command-line calls.
+For this project, you issue your request through the command-line.
 
-Some more about his code:
+A few more things about this code:
 
 - As a standalone application, this Worker has a `main` method.
 - The app starts by checking for an OpenAI bearer token and stores it as a static member of the `TTSActivitiesImpl` class.
@@ -853,10 +869,11 @@ Interrupted work can be picked up and continued without repeating steps, even if
 
 ```sh
 temporal server start-dev \
+    --ui-port 8080 \
     --db-filename /path/to/your/temporal.db
 ```
 
-Once running, connect to the [Temporal Web UI](http://localhost:8233/) and verify that the server is working.
+Once running, connect to the [Temporal Web UI](http://localhost:8080/) and verify that the server is working.
 
 ### Instantiate Your Bearer Token
 
@@ -899,7 +916,7 @@ temporal workflow execute \
 
 * **type**: The name of this text-to-speech Workflow is `TTSWorkflow`.
 * **task-queue**: This Worker polls the "tts-task-queue" Task Queue.
-* **input**: Pass a quoted JSON string with a /path/to/your/input/text-file.
+* **input**: Pass a quoted JSON string with a `/path/to/your/input/text-file`.
 * **workflow-id**: Set a descriptive name for your Workflow Id.
   This makes it easier to track your Workflow Execution in the Web UI.
   The identifier you set doesn't affect the input text file or the output audio file names.
@@ -921,14 +938,13 @@ After, your generated MP3 audio is moved into the same folder as your input text
 It uses the same name replacing the `txt` extension with `mp3`.
 If an output file already exists, the project versions it to prevent name collisions.
 
-The `TTSWorkflow` returns a string, the /path/to/your/output/audio-file.
+The `TTSWorkflow` returns a string, the `/path/to/your/output/audio-file`.
 Check the Web UI Input and Results section after the Workflow completes.
 The results path is also displayed as part of the CLI's `workflow execute` command output and in the Worker logs.
 
 :::tip Cautions and notes
 
 - Do not modify your input or output files while the Workflow is running.
-  Temporal isn't a cure for bad judgement.
 - The Workflow fails if you don't pass a valid text file named with a `txt` extension.
 
 :::
@@ -943,6 +959,18 @@ temporal workflow query \
     --type fetchMessage \
     --workflow-id "your-workflow-id"
 ```
+
+The query returns a status reporting how many chunks have completed.
+For example,
+
+```
+% workflow query --type fetchMessage --workflow-id chapter-1
+Query result:
+  QueryResult  "Processing part 8 of 47"
+%
+```
+
+This Workflow has completed about 17% of its work.
 
 ### Validate your audio output
 
@@ -972,11 +1000,18 @@ SUMMARY: chapter-1.mp3
     result                        Ok
 ```
 
-## Wrap-up
+With no errors found, your audio is ready to use.
+Fire up your favorite player and listen to your creation.
+
+## Conclusion
 
 In this tutorial, you created an OpenAI solution that converts text files into audio.
 You used Temporal error mitigation to make sure that failed API requests could be retried and catastrophic events could be recovered.
-With just a few source files, you created a complete working solution to build a durable, reliable system to build audiobooks from simple text files.
+With just a few source files, you created a complete working solution, building a durable, reliable system that builds audiobooks from simple text files.
 
-Now that you've completed this tutorial, check out some other great  [Temporal Java projects](https://learn.temporal.io/tutorials/java/).
-We also provide hands-on projects for other supported SDK languages including golang, Python, TypeScript, and PHP.
+:::info What's next?
+
+Now that you've completed this tutorial, check out some other great [Temporal Java projects](https://learn.temporal.io/tutorials/java/) or learn more about Temporal by taking our [free courses](https://learn.temporal.io/courses).
+We provide hands-on projects for supported SDK languages including Java, golang, Python, TypeScript, and PHP.
+
+:::
