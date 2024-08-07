@@ -91,20 +91,8 @@ If you expand on this project, consider a API-based Cloud storage solution.
    You can check it with the Unix `tree` command.
    If the command isn't native to your system, you can install it with standard package managers like Homebrew and apt.
 
-2. Initialize version control:
-   This is a good time to set up version control if you want to use it with this project.
-   Using Git, you can initialize your repository:
-
-   ```sh
-   cd TTSWorker
-   git init
-   ```
-
-   Version control helps you manage changes and collaborate with others efficiently.
-   Just like Temporal, it provides check-in points so you can back up in time if needed to retry your project development without duplicating all your earlier work.
-
-3. Create your build file
-   In your root folder, create a build.gradle file and add the following contents.
+2. Create your build file
+   In your project root folder, create a build.gradle file and add the following contents.
    Feel free to swap in Maven if you prefer:
 
 <!--SNIPSTART audiobook-project-java-Gradle-build-file-->
@@ -132,7 +120,7 @@ task run(type: JavaExec) {
 ```
 <!--SNIPEND-->
 
-4. Review your dependencies and run task:
+3. Review your dependencies and run task:
    Your dependencies include Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few basic libraries:
 
    * **com.squareup.okhttp3:okhttp:4.9.3**: OkHttp is a basic HTTP client for network requests.
@@ -143,7 +131,7 @@ task run(type: JavaExec) {
 
    The run task starts your TTS application.
 
-5. Establish your bearer token environment variable
+4. Establish your bearer token environment variable
    Your application uses the environment variable to authenticate with the OpenAI service.
    It needs to live in the same shell as  your running app.
 
