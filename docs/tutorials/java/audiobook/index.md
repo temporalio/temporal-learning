@@ -39,7 +39,7 @@ Get started by checking that you have the necessary understanding, tools, and en
 
 ## Prerequisites
 
-You can build the project by following this tutorial or, if you're feeling impatient, just grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java).
+You can build the project by following this tutorial, or just grab the ready-to-go source from its [GitHub repo](https://github.com/temporalio/build-audiobook-java).
 This repository has the full source code and can serve as a guide or a fallback if you encounter issues when working through this tutorial.
 If you want to play first and explore later, you can come back and read through the how-to and background.
 Here's what you need to get going:
@@ -62,7 +62,7 @@ Once caught up with prerequisites, you can build out your Java project directory
 :::info CAUTIONS
 
 This is a tutorial project and its implementation is suited for personal and hobbyist use.
-In production, you wouldn't read or write from a single database file, hard drive, or system.
+In production, you wouldn't read or write from a single database file or system.
 These aren't durable so you can't develop durable software with them.
 You must be able to rebuild your progress state or store information somewhere more durable.
 If you expand on this project, consider a API-based Cloud storage solution.
@@ -130,43 +130,6 @@ task run(type: JavaExec) {
    * **io.temporal:temporal-sdk:1.22.2**: Add error mitigation.
 
    The run task starts your TTS application.
-
-4. Establish your bearer token environment variable
-   Your application uses the environment variable to authenticate with the OpenAI service.
-   It needs to live in the same shell as  your running app.
-
-   This varies by shell, so you might use the following for tcsh:
-
-   ```sh
-   setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
-   ```
-
-   or bash:
-
-   ```
-   export OPEN_AI_BEARER_TOKEN='your-secret-bearer-token'
-   ```
-
-   Optionally, create a `bearer.sh` utility to reduce typing.
-   Make it executable with `chmod +x`.
-   Store this wherever you keep similar secure items:
-
-   ```sh
-   #! /bin/sh
-
-   setenv OPEN_AI_BEARER_TOKEN 'your-secret-bearer-token'
-   ```
-
-   You must `source /path/to/bearer.sh` to set the variable into your current shell.
-   Environment variables let you skip hard coding your bearer token into projects.
-
-
-:::note Your Bearer Token
-
-When using your application, you must set your `OPEN_AI_BEARER_TOKEN` environment variable in the same shell before execution.
-The application checks for the token and if it's not set, it will error.
-
-:::
 
 ## Create your OpenAI conversion code
 
@@ -383,6 +346,8 @@ public class TTSActivitiesImpl implements TTSActivities {
 
 </details>
 
+Now that you've built the Activities file, you'll explore some of its functionality and how these pieces work together.
+
 [Activities](https://docs.temporal.io/activities), like the `TTSActivities` class, handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
 Temporal uses Activities for any action that is prone to failure, allowing them to be retried.
 Imagine that the network goes down or your service provider (OpenAI in this case) is temporarily doing maintenance.
@@ -390,23 +355,21 @@ Temporal provides a Retry Policy to support "do-overs" for error mitigation.
 Activities add check-in points for your application state in your [Event History](https://docs.temporal.io/workflows#event-history).
 When retried, an Activity picks up state from just before it was first called, so it's like the failed attempt never happened.
 
-The `TTSActivities` class reads text from files and converts those strings to audio.
-This class has four activities:
+The `TTSActivities` class handles text-to-speech operations with the following methods::
 
-- **`readFile`**: Accepts an `inputPath` to a file, and returns a chunked list of the contents for well-sized API calls.
-- **`createTemporaryFile`**: Creates a temporary file for audio output in a safe folder that normally cleans itself on reboots.
-- **`process`**: Sends a text chunk to OpenAI for processing, retrieve the TTS audio segment, and append it to the output file.
-- **`moveOutputFileToPlace`**: Finds a safe, versioned location for the audio in the same folder as the original text, and move it there.
+- **`readFile`**: Reads from the specified `fileInputPath` and returns the contents as a chunked list of strings, for well-sized API calls.
+- **`createTemporaryFile`**: Creates a temporary file for audio output in a designated folder that is typically cleaned up on system reboots.
+- **`process`**: Sends a text chunk to OpenAI for processing, retrieves the TTS audio segment, and appends it to the output file.
+- **`moveOutputFileToPlace`**: Moves an audio file to a safe, versioned location in the same folder as the original text file.
 
-Here is how the activities help in the overall conversion process:
+Here is how the Activities help in the overall conversion process:
 ![After reading a text file and dividing it into chunks, each chunk is sent to OpenAI to be converted to audio and the results appended to the output file](images/highlevelprocess.png)
 
 ### Prepare your text with `readFile`
 
 The `readfile` Activity reads and processes text from a file.
 Before and during the read, it performs a series of safety checks, such as making sure the file exists and it's readable.
-If it encounters any file system error, the project assumes the situation is unrecoverable, throwing a non-retryable exception, and ending the conversion process.
-A corrupt file system can't be reasonably retried.
+If it encounters any file system issues, it throws an application error.
 
 The following code appears at the end of the Activity.
 It splits the text into "chunks", each containing part of the source material:
@@ -447,8 +410,8 @@ After building a method to process string data, you'll add code to build an outp
 
 ### Build a temporary file to store output with `createTemporaryFile`
 
-The second Activity, `createTemporaryFile`, requests the system to create a new temporary file.
-You use this file to store your intermediate results, ensuring that your work won't affect the main file system:
+The `CreateTemporaryFile` Activity requests that the system create a new temporary file.
+This file stores intermediate results so your work won't affect the main file system:
 
 ```java
 public Path createTemporaryFile() {
@@ -592,7 +555,7 @@ Next, you'll create a Workflow, which sets the overall business logic for your a
 
 ## Define your Workflow with Temporal
 
-You've seen the pieces that perform the conversion work but you haven't tied them together.
+You've seen the pieces that perform the conversion work but you haven't tied the process together.
 In this section, you'll build a Temporal Workflow to process a text-to-speech conversion from start to finish.
 [Workflows](https://docs.temporal.io/workflows) create the overall flow of your application's business process.
 It's essentially a sequence of steps written in your programming language.
@@ -696,6 +659,11 @@ public class TTSWorkflowImpl implements TTSWorkflow {
 </Tabs>
 
 </details>
+
+
+The `TTSWorkflow` class defines a complete business logic flow, in this case transforming the text within a file pointed to by the input path parameter, into spoken audio.
+As you see, this code reads the source file, creates the temporary file, processes each chunk, and finally moves the output file into place.
+The function returns the file output path for the generated mp3 results.
 
 [Workflows](https://docs.temporal.io/workflows) coordinate [Activities](https://docs.temporal.io/activities), which are the methods you created in the previous section.
 You use Activities to make API requests, access the file system, or perform other non-deterministic operations.
@@ -867,7 +835,14 @@ Once running, connect to the [Temporal Web UI](http://localhost:8080/) and verif
 
 Create an environment variable called OPEN_AI_BEARER_TOKEN to configure your OpenAI credentials.
 If you set this value using a shell script, make sure to `source` the script so the variable carries over past the script execution.
-The environment variable must be set in the same shell where you'll run your application.
+The environment variable must be set in the same terminal session where you run your application.
+
+:::note Your Bearer Token
+
+When using your application, you must set your `OPEN_AI_BEARER_TOKEN` environment variable in the same shell before execution.
+The application checks for the token and if it's not set, it will error.
+
+:::
 
 ### Run the Worker application
 
@@ -883,7 +858,7 @@ The environment variable must be set in the same shell where you'll run your app
    gradle run
    ```
 
-If the Worker can't fetch a bearer token from the shell environment, it will loudly fail at launch.
+If the Worker can't fetch a bearer token from the shell environment, it will fail loudly at launch.
 This early check prevents you from running jobs and waiting to find out that you forgot to set the bearer token until you're well into the Workflow process.
 
 Now that the Worker is running, you can submit jobs for text-to-speech processing.
@@ -948,7 +923,7 @@ temporal workflow query \
     --workflow-id "your-workflow-id"
 ```
 
-The query returns a status reporting how many chunks have completed.
+The Query returns a status reporting how many chunks have completed.
 For example,
 
 ```
@@ -1000,6 +975,6 @@ With just a few source files, you created a complete working solution, building 
 :::info What's next?
 
 Now that you've completed this tutorial, check out some other great [Temporal Java projects](https://learn.temporal.io/tutorials/java/) or learn more about Temporal by taking our [free courses](https://learn.temporal.io/courses).
-We provide hands-on projects for supported SDK languages including Java, golang, Python, TypeScript, and PHP.
+We provide hands-on projects for supported SDK languages including Java, Go, Python, TypeScript, and PHP.
 
 :::
