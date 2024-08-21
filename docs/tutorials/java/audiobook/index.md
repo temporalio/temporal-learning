@@ -194,8 +194,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
 
 public class TTSActivitiesImpl implements TTSActivities {
-    public static String bearerToken = null;
+    private String bearerToken = null;
     Path canonicalPath = null;
+
+    TTSActivitiesImpl(String bearerToken) {
+        this.bearerToken = bearerToken;
+    }
 
     ApplicationFailure fail(String reason, String issue) {
         return ApplicationFailure.newFailure(reason, issue);
@@ -274,7 +278,7 @@ public class TTSActivitiesImpl implements TTSActivities {
         String apiEndpoint = "https://api.openai.com/v1/audio/speech";
 
         OkHttpClient client = new OkHttpClient();
-
+        
         JSONObject json = new JSONObject();
         json.put("model", "tts-1");
         json.put("input", text);
@@ -309,7 +313,7 @@ public class TTSActivitiesImpl implements TTSActivities {
         }
 
         try {
-            Files.write(outputPath, audio,
+            Files.write(outputPath, audio, 
                             java.nio.file.StandardOpenOption.CREATE,
                             java.nio.file.StandardOpenOption.APPEND);
         } catch (IOException e) {
@@ -618,13 +622,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 public class TTSWorkflowImpl implements TTSWorkflow {
     public TTSWorkflowImpl() { }
 
-    private final Logger logger = Logger.getLogger(TTSWorkflowImpl.class.getName());
-    public String message = "Conversion request received";
+    private static final Logger logger = Workflow.getLogger(TTSWorkflowImpl.class);
+    private String message = "Conversion request received";
 
     private ActivityOptions activityOptions = ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(120)).build();
     private TTSActivities encodingStub = Workflow.newActivityStub(TTSActivities.class, activityOptions);
@@ -754,16 +758,6 @@ public class TTSWorkerApp {
     public static String sharedTaskQueue = "tts-task-queue";
     private static final Logger logger = Logger.getLogger(TTSWorkerApp.class.getName());
 
-    public static void runWorker(String[] args) {
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-        WorkflowClient client = WorkflowClient.newInstance(service);
-        WorkerFactory factory = WorkerFactory.newInstance(client);
-        Worker worker = factory.newWorker(sharedTaskQueue);
-        worker.registerWorkflowImplementationTypes(TTSWorkflowImpl.class);
-        worker.registerActivitiesImplementations(new TTSActivitiesImpl());
-        factory.start();
-    }
-
     public static void main(String[] args) {
         String bearerToken = System.getenv("OPEN_AI_BEARER_TOKEN");
         if (bearerToken == null || bearerToken.isEmpty()) {
@@ -772,9 +766,14 @@ public class TTSWorkerApp {
         }
         bearerToken = bearerToken.trim();
         bearerToken = bearerToken.replaceAll("[\\P{Print}]", "");
-        TTSActivitiesImpl.bearerToken = bearerToken;
 
-        runWorker(args);
+        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        WorkflowClient client = WorkflowClient.newInstance(service);
+        WorkerFactory factory = WorkerFactory.newInstance(client);
+        Worker worker = factory.newWorker(sharedTaskQueue);
+        worker.registerWorkflowImplementationTypes(TTSWorkflowImpl.class);
+        worker.registerActivitiesImplementations(new TTSActivitiesImpl(bearerToken));
+        factory.start();
     }
 }
 ```
