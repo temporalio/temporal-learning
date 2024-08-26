@@ -101,4 +101,5 @@ targets:
 features:
   enable_source_link: true
   enable_code_block: true
+  enable_dedenting: true
   allowed_target_extensions: [.md, .mdx]
