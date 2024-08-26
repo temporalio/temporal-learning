@@ -61,10 +61,13 @@ Once caught up with prerequisites, you can build out your Java project directory
 
 :::info CAUTIONS
 
+This tutorial is written to be run on a single system, with a single Worker, using the local file system.
 This is a tutorial project and its implementation is suited for personal and hobbyist use.
 In production, you wouldn't read or write from a single database file or system.
-These aren't durable so you can't develop durable software with them.
-You must be able to rebuild your progress state or store information somewhere more durable.
+This approach isn't durable so you wouldn't develop durable software with them.
+
+Durable execution refers to maintaining state and progress even in the face of failures, crashes, or server outages. 
+For durable execution, you must be able to rebuild progress state and store information somewhere more reliable.
 If you expand on this project, consider a API-based Cloud storage solution.
 
 :::
@@ -164,7 +167,7 @@ public interface TTSActivities {
     public List<String> readFile(String inputPath);
     public Path createTemporaryFile();
     public void process(String chunk, Path outputPath);
-    public String moveOutputFileToPlace(Path tempPath);
+    public String moveOutputFileToPlace(Path tempPath, String inputPath);
 }
 ```
 <!--SNIPEND-->
@@ -195,7 +198,6 @@ import org.json.JSONObject;
 
 public class TTSActivitiesImpl implements TTSActivities {
     private String bearerToken = null;
-    Path canonicalPath = null;
 
     TTSActivitiesImpl(String bearerToken) {
         this.bearerToken = bearerToken;
@@ -207,6 +209,8 @@ public class TTSActivitiesImpl implements TTSActivities {
 
     @Override
     public List<String> readFile(String inputPath) {
+        Path canonicalPath;
+        
         try {
 
             if (inputPath == null || inputPath.isEmpty() || !inputPath.endsWith(".txt")) {
@@ -322,10 +326,13 @@ public class TTSActivitiesImpl implements TTSActivities {
     }
 
     @Override
-    public String moveOutputFileToPlace(Path tempPath) {
+    public String moveOutputFileToPlace(Path tempPath, String inputPath) {
         Path newPath = null;
         String extension = ".mp3";
         try {
+            Path canonicalPath = Paths.get(inputPath)
+                .toAbsolutePath().normalize()
+                .toRealPath(LinkOption.NOFOLLOW_LINKS);
             String baseName = FilenameUtils.getBaseName(canonicalPath.toString());
             Path parentDir = canonicalPath.getParent();
             newPath = parentDir.resolve(Paths.get(baseName + extension));
@@ -350,7 +357,7 @@ public class TTSActivitiesImpl implements TTSActivities {
 
 </details>
 
-Now that you've built the Activities file, you'll explore some of its functionality and how these pieces work together.
+Now that you've built the Activities file, explore how its components work together.
 
 [Activities](https://docs.temporal.io/activities), like the `TTSActivities` class, handle potentially unreliable parts of your code, such as calling APIs or working with file systems.
 Temporal uses Activities for any action that is prone to failure, allowing them to be retried.
@@ -366,7 +373,7 @@ The `TTSActivities` class handles text-to-speech operations with the following m
 - **`process`**: Sends a text chunk to OpenAI for processing, retrieves the TTS audio segment, and appends it to the output file.
 - **`moveOutputFileToPlace`**: Moves an audio file to a safe, versioned location in the same folder as the original text file.
 
-Here is how the Activities help in the overall conversion process:
+Here is how the Activities help the conversion process:
 ![After reading a text file and dividing it into chunks, each chunk is sent to OpenAI to be converted to audio and the results appended to the output file](images/highlevelprocess.png)
 
 ### Prepare your text with `readFile`
@@ -378,30 +385,34 @@ If it encounters any file system issues, it throws an application error.
 The following code appears at the end of the Activity.
 It splits the text into "chunks", each containing part of the source material:
 
+<!--SNIPSTART audiobook-project-java-tts-implementation {"selectedLines": ["61-82"]}-->
+[src/main/java/ttsworker/TTSActivitiesImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSActivitiesImpl.java)
 ```java
-int MAX_TOKENS = 512;
-float AVERAGE_TOKENS_PER_WORD = 1.33f;
+// ...
+        int MAX_TOKENS = 512;
+        float AVERAGE_TOKENS_PER_WORD = 1.33f;
 
-List<String> chunks = new ArrayList<>();
-String[] words = content.split("\\s+");
-StringJoiner chunk = new StringJoiner(" ");
+        List<String> chunks = new ArrayList<>();
+        String[] words = content.split("\\s+");
+        StringJoiner chunk = new StringJoiner(" ");
 
-for (String word : words) {
-    if ((chunk.length() + word.length()) * AVERAGE_TOKENS_PER_WORD <= MAX_TOKENS) {
-        chunk.add(word);
-    } else {
-        chunks.add(chunk.toString());
-        chunk = new StringJoiner(" ");
-        chunk.add(word);
-    }
-}
+        for (String word : words) {
+            if ((chunk.length() + word.length()) * AVERAGE_TOKENS_PER_WORD <= MAX_TOKENS) {
+                chunk.add(word);
+            } else {
+                chunks.add(chunk.toString());
+                chunk = new StringJoiner(" ");
+                chunk.add(word);
+            }
+        }
 
-if (chunk.length() > 0) {
-    chunks.add(chunk.toString());
-}
+        if (chunk.length() > 0) {
+            chunks.add(chunk.toString());
+        }
 
-return chunks;
+        return chunks;
 ```
+<!--SNIPEND-->
 
 As a rule-of-thumb, a typical English word uses 1.33 OpenAI tokens, which is how this code defines the `AVERAGE_TOKENS_PER_WORD` constant.
 When working with other languages, adjust that value to fit with typical word lengths.
@@ -417,17 +428,21 @@ After building a method to process string data, you'll add code to build an outp
 The `CreateTemporaryFile` Activity requests that the system create a new temporary file.
 This file stores intermediate results so your work won't affect the main file system:
 
+<!--SNIPSTART audiobook-project-java-tts-implementation {"selectedLines": ["86-94"]}-->
+[src/main/java/ttsworker/TTSActivitiesImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSActivitiesImpl.java)
 ```java
-public Path createTemporaryFile() {
-    try {
-        Path tempFile = Files.createTempFile(null, null);
-        return tempFile;
-    } catch (IOException | IllegalArgumentException | SecurityException e) {
-        fail("Unable to create temporary work file", "FILE_ERROR");
+// ...
+    public Path createTemporaryFile() {
+        try {
+            Path tempFile = Files.createTempFile(null, null);
+            return tempFile;
+        } catch (IOException | IllegalArgumentException | SecurityException e) {
+            fail("Unable to create temporary work file", "FILE_ERROR");
+        }
+        return null;
     }
-    return null;
-}
 ```
+<!--SNIPEND-->
 
 APIs to create temporary folders and files are provided by nearly every system.
 Temporary folders and files avoid name collisions, improve security, and isolate partial work.
@@ -442,70 +457,69 @@ Each time it's called, it sends a chunk of text to the `textToSpeech` method and
 You call it with a `String` to process and the output destination.
 Should the text-to-speech conversion request fail, Temporal can retry the request:
 
+<!--SNIPSTART audiobook-project-java-tts-implementation {"selectedLines": ["125-141"]}-->
+[src/main/java/ttsworker/TTSActivitiesImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSActivitiesImpl.java)
 ```java
-public void process(String chunk, Path outputPath) {
-    byte[] audio;
+// ...
+    public void process(String chunk, Path outputPath) {
+        byte[] audio;
 
-    try {
-        audio = textToSpeech(chunk);
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
+        try {
+            audio = textToSpeech(chunk);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-    try {
-        Files.write(outputPath, audio,
-                        java.nio.file.StandardOpenOption.CREATE,
-                        java.nio.file.StandardOpenOption.APPEND);
-    } catch (IOException e) {
-        throw fail("Unable to write to output file", "FILE_ERROR");
+        try {
+            Files.write(outputPath, audio, 
+                            java.nio.file.StandardOpenOption.CREATE,
+                            java.nio.file.StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            throw fail("Unable to write to output file", "FILE_ERROR");
+        }
     }
-}
 ```
+<!--SNIPEND-->
 
 The conversion code lives in its own method to make the project easier to follow.
-It uses the bearer token, which is stored within the `TTSActivities` class, along with a canonical path to your input file.
-The path helps you determine where to move your completed output file after your conversion is done:
-
-```java
-public class TTSActivitiesImpl implements TTSActivities {
-    public static String bearerToken = null;
-    Path canonicalPath = null;
-...
-```
-
+It uses the bearer token, which is stored within the `TTSActivities` class.
 The `textToSpeech` method calls out to OpenAI to convert a `String` into a `byte[]` array.
 It creates the request body, and performs a POST operation to an OpenAI endpoint.
 It either returns a `byte[]` array or throws a (retryable) error:
 
+<!--SNIPSTART audiobook-project-java-tts-implementation {"selectedLines": ["96-122"]}-->
+[src/main/java/ttsworker/TTSActivitiesImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSActivitiesImpl.java)
 ```java
-byte[] textToSpeech(String text) throws IOException {
-    String apiEndpoint = "https://api.openai.com/v1/audio/speech";
+// ...
+    byte[] textToSpeech(String text) throws IOException {
+        String apiEndpoint = "https://api.openai.com/v1/audio/speech";
 
-    OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient();
+        
+        JSONObject json = new JSONObject();
+        json.put("model", "tts-1");
+        json.put("input", text);
+        json.put("voice", "nova"); // see https://platform.openai.com/docs/guides/text-to-speech/voice-options
+        json.put("response_format", "mp3");
 
-    JSONObject json = new JSONObject();
-    json.put("model", "tts-1");
-    json.put("input", text);
-    json.put("voice", "nova"); // see https://platform.openai.com/docs/guides/text-to-speech/voice-options
-    json.put("response_format", "mp3");
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json.toString(), mediaType);
 
-    MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-    RequestBody body = RequestBody.create(json.toString(), mediaType);
+        Request request = new Request.Builder()
+            .url(apiEndpoint)
+            .post(body)
+            .addHeader("Authorization", "Bearer " + bearerToken)
+            .build();
 
-    Request request = new Request.Builder()
-        .url(apiEndpoint)
-        .post(body)
-        .addHeader("Authorization", "Bearer " + bearerToken)
-        .build();
-
-    try (Response response = client.newCall(request).execute()) {
-        if (!response.isSuccessful()) {
-            throw new IOException("Unexpected code " + response);
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            return response.body().bytes();
         }
-        return response.body().bytes();
     }
-}
 ```
+<!--SNIPEND-->
 
 When creating the HTTP request body, customizable [endpoint options](https://platform.openai.com/docs/api-reference/audio/createSpeech) shape the way your audio gets built:
 
@@ -529,27 +543,34 @@ After fully processing your data, you'll need to move the complete audio file fr
 In this project, you'll move your output audio file to the same directory as your input text.
 The `moveOutputFileToPlace` Activity handles this process by versioning the output path to prevent overwriting an existing file:
 
+<!--SNIPSTART audiobook-project-java-tts-implementation {"selectedLines": ["144-165"]}-->
+[src/main/java/ttsworker/TTSActivitiesImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSActivitiesImpl.java)
 ```java
-public String moveOutputFileToPlace(Path tempPath) {
-    Path newPath = null;
-    String extension = ".mp3";
-    try {
-        String baseName = FilenameUtils.getBaseName(canonicalPath.toString());
-        Path parentDir = canonicalPath.getParent();
-        newPath = parentDir.resolve(Paths.get(baseName + extension));
-        int suffixCounter = 1;
-        while (Files.exists(newPath)) {
-            String newFileName = baseName + "-" + suffixCounter + extension;
-            newPath = parentDir.resolve(newFileName);
-            suffixCounter += 1;
+// ...
+    public String moveOutputFileToPlace(Path tempPath, String inputPath) {
+        Path newPath = null;
+        String extension = ".mp3";
+        try {
+            Path canonicalPath = Paths.get(inputPath)
+                .toAbsolutePath().normalize()
+                .toRealPath(LinkOption.NOFOLLOW_LINKS);
+            String baseName = FilenameUtils.getBaseName(canonicalPath.toString());
+            Path parentDir = canonicalPath.getParent();
+            newPath = parentDir.resolve(Paths.get(baseName + extension));
+            int suffixCounter = 1;
+            while (Files.exists(newPath)) {
+                String newFileName = baseName + "-" + suffixCounter + extension;
+                newPath = parentDir.resolve(newFileName);
+                suffixCounter += 1;
+            }
+            Files.move(tempPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (InvalidPathException | IOException e) {
+            throw fail("Unable to move output file to destination", "FILE_ERROR");
         }
-        Files.move(tempPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-    } catch (InvalidPathException | IOException e) {
-        throw fail("Unable to move output file to destination", "FILE_ERROR");
+        return newPath.toString();
     }
-    return newPath.toString();
-}
 ```
+<!--SNIPEND-->
 
 The code iterates through potential new paths, adding suffix counters (`-1`, `-2`, etc) as needed to avoid path conflicts.
 Once found, it uses `File.move` to bring the file out of the temporary folder and into place.
@@ -650,7 +671,7 @@ public class TTSWorkflowImpl implements TTSWorkflow {
             logger.info(message);
             encodingStub.process(chunks.get(index), tempOutputPath);
         }
-        String outputPath = encodingStub.moveOutputFileToPlace(tempOutputPath);
+        String outputPath = encodingStub.moveOutputFileToPlace(tempOutputPath, fileInputPath);
         message = "Processing of file is done " + outputPath;
         logger.info("Output file: " + outputPath);
         return outputPath;
@@ -675,12 +696,26 @@ In contrast, every Workflow [must be deterministic](https://docs.temporal.io/wor
 
 This is the complete business logic code for this application:
 
+<!--SNIPSTART audiobook-project-java-Workflow-implementation-->
+[src/main/java/ttsworker/TTSWorkflowImpl.java](https://github.com/temporalio/build-audiobook-java/blob/main/src/main/java/ttsworker/TTSWorkflowImpl.java)
 ```java
+package ttspackage;
+
+import io.temporal.activity.ActivityOptions;
+import io.temporal.common.RetryOptions;
+import io.temporal.client.WorkflowStub;
+import io.temporal.workflow.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.List;
+import org.slf4j.Logger;
+
 public class TTSWorkflowImpl implements TTSWorkflow {
     public TTSWorkflowImpl() { }
 
-    private final Logger logger = Logger.getLogger(TTSWorkflowImpl.class.getName());
-    public String message = "Conversion request received";
+    private static final Logger logger = Workflow.getLogger(TTSWorkflowImpl.class);
+    private String message = "Conversion request received";
 
     private ActivityOptions activityOptions = ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(120)).build();
     private TTSActivities encodingStub = Workflow.newActivityStub(TTSActivities.class, activityOptions);
@@ -702,14 +737,14 @@ public class TTSWorkflowImpl implements TTSWorkflow {
             logger.info(message);
             encodingStub.process(chunks.get(index), tempOutputPath);
         }
-        String outputPath = encodingStub.moveOutputFileToPlace(tempOutputPath);
+        String outputPath = encodingStub.moveOutputFileToPlace(tempOutputPath, fileInputPath);
         message = "Processing of file is done " + outputPath;
         logger.info("Output file: " + outputPath);
         return outputPath;
     }
 }
-
 ```
+<!--SNIPEND-->
 
 This class creates `ActivityOptions`, which set the policies Temporal uses for retrying failed Activities.
 Then it builds the `encodingStub`, which allows your application to run Activities as they are managed by the Temporal system.
