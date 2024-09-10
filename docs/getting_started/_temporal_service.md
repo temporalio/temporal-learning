@@ -4,36 +4,22 @@ Temporal CLI is a tool for interacting with the Temporal Service from the comman
 
 Install Temporal CLI on your local machine using the following instructions for your platform.
 
-:::info Temporal CLI Version
-
-We recommend Temporal CLI version 0.11.0 for our courses and tutorials.
-
-:::
 <Tabs groupId="os" queryString>
   <TabItem value="mac" label="macOS">
 
-To install Temporal CLI, download the version for your architecture:
-
-- [Download Temporal CLI for Intel Macs](https://temporal.download/cli/archive/v0.11.0?platform=darwin&arch=amd64)
-- [Download Temporal CLI for Apple Silicon Macs](https://temporal.download/cli/archive/v0.11.0?platform=darwin&arch=arm64)
-
-Once you've downloaded the file, extract the downloaded archive and add the `temporal` binary to your `PATH` by copying it to a directory like `/usr/local/bin`.
-
-<!--
 You can install the latest version with [Homebrew](https://brew.sh) using the following command:
 
 ```command
 brew install temporal
 ```
--->
 
   </TabItem>
   <TabItem value="win" label="Windows">
 
 To install Temporal CLI on Windows, download the version for your architecture:
 
-- [Download Temporal CLI for Windows amd64](https://temporal.download/cli/archive/v0.11.0?platform=windows&arch=amd64)
-- [Download Temporal CLI for Windows arm64](https://temporal.download/cli/archive/v0.11.0?platform=windows&arch=arm64)
+- [Download Temporal CLI for Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
+- [Download Temporal CLI for Windows arm64](https://temporal.download/cli/archive/latest?platform=windows&arch=arm64)
 
 Once you've downloaded the file, extract the downloaded archive and add the `temporal.exe` binary to your `PATH`.
 
@@ -43,8 +29,8 @@ Once you've downloaded the file, extract the downloaded archive and add the `tem
 
 To install Temporal CLI, download the version for your architecture
 
-- [Download Temporal CLI for Linux amd64](https://temporal.download/cli/archive/v0.11.0?platform=linux&arch=amd64)
-- [Download Temporal CLI for Linux arm64](https://temporal.download/cli/archive/v0.11.0?platform=linux&arch=arm64)
+- [Download Temporal CLI for Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
+- [Download Temporal CLI for Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
 
 Once you've downloaded the file, extract the downloaded archive and add the `temporal` binary to your `PATH` by copying it to a directory like `/usr/local/bin`.
 
