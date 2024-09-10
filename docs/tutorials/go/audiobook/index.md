@@ -3,7 +3,7 @@ id: audiobook-tutorial
 keywords: [Go, temporal, sdk, tutorial, entity workflow, audiobook, text to speech, OpenAI]
 tags: [Go, SDK]
 last_update:
-  date: 2024-08-07
+  date: 2024-09-10
 title: Create audiobooks from text with OpenAI and Go
 description: Learn to build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
 sidebar_label: Create audiobooks from text with OpenAI and Go
@@ -96,13 +96,13 @@ If you expand on this project, consider a API-based Cloud storage solution.
 
 3. Create `go.mod` by entering:
 
-   ```
+   ```sh
    go mod init audiobook/app
    ```
    
    The file contents are initialized to:
    
-   ```
+   ```sh
    module audiobook/app
 
    go 1.22.2
@@ -110,7 +110,7 @@ If you expand on this project, consider a API-based Cloud storage solution.
    
 4. Edit your new `go.mod` file to add two requirements:
 
-   ```
+   ```sh
    module audiobook/app
 
    go 1.22.2
@@ -183,6 +183,7 @@ const (
     requestTimeout       = 30 * time.Second
     maxTokens            = 512
     averageTokensPerWord = 1.33
+    fileExtension        = ".mp3"
 )
 
 ...
@@ -228,14 +229,14 @@ The `CreateTemporaryFile` Activity requests that the system create a new tempora
 This file stores intermediate results so your work won't affect the main file system:
 
 ```go
-func CreateTemporaryFile(ctx context.Context) (string, error) {
+func (a *Activities) CreateTemporaryFile(ctx context.Context) (string, error) {
     tempFile, err := os.CreateTemp("", "*.tmp")
     if err != nil {
-        return "", fmt.Errorf("unable to create temporary work file: %w", err)
+        return "", temporal.NewApplicationError("Unable to create temporary work file", "FILE_ERROR", err)
     }
 
     if err := tempFile.Close(); err != nil {
-        return "", fmt.Errorf("unable to close temporary work file: %w", err)
+        return "", temporal.NewApplicationError("Unable to close temporary work file", "FILE_ERROR", err)
     }
 
     return tempFile.Name(), nil
@@ -245,44 +246,18 @@ func CreateTemporaryFile(ctx context.Context) (string, error) {
 ### Convert text to audio with `Process`
 
 The `Process` Activity handles text-to-speech work.
-Each time it's called, it sends a chunk of text to the `textToSpeech` method and appends those results to your output file.
+Each time it's called, it sends a chunk of text to the OpenAI and appends those results to your output file.
 You call it with a `string` to process and the output destination.
 Should the text-to-speech conversion request fail, Temporal can retry the request:
 
 ```go
-func Process(ctx context.Context, chunk, outputPath string) error {
-    audio, err := TextToSpeech(ctx, chunk)
-    if err != nil {
-        return err
-    }
-
-    file, err := os.OpenFile(outputPath, os.O_APPEND|os.O_WRONLY, 0644)
-    if err != nil {
-        return fail("Unable to open file for appending", "FILE_ERROR", err)
-    }
-    defer file.Close()
-
-    _, err = file.Write(audio)
-    if err != nil {
-        return fail("Unable to write data to file", "FILE_ERROR", err)
-    }
-
-    return nil
-}
-```
-
-The `TextToSpeech` method calls out to OpenAI to convert a `string` into a `[]byte` array.
-It creates the request body, and performs a POST operation to the OpenAI endpoint.
-It either returns a `[]byte` array or a retryable error:
-
-```go
-func TextToSpeech(ctx context.Context, text string) ([]byte, error) {
+func (a *Activities) Process(ctx context.Context, chunk, outputPath string) error {
     reqBody := fmt.Sprintf(`{
         "model": "tts-1",
         "input": %q,
         "voice": "nova",
         "response_format": "mp3"
-    }`, text)
+    }`, chunk)
 
     client := &http.Client{
         Timeout: requestTimeout,
@@ -290,36 +265,47 @@ func TextToSpeech(ctx context.Context, text string) ([]byte, error) {
 
     req, err := http.NewRequestWithContext(ctx, "POST", apiEndpoint, strings.NewReader(reqBody))
     if err != nil {
-        return nil, fail("Failed to create request", "REQUEST_ERROR", err)
+        return temporal.NewApplicationError("Failed to create request", "REQUEST_ERROR", err)
     }
 
-    req.Header.Set("Authorization", "Bearer "+BearerToken)
+    req.Header.Set("Authorization", "Bearer "+a.BearerToken)
     req.Header.Set("Content-Type", contentType)
 
     resp, err := client.Do(req)
     if err != nil {
-        return nil, fail("Failed to execute request", "REQUEST_ERROR", err)
+        return temporal.NewApplicationError("Failed to execute request", "REQUEST_ERROR", err)
     }
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        return nil, fail(fmt.Sprintf("Received Unexpected status code: %d", resp.StatusCode), "REQUEST_ERROR", nil)
+        return temporal.NewApplicationError(fmt.Sprintf("Received Unexpected status code: %d", resp.StatusCode), "REQUEST_ERROR", nil)
     }
 
     if resp.Header.Get("Content-Type") != "audio/mpeg" {
-        return nil, fail("Received unexpected content type", "RESPONSE_ERROR", nil)
+        return temporal.NewApplicationError("Received unexpected content type", "RESPONSE_ERROR", nil)
     }
 
     body, err := io.ReadAll(resp.Body)
     if err != nil {
-        return nil, fail("Failed to read response body", "RESPONSE_ERROR", err)
+        return temporal.NewApplicationError("Failed to read response body", "RESPONSE_ERROR", err)
     }
 
     if len(body) == 0 {
-        return nil, fail("Received empty response body", "RESPONSE_ERROR", nil)
+        return temporal.NewApplicationError("Received empty response body", "RESPONSE_ERROR", nil)
     }
 
-    return body, nil
+    file, err := os.OpenFile(outputPath, os.O_APPEND|os.O_WRONLY, 0644)
+    if err != nil {
+        return temporal.NewApplicationError("Unable to open file for appending", "FILE_ERROR", err)
+    }
+    defer file.Close()
+
+    _, err = file.Write(body)
+    if err != nil {
+        return temporal.NewApplicationError("Unable to write data to file", "FILE_ERROR", err)
+    }
+
+    return nil
 }
 ```
 
@@ -346,13 +332,13 @@ In this project, you'll move your output audio file to the same directory as you
 The `MoveOutputFileToPlace` Activity handles this process by versioning the output path to prevent overwriting an existing file:
 
 ```go
-func MoveOutputFileToPlace(ctx context.Context, tempPath, originalPath string) (string, error) {
+func (a *Activities) MoveOutputFileToPlace(ctx context.Context, tempPath, originalPath string) (string, error) {
     baseName := strings.TrimSuffix(filepath.Base(originalPath), filepath.Ext(originalPath))
     parentDir := filepath.Dir(originalPath)
     newPath := filepath.Join(parentDir, baseName+fileExtension)
 
-    fileMutex.Lock()
-    defer fileMutex.Unlock()
+    a.fileMutex.Lock()
+    defer a.fileMutex.Unlock()
 
     for i := 1; ; i++ {
         if _, err := os.Stat(newPath); os.IsNotExist(err) {
@@ -363,23 +349,23 @@ func MoveOutputFileToPlace(ctx context.Context, tempPath, originalPath string) (
 
     tempFile, err := os.Open(tempPath)
     if err != nil {
-        return "", fail("Unable to open temporary file", "FILE_ERROR", err)
+        return "", temporal.NewApplicationError("Unable to open temporary file", "FILE_ERROR", err)
     }
     defer tempFile.Close()
 
     fileInfo, err := tempFile.Stat()
     if err != nil {
-        return "", fail("Unable to get file info", "FILE_ERROR", err)
+        return "", temporal.NewApplicationError("Unable to get file info", "FILE_ERROR", err)
     }
 
     err = os.Rename(tempPath, newPath)
     if err != nil {
-        return "", fail("Unable to move output file to destination", "FILE_ERROR", err)
+        return "", temporal.NewApplicationError("Unable to move output file to destination", "FILE_ERROR", err)
     }
 
     err = os.Chmod(newPath, fileInfo.Mode())
     if err != nil {
-        return "", fail("Unable to set file permissions", "FILE_ERROR", err)
+        return "", temporal.NewApplicationError("Unable to set file permissions", "FILE_ERROR", err)
     }
 
     return newPath, nil
