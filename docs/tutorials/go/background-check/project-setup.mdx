@@ -407,8 +407,8 @@ Additional parameters can be passed to the Workflow when it is invoked.
 A Workflow Definition may support multiple custom parameters, or none.
 All Workflow Definition parameters must be serializable and can't be channels, functions, variadic, or unsafe pointers.
 
-To spawn an [Activity Execution](https://docs.temporal.io/activities#activity-execution), call [`ExecuteActivity()`](https://pkg.go.dev/go.temporal.io/workflow#ExecuteActivity) inside your Workflow Definition.
-The API is available from the [`go.temporal.io/sdk/workflow`](https://pkg.go.dev/go.temporal.io/workflow) package.
+To spawn an [Activity Execution](https://docs.temporal.io/activities#activity-execution), call [`ExecuteActivity()`](https://pkg.go.dev/go.temporal.io/sdk/workflow#hdr-Execute_Activity) inside your Workflow Definition.
+The API is available from the [`go.temporal.io/sdk/workflow`](https://pkg.go.dev/go.temporal.io/sdk/workflow) package.
 The `ExecuteActivity()` API call requires an instance of `workflow.Context`, the Activity function name, and any variables to be passed to the Activity Execution.
 
 A Go-based Workflow Definition can return either just an `error` or a `customValue, error` combination.

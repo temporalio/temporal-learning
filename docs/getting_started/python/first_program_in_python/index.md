@@ -87,7 +87,7 @@ The Temporal Application will consist of the following pieces:
 
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity methods](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
 
 The following diagram illustrates what happens when you start the Workflow:
 
