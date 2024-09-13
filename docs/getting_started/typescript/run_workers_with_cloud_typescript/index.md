@@ -7,7 +7,7 @@ keywords: [typescript, temporal, sdk, tutorial, example, workflow, worker, getti
 tags: [TypeScript, SDK, Temporal Cloud]
 last_update:
   date: 2024-01-22
-code_repo: https://github.com/temporalio/money-transfer-project-template-typescript
+code_repo: https://github.com/temporalio/money-transfer-project-template-ts
 image: /img/temporal-logo-twitter-card.png
 ---
 
