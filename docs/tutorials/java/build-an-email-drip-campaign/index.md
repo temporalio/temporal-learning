@@ -397,7 +397,7 @@ Now that you have the Activity Definition and Workflow Definition, it's time to 
 
 ## Create the Worker to handle the Workflow and Activity Executions
 
-Temporal's Java SDK [Spring Boot integration package](https://github.com/temporalio/sdk-java/tree/master/temporal-spring-boot-autoconfigure) let you write a Worker process for your Workflows and Activities without a dedicated Worker class.
+Temporal's Java SDK [Spring Boot integration package](https://github.com/temporalio/sdk-java/tree/master/temporal-spring-boot-autoconfigure) lets you write a Worker process for your Workflows and Activities without a dedicated Worker class.
 This simplifies the steps needed to run your Temporal Spring Boot application.
 Your Worker will start automatically by running your Spring Boot application.
 Create a new file in the `src/main/resources` directory called `application.yml` and provide the specifications of your application.
