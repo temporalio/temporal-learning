@@ -17,7 +17,7 @@ python3 -m venv venv
 Activate your virtual environment:
 
 ```command
-source .venv/bin/activate
+source ./venv/bin/activate
 ```
 
 Install the dependencies:
@@ -47,7 +47,7 @@ python run_worker.py
 In the third terminal, run the workflow script:
 
 ```command
-python run_workflow.py
+python starter.py
 ```
 
 ## Run a Successful Booking
@@ -57,7 +57,7 @@ In the fourth terminal, run the following `curl` command to initiate a successfu
 ### Input
 
 ```command
-curl -X POST http://localhost:3002/book \
+curl -X POST http://localhost:5000/book \
 -H "Content-Type: application/json" \
 -d '{
     "name": "John Doe",
@@ -91,7 +91,7 @@ To simulate a booking failure, run the following `curl` command in the fourth te
 ### Input
 
 ```command
-curl -X POST http://localhost:3002/book \
+curl -X POST http://localhost:5000/book \
 -H "Content-Type: application/json" \
 -d '{
     "name": "Jane Smith",
