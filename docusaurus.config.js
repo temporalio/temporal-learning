@@ -164,7 +164,7 @@ const config = {
             },
             {
               label: "Newsletter Signup",
-              href: "https://temporal.us17.list-manage.com/subscribe/post?u=2334a0f23e55fd1840613755d&id=3475f910fc",
+              href: "https://pages.temporal.io/newsletter-subscribe",
             },
           ],
         },
