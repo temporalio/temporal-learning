@@ -8,7 +8,6 @@ tags: [TypeScript, SDK]
 last_update:
   date: 2022-12-20
 image: /img/temporal-logo-twitter-card.png
-pagination_next: courses/temporal_101/typescript
 ---
 
 ![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
