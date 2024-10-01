@@ -607,7 +607,7 @@ You can view more information about the process in the [Temporal Web UI](localho
 
 ![The next Activity](images/activity_failure.png)
 
-Click any ActivityTaskFailed event link to see Failure detail information and a Call Stack trace.
+Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
 This lets you explore the location and reason for failed Activity Tasks.
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors.  With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). 
