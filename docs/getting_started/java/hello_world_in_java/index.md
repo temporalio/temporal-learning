@@ -12,7 +12,6 @@ tags:
   - sdk
   - tutorial
 image: /img/temporal-logo-twitter-card.png
-pagination_next: courses/temporal_101/java
 code_repo: https://github.com/temporalio/hello-world-project-template-java
 code_notes: branch 'main' has Gradle snipsync source, branch 'maven' has Maven
 ---

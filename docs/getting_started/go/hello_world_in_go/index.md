@@ -11,7 +11,6 @@ tags:
   - sdk
   - tutorial
 image: /img/temporal-logo-twitter-card.png
-pagination_next: courses/temporal_101/go
 ---
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)

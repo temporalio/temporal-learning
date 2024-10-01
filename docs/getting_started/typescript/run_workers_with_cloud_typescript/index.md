@@ -9,6 +9,7 @@ last_update:
   date: 2024-01-22
 code_repo: https://github.com/temporalio/money-transfer-project-template-ts
 image: /img/temporal-logo-twitter-card.png
+pagination_next: courses/temporal_101/typescript
 ---
 
 import Tabs from '@theme/Tabs';
