@@ -38,14 +38,14 @@ const config = {
     },
   ],
   themeConfig: {
-    announcementBar: {
-      id: "replay_announcement",
-      content:
-        'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024"> <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">Secure your ticket</a>.',
-      backgroundColor: "#141414",
-      textColor: "#ffffff",
-      isCloseable: true,
-    },
+    // announcementBar: {
+    //   id: "replay_announcement",
+    //   content:
+    //     'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024"> <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">Secure your ticket</a>.',
+    //   backgroundColor: "#141414",
+    //   textColor: "#ffffff",
+    //   isCloseable: true,
+    // },
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,
@@ -164,7 +164,7 @@ const config = {
             },
             {
               label: "Newsletter Signup",
-              href: "https://temporal.us17.list-manage.com/subscribe/post?u=2334a0f23e55fd1840613755d&id=3475f910fc",
+              href: "https://pages.temporal.io/newsletter-subscribe",
             },
           ],
         },
