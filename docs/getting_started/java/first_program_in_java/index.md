@@ -851,9 +851,7 @@ Deposit failed
 
 The Workflow keeps retrying using the `RetryPolicy` specified when the Workflow first executes the Activity.
 
-
 You can view more information about the process in the [Temporal Web UI](http://localhost:8080).
-
 
 4. Click the Workflow. You'll see more details including the state, the number of attempts run, and the next scheduled run time.
 
