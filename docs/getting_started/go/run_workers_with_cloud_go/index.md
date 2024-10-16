@@ -40,10 +40,16 @@ They are required for configuring mutual Transport Layer Security (mTLS) protoco
 You have a few options to generate certificates.
 
 - Use existing certificate management infrastructure to generate certificates for your Namespace.
-- Use Temporal's built-in certificate generation tool [tcld](https://docs.temporal.io/cloud/tcld).
-- Use open-source tools like [certstrap](https://github.com/square/certstrap).
+- Use Temporal's built-in certificate generation tool [`tcld`](https://docs.temporal.io/cloud/tcld) to create a `.pem` file containing the certificate.
+- Use open-source tools like [Certstrap](https://github.com/square/certstrap) to generate either a `crt` certificate file or a `pem` cryptographic file, which stores the certificate in a portable form.
 
-The next step uses [certstrap](https://github.com/square/certstrap) to generate certificates.
+:::info
+
+- A `.crt` certificate file may be encoded in either PEM (Base64) or DER (binary) format.
+- A `.pem` file is a Base64 encoded format for certificates, private keys, and other cryptographic data.
+  It is structured with clear header and footer lines.
+
+:::
 
 **Create a Certificate Authority (CA)**
 
@@ -206,7 +212,7 @@ Next, you will set the required environment variables.
 
 Before running your application, set the following environment variables with the appropriate values provided by your managed Temporal Cloud environment:
 
-- `TEMPORAL_MTLS_TLS_CERT`: The path to the `.pem` file with your mTLS x509 Certificate.
+- `TEMPORAL_MTLS_TLS_CERT`: The path to the `.pem` or `.crt` file with your mTLS x509 Certificate.
 - `TEMPORAL_MTLS_TLS_KEY`: The path to the file with your mTLS private key.
 - `TEMPORAL_HOST_URL`: The host URL of your managed Temporal Cloud environment.
 - `TEMPORAL_NAMESPACE`: The Namespace Name and Account Id associated with your Temporal Cloud environment.
@@ -215,8 +221,8 @@ Before running your application, set the following environment variables with th
   <TabItem value="macos" label="MacOS">
 
 ```bash
-export TEMPORAL_MTLS_TLS_CERT=/path/to/tls/cert.pem
-export TEMPORAL_MTLS_TLS_KEY=/path/to/tls/key.pem
+export TEMPORAL_MTLS_TLS_CERT=/path/to/tls/cert-file.(pem|crt)
+export TEMPORAL_MTLS_TLS_KEY=/path/to/tls/key-file.(pem|crt)
 export TEMPORAL_HOST_URL=https://namespace.account-id.tmprl.cloud:port
 export TEMPORAL_NAMESPACE=namespace.account-id
 ```
@@ -225,8 +231,8 @@ export TEMPORAL_NAMESPACE=namespace.account-id
   <TabItem value="windows" label="Windows">
 
 ```bash
-set TEMPORAL_MTLS_TLS_CERT=C:\path\to\tls\cert.pem
-set TEMPORAL_MTLS_TLS_KEY=C:\path\to\tls\key.pem
+set TEMPORAL_MTLS_TLS_CERT=C:\path\to\tls\cert-file.(pem|crt)
+set TEMPORAL_MTLS_TLS_KEY=C:\path\to\tls\key-file.(pem|crt)
 set TEMPORAL_HOST_URL=https://namespace.account-id.tmprl.cloud:port
 set TEMPORAL_NAMESPACE=namespace.account-id
 ```
