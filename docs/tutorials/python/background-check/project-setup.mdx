@@ -71,11 +71,11 @@ Reference [the documentation](https://docs.temporal.io/cli) for detailed install
 ### Install via download
 
 1. Download the version for your OS and architecture:
-    - [Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
-    - [Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
-    - [macOS amd64](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
-    - [macOS arm64](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64) (Apple silicon)
-    - [Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
+   - [Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
+   - [Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
+   - [macOS amd64](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
+   - [macOS arm64](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64) (Apple silicon)
+   - [Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
 2. Extract the downloaded archive.
 3. Add the `temporal` binary to your `PATH` (`temporal.exe` for Windows).
 
@@ -90,6 +90,7 @@ Reference [the documentation](https://docs.temporal.io/cli) for detailed install
 3. Switch to cloned directory, and run `go build ./cmd/temporal`
 
 :::note
+
 - The executable will be at `temporal` (`temporal.exe` for Windows).
   Reference [the documentation](https://docs.temporal.io/cli) for detailed usage information.
 
@@ -308,7 +309,9 @@ In the Temporal Python SDK programming model, a Workflow Definition is defined a
 The `BackgroundCheck class` below is an example of a basic Workflow Definition.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-workflow-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/workflows/backgroundcheck.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/workflows/backgroundcheck.py)
+
 ```py
 from datetime import timedelta
 
@@ -326,8 +329,8 @@ class BackgroundCheck:
             ssn,
             schedule_to_close_timeout=timedelta(seconds=5),
         )
-
 ```
+
 <!--SNIPEND-->
 
 Use the `@workflow.defn` decorator on the `BackgroundCheck` class to identify a Workflow.
@@ -347,15 +350,17 @@ You can use asynchronous, synchronous multithreaded, and synchronous multiproces
 Below is an example of an Activity defined as a function.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-activity-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/activities/ssntraceactivity.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/activities/ssntraceactivity.py)
+
 ```py
 from temporalio import activity
 
 @activity.defn
 async def ssn_trace_activity(ssn) -> str:
     return "pass"
-
 ```
+
 <!--SNIPEND-->
 
 The `ssn_trace_activity` function passes a string and returns `pass`.
@@ -392,7 +397,9 @@ To run a Worker Process with a local development server, define the following st
 In regards to organization, we recommend keeping Worker code separate from Workflow and Activity code.
 
 <!--SNIPSTART python-project-setup-chapter-dev-service-worker-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/dev_server_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/dev_server_worker/main.py)
+
 ```py
 import asyncio
 
@@ -418,8 +425,8 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
+
 <!--SNIPEND-->
 
 ### Run a Temporal Cloud Worker {#cloud-worker}
@@ -431,7 +438,9 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 - Certificate and private key associated with the Namespace
 
 <!--SNIPSTART python-project-setup-chapter-cloud-worker-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/cloud_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/cloud_worker/main.py)
+
 ```py
 import asyncio
 import os
@@ -469,8 +478,8 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
+
 <!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
@@ -550,7 +559,9 @@ Copy the IP address part.
 Set IP address, port, and Namespace in the Temporal Client options.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-self-hosted-worker-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/self_hosted_worker/main.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/self_hosted_worker/main.py)
+
 ```py
 import asyncio
 
@@ -576,8 +587,8 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
+
 <!--SNIPEND-->
 
 #### Build and deploy Docker image {#dockerfile}
@@ -802,7 +813,9 @@ Then, it executes the `BackgroundCheck.run` method with a social security number
 The test is marked with `@pytest.mark.asyncio` to indicate that it is an asynchronous test.
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-workflow-test-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/workflow_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/workflow_test.py)
+
 ```py
 import uuid
 
@@ -830,8 +843,8 @@ async def test_execute_workflow():
                 id=str(uuid.uuid4()),
                 task_queue=task_queue_name,
             )
-
 ```
+
 <!--SNIPEND-->
 
 ### Add Activity function tests {#test-activity-code}
@@ -842,7 +855,9 @@ The function takes a social security number as input and returns a string indica
 The test checks if the function returns "pass" when given the SSN "55-55-555".
 
 <!--SNIPSTART python-project-setup-chapter-backgroundcheck-activity-test-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/activity_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_boilerplate/tests/activity_test.py)
+
 ```py
 import pytest
 from temporalio.testing import ActivityEnvironment
@@ -855,6 +870,6 @@ async def test_ssn_trace_activity() -> str:
     assert expected_output == await activity_environment.run(
         ssn_trace_activity, "55-55-555"
     )
-
 ```
+
 <!--SNIPEND-->
