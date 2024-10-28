@@ -113,7 +113,7 @@ const courseData = [
     main: true, 
     language: "TypeScript", 
     banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", 
-    filename: "errors/typescript.md", 
+    filename: "errstrat/typescript.md", 
     index: 4, 
     keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
     metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
@@ -123,7 +123,7 @@ const courseData = [
     main: true, 
     language: "Go", 
     banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", 
-    filename: "errors/go.md", 
+    filename: "errstrat/go.md", 
     index: 1,
     keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
     metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
@@ -133,7 +133,7 @@ const courseData = [
     main: true, 
     language: "Java", 
     banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", 
-    filename: "errors/java.md", 
+    filename: "errstrat/java.md", 
     index: 2,
     keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
     metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
@@ -143,7 +143,7 @@ const courseData = [
     main: true, 
     language: "Python", 
     banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", 
-    filename: "errors/python.md", 
+    filename: "errstrat/python.md", 
     index: 3, 
     keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
     metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."

@@ -1,6 +1,6 @@
 ---
 title: "Crafting an Error Handling Strategy"
-sidebar_position: 4
+sidebar_position: 3
 public: true
 draft: false
 tags: [courses]
@@ -15,20 +15,18 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-**Estimated time**: ⏱️ 3 hours, self-paced.
+**Estimated time**: ⏱️ 2.5 hours, self-paced.
 
 **Cost**: Free
 
 ## Description
 
-In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application.
 
 When you've completed the course, you'll be able to:
-
-* Integrate Signals and Queries with Workflows
-* Develop Custom Search Attributes to identify specific Workflow Executions
-* Evaluate methods to stop Workflow Executions
-* Develop Activities asynchronously
+- Recommend an error handling strategy
+- Implement an error handling strategy
+- Integrate appropriate mechanisms for handling various types of errors
 
 ### Select your programming language to learn more and enroll
 
