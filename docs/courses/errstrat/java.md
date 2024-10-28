@@ -5,7 +5,7 @@ sidebar_label: "Crafting an Error Handling Strategy with Java"
 draft: false
 tags: [courses, Java]
 keywords: [Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]
-description: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
+description: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will encounter essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
