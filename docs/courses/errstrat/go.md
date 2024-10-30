@@ -1,7 +1,7 @@
 ---
-title: "Crafting an Error Handling Course with Go"
+title: "Crafting an Error Handling Strategy with Go"
 sidebar_position: 1
-sidebar_label: "Crafting an Error Handling Course with Go"
+sidebar_label: "Crafting an Error Handling Strategy with Go"
 draft: false
 tags: [courses, Go]
 keywords: [Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]
