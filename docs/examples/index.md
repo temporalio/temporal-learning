@@ -29,7 +29,7 @@ While not intended for production use, Example Applications can nonetheless be u
 * **Entity Workflow demo** [[Go]](https://github.com/temporal-sa/temporal-entity-lifecycle-go) The purpose of this demo is to illustrate some of the interesting properties of the Entity Lifecycle Pattern (aka Entity Workflows). See companion slide deck on [Long-running workflows](https://docs.google.com/presentation/d/1A2dz4lFiIFz4c_7QlOpahbvesbBY8Y6y65zRrkVgqYE/edit?usp=sharing).
 * **Order Saga sample** [[Java]](https://github.com/temporal-sa/temporal-order-saga) Demonstrates Temporal's enhanced support for the Saga pattern, supporting recovery from failed transactions. See this  [companion video](https://www.youtube.com/watch?v=uHDQMfOMFD4) to see a demonstration of the example.
 
-## Data Encryption
+## Data encryption
 See the [Temporal Platform Feature Guide](https://docs.temporal.io/production-deployment/data-encryption) for more information on the purpose of Temporal Codec Servers.
 * **Codec Server with JWT Validation** [[TypeScript]](https://github.com/temporal-sa/temporal-codec-server) The codec server uses JSON Web Tokens (JWT) to confirm the authenticity of JWTs issued by Temporal Cloud.
 * **Codec CORS Credentials** [[Go]](https://github.com/temporal-sa/codec-cors-credentials) An implementation of a Temporal [Codec Server](https://docs.temporal.io/dataconversion#codec-server) that supports Cross-Origin Resource Sharing (CORS), and specifically CORS Requests with credentials.
