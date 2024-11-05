@@ -31,7 +31,7 @@ While not intended for production use, Example Applications can nonetheless be u
 
 ## Data encryption
 See the [Temporal Platform Feature Guide](https://docs.temporal.io/production-deployment/data-encryption) for more information on the purpose of Temporal Codec Servers.
-* **Codec Server with JWT Validation** [[TypeScript]](https://github.com/temporal-sa/temporal-codec-server) The codec server uses JSON Web Tokens (JWT) to confirm the authenticity of JWTs issued by Temporal Cloud.
+* **Codec Server with JWT validation** [[TypeScript]](https://github.com/temporal-sa/temporal-codec-server) The codec server uses JSON Web Tokens (JWT) to confirm the authenticity of JWTs issued by Temporal Cloud.
 * **Codec CORS Credentials** [[Go]](https://github.com/temporal-sa/codec-cors-credentials) An implementation of a Temporal [Codec Server](https://docs.temporal.io/dataconversion#codec-server) that supports Cross-Origin Resource Sharing (CORS), and specifically CORS Requests with credentials.
 
 # Samples
