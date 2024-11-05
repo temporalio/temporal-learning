@@ -17,7 +17,7 @@ Reference Applications are fully documented, end-to-end solutions that show how 
 * [Background Check Application in Go](go/background-checks/index.md)
 * [Order Management System in Go](https://github.com/temporalio/reference-app-orders-go)
 
-# Example Applications
+# Example applications
 While not intended for production use, Example Applications can nonetheless be useful for seeing Temporal in action for particular use cases and architectural design patterns.
 
 ## Use cases
