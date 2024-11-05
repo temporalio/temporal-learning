@@ -27,7 +27,7 @@ While not intended for production use, Example Applications can nonetheless be u
 
 ## Design patterns
 * **Entity Workflow demo** [[Go]](https://github.com/temporal-sa/temporal-entity-lifecycle-go) The purpose of this demo is to illustrate some of the interesting properties of the Entity Lifecycle Pattern (aka Entity Workflows). See companion slide deck on [Long-running workflows](https://docs.google.com/presentation/d/1A2dz4lFiIFz4c_7QlOpahbvesbBY8Y6y65zRrkVgqYE/edit?usp=sharing).
-* **Order Saga Sample** [[Java]](https://github.com/temporal-sa/temporal-order-saga) Demonstrates Temporal's enhanced support for the Saga pattern, supporting recovery from failed transactions. See companion [video](https://www.youtube.com/watch?v=uHDQMfOMFD4).
+* **Order Saga sample** [[Java]](https://github.com/temporal-sa/temporal-order-saga) Demonstrates Temporal's enhanced support for the Saga pattern, supporting recovery from failed transactions. See this  [companion video](https://www.youtube.com/watch?v=uHDQMfOMFD4) to see a demonstration of the example.
 
 ## Data Encryption
 See the [Temporal Platform Feature Guide](https://docs.temporal.io/production-deployment/data-encryption) for more information on the purpose of Temporal Codec Servers.
