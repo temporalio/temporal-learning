@@ -5,7 +5,7 @@ sidebar_label: "Interacting with Workflows with Python"
 draft: false
 tags: [courses, Python]
 keywords: [Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]
-description: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+description: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
@@ -21,7 +21,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli. You’ll use Signals to interact with your running Workflows, and use Queries to retrieve information about your Workflow Executions. You’ll filter for specific Workflow Executions based on Search Attributes that you tag your Workflow Executions with. You’ll use Cancellation Scopes to cancel specific parts of your Workflow. You’ll handle long-running or externally dependent tasks by asynchronously completing your Activities.
 
 When you've completed the course, you'll be able to:
 
