@@ -5,7 +5,7 @@ public: true
 draft: false
 tags: [courses]
 keywords: [Temporal, application development, best practices, timeouts, retry policies, saga pattern, cancellations, search attributes]
-description: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+description: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:

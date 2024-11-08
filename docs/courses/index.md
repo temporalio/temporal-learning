@@ -106,7 +106,7 @@ By implementing Custom Data Converters and a Codec Server, you can expand this b
 
 ## [Interacting with Workflows](interacting_with_workflows/index.md)
 
-In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli.
 
 **Estimated time**: ⏱️ 3 hours, self-paced.
 
