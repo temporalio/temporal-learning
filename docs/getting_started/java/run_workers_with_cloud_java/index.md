@@ -67,7 +67,7 @@ This CA certificate will be used to sign and issue end-entity certificates.
 Set the Namespace Name as the common name for the end-entity certificate:
 
 <Tabs>
-  <TabItem value="macos" label="macOs" default>
+  <TabItem value="macos" label="macOS" default>
 
 For Linux or macOS:
 
@@ -238,7 +238,7 @@ Before running your application, set the following environment variables with th
 - `TEMPORAL_NAMESPACE`: The Namespace Name and Account Id associated with your Temporal Cloud environment.
 
 <Tabs>
-  <TabItem value="macos" label="MacOS">
+  <TabItem value="macos" label="macOS">
 
 ```bash
 export TEMPORAL_MTLS_TLS_CERT=/path/to/tls/cert-file.(pem|crt)
