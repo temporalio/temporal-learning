@@ -52,6 +52,23 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 -----
 
+## [Crafting an Error Handling Strategy](errstrat/index.md)
+
+In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application.
+
+**Estimated time**: ~⏱️ 2.5 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="errstrat/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/typescript">TypeScript</Link>&nbsp;
+
+-----
+
 ## [Versioning Workflows](versioning/index.md)
 
 In this course, you'll go beyond the fundamentals, learning how to safely evolve your Temporal application code in production. There are three primary approaches to versioning Temporal Workflows, and this course will cover each of them, bookended by examples of how to monitor and test your Workflow Execution History, so you can verify that your Versioning is working correctly.
@@ -89,7 +106,7 @@ By implementing Custom Data Converters and a Codec Server, you can expand this b
 
 ## [Interacting with Workflows](interacting_with_workflows/index.md)
 
-In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli.
 
 **Estimated time**: ⏱️ 3 hours, self-paced.
 
