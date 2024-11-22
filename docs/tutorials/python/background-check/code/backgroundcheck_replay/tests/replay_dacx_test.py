@@ -39,10 +39,9 @@ async def test_execute_workflow():
 # @@@SNIPSTART python-durability-chapter-replay-from-file-test
 @pytest.mark.asyncio
 async def test_replay_workflow_history_from_file():
-    async with await WorkflowEnvironment.start_time_skipping():
-        with open("tests/backgroundcheck_workflow_history.json", "r") as f:
-            history_json = json.load(f)
-            await Replayer(workflows=[BackgroundCheck]).replay_workflow(
-                WorkflowHistory.from_json("backgroundcheck_workflow", history_json)
-            )
+    with open("tests/backgroundcheck_workflow_history.json", "r") as f:
+        history_json = json.load(f)
+        await Replayer(workflows=[BackgroundCheck]).replay_workflow(
+            WorkflowHistory.from_json("backgroundcheck_workflow", history_json)
+        )
 # @@@SNIPEND
