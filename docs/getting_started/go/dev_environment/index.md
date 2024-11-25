@@ -48,7 +48,7 @@ cd goproject
 Then, initialize a Go project in that directory:
 
 ```command
-go mod init
+go mod init goproject/app
 ```
 
 Finally, install the Temporal SDK with `go get`:
