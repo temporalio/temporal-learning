@@ -687,6 +687,8 @@ With that, you should have a complete REST API interface to your eCommerce appli
 From here, you can build a user-friendly frontend, or continue to add features.
 The [Github repo](https://github.com/temporalio/temporal-ecommerce/tree/main/frontend) for this tutorial contains an example of a frontend that you can take from here.
 
+![An example frontend for this application](images/frontend.png)
+
 ## Conclusion
 
 In this tutorial, you created a shopping cart Workflow.
