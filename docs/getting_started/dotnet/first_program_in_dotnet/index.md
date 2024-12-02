@@ -151,7 +151,7 @@ public class MoneyTransferWorkflow
             InitialInterval = TimeSpan.FromSeconds(1),
             MaximumInterval = TimeSpan.FromSeconds(100),
             BackoffCoefficient = 2,
-            MaximumAttempts = 500,
+            MaximumAttempts = 3,
             NonRetryableErrorTypes = new[] { "InvalidAccountException", "InsufficientFundsException" }
         };
 
@@ -178,7 +178,7 @@ public class MoneyTransferWorkflow
             // If everything succeeds, return transfer complete
             return $"Transfer complete (transaction IDs: {withdrawResult}, {depositResult})";
         }
-        catch (ApplicationFailureException depositEx)
+        catch (Exception depositEx)
         {
             try
             {
@@ -188,9 +188,9 @@ public class MoneyTransferWorkflow
                     new ActivityOptions { StartToCloseTimeout = TimeSpan.FromMinutes(5), RetryPolicy = retryPolicy }
                 );
                 // If refund is successful, but deposit failed
-                throw new ApplicationFailureException($"Failed to deposit money into account {details.TargetAccount}. Money returned to {details.SourceAccount}. Cause: {depositEx.Message}", depositEx);
+                throw new ApplicationFailureException($"Failed to deposit money into account {details.TargetAccount}. Money returned to {details.SourceAccount}.", depositEx);
             }
-            catch (ApplicationFailureException refundEx)
+            catch (Exception refundEx)
             {
                 // If both deposit and refund fail
                 throw new ApplicationFailureException($"Failed to deposit money into account {details.TargetAccount}. Money could not be returned to {details.SourceAccount}. Cause: {refundEx.Message}", refundEx);
@@ -351,7 +351,7 @@ You'll see a **Retry Policy** defined that looks like this:
             InitialInterval = TimeSpan.FromSeconds(1),
             MaximumInterval = TimeSpan.FromSeconds(100),
             BackoffCoefficient = 2,
-            MaximumAttempts = 500,
+            MaximumAttempts = 3,
             NonRetryableErrorTypes = new[] { "InvalidAccountException", "InsufficientFundsException" }
 ```
 <!--SNIPEND-->

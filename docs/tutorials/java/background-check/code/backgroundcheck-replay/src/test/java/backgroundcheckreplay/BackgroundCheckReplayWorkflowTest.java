@@ -55,8 +55,7 @@ public class BackgroundCheckReplayWorkflowTest {
   }
 
   @Test
-  public void testSuccessfulReplayFromFile(TestWorkflowEnvironment testEnv, Worker worker,
-      BackgroundCheckReplayWorkflow workflow) throws Exception {
+  public void testSuccessfulReplayFromFile(BackgroundCheckReplayWorkflow workflow) throws Exception {
 
     File eventHistoryFile = new File("backgroundcheck_workflow_event_history.json");
 
