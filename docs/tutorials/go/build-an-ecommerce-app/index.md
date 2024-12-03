@@ -164,7 +164,7 @@ Next, you'll look at a case where Temporal's long-running Workflows shine: sendi
 
 ## Check for an abandoned cart
 
-In eCommerce, an is a shopping cart that has items, but which the user hasn't added any new items to or checked out after a few hours.
+In eCommerce, an abandoned cart is a shopping cart that has items, but which the user hasn't added any new items to or checked out after a few hours.
 In a traditional web app architecture, abandoned cart notifications can be complicated.
 
 You might need to use a job queue like [Celery](https://en.wikipedia.org/wiki/Celery_(software)) in Python or [Machinery](https://github.com/RichardKnop/machinery) in Go. Then, you would schedule a job that checks if the cart is abandoned, and reschedule that job every time the cart is updated.
@@ -223,7 +223,7 @@ Next, let's take a closer look at Activities and the `ExecuteActivity()` call ab
 ## Send emails from an Activity
 
 You can think of Activities as an abstraction for side effects in Temporal.
-[Workflows need to be idempotent functions](https://docs.temporal.io/workflows) to enable Temporal to re-run a Workflow to recreate the Workflow's state.
+[Workflows need to be deterministic functions](https://docs.temporal.io/workflows) to enable Temporal to re-run a Workflow to recreate the Workflow's state.
 Any side effects, like HTTP requests to the Mailgun API, should be in an Activity.
 
 Create another file named `activities.go` and define a function called `SendAbandonedCartEmail`.
@@ -556,7 +556,7 @@ r.Handle("/cart/{workflowID}/checkout", http.HandlerFunc(CheckoutHandler)).Metho
 
 Your new Web API server and the [Temporal Worker](https://docs.temporal.io/workers) are totally separate processes.
 Your API server is just an intermediary between the Temporal server and your API server's clients.
-The Event History representing the cart is stored in the Temporal server.
+The [Event History](https://docs.temporal.io/workflows#event-history) representing the cart is stored in the Temporal server.
 
 ### Handler Functions
 
