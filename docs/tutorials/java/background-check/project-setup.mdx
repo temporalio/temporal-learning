@@ -63,7 +63,7 @@ Read more in the [Choose a development Cluster](#choose-dev-cluster) section on 
 
 ## Install the Temporal CLI {#install-cli}
 
-The Temporal CLI is available on MacOS, Windows, and Linux.
+The Temporal CLI is available on macOS, Windows, and Linux.
 Reference [the documentation](https://docs.temporal.io/cli) for detailed install information.
 
 ### Install via download
@@ -363,9 +363,7 @@ In the Temporal Java SDK programming model, a [Workflow Definition](https://docs
 #### Boilerplate Workflow Interface {#workflow-code}
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-workflow-interface-->
-
-[BackgroundCheckBoilerplateWorkflow.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflow.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflow.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflow.java)
 ```java
 package backgroundcheckboilerplate;
 
@@ -396,9 +394,7 @@ There can only be one Workflow Method per Workflow Definition.
 Now that you've defined your Workflow Interface you can define its implementation.
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-workflow-implementation-->
-
-[BackgroundCheckBoilerplateWorkflowImpl.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateWorkflowImpl.java)
 ```java
 package backgroundcheckboilerplate;
 
@@ -464,9 +460,7 @@ In the Temporal Java SDK programming model, an Activity is defined as an interfa
 The `BackgroundCheckActivity` interface below is an example of a the first part defining an Activity
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-activities-interface-->
-
-[BackgroundCheckBoilerplateActivities.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivities.java)
 ```java
 package backgroundcheckboilerplate;
 
@@ -496,9 +490,7 @@ Activity. There can multiple Activity Methods per Activity Definition.
 Now that you've defined your Activity Interface you can define its implementation.
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-activity-implementation-->
-
-[BackgroundCheckBoilerplateActivitiesImpl.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/BackgroundCheckBoilerplateActivitiesImpl.java)
 ```java
 package backgroundcheckboilerplate;
 
@@ -560,9 +552,7 @@ To run a Worker Process with a local development server, define the following st
 Temporal recommends keeping Worker code separate from Workflow and Activity code.
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-dev-service-worker-->
-
-[workers/DevServerWorker.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/DevServerWorker.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/DevServerWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/DevServerWorker.java)
 ```java
 package backgroundcheckboilerplate.workers;
 
@@ -610,9 +600,7 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 - Certificate and private key associated with the Namespace
 
 <!--SNIPSTART java-project-setup-chapter-boilerplate-cloud-worker-->
-
-[workers/CloudWorker.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/CloudWorker.java)
 ```java
 package backgroundcheckboilerplate.workers;
 
@@ -770,9 +758,7 @@ Set IP address and port in the Service Stubs Options and the Namespace in the
 Temporal Client options.
 
 <!--SNIPSTART java-project-setup-chapter-self-hosted-worker-->
-
-[workers/SelfHostedWorker.java](code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/SelfHostedWorker.java)
-
+[docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/SelfHostedWorker.java](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/java/background-check/code/backgroundcheck/src/main/java/backgroundcheckboilerplate/workers/SelfHostedWorker.java)
 ```java
 package backgroundcheckboilerplate.workers;
 

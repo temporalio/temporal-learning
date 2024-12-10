@@ -70,6 +70,8 @@ Durable execution refers to maintaining state and progress even in the face of f
 For durable execution, you must be able to rebuild progress state and store information somewhere more reliable.
 If you expand on this project, consider a API-based Cloud storage solution.
 
+For single-host work, check out [this sample](https://github.com/temporalio/samples-go/tree/main/fileprocessing), which shows how to pick up work off a shared Task Queue to start a Workflow, and then use a host-specific Task Queue for the following Activity tasks.
+
 :::
 
 ## Create your Go project structure

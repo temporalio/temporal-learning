@@ -147,8 +147,7 @@ Add the Replay test to the set of application tests.
 ```java
 // ...
   @Test
-  public void testSuccessfulReplayFromFile(TestWorkflowEnvironment testEnv, Worker worker,
-      BackgroundCheckReplayWorkflow workflow) throws Exception {
+  public void testSuccessfulReplayFromFile(BackgroundCheckReplayWorkflow workflow) throws Exception {
 
     File eventHistoryFile = new File("backgroundcheck_workflow_event_history.json");
 
@@ -156,6 +155,7 @@ Add the Replay test to the set of application tests.
         BackgroundCheckReplayWorkflowImpl.class));
 
   }
+}
 ```
 
 <!--SNIPEND-->
