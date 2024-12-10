@@ -105,12 +105,14 @@ selector.AddReceive(channel, func(c workflow.ReceiveChannel, _ bool) {
 		RemoveFromCart(&state, message.Item)
 })
 
+// Stop blocking once one condition is satisfied
 for {
 	selector.Select(ctx)
 }
 ```
 
-The use of a Go `selector` allows your Workflow to block and wait for any of several Signals -- i.e., `ADD_TO_CART` or `REMOVE_FROM_CART`.
+Using Signals with the Go SDK usually blocks a Workflow and waits for input. 
+The use of a Go `selector` allows your Workflow to wait for any of several conditions -- in this case, the `ADD_TO_CART` or `REMOVE_FROM_CART` Signals.
 All the `AddToCart()` and `RemoveFromCart()` functions need to do is modify the `state.Items` array.
 Temporal is responsible for persisting and distributing `state`.
 
