@@ -9,7 +9,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 <h1>
-  <img alt="Project-based tutorials" src="/img/banners/projectbasetutorials.png" />
+  <img alt="Project-based tutorials" src="/img/banners/projectbasedtutorials.png" />
 </h1>
 
 Go beyond code samples and individual concepts as you practice building specific applications with Temporal with step-by-step tutorials.
