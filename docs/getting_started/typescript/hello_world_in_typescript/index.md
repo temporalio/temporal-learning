@@ -36,8 +36,8 @@ The app will consist of the following pieces:
 1. Two [Activities](https://docs.temporal.io/activities): Activities are functions called by Workflows, and they contain any logic that might fail or behave differently at different times. The first Activity will get your IP address, and the second Activity will use that IP address to get your location.
 
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.  Your Workflow will execute both Activities you define. It will call the first Activity to fetch the IP address, and then use the result of that Activity to call the next Activity to find your location.
-2. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and executes the code piece by piece.
-3. A client program: Youll need to start your Worfklow. In this tutorial you'll create a small program using the Temporal Client to start the Workflow.
+2. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
+3. A client program: You'll need to start your Worfklow. In this tutorial you'll create a small program using the [Temporal Client](https://docs.temporal.io/encyclopedia/temporal-sdks#temporal-client) to start the Workflow.
 
 You'll also write tests to ensure your Workflow executes successfully.
 
@@ -192,6 +192,8 @@ Your application will make two HTTP requests. The first request will return your
 
 You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute non-deterministic code or perform operations that may fail.
 
+If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
+
 Open `src/activities.ts` and remove all the existing code in the file. You'll replace it with your own.
 
 Add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
@@ -211,7 +213,7 @@ The response from `icanhazip.com` is plain-text, and it includes a newline, so y
 
 Notice that there's no error-handling code in this function. When you build your Workflow, you''ll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
 
-Now add the second Activity that accepts an IP address and retrives location data. In In `src/activities.ts`, add the following code to define it:
+Now add the second Activity that accepts an IP address and retrieves location data. In `src/activities.ts`, add the following code to define it:
 
 ```ts
 // Use the IP address to get the location.
@@ -233,7 +235,7 @@ You've created your two Activities. Now you'll coordinate them using a Temporal 
 
 Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. Review the [Develop Workflows](https://docs.temporal.io/develop/typescript/core-application#develop-workflows) section of the Temporal documentation for more about Workflows in TypeScript.
 
-Open the file `src/workflows.src` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures:
+Open the file `src/workflows.src` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
 ```typescript
 import * as workflow from '@temporalio/workflow';
@@ -254,7 +256,9 @@ const { getIP, getLocationInfo} = workflow.proxyActivities<typeof activities>({
 });
 ```
 
-The Temporal TypeScript SDK requires that Workflows and Activities run in separate environments. Temporal Workflows must be deterministic, and so Workflows are run in a sandbox that checks code for determinism. Since you run your non-deterministic operations in Activities, you configure your Workflow to call Activities through a proxy. That's why you import their types rather than the functions themselves.
+The Temporal TypeScript SDK requires that Workflows and Activities run in separate environments. Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash,  and the TypeScript SDK runs Workflows in a sandbox that checks code for determinism to enforce this.
+
+Since you run your non-deterministic operations in Activities, you configure your Workflow to call Activities through a proxy. That's why you import their types rather than the functions themselves.
 
 The `proxyActivities` method is also where you set options for how Temporal works with Activities. In this example, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to begin before it times out. Of all the Temporal timeout options, `startToCloseTimeOut` is the one you should always set.
 
@@ -281,17 +285,17 @@ export async function getAddressFromIP(name: string): Promise<string> {
 }
 ```
 
-This code uses a `try/catch` block, but because you've configured unlimited retries, there won't be any exceptions caught. However, if you change the Retry Policy's maximum retries, or you specify specific non-retryable exceptions, this code will be in place to handle those errors.
+This code uses a `try/catch` block, but because you've configured unlimited retries, there won't be any exceptions caught. However, if you change the Retry Policy's maximum retries, or you specify non-retryable exceptions, this code will be in place to handle those errors.
 
 Next you'll create a Worker that executes the Workflow and Activities.
 
 ## Configure and run a Worker
 
-When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue).  A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History.
+When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History. This records the Workflow's entire execution, enabling features like fault tolerance by allowing the Workflow to replay in case of Worker crashes or restarts.
 
 To define a Worker, you use the Temporal SDK to define a Worker Program.
 
-You'll need to specify the name of the Task Queue in your Worker Program, and any time you interact with a Workflow from a client application. You specify the Task Queue name as a case-insensitive string. Since you'll use this string in multiple places, create a constant to guarantee you use it consistently.
+In your Worker Program, you need to specify the name of the Task Queue, which must match the Task Queue name used whenever you interact with a Workflow from a client application. This ensures that the Worker processes tasks for the correct Workflow. The Task Queue name is a case-insensitive string. To ensure consistency and avoid errors, define the Task Queue name as a constant that can be reused throughout your code.
 
 Open the file `temporal/src/shared.ts` and edit the following line to the file to define the constant for the Task Queue:
 
@@ -354,7 +358,7 @@ The code imports the `TASK_QUEUE_NAME` constant along with all of the Activities
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure a Worker to run Activities, and another Worker to run the Workflows.
 
-Now you will use an `npm` script to start your Worker using Nodemon, which will reload whenever it detects changes in your file, hence the command name `start.watch`. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
+Now you will use an `npm` script to start your Worker with Nodemon. Nodemon automatically reloads whenever it detects changes in your file, hence the command name `start.watch`. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
 
 ```command
 npm run start.watch
@@ -486,7 +490,11 @@ If you get an error that your test has timed out, run it again. The first time y
 
 With a Workflow test in place, you can write unit tests for the Activities.
 
-Both of your Activities make external calls, and it'll be difficult to write tests that reliably test your Activities if they make calls to external services because you'll get a different IP address based on where your machine is located. To ensure the Activities are testable in isolation, you'll stub out the `fetch` calls using the sinon library.
+Both of your Activities make external calls to services that will change their results based on who runs them. It will be challenging to test these Activities reliably. For example, the IP address may vary based on your machine's location.
+
+To ensure you can teest the Activities in isolation, you’ll stub out the `fetch` calls using the [`sinon`](https://sinonjs.org/) library.
+
+Sinon.js is a JavaScript testing library that provides powerful tools like spies, stubs, and mocks, allowing you to replace dependencies with controlled, testable behavior.
 
 Add `sinon` as a development dependency, along with its type definitions:
 
@@ -504,7 +512,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 ```
 
-The `MockActivityEnvironment `from the `@temporalio/testing` package lets you test Activities as if they were part of a Temporal Application.
+The `MockActivityEnvironment` from the `@temporalio/testing` package lets you test Activities as if they were part of a Temporal Application.
 
 Next, write the test for the `getIP` Activity, using `sinon` to stub out actual HTTP calls so your tests are consistent. Notice that the stubbed response adds the newline character so it replicates the actual response:
 
@@ -697,7 +705,7 @@ Select the **Pending Activity** in the table to see why it failed and you'll see
 
 In the **Last Failure** field, you can see there was a TypeScript error indicating that `fetch` failed.
 
-Connect to the Internet again and wait. After a few moments, the Workflow recovers and completes:
+Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
 
 ![history_recovered](images/history_recovered.png)
 
@@ -707,7 +715,7 @@ You can recover from failures by letting Temporal handle them for you instead of
 
 ## Conclusion
 
-In this tutorial you built your first Temporal Application, using TypeScript functions to build a resiliant application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an Internet connection to understand how Temporal recovers from failures like network outages.
+In this tutorial you built your first Temporal Application, using TypeScript functions to build a resilient application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an internet connection to understand how Temporal recovers from failures like network outages.
 
 Take this application one step further and add a new Activity that gets the current weather for the location you found.
 
