@@ -5,7 +5,10 @@ sidebar_label: "Temporal 101 with Python"
 draft: false
 tags: [courses, Python]
 keywords: [Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]
-description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your application lifecycle effectively."
+description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Temporal Python SDK. Start the course today."
+description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and↵ │  8 │description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and↵
+│    │ the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your ↵ │    │ the Temporal Python SDK. Start the course today."
+│    │application lifecycle effectively.
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
@@ -39,4 +42,4 @@ To be successful in this course, you should have experience writing backend appl
 
 This course uses the Python programming language. Although the code examples and hands-on exercises are written in Python, they include explanations and avoid advanced language features, so a developer with minimal Python experience should be able to successfully complete this course.
 
- <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:143">Go to Course</a> 
+ <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:143">Go to Course</a>

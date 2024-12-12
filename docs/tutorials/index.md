@@ -1,5 +1,5 @@
 ---
-title: "Project-based Tutorials"
+title: "Project-based tutorials"
 hide_title: true
 sidebar_position: 4
 hide_table_of_contents: true
@@ -8,7 +8,9 @@ pagination_next: examples/index
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Project-based tutorials](/img/banners/projectbasedtutorials.png)
+<h1>
+  <img alt="Project-based tutorials" src="/img/banners/projectbasetutorials.png" />
+</h1>
 
 Go beyond code samples and individual concepts as you practice building specific applications with Temporal with step-by-step tutorials.
 
