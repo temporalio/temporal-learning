@@ -6,9 +6,6 @@ draft: false
 tags: [courses, Python]
 keywords: [Temporal, Workflows, Activities, Python SDK, external service, recovery, execution model, event history, Temporal Web UI, command-line tools, business process, application lifecycle]
 description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and the Temporal Python SDK. Start the course today."
-description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and↵ │  8 │description: "Discover the essentials of Temporal application development in this course, focusing on Workflows, Activities, and↵
-│    │ the Python SDK. You'll develop a small app, recover from failures, and use Temporal's execution model and tools to manage your ↵ │    │ the Temporal Python SDK. Start the course today."
-│    │application lifecycle effectively.
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
