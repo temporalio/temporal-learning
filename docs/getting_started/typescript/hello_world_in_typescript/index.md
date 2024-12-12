@@ -1,6 +1,35 @@
-Creating reliable applications is a difficult task. [Temporal](https://temporal.io/) lets you create fault-tolerant, resilient applications using programming languages you already know, so you can build complex applications that execute reliably and recover from failures.
+---
+id: hello-world-ts
+title: Build a Temporal Application from scratch in TypeScript
+sidebar_position: 3
+keywords: [typescript, javascript, temporal, sdk, tutorial, learn]
+description: In this tutorial you will build a Temporal Application using the TypeScript SDK. You'll write a Workflow, an Activity, and define a Worker.
+tags: [TypeScript, SDK]
+last_update:
+  author: Brian P. Hogan
+  date: 2024-12-16
+image: /img/temporal-logo-twitter-card.png
+---
 
-In this tutorial, you will build your first Temporal Application from scratch using the [Temporal TypeScript SDK](https://github.com/temporalio/sdk-typescript). You'll develop a small application that asks for your name and then uses APIs to get your public IP address and your approximate location based on that address.  External requests can fail due to rate limiting, network interruptions, or other errors. Using Temporal for this application will let you automatically recover from these and other kinds of failures without having to write explicit error-handling code.
+![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+
+:::note Tutorial information
+
+- **Level:** ⭐ Temporal beginner
+- **Time:** ⏱️ ~15 minutes
+- **Goals:** 🙌
+  - Set up, build, and test a Temporal Application project from scratch using the [TypeScript SDK](https://github.com/temporalio/sdk-typescript).
+  - Identify the four parts of a Temporal Workflow application.
+  - Describe how the Temporal Server gets information to the Worker.
+  - Observe how Temporal recovers from failed Activities.
+
+:::
+
+### Introduction
+
+Creating reliable applications is a difficult chore. [Temporal](https://temporal.io/) lets you create fault-tolerant, resilient applications using programming languages you already know, so you can build complex applications that execute reliably and recover from failures.
+
+In this tutorial, you will build your first Temporal Application from scratch using the [Temporal TypeScript SDK](https://github.com/temporalio/sdk-typescript). You'll develop a small application that asks for your name and then uses APIs to get your public IP address and your location based on that address. External requests can fail due to rate limiting, network interruptions, or other errors. Using Temporal for this application will let you automatically recover from these and other kinds of failures without having to write explicit error-handling code.
 
 The app will consist of the following pieces:
 
@@ -159,7 +188,7 @@ With the project created, you'll create the application's core logic.
 
 ## Write functions to call external services
 
-Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information. 
+Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information.
 
 You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute non-deterministic code or perform operations that may fail.
 
@@ -176,11 +205,11 @@ export async function getIP(): Promise<string> {
 }
 ```
 
-This function looks like a regular TypeScript function. With the Temporal TypeScript SDK, you define Activities using an exportable TypeScript module. 
+This function looks like a regular TypeScript function. With the Temporal TypeScript SDK, you define Activities using an exportable TypeScript module.
 
 The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
 
-Notice that there's no error-handling code in this function. When you build your Workflow, you''ll use Temporal's Activity Retry policies to retry this code automatically if there's an error. 
+Notice that there's no error-handling code in this function. When you build your Workflow, you''ll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
 
 Now add the second Activity that accepts an IP address and retrives location data. In In `src/activities.ts`, add the following code to define it:
 
@@ -260,7 +289,7 @@ Next you'll create a Worker that executes the Workflow and Activities.
 
 When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue).  A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History.
 
-To define a Worker, you use the Temporal SDK to define a Worker Program. 
+To define a Worker, you use the Temporal SDK to define a Worker Program.
 
 You'll need to specify the name of the Task Queue in your Worker Program, and any time you interact with a Workflow from a client application. You specify the Task Queue name as a case-insensitive string. Since you'll use this string in multiple places, create a constant to guarantee you use it consistently.
 
@@ -321,7 +350,7 @@ run().catch((err) => {
 
 ```
 
-The code imports the `TASK_QUEUE_NAME` constant along with all of the Activities in the `src/activities.ts` file. It then defines an async function named `run` which creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue. 
+The code imports the `TASK_QUEUE_NAME` constant along with all of the Activities in the `src/activities.ts` file. It then defines an async function named `run` which creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure a Worker to run Activities, and another Worker to run the Workflows.
 
@@ -455,7 +484,7 @@ The test environment starts, spins up a Worker, and executes the Workflow in the
 If you get an error that your test has timed out, run it again. The first time you run the tests on your local machine, the test server might not start quickly enough.
 :::
 
-With a Workflow test in place, you can write unit tests for the Activities. 
+With a Workflow test in place, you can write unit tests for the Activities.
 
 Both of your Activities make external calls, and it'll be difficult to write tests that reliably test your Activities if they make calls to external services because you'll get a different IP address based on where your machine is located. To ensure the Activities are testable in isolation, you'll stub out the `fetch` calls using the sinon library.
 
@@ -586,7 +615,7 @@ run().catch((err) => {
 
 ```
 
-You import the `process` module so you can access command-line arguments you'll pass. 
+You import the `process` module so you can access command-line arguments you'll pass.
 
 In the `run` function you check to see if there is at least two arguments passed. You need to check for two arguments because `process.argv` includes the Node.js executable path and the script path as the first two elements, so the actual command-line arguments start at index 2.
 
@@ -594,7 +623,7 @@ The `run` function then sets up a connection to your Temporal Server, invokes yo
 
 :::note Specify a Workflow Id
 
-A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later. 
+A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
 
 In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
 :::
@@ -636,7 +665,7 @@ Below that, you see the Event History, detailing the entire flow, including the 
 
 The most recent event is at the top, so read the history from the bottom up to see each step in the process. Using this history, you can see exactly how your Workflow executed and pinpoint any places things might have gone wrong.
 
-Temporal stores the results of each Activity in this history, as you can see im the image. If there was a system crash between the `getIP` and `getLocationInfo` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `getIP` function, it would use the previous run's value and continue on. 
+Temporal stores the results of each Activity in this history, as you can see im the image. If there was a system crash between the `getIP` and `getLocationInfo` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `getIP` function, it would use the previous run's value and continue on.
 
 In this application, this recovery isn't crucial. But imagine a situation where each Activity execution was a bank transaction. If a crash occurred between transactions, the Worker can pick up where the previous one failed. Nobody gets charged multiple times because something failed.
 
@@ -654,7 +683,7 @@ Then, with the local Temporal Service running and your Worker running, switch to
 npm run workflow
 ```
 
-This time you don't get a response. 
+This time you don't get a response.
 
 Visit `http://localhost:8233` to open the Temporal Web UI and locate the Workflow Execution that's currently running. When you select it, you'll see something like the following image, indicating that there's a problem:
 ![timeline](images/timeline_failed.png)
@@ -674,12 +703,41 @@ Connect to the Internet again and wait. After a few moments, the Workflow recove
 
 If you return to your terminal where you launched the Workflow, you'll find your results there as well.
 
-You can recover gracefully from failures by letting Temporal handle them for you. You can also decide that you only want to retry a fixed number of times, or that you only want to recover on certain kinds of errors. 
+You can recover from failures by letting Temporal handle them for you instead of writing complex error-handling logic. You can also decide that you only want to retry a fixed number of times, or that you only want to recover on certain kinds of errors.
 
 ## Conclusion
 
-In this tutorial you built your first Temporal application, using TypeScript functions to build a resiliant application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an Internet connection to understand how Temporal recovers from failures like network outages.
+In this tutorial you built your first Temporal Application, using TypeScript functions to build a resiliant application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an Internet connection to understand how Temporal recovers from failures like network outages.
 
 Take this application one step further and add a new Activity that gets the current weather for the location you found.
 
 Then [get your application working on Temporal Cloud](https://learn.temporal.io/getting_started/typescript/run_workers_with_cloud_typescript/).
+
+### Review
+
+Answer the following questions to see whether you remember some important concepts from this tutorial:
+
+<details>
+<summary>
+
+**What are the four parts of a Temporal Workflow application?**
+
+</summary>
+
+1. A Workflow function.
+2. An Activity function.
+3. A Worker to host the Workflow and Activity code.
+4. Some way to start the Workflow.
+
+</details>
+
+<details>
+<summary>
+
+**How does the Temporal Server get information to the Worker?**
+
+</summary>
+
+The Temporal Server adds Tasks to a Task Queue, and the Worker polls the Task Queue.
+
+</details>
