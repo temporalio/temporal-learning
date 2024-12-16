@@ -58,13 +58,13 @@ While you could create a new directory, initialize a TypeScript project, and con
 
 Run the following command in your shell:
 
-```shell
+```command
 npx @temporalio/create --sample empty temporal-ip-geolocation
 ```
 
 The command will ask you to confirm if you want to install `@temporalio/create`:
 
-```
+```output
 Need to install the following packages:
 @temporalio/create@1.11.5
 Ok to proceed? (y) y
@@ -89,7 +89,7 @@ Initialized a git repository.
 
 Then it'll give you further instructions, including how to set up and start a local Temporal service and install a compatible version of NodeJS:
 
-```
+```output
 Success! Created project temporal-ip-geolocation at:
 
 /Users/temporal/temporal-ip-geolocation/
@@ -215,7 +215,7 @@ This function looks like a regular TypeScript function. With the Temporal TypeSc
 
 The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
 
-Notice that there's no error-handling code in this function. When you build your Workflow, you''ll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
+Notice that there's no error-handling code in this function. When you build your Workflow, you'll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
 
 Now add the second Activity that accepts an IP address and retrieves location data. In `src/activities.ts`, add the following code to define it:
 
@@ -234,7 +234,7 @@ export async function getLocationInfo(ip: string): Promise<string> {
 
 This Activity follows the same pattern as the `getIP` Activity. It's an exported async function that uses `fetch` to call a remote service. This time, the service returns JSON data rather than text.
 
-While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object.  Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of in more complex applications.
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of in more complex applications.
 
 You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
 
@@ -242,7 +242,7 @@ You've created your two Activities. Now you'll coordinate them using a Temporal 
 
 Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. Review the [Develop Workflows](https://docs.temporal.io/develop/typescript/core-application#develop-workflows) section of the Temporal documentation for more about Workflows in TypeScript.
 
-Open the file `src/workflows.src` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
+Open the file `src/workflows.ts` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
 <!--SNIPSTART ts-ipgeo-workflow-imports-->
 [src/workflows.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/workflows.ts)
@@ -372,7 +372,7 @@ run().catch((err) => {
 ```
 <!--SNIPEND-->
 
-The code imports the `TASK_QUEUE_NAME` constant along with all of the Activities in the `src/activities.ts` file. It then defines an async function named `run` that creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
+The code imports the `TASK_QUEUE_NAME` constant along with all the Activities in the `src/activities.ts` file. It then defines an async function named `run` that creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
 
@@ -433,7 +433,7 @@ import assert from 'assert';
 ```
 <!--SNIPEND-->
 
-`TestWorkflowEnvironment` is a runtime environment used to test a Workflow. It is used to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the `TestWorkflowEnvironment` will be shared across tests, you will set it up before all of your tests, and tear it down after your tests are done.
+`TestWorkflowEnvironment` is a runtime environment used to test a Workflow. You use it to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the `TestWorkflowEnvironment` will be shared across tests, you will set it up before all of your tests, and tear it down after your tests finish.
 
 Add the following code to configure the testing environment and test the Workflow execution:
 
@@ -480,7 +480,7 @@ describe('getAddressFromIP', () => {
 
 This test sets up a test environment to run Workflows that uses a lightweight Temporal Service specifically for testing. In the test itself, you create a Worker that connects to the test environment. This should look familiar, as it's similar to the code you wrote to define your Worker Program.
 
-Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress`  with async functions that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you'd specify them directly as you did when you wrote the Worker program.
+Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress` with async functions that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you'd specify them directly as you did when you wrote the Worker program.
 
 Running the tests requires using the `mocha` command along with requiring the following libraries and pointing the test runner to the appropriate folder. Here's what the command would look like to run the tests:
 
@@ -491,9 +491,9 @@ npx  mocha \
   src/mocha/*.test.ts
 ```
 
-However, since this is quite verbose to type into the command line every time, you'll find a `test` script defined in `package.json` that runs this command for you.
+However, since this is a lot to type into the command line every time, you'll find a `test` script defined in `package.json` that runs this command for you.
 
-Ensure you've saved all of your files and execute your tests with the following command:
+Ensure you've saved all your files and execute your tests with the following command:
 
 ```command
 npm test
@@ -515,7 +515,7 @@ With a Workflow test in place, you can write unit tests for the Activities.
 
 Both of your Activities make external calls to services that will change their results based on who runs them. It will be challenging to test these Activities reliably. For example, the IP address may vary based on your machine's location.
 
-To ensure you can teest the Activities in isolation, you’ll stub out the `fetch` calls using the [`sinon`](https://sinonjs.org/) library.
+To ensure you can test the Activities in isolation, you’ll stub out the `fetch` calls using the [`sinon`](https://sinonjs.org/) library.
 
 Sinon.js is a JavaScript testing library that provides powerful tools like spies, stubs, and mocks, allowing you to replace dependencies with controlled, testable behavior.
 
@@ -567,7 +567,8 @@ describe('ip activity', async () => {
 
 To test the Activity itself, you use the `MockActivityEnvironment` to execute the Activity rather than directly calling the `getIP` function.
 
-The `try/finally` block ensures that if the test fails, the `fetch` stub is restored to its original functionality. This way other tests you write can also stub `fetch` with a different response.
+The `try/finally` block ensures that if the test fails, the tests restore the `fetch` stub to its original functionality.
+This way other tests you write can also stub `fetch` with a different response.
 
 To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
 
@@ -618,7 +619,7 @@ Starting a Workflow Execution using the Temporal SDK involves connecting to the 
 The project generator created a `client.ts` file in the `src` directory, but it will need a couple changes to make it work for this application:
 
 - You'll need to change the name of the Workflow.
-- You'll need to add code that lets you specify the person's name as the command-line argument so it can be passed to the Workflow, instead of using the hard-coded value of `Temporal`.
+- You'll need to add code that lets you specify the person's name as the command-line argument so you can pass it to the Workflow, instead of using the hard-coded value of `Temporal`.
 
 Open the `src/client.ts` file in your editor and modify it so it looks like the following:
 
@@ -665,7 +666,7 @@ The `run` function then sets up a connection to your Temporal Server, invokes yo
 
 :::note Specify a Workflow Id
 
-A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all of the Workflow Executions related to that customer later.
+A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all Workflow Executions related to that customer later.
 
 In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
 :::
@@ -691,23 +692,23 @@ You'll see the following output:
 Hello, Brian. Your IP is 198.51.100.23 and your location is Seattle,  Washington, United States
 ```
 
-Your Temporal application works. Now review it in the Temporal Web UI.
+Your Temporal Application works. Now review it in the Temporal Web UI.
 
 ## Exploring your application in the Web UI
 
 The Temporal Web UI gives you insights into your Workflow's execution. Open the Temporal Web UI by visiting `http://localhost:8233` and click on your completed Workflow to view the execution history. You'll see results similar to the following image:
 
-![The results of the Workflow](images/overview.png)
+![The UI shows the results of the Workflow including the output](images/overview.png)
 
 You'll see the dates the Workflow Exeuction ran, how long it took to run, the input to the Workflow, and the result.
 
-Below that, you see the Event History, detailing the entire flow, including the inputs and outputs of the Activity Executions:
+After that, you see the Event History, detailing the entire flow, including the inputs and outputs of the Activity Executions:
 
-![The Workflow History](images/history.png)
+![The Workflow History showing all Activities and their results, oldest to newest.](images/history.png)
 
 The most recent event is at the top, so read the history from the bottom up to see each step in the process. Using this history, you can see exactly how your Workflow executed and pinpoint any places things might have gone wrong.
 
-Temporal stores the results of each Activity in this history, as you can see im the image. If there was a system crash between the `getIP` and `getLocationInfo` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `getIP` function, it would use the previous run's value and continue on. This prevents duplicate executions. By relying on the stored Event History, Temporal ensures that the Workflow can recover seamlessly, maintaining reliability and consistency even after a crash.
+Temporal stores the results of each Activity in this history, as you can see in the image. If there was a system crash between the `getIP` and `getLocationInfo` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `getIP` function, it would use the previous run's value and continue on. This prevents duplicate executions. By relying on the stored Event History, Temporal ensures that the Workflow can recover seamlessly, maintaining reliability and consistency even after a crash.
 
 In this application, this recovery isn't crucial. But imagine a situation where each Activity execution was a bank transaction. If a crash occurred between transactions, the Worker can pick up where the previous one failed. Nobody gets charged multiple times because something failed.
 
@@ -728,20 +729,20 @@ npm run workflow
 This time you don't get a response.
 
 Visit `http://localhost:8233` to open the Temporal Web UI and locate the Workflow Execution that's currently running. When you select it, you'll see something like the following image, indicating that there's a problem:
-![timeline](images/timeline_failed.png)
+![The timeline shows the Activity failure](images/timeline_failed.png)
 
 As you can see, the `getIP` Activity has failed and Temporal is retrying it. Scroll down to the Event History and you'll see the failure represented there:
 
-![Failed Activity](images/history_failed.png)
+![The Event History shows the failed Activity](images/history_failed.png)
 Select the **Pending Activity** item in the table to see why it failed and you'll see the stack trace:
 
-![activity_stack_trace](images/activity_stack_trace.png)
+![The Activity stack trace shows the error](images/activity_stack_trace.png)
 
 In the **Last Failure** field, you can see there was a TypeScript error indicating that `fetch` failed.
 
 Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
 
-![history_recovered](images/history_recovered.png)
+![Once the network comes back the history updates and shows that things completed.](images/history_recovered.png)
 
 If you return to your terminal where you launched the Workflow, you'll find your results there as well.
 
