@@ -198,14 +198,18 @@ Open `src/activities.ts` and remove all the existing code in the file. You'll re
 
 Add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
+<!--SNIPSTART ts-ipgeo-activity-ip-->
+[src/activities.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/activities.ts)
 ```ts
 // Get the IP address
 export async function getIP(): Promise<string> {
-  const response = await fetch('https://icanhazip.com');
+  const url = 'https://icanhazip.com';
+  const response = await fetch(url);
   const data = await response.text();
   return data.trim();
 }
 ```
+<!--SNIPEND-->
 
 This function looks like a regular TypeScript function. With the Temporal TypeScript SDK, you define Activities using an exportable TypeScript module.
 
@@ -215,6 +219,8 @@ Notice that there's no error-handling code in this function. When you build your
 
 Now add the second Activity that accepts an IP address and retrieves location data. In `src/activities.ts`, add the following code to define it:
 
+<!--SNIPSTART ts-ipgeo-activity-location-->
+[src/activities.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/activities.ts)
 ```ts
 // Use the IP address to get the location.
 export async function getLocationInfo(ip: string): Promise<string> {
@@ -224,6 +230,7 @@ export async function getLocationInfo(ip: string): Promise<string> {
   return `${data.city}, ${data.regionName}, ${data.country}`;
 }
 ```
+<!--SNIPEND-->
 
 This Activity follows the same pattern as the `getIP` Activity. It's an exported async function that uses `fetch` to call a remote service. This time, the service returns JSON data rather than text.
 
@@ -237,24 +244,26 @@ Workflows are where you configure and organize the execution of Activities. You 
 
 Open the file `src/workflows.src` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
-```typescript
+<!--SNIPSTART ts-ipgeo-workflow-imports-->
+[src/workflows.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/workflows.ts)
+```ts
 import * as workflow from '@temporalio/workflow';
 
 // Only import the activity types
 import type * as activities from './activities';
 
-
 // Load Activities and assign the Retry Policy
 const { getIP, getLocationInfo} = workflow.proxyActivities<typeof activities>({
   retry: {
-    initialInterval: '1 second',
-    maximumInterval: '1 minute',
-    backoffCoefficient: 2,
-    // maximumAttempts: 5,
+    initialInterval: '1 second', // amount of time that must elapse before the first retry occurs.
+    maximumInterval: '1 minute', // maximum interval between retries.
+    backoffCoefficient: 2, // how much the retry interval increases.
+    // maximumAttempts: 5, // maximum number of execution attempts. Unspecified means unlimited retries.
   },
-  startToCloseTimeout: '1 minute',
+  startToCloseTimeout: '1 minute', // maximum time allowed for a single Activity Task Execution.
 });
 ```
+<!--SNIPEND-->
 
 The Temporal TypeScript SDK requires that Workflows and Activities run in separate environments. Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash,  and the TypeScript SDK runs Workflows in a sandbox that checks code for determinism to enforce this.
 
@@ -266,8 +275,11 @@ You also set the Retry Policy for Activities this way. In this example, you're u
 
 With the imports and options in place, you can define the Workflow itself. In the TypeScript SDK, you implement a Workflow the same way you define an Activity; using an exportable async TypeScript function. Add the following code to call both Activities, using the value of the first as the input to the second:
 
+<!--SNIPSTART ts-ipgeo-workflow-code-->
+[src/workflows.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/workflows.ts)
 ```ts
 // The Temporal Workflow.
+// Just a TypeScript function.
 export async function getAddressFromIP(name: string): Promise<string> {
 
   try {
@@ -284,6 +296,7 @@ export async function getAddressFromIP(name: string): Promise<string> {
 
 }
 ```
+<!--SNIPEND-->
 
 This code uses a `try/catch` block, but because you've configured unlimited retries, there won't be any exceptions caught. However, if you change the Retry Policy's maximum retries, or you specify non-retryable exceptions, this code will be in place to handle those errors.
 
@@ -299,15 +312,20 @@ In your Worker Program, you need to specify the name of the Task Queue, which mu
 
 Open the file `temporal/src/shared.ts` and edit the following line to the file to define the constant for the Task Queue:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-shared-->
+[src/shared.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/shared.ts)
+```ts
 export const TASK_QUEUE_NAME="ip-address-ts";
 ```
+<!--SNIPEND-->
 
 When you created the project, the project generator created a Worker program for you.
 
 Open the file `src/worker.ts` in your editor and you'll see the following code:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-worker-->
+[src/worker.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/worker.ts)
+```ts
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
 import { TASK_QUEUE_NAME } from './shared';
@@ -351,8 +369,8 @@ run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
 ```
+<!--SNIPEND-->
 
 The code imports the `TASK_QUEUE_NAME` constant along with all of the Activities in the `src/activities.ts` file. It then defines an async function named `run` that creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
 
@@ -367,7 +385,7 @@ npm run start.watch
 The Worker runs and you see the following output:
 
 ```output
-> temporal-hello-world@0.1.0 start.watch
+> empty@0.1.0 start.watch
 > nodemon src/worker.ts
 
 [nodemon] 2.0.22
@@ -404,6 +422,8 @@ You'll use the [mocha](https://mochajs.org/) package to build your test cases an
 
 Create the file `src/mocha/workflows-mocks.test.ts` and add the following code to set up the testing environment:
 
+<!--SNIPSTART ts-ipgeo-workflow-test-setup-->
+[src/mocha/workflows-mocks.test.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/mocha/workflows-mocks.test.ts)
 ```ts
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { after, before, it } from 'mocha';
@@ -411,13 +431,15 @@ import { Worker } from '@temporalio/worker';
 import { getAddressFromIP } from '../workflows';
 import assert from 'assert';
 ```
+<!--SNIPEND-->
 
 `TestWorkflowEnvironment` is a runtime environment used to test a Workflow. It is used to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the `TestWorkflowEnvironment` will be shared across tests, you will set it up before all of your tests, and tear it down after your tests are done.
 
 Add the following code to configure the testing environment and test the Workflow execution:
 
-
-```typescript
+<!--SNIPSTART ts-ipgeo-workflow-test-workflow-->
+[src/mocha/workflows-mocks.test.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/mocha/workflows-mocks.test.ts)
+```ts
 describe('getAddressFromIP', () => {
   let testEnv: TestWorkflowEnvironment;
 
@@ -454,8 +476,9 @@ describe('getAddressFromIP', () => {
   });
 });
 ```
+<!--SNIPEND-->
 
-This test sets up a test environment to run Workflows that uses a lightweight Temporal Service specifically for testing. In the test itself, you create a Worker that connects to the test environment. This should look familiar, as it's very similar to the code you wrote to define your Worker Program.
+This test sets up a test environment to run Workflows that uses a lightweight Temporal Service specifically for testing. In the test itself, you create a Worker that connects to the test environment. This should look familiar, as it's similar to the code you wrote to define your Worker Program.
 
 Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress`  with async functions that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you'd specify them directly as you did when you wrote the Worker program.
 
@@ -504,22 +527,27 @@ npm i sinon @types/sinon --save-dev
 
 Create the file `src/mocha/activities.test.ts` and add the following code to import the testing libraries you'll use:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-activity-test-setup-->
+[src/mocha/activities.test.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/mocha/activities.test.ts)
+```ts
 import { MockActivityEnvironment } from '@temporalio/testing';
 import { describe, it } from 'mocha';
 import * as activities from '../activities';
 import assert from 'assert';
 import sinon from 'sinon';
 ```
+<!--SNIPEND-->
+
 
 The `MockActivityEnvironment` from the `@temporalio/testing` package lets you test Activities as if they were part of a Temporal Application.
 
 Next, write the test for the `getIP` Activity, using `sinon` to stub out actual HTTP calls so your tests are consistent. Notice that the stubbed response adds the newline character so it replicates the actual response:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-activity-test-ip-->
+[src/mocha/activities.test.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/mocha/activities.test.ts)
+```ts
 describe('ip activity', async () => {
   it('successfully gets the ip', async () => {
-
     const fakeIP = '123.45.67.89';
     const stub = sinon.stub(global, 'fetch').resolves({
       text: () => Promise.resolve(`${fakeIP}\n`),
@@ -535,6 +563,7 @@ describe('ip activity', async () => {
   });
 });
 ```
+<!--SNIPEND-->
 
 To test the Activity itself, you use the `MockActivityEnvironment` to execute the Activity rather than directly calling the `getIP` function.
 
@@ -542,7 +571,9 @@ The `try/finally` block ensures that if the test fails, the `fetch` stub is rest
 
 To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-activity-test-location-->
+[src/mocha/activities.test.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/mocha/activities.test.ts)
+```ts
 describe('getLocation activity', async () => {
   it('successfully gets the location', async () => {
     const ip = '123.45.67.89';
@@ -566,6 +597,7 @@ describe('getLocation activity', async () => {
   });
 });
 ```
+<!--SNIPEND-->
 
 This test looks similar to the previous test; you stub out the `fetch` method and ensure it returns the expected data, and then you execute the Actiity in the `MockActivityEnvironment`. Then you restore the stubbed `fetch` method.
 
@@ -590,7 +622,9 @@ The project generator created a `client.ts` file in the `src` directory, but it 
 
 Open the `src/client.ts` file in your editor and modify it so it looks like the following:
 
-```typescript
+<!--SNIPSTART ts-ipgeo-cli-client-->
+[src/client.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/client.ts)
+```ts
 import { Connection, Client } from '@temporalio/client';
 import { getAddressFromIP } from './workflows';
 import { nanoid } from 'nanoid';
@@ -620,8 +654,8 @@ run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
 ```
+<!--SNIPEND-->
 
 You import the `process` module so you can access command-line arguments you'll pass.
 
