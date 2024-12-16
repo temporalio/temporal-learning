@@ -10,11 +10,14 @@ last_update:
   date: 2024-03-28
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
+description: "Grow your Temporal knowledge with free self-paced, hands-on online courses."
 ---
 
 import Link from '@docusaurus/Link';
 
-![Temporal Courses](/img/banners/courses.png)
+<h1>
+  <img alt="Temporal Courses" src="/img/banners/courses.png" />
+</h1>
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
