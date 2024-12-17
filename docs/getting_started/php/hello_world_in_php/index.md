@@ -162,7 +162,9 @@ class GreetingWorkflow implements GreetingWorkflowInterface
          */
         $this->greetingActivity = Workflow::newActivityStub(
             GreetingActivityInterface::class,
-            ActivityOptions::new()->withStartToCloseTimeout(CarbonInterval::seconds(2))
+            ActivityOptions::new()
+                ->withStartToCloseTimeout(CarbonInterval::seconds(2))
+                ->withRetryOptions(RetryOptions::new()->withMaximumAttempts(1))
         );
     }
 

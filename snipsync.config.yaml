@@ -62,6 +62,9 @@ origins:
   - owner: temporalio
     repo: build-audiobook-java
     ref: main
+  - owner: temporalio
+    repo: temporal-tutorial-ipgeo-go
+    ref: v1
   # Background Check tutorial code in the learn repo
   - files:
       pattern: "./docs/tutorials/go/background-check/code/**/*.go"
