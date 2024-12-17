@@ -470,11 +470,11 @@ func Test_Workflow(t *testing.T) {
 ```
 <!--SNIPEND-->
 
-This test creates a test execution environment and then mocks the Activity implementation so it returns a successful execution.  Since each Activity accepts a `context` as its first argument, you use `mock.Anything` as a substitute for the context since it isn't required for this test.
+This test creates a test execution environment to run the Workflow.
+
+Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress` with mocks that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you would omit these mocks from the test.  Since each Activity accepts a `context` as its first argument, you use `mock.Anything` as a substitute for the context since it isn't required for this test.
 
 The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
-
-Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress` with mocks that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you would omit these mocks from the test.
 
 Ensure you've saved all your files and execute your tests with the following command:
 
@@ -485,6 +485,10 @@ go test
 The test environment starts, spins up a Worker, and executes the Workflow in the test environment. At the end, you'll see that your test passes:
 
 ```output
+2024/12/17 10:25:15 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType GetIP
+2024/12/17 10:25:15 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 2 ActivityType GetLocationInfo
+PASS
+ok      iplocate        0.397s
 ```
 
 With a Workflow test in place, you can write unit tests for the Activities.
@@ -499,7 +503,7 @@ Create the file `activities_test.go`
 touch activities_test.go
 ```
 
-Add the following code to import the testing libraries you'll use:
+Add the following code to import the testing libraries and Activities you'll use, and then define types for your mock HTTP client and mock response:
 
 <!--SNIPSTART go-ipgeo-activity-test-setup-->
 [activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities_test.go)
@@ -531,7 +535,7 @@ func (m *MockHTTPClient) Get(url string) (*http.Response, error) {
 
 To ensure you don't make real HTTP requests, you define a mock HTTP client struct with a `Get` function. When you write your tests you'll inject this mocked client into the Activity so you can control the response.
 
-Next, write the test for the `getIP` Activity, using `sinon` to stub out actual HTTP calls so your tests are consistent. Notice that the stubbed response adds the newline character so it replicates the actual response:
+Next, write the test for the `getIP` Activity, using your mocked HTTP client to stub out actual HTTP calls so your tests are consistent. Notice that the mock response adds the newline character so it replicates the actual response:
 
 <!--SNIPSTART go-ipgeo-activity-test-ip-->
 [activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities_test.go)
@@ -572,10 +576,9 @@ func TestGetIP(t *testing.T) {
 ```
 <!--SNIPEND-->
 
-To test the Activity itself, you use the `MockActivityEnvironment` to execute the Activity rather than directly calling the `getIP` function.
+Like in your Worker, you inject the HTTP client into the Activities struct and then register the Activities with the test environment.
 
-The `try/finally` block ensures that if the test fails, the tests restore the `fetch` stub to its original functionality.
-This way other tests you write can also stub `fetch` with a different response.
+To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `getIP` function. You get the result from the Activity Execution and then ensure it matches the value you expect.
 
 To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
 
@@ -619,12 +622,25 @@ func TestGetLocationInfo(t *testing.T) {
 ```
 <!--SNIPEND-->
 
-This test looks similar to the previous test; you stub out the `fetch` method and ensure it returns the expected data, and then you execute the Actiity in the `MockActivityEnvironment`. Then you restore the stubbed `fetch` method.
+This test looks similar to the previous test; you mock out the HTTP client and ensure it returns the expected data, and then you execute the Actiity in the test environment. Then you retrieve the value and ensure it's what you expect.
 
-Run the tests again to see them pass:
+Run the tests again to see them pass. Use the `-V` option to see verbose output so you can see that all the tests ran:
 
 ```command
-go test
+go test -v
+```
+
+```output
+=== RUN   TestGetIP
+--- PASS: TestGetIP (0.03s)
+=== RUN   TestGetLocationInfo
+--- PASS: TestGetLocationInfo (0.00s)
+=== RUN   Test_Workflow
+2024/12/17 10:31:07 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType GetIP
+2024/12/17 10:31:07 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 2 ActivityType GetLocationInfo
+--- PASS: Test_Workflow (0.00s)
+PASS
+ok      iplocate        0.395s
 ```
 
 Now that you have your tests passing, it's time to start a Workflow Execution.
@@ -633,7 +649,7 @@ Now that you have your tests passing, it's time to start a Workflow Execution.
 
 You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK.
 
-Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a `client.ts` file that triggers your Temporal Workflow.
+Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a small CLI program that runs your Temporal Workflow.
 
 Create a new directory called `client` to hold the program:
 
@@ -700,11 +716,9 @@ func main() {
 ```
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses `client.Dial` to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/dev-guide/go/foundations/#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue. Your shared constant ensures you're using the same Task Queue name here.
+In the `main` function you check to see if there are at least one argument passed and then capture the user's name from the arguments.
 
-In the `run` function you check to see if there are at least two arguments passed. You need to check for two arguments because `process.argv` includes the Node.js executable path and the script path as the first two elements, so the actual command-line arguments start at index 2.
-
-The `run` function then sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name`, and assigns the Workflow a unique identifier with Nanoid. The client dispatches the Workflow on the same Task Queue that the Worker is polling on. That's why you used a constant to ensure the Task Queue name is consistent. If there's a mismatch, your Workflow will execute on a different Task Queue and there won't be any Workers polling for tasks.
+The `main` function then sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name`, and assigns the Workflow a unique identifier using a UUID. The client dispatches the Workflow on the same Task Queue that the Worker is polling on. That's why you used a constant to ensure the Task Queue name is consistent. If there's a mismatch, your Workflow will execute on a different Task Queue and there won't be any Workers polling for tasks.
 
 :::note Specify a Workflow Id
 
@@ -714,8 +728,6 @@ In this tutorial you're generating a UUID and appending it to a string that iden
 :::
 
 You can [get the results](https://docs.temporal.io/dev-guide/go/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling `we.Get`, which blocks the program's execution until the Workflow Execution completes.
-
-
 
 Now you can run your Workflow. First, ensure that your local Temporal Service is running, and that your Worker program is running also.
 
@@ -734,10 +746,8 @@ go run client/main.go Brian
 You'll see the following output:
 
 ```output
-> temporal-hello-world@0.1.0 workflow
-> ts-node src/client.ts Brian
-
-Hello, Brian. Your IP is 198.51.100.23 and your location is Seattle,  Washington, United States
+2024/12/17 10:43:15 INFO  No logger configured for temporal client. Created default one.
+Hello, Brian. Your IP is 198.51.100.23 and your location is Seattle, Washington, United States
 ```
 
 :::tip
