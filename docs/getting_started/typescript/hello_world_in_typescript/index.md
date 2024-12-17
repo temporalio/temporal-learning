@@ -306,7 +306,7 @@ Next you'll create a Worker that executes the Workflow and Activities.
 
 When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History. This records the Workflow's entire execution, enabling features like fault tolerance by allowing the Workflow to replay in case of Worker crashes or restarts.
 
-To define a Worker, you use the Temporal SDK to define a Worker Program.
+You use the Temporal SDK to define a Worker Program.
 
 In your Worker Program, you need to specify the name of the Task Queue, which must match the Task Queue name used whenever you interact with a Workflow from a client application. This ensures that the Worker processes tasks for the correct Workflow. The Task Queue name is a case-insensitive string. To ensure consistency and avoid errors, define the Task Queue name as a constant that can be reused throughout your code.
 
@@ -372,7 +372,7 @@ run().catch((err) => {
 ```
 <!--SNIPEND-->
 
-The code imports the `TASK_QUEUE_NAME` constant along with all the Activities in the `src/activities.ts` file. It then defines an async function named `run` that creates and runs a Worker. The Worker takes a configuration object that specifies a  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
+The code imports the `TASK_QUEUE_NAME` constant along with all the Activities in the `src/activities.ts` file. It then defines an async function named `run` that creates and runs a Worker that talks to the Temporal Service. The Worker takes a configuration object that specifies a connection to the Temporal Service,  `workflowsPath` (the location of your Workflow file), your Activity functions, and the name of the Task Queue.
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
 
@@ -671,11 +671,19 @@ A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Usin
 In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
 :::
 
-With the script created, open a new terminal and switch to the project directory:
+Now you can run your Workflow. First, ensure that your local Temporal Service is running, and that your Worker program is running also.
+
+Then open a new terminal and switch to the project directory:
 
 ```command
 cd temporal-ip-geolocation
 ```
+
+:::tip
+
+To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
+
+:::
 
 Now run the following command to run the Workflow using the client program you wrote:
 
