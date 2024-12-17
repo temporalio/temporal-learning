@@ -6,7 +6,7 @@ description: In this tutorial you will build a Temporal Application using the Go
 keywords: [golang,go,temporal,sdk,tutorial, hello world, temporal application, workflow, activity]
 last_update:
   author: Brian P. Hogan
-  date: 2023-03-03
+  date: 2024-12-17
 tags:
   - go
   - sdk
@@ -85,7 +85,7 @@ go get go.temporal.io/sdk
 
 You'll see the following output, indicating that the SDK is now a project dependency:
 
-```text
+```output
 go: added go.temporal.io/sdk v1.17.0
 ```
 
@@ -114,6 +114,7 @@ Open the file `activities.go` in your editor and add the following code that imp
 package iplocate
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -140,7 +141,7 @@ Now add the following code to define a Temporal Activity that retrieves your IP 
 [activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities.go)
 ```go
 // GetIP fetches the public IP address.
-func (i *IPActivities) GetIP() (string, error) {
+func (i *IPActivities) GetIP(ctx context.Context) (string, error) {
 	resp, err := i.HTTPClient.Get("https://icanhazip.com")
 	if err != nil {
 		return "", err
@@ -159,6 +160,8 @@ func (i *IPActivities) GetIP() (string, error) {
 ```
 <!--SNIPEND-->
 
+Whether you define Activities as exportable functions or as members of a struct, Activities can accept a `context` as their first argument. While this argument is optional for Activity Definitions, you should add it as you may need it for other Go SDK features as your application evolves. Additionally, Activities also need to return an `error`.
+
 The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
 
 Notice that there's no error-handling code in this function. When you build your Workflow, you'll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
@@ -169,7 +172,7 @@ Now add the second Activity that accepts an IP address and retrieves location da
 [activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities.go)
 ```go
 // GetLocationInfo uses the IP address to fetch location information.
-func (i *IPActivities) GetLocationInfo(ip string) (string, error) {
+func (i *IPActivities) GetLocationInfo(ctx context.Context, ip string) (string, error) {
 	url := fmt.Sprintf("http://ip-api.com/json/%s", ip)
 	resp, err := i.HTTPClient.Get(url)
 	if err != nil {
@@ -237,7 +240,11 @@ import (
 <!--SNIPEND-->
 
 
-With the imports and options in place, you can define the Workflow itself. In the Go SDK, you implement a Workflow by defining a public function. Add the following code to call both Activities, using the value of the first as the input to the second:
+With the imports and options in place, you can define the Workflow itself.
+
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
+
+Add the following code to define the `GetAddressFromIP` Workflow which will call both Activities, using the value of the first as the input to the second:
 
 <!--SNIPSTART go-ipgeo-workflow-code-->
 [workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows.go)
@@ -248,17 +255,17 @@ func GetAddressFromIP(ctx workflow.Context, name string) (string, error) {
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: time.Minute,
 		RetryPolicy: &temporal.RetryPolicy{
-			InitialInterval:    time.Second,
-			MaximumInterval:    time.Minute,
-			BackoffCoefficient: 2,
+			InitialInterval:    time.Second, //amount of time that must elapse before the first retry occurs
+			MaximumInterval:    time.Minute, //maximum interval between retries
+			BackoffCoefficient: 2,           //how much the retry interval increases
 			// MaximumAttempts: 5, // Uncomment this if you want to limit attempts
 		},
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	var ip string
 	var ipActivities *IPActivities
 
+	var ip string
 	err := workflow.ExecuteActivity(ctx, ipActivities.GetIP).Get(ctx, &ip)
 	if err != nil {
 		return "", fmt.Errorf("Failed to get IP: %s", err)
@@ -269,14 +276,15 @@ func GetAddressFromIP(ctx workflow.Context, name string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Failed to get location: %s", err)
 	}
-
 	return fmt.Sprintf("Hello, %s. Your IP is %s and your location is %s", name, ip, location), nil
 }
 
 ```
 <!--SNIPEND-->
 
-In this example, you have specified that the Start-to-Close Timeout for your Activity will be one minute, meaning that your Activity has one minute to complete before it times out. Of all the Temporal timeout options, `StartToCloseTimeout` is the one you should always set.
+The function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs.  Like with Activities, you can send multiple inputs into a Workflow, but it's a good practice to combine those into a struct.
+
+In this example, you have specified that the Start-to-Close Timeout for your Activities will be one minute, meaning that your Activity has one minute to complete before it times out. Of all the Temporal timeout options, `StartToCloseTimeout` is the one you should always set.
 
 You also set the Retry Policy for Activities. In this example, you're using the default Retry Policy values, so you don't need to specify the values, but by leaving them in you have a more clear picture of what happens. Note that the `MaximumAttempts` is commented out, which means there's no limit to the number of times Temporal will retry your Activities if they fail.
 
@@ -326,7 +334,6 @@ Then open `worker/main.go` in your editor and add the following code to define t
 
 <!--SNIPSTART go-ipgeo-worker-->
 [worker/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/worker/main.go)
-
 ```go
 package main
 
@@ -398,17 +405,21 @@ The Temporal Go SDK includes functions that help you test your Workflow executio
 
 You'll use the [testify](https://github.com/stretchr/testify) package to build your test cases and mock the Activity so you can test the Workflow in isolation.
 
-Add the `testify/require` package to your project by running the following commands in your terminal:
+Add the `testify/mock` and `testify/assert` packages to your project by running the following commands in your terminal:
 
 ```command
-go get github.com/stretchr/testify/require
+go get github.com/stretchr/testify/mock
+```
+
+```command
+go get github.com/stretchr/testify/assert
 ```
 
 ```command
 go mod tidy
 ```
 
-Create the file `workflows_test.go` in your project root:
+Now create a file to hold the test for your Workflow. Create the file `workflows_test.go` in your project root:
 
 ```command
 touch workflows_test.go
@@ -425,15 +436,14 @@ import (
 	"iplocate"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"go.temporal.io/sdk/testsuite"
 )
 
 ```
 <!--SNIPEND-->
-
-You'll use the [Testify](https://github.com/stretchr/testify) module, along with the Temporal Go SDK's testing libraries to build your tests.
 
 Add the following code to test the Workflow execution:
 
@@ -447,21 +457,22 @@ func Test_Workflow(t *testing.T) {
 	activities := &iplocate.IPActivities{}
 
 	// Mock activity implementation
-	env.OnActivity(activities.GetIP).Return("1.1.1.1", nil)
-	env.OnActivity(activities.GetLocationInfo, "1.1.1.1").Return("Planet Earth", nil)
+	env.OnActivity(activities.GetIP, mock.Anything).Return("1.1.1.1", nil)
+	env.OnActivity(activities.GetLocationInfo, mock.Anything, "1.1.1.1").Return("Planet Earth", nil)
 
 	env.ExecuteWorkflow(iplocate.GetAddressFromIP, "Temporal")
 
 	var result string
-	require.NoError(t, env.GetWorkflowResult(&result))
-
-	require.Equal(t, "Hello, Temporal. Your IP is 1.1.1.1 and your location is Planet Earth", result)
+	assert.NoError(t, env.GetWorkflowResult(&result))
+	assert.Equal(t, "Hello, Temporal. Your IP is 1.1.1.1 and your location is Planet Earth", result)
 }
 
 ```
 <!--SNIPEND-->
 
-This test creates a test execution environment and then mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+This test creates a test execution environment and then mocks the Activity implementation so it returns a successful execution.  Since each Activity accepts a `context` as its first argument, you use `mock.Anything` as a substitute for the context since it isn't required for this test.
+
+The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
 
 Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress` with mocks that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you would omit these mocks from the test.
 
@@ -496,6 +507,8 @@ Add the following code to import the testing libraries you'll use:
 package iplocate_test
 
 import (
+	"github.com/stretchr/testify/assert"
+	"go.temporal.io/sdk/testsuite"
 	"io"
 	"iplocate"
 	"net/http"
@@ -525,28 +538,35 @@ Next, write the test for the `getIP` Activity, using `sinon` to stub out actual 
 ```go
 // TestGetIP tests the GetIP activity with a mock server.
 func TestGetIP(t *testing.T) {
-	// Create a mock server that returns the fake IP address
+	// set up test environment
+	testSuite := &testsuite.WorkflowTestSuite{}
+	env := testSuite.NewTestActivityEnvironment()
 
+	// Create a mock response that returns the fake IP address
 	mockResponse := &http.Response{
 		StatusCode: 200,
 		Body:       io.NopCloser(strings.NewReader("127.0.0.1\n")),
 	}
 
-	ipActivities := iplocate.IPActivities{
+	// load Activities and inject mock response
+	ipActivities := &iplocate.IPActivities{
 		HTTPClient: &MockHTTPClient{Response: mockResponse},
 	}
+	env.RegisterActivity(ipActivities)
 
 	// Call the GetIP function
-	ip, err := ipActivities.GetIP()
+	val, err := env.ExecuteActivity(ipActivities.GetIP)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
+	// get the Activity result
+	var ip string
+	val.Get(&ip)
+
 	// Validate the returned IP
 	expectedIP := "127.0.0.1"
-	if ip != expectedIP {
-		t.Fatalf("Expected IP to be '%s', but got '%s'", expectedIP, ip)
-	}
+	assert.Equal(t, ip, expectedIP)
 }
 
 ```
@@ -564,6 +584,10 @@ To test the `getLocation` Activity, you use a similar approach. Add the followin
 ```go
 // TestGetLocationInfo tests the GetLocationInfo activity with a mock server.
 func TestGetLocationInfo(t *testing.T) {
+	// set up test environment
+	testSuite := &testsuite.WorkflowTestSuite{}
+	env := testSuite.NewTestActivityEnvironment()
+
 	mockResponse := &http.Response{
 		StatusCode: 200,
 		Body: io.NopCloser(strings.NewReader(`{
@@ -573,20 +597,23 @@ func TestGetLocationInfo(t *testing.T) {
         }`)),
 	}
 
-	ipActivities := iplocate.IPActivities{
+	ipActivities := &iplocate.IPActivities{
 		HTTPClient: &MockHTTPClient{Response: mockResponse},
 	}
 
+	env.RegisterActivity(ipActivities)
+
 	ip := "127.0.0.1"
-	location, err := ipActivities.GetLocationInfo(ip)
+	val, err := env.ExecuteActivity(ipActivities.GetLocationInfo, ip)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
+	var location string
+	val.Get(&location)
+
 	expectedLocation := "San Francisco, California, United States"
-	if location != expectedLocation {
-		t.Errorf("Expected location %v, got %v", expectedLocation, location)
-	}
+	assert.Equal(t, location, expectedLocation)
 }
 
 ```
@@ -756,6 +783,7 @@ go run client/main.go Brian
 This time you don't get a response.
 
 Visit `http://localhost:8233` to open the Temporal Web UI and locate the Workflow Execution that's currently running. When you select it, you'll see something like the following image, indicating that there's a problem:
+
 ![The timeline shows the Activity failure](images/timeline_failed.png)
 
 As you can see, the `getIP` Activity has failed and Temporal is retrying it. Scroll down to the Event History and you'll see the failure represented there:
