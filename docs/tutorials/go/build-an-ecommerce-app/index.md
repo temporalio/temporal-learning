@@ -9,7 +9,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2024-12-18
-  author: [Valeri Karpov, Alex Garnett]
+  author: Valeri Karpov
 ---
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)
