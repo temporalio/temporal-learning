@@ -110,7 +110,7 @@ Open the file `activities.go` in your editor and add the following code that imp
 
 
 <!--SNIPSTART go-ipgeo-activity-setup-->
-[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities.go)
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
 ```go
 package iplocate
 
@@ -139,7 +139,7 @@ With the Go SDK, you can define Activities as regular Go functions, or you can c
 Now add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
 <!--SNIPSTART go-ipgeo-activity-ip-->
-[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities.go)
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
 ```go
 // GetIP fetches the public IP address.
 func (i *IPActivities) GetIP(ctx context.Context) (string, error) {
@@ -170,7 +170,7 @@ Notice that there's no error-handling code in this function. When you build your
 Now add the second Activity that accepts an IP address and retrieves location data. In `activities.go`, add the following code to define it:
 
 <!--SNIPSTART go-ipgeo-activity-location-->
-[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities.go)
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
 ```go
 // GetLocationInfo uses the IP address to fetch location information.
 func (i *IPActivities) GetLocationInfo(ctx context.Context, ip string) (string, error) {
@@ -226,7 +226,7 @@ touch workflows.go
 Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
 <!--SNIPSTART go-ipgeo-workflow-imports-->
-[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows.go)
+[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows.go)
 ```go
 package iplocate
 
@@ -248,7 +248,7 @@ In the Temporal Go SDK, a Workflow Definition is an [exported function](https://
 Add the following code to define the `GetAddressFromIP` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
 <!--SNIPSTART go-ipgeo-workflow-code-->
-[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows.go)
+[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows.go)
 ```go
 // GetAddressFromIP is the Temporal Workflow that retrieves the IP address and location info.
 func GetAddressFromIP(ctx workflow.Context, name string) (string, error) {
@@ -311,7 +311,7 @@ touch shared.go
 Open the file and add the following lines to the file to define the constant for the Task Queue:
 
 <!--SNIPSTART go-ipgeo-shared-->
-[shared.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/shared.go)
+[shared.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/shared.go)
 ```go
 package iplocate
 
@@ -337,7 +337,7 @@ touch worker/main.go
 Then open `worker/main.go` in your editor and add the following code to define the Worker program:
 
 <!--SNIPSTART go-ipgeo-worker-->
-[worker/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/worker/main.go)
+[worker/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/worker/main.go)
 ```go
 package main
 
@@ -432,7 +432,7 @@ touch workflows_test.go
 Add the following code to set up the testing environment:
 
 <!--SNIPSTART go-ipgeo-workflow-test-setup-->
-[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows_test.go)
+[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows_test.go)
 ```go
 package iplocate_test
 
@@ -452,7 +452,7 @@ import (
 Add the following code to test the Workflow execution:
 
 <!--SNIPSTART go-ipgeo-workflow-test-workflow-->
-[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows_test.go)
+[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows_test.go)
 ```go
 
 func Test_Workflow(t *testing.T) {
@@ -510,7 +510,7 @@ touch activities_test.go
 Add the following code to import the testing libraries and Activities you'll use, and then define types for your mock HTTP client and mock response:
 
 <!--SNIPSTART go-ipgeo-activity-test-setup-->
-[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities_test.go)
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
 ```go
 package iplocate_test
 
@@ -542,7 +542,7 @@ To ensure you don't make real HTTP requests, you define a mock HTTP client struc
 Next, write the test for the `getIP` Activity, using your mocked HTTP client to stub out actual HTTP calls so your tests are consistent. Notice that the mock response adds the newline character so it replicates the actual response:
 
 <!--SNIPSTART go-ipgeo-activity-test-ip-->
-[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities_test.go)
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
 ```go
 // TestGetIP tests the GetIP activity with a mock server.
 func TestGetIP(t *testing.T) {
@@ -587,7 +587,7 @@ To test the Activity itself, you use the test environment to execute the Activit
 To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
 
 <!--SNIPSTART go-ipgeo-activity-test-location-->
-[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/activities_test.go)
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
 ```go
 // TestGetLocationInfo tests the GetLocationInfo activity with a mock server.
 func TestGetLocationInfo(t *testing.T) {
@@ -670,7 +670,7 @@ touch client/main.go
 Open `client/main.go` in your editor and add the following code to the file to connect to the server and start the Workflow:
 
 <!--SNIPSTART go-ipgeo-cli-client-->
-[client/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/client/main.go)
+[client/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/client/main.go)
 ```go
 package main
 

@@ -13,8 +13,6 @@ origins:
   - owner: temporalio
     repo: money-transfer-project-template-go
   - owner: temporalio
-    repo: hello-world-project-template-go
-  - owner: temporalio
     repo: subscription-workflow-project-template-go
   - owner: temporalio
     repo: subscription-workflow-project-template-java
@@ -64,7 +62,7 @@ origins:
     ref: main
   - owner: temporalio
     repo: temporal-tutorial-ipgeo-go
-    ref: v1
+    ref: main
   # Background Check tutorial code in the learn repo
   - files:
       pattern: "./docs/tutorials/go/background-check/code/**/*.go"
