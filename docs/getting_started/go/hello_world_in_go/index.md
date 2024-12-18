@@ -86,7 +86,8 @@ go get go.temporal.io/sdk
 You'll see the following output, indicating that the SDK is now a project dependency:
 
 ```output
-go: added go.temporal.io/sdk v1.17.0
+go: downloading go.temporal.io/sdk v1.31.0
+go: added go.temporal.io/sdk v1.31.0
 ```
 
 With the project created, you'll create the application's core logic.
@@ -310,9 +311,12 @@ touch shared.go
 Open the file and add the following lines to the file to define the constant for the Task Queue:
 
 <!--SNIPSTART go-ipgeo-shared-->
-[src/shared.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/shared.ts)
-```ts
-export const TASK_QUEUE_NAME="ip-address-ts";
+[shared.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/shared.go)
+```go
+package iplocate
+
+const TaskQueueName = "ip-address-go"
+
 ```
 <!--SNIPEND-->
 
@@ -338,9 +342,9 @@ Then open `worker/main.go` in your editor and add the following code to define t
 package main
 
 import (
-	"iplocate"
 	"log"
 	"net/http"
+	"temporal-ip-geolocation/iplocate"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -675,9 +679,9 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
-	"iplocate"
 	"log"
 	"os"
+	"temporal-ip-geolocation/iplocate"
 )
 
 func main() {
