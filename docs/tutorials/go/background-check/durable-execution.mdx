@@ -147,9 +147,10 @@ Run the tests in the test directory (`go test`).
 If the Workflow Definition and the Event History are incompatible then the test fails.
 
 <!--SNIPSTART go-durability-chapter-replay-test-->
-[docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
-```go
 
+[docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
+
+```go
 // TestReplayWorkflowHistoryFromFile tests for Event History compatibility.
 func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {
 	// Create a new Replayer
@@ -161,8 +162,8 @@ func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {
 	err := replayer.ReplayWorkflowHistoryFromJSONFile(nil, "backgroundcheck_workflow_event_history.json")
 	s.NoError(err)
 }
-
 ```
+
 <!--SNIPEND-->
 
 ### Why add a Replay test? {#why-replay-test}
@@ -207,7 +208,9 @@ The following are some common operations that **can't** be done inside of a Work
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
 <!--SNIPSTART go-durability-chapter-non-deterministic-workflow-->
+
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go)
+
 ```go
 // CAUTION! Do not use this code!
 package workflows
@@ -244,8 +247,8 @@ func BackgroundCheckNonDeterministic(ctx workflow.Context, param string) (string
 	}
 	return ssnTraceResult, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 If you run the BackgroundCheckNonDeterministic Workflow enough times, eventually you will see a Workflow Task failure.
@@ -396,7 +399,9 @@ The Temporal SDK offers both a `workflow.StartTimer()` API, and a `workflow.Slee
 Use the `workflow.GetLogger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
 <!--SNIPSTART go-durability-chapter-workflow-->
+
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go)
+
 ```go
 package workflows
 
@@ -434,8 +439,8 @@ func BackgroundCheck(ctx workflow.Context, param string) (string, error) {
 	// Make the results of the Workflow available
 	return ssnTraceResult, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}

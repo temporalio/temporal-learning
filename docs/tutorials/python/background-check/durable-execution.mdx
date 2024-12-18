@@ -154,7 +154,9 @@ Run the tests in the test directory (pytest).
 If the Workflow Definition and the Event History are incompatible, then the test fails.
 
 <!--SNIPSTART python-durability-chapter-replay-from-file-test-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_replay/tests/replay_dacx_test.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_replay/tests/replay_dacx_test.py)
+
 ```py
 @pytest.mark.asyncio
 async def test_replay_workflow_history_from_file():
@@ -164,6 +166,7 @@ async def test_replay_workflow_history_from_file():
             WorkflowHistory.from_json("backgroundcheck_workflow", history_json)
         )
 ```
+
 <!--SNIPEND-->
 
 [WorkflowEnvironment](https://python.temporal.io/temporalio.testing.WorkflowEnvironment.html) is a class in the Temporal Python SDK that provides a testing suite for running Workflows and Activity code.
@@ -294,7 +297,9 @@ The Temporal Python SDK offers deterministic implementations to the following AP
 Use the `workflow.logger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
 <!--SNIPSTART python-durability-chapter-backgroundcheck-workflow-->
+
 [docs/tutorials/python/background-check/code/backgroundcheck_replay/backgroundcheck_dacx.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/background-check/code/backgroundcheck_replay/backgroundcheck_dacx.py)
+
 ```py
 import asyncio
 from datetime import timedelta
@@ -318,6 +323,7 @@ class BackgroundCheck:
             schedule_to_close_timeout=timedelta(seconds=5),
         )
 ```
+
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}

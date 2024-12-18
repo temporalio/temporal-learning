@@ -379,8 +379,8 @@ public interface BackgroundCheckBoilerplateWorkflow {
   public String backgroundCheck(String socialSecurityNumber);
 
 }
-
 ```
+
 <!--SNIPEND-->
 
 To designate an interface as a Workflow, annotate the interface declaration
@@ -423,6 +423,7 @@ public class BackgroundCheckBoilerplateWorkflowImpl implements BackgroundCheckBo
 
 }
 ```
+
 <!--SNIPEND-->
 
 You define your Workflow Implementation by defining a class that `implements` the
@@ -475,6 +476,7 @@ public interface BackgroundCheckBoilerplateActivities {
 
 }
 ```
+
 <!--SNIPEND-->
 
 To designate an interface as a Activity, annotate the interface declaration
@@ -507,6 +509,7 @@ public class BackgroundCheckBoilerplateActivitiesImpl implements BackgroundCheck
 
 }
 ```
+
 <!--SNIPEND-->
 
 You define your Activity Implementation by defining a class that `implements` the
@@ -585,6 +588,7 @@ public class DevServerWorker {
   }
 }
 ```
+
 <!--SNIPEND-->
 
 #### Run a Temporal Cloud Worker {#cloud-worker}
@@ -669,6 +673,7 @@ public class CloudWorker {
   }
 }
 ```
+
 <!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
@@ -801,8 +806,8 @@ public class SelfHostedWorker {
     factory.start();
   }
 }
-
 ```
+
 <!--SNIPEND-->
 
 Add a Docker file to the root of your Background Check application project.
