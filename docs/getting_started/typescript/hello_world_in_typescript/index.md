@@ -7,7 +7,7 @@ description: In this tutorial you will build a Temporal Application using the Ty
 tags: [TypeScript, SDK]
 last_update:
   author: Brian P. Hogan
-  date: 2024-12-16
+  date: 2024-12-18
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -139,7 +139,7 @@ Here's what each file does:
 - The `tsconfig.json` file holds the TypeScript configuration designed for working with Temporal's SDK.
 - The `src/activities.ts` file is where you can define Activities.
 - The `src/client.ts` file has the code for a small CLI program to execute a Workflow. You won't use this directly in this guide.
-- The `src/mocha` folder is where you'll place your tests. We recommend using Mocha to test your Temporal Workflows and Activities.
+- The `src/mocha` folder is where you'll place your tests. We recommend using [Mocha](https://mochajs.org/) to test your Temporal Workflows and Activities.
 - The `src/workflows.ts` file is where you can define Workflows.
 - The `src/worker.ts` file has the code to configure and run your Worker process, which executes your Workflows and Activities.
 
@@ -376,7 +376,7 @@ The code imports the `TASK_QUEUE_NAME` constant along with all the Activities in
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
 
-Now you will use an `npm` script to start your Worker with Nodemon. Nodemon automatically reloads whenever it detects changes in your file, hence the command name `start.watch`. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
+Now you will use an `npm` script to start your Worker with [Nodemon](https://nodemon.io/). Nodemon automatically reloads whenever it detects changes in your file, hence the command name `start.watch`. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
 
 ```command
 npm run start.watch
@@ -621,7 +621,7 @@ The project generator created a `client.ts` file in the `src` directory, but it 
 - You'll need to change the name of the Workflow.
 - You'll need to add code that lets you specify the person's name as the command-line argument so you can pass it to the Workflow, instead of using the hard-coded value of `Temporal`.
 
-Open the `src/client.ts` file in your editor and modify it so it looks like the following:
+Open the `src/client.ts` file in your editor. Remove its contents and replace it with the following code:
 
 <!--SNIPSTART ts-ipgeo-cli-client-->
 [src/client.ts](https://github.com/temporalio/temporal-tutorial-ipgeo-ts/blob/main/src/client.ts)
@@ -685,7 +685,7 @@ To run your Temporal Application, you need to start the Workflow and the Worker.
 
 :::
 
-Now run the following command to run the Workflow using the client program you wrote:
+Now run the following command to run the Workflow using the client program you wrote, using your name as the argument:
 
 ```command
 npm run workflow Brian
@@ -708,7 +708,7 @@ The Temporal Web UI gives you insights into your Workflow's execution. Open the 
 
 ![The UI shows the results of the Workflow including the output](images/overview.png)
 
-You'll see the dates the Workflow Exeuction ran, how long it took to run, the input to the Workflow, and the result.
+You'll see the dates the Workflow Execution ran, how long it took to run, the input to the Workflow, and the result.
 
 After that, you see the Event History, detailing the entire flow, including the inputs and outputs of the Activity Executions:
 
