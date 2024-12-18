@@ -232,9 +232,10 @@ package iplocate
 
 import (
 	"fmt"
+	"time"
+
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
-	"time"
 )
 
 ```
@@ -304,7 +305,7 @@ In your Worker Program, you need to specify the name of the Task Queue, which mu
 
 Create the file `shared.go`:
 
-```
+```command
 touch shared.go
 ```
 
@@ -344,6 +345,7 @@ package main
 import (
 	"log"
 	"net/http"
+
 	"temporal-ip-geolocation/iplocate"
 
 	"go.temporal.io/sdk/client"
@@ -437,8 +439,9 @@ Add the following code to set up the testing environment:
 package iplocate_test
 
 import (
-	"iplocate"
 	"testing"
+
+	"temporal-ip-geolocation/iplocate"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -515,13 +518,15 @@ Add the following code to import the testing libraries and Activities you'll use
 package iplocate_test
 
 import (
-	"github.com/stretchr/testify/assert"
-	"go.temporal.io/sdk/testsuite"
 	"io"
-	"iplocate"
 	"net/http"
 	"strings"
 	"testing"
+
+	"temporal-ip-geolocation/iplocate"
+
+	"github.com/stretchr/testify/assert"
+	"go.temporal.io/sdk/testsuite"
 )
 
 type MockHTTPClient struct {
@@ -677,11 +682,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"go.temporal.io/sdk/client"
 	"log"
 	"os"
+
 	"temporal-ip-geolocation/iplocate"
+
+	"github.com/google/uuid"
+	"go.temporal.io/sdk/client"
 )
 
 func main() {
