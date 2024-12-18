@@ -5,6 +5,7 @@ keywords: [sqlite, binary, systemd, certbot, hosting, deploy, config, minimal, b
 tags: [Server, Binary]
 last_update:
   date: 2024-07-08
+  author: Alex Garnett
 title: How to Configure a Temporal Service without a Proxy
 description: Configure a Temporal Service from scratch using our Server Binaries without requiring any additional dependencies.
 image: /img/temporal-logo-twitter-card.png
