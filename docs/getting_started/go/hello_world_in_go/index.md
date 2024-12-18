@@ -44,7 +44,7 @@ The app will consist of the following pieces:
 
 You'll also write tests to ensure your Workflow executes successfully.
 
-When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications in TypeScript.
+When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications in Go.
 
 ## Prerequisites
 
@@ -134,7 +134,7 @@ type IPActivities struct {
 ```
 <!--SNIPEND-->
 
-With the Go SDK, you can define Activities as regular Go functions, or you can create them as members of a struct. If you use a struct, you can then pass in shared objects like database connections or clients that all Activities can share. In this tutorial you'll pass an HTTP client into the struct. This will let you stub out the HTTP client implementation when you write tests for your Activities later.
+With the Go SDK, you can define Activities as regular Go functions. You can also create them as members of a struct, which is necessary to pass shared objects like database connections. In this tutorial you'll pass an HTTP client into the struct. This will let you stub out the HTTP client implementation when you write tests for your Activities later.
 
 Now add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
@@ -161,7 +161,9 @@ func (i *IPActivities) GetIP(ctx context.Context) (string, error) {
 ```
 <!--SNIPEND-->
 
-Whether you define Activities as exportable functions or as members of a struct, Activities can accept a `context` as their first argument. While this argument is optional for Activity Definitions, you should add it as you may need it for other Go SDK features as your application evolves. Additionally, Activities also need to return an `error`.
+With the Temporal Go SDK, both Activities and Workflows expect a Go `context` as their first argument. This argument is necessary to enable a number of other SDK features.
+
+Like other Go functions, Activities should return an `error` as one of their arguments, so it can be checked after the Activity completes. This is because Go does not use a `try`/`catch` construct like other languages.
 
 The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
 
@@ -205,7 +207,7 @@ func (i *IPActivities) GetLocationInfo(ctx context.Context, ip string) (string, 
 
 This Activity follows the same pattern as the `getIP` Activity.  This time, the service returns JSON data rather than text, so you have to define a type to unmarshal the data.
 
-While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of in more complex applications.
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. This is because later revisions to your Workflows and Activities that change the number of arguments sent to them can otherwise introduce the need for versioning. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details.
 
 You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
 
