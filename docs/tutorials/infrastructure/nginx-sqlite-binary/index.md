@@ -5,6 +5,7 @@ keywords: [sqlite, nginx, binary, systemd, https, certbot, hosting, deploy, conf
 tags: [Server, Binary, Nginx]
 last_update:
   date: 2024-07-22
+  author: Alex Garnett
 title: How to Deploy a Temporal Service using an SQLite Backend with Nginx
 description: Deploy a Temporal Service from scratch using our Server Binaries using an Nginx reverse proxy.
 image: /img/temporal-logo-twitter-card.png
