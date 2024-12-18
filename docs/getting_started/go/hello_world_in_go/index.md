@@ -245,7 +245,7 @@ With the imports and options in place, you can define the Workflow itself.
 
 In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
 
-Add the following code to define the `GetAddressFromIP` Workflow which will call both Activities, using the value of the first as the input to the second:
+Add the following code to define the `GetAddressFromIP` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
 <!--SNIPSTART go-ipgeo-workflow-code-->
 [workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/v1/workflows.go)
@@ -388,7 +388,7 @@ Then you register your Workflow and Activities with the Worker. Since you define
 
 In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
 
-Now you will use an `npm` script to start your Worker with Nodemon. Nodemon automatically reloads whenever it detects changes in your file, hence the command name `start.watch`. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
+Now you'll start the Worker. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
 
 ```command
 go run worker/main.go
@@ -661,7 +661,7 @@ Create a new directory called `client` to hold the program:
 mkdir client
 ```
 
-Then create the file `start/main.go` :
+Then create the file `client/main.go` :
 
 ```command
 touch client/main.go
@@ -720,7 +720,7 @@ func main() {
 ```
 <!--SNIPEND-->
 
-In the `main` function you check to see if there are at least one argument passed and then capture the user's name from the arguments.
+In the `main` function you check to see if there is at least one argument passed and then capture the user's name from the arguments.
 
 The `main` function then sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name`, and assigns the Workflow a unique identifier using a UUID. The client dispatches the Workflow on the same Task Queue that the Worker is polling on. That's why you used a constant to ensure the Task Queue name is consistent. If there's a mismatch, your Workflow will execute on a different Task Queue and there won't be any Workers polling for tasks.
 
