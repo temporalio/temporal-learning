@@ -1,5 +1,7 @@
 origins:
   - owner: temporalio
+    repo: temporal-tutorial-ipgeo-ts
+  - owner: temporalio
     repo: money-transfer-project-template-dotnet
   - owner: temporalio
     repo: money-transfer-project-template-python
