@@ -5,7 +5,7 @@ tags: [Go, SDK]
 last_update:
   date: 2024-09-10
 title: Create audiobooks from text with OpenAI and Go
-description: Learn to build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
+description: Build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
 sidebar_label: Create audiobooks from text with OpenAI and Go
 image: /img/temporal-logo-twitter-card.png
 ---

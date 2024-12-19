@@ -2,7 +2,7 @@
 title: Run Workers with Temporal Cloud for the Java SDK
 id: run-workers-with-cloud-java
 sidebar_position: 4
-description: In this tutorial, you'll learn how to migrate your Java application from a local Temporal Server to a managed Temporal Cloud environment, leveraging the benefits of a scalable and reliable platform for running your Workflows and Activities.
+description: In this tutorial, you'll migrate your Java application from a local Temporal Server to a managed Temporal Cloud environment, leveraging the benefits of a scalable and reliable platform for running your Workflows and Activities.
 keywords: [java, temporal, sdk, tutorial, example, workflow, worker, getting started, temporal cloud, managed service, migrating]
 tags: [Java, SDK, Temporal Cloud]
 last_update:
