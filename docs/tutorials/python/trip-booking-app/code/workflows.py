@@ -55,7 +55,10 @@ class BookingWorkflow:
                 book_hotel,
                 book_input,
                 start_to_close_timeout=timedelta(seconds=10),
-                retry_policy=RetryPolicy(non_retryable_error_types=["ValueError"]),
+                retry_policy=RetryPolicy(
+                    non_retryable_error_types=["ValueError"],
+                    maximum_attempts=book_input.attempts
+                ),
             )
             results["booked_hotel"] = hotel_result
 
