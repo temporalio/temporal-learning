@@ -648,7 +648,7 @@ You need at least one Worker running to execute your Workflows. You'll start the
 
 ## Start a Worker
 
-A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `Program.cs` contains the code for the Worker within the MoneyTransferWorker project.
+A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the MoneyTransferWorker type contains the code for the Worker within the MoneyTransferWorker project.
 
 Open a new terminal window.
 

@@ -87,13 +87,13 @@ In this chapter you will do the following:
 
 **How to download and install the Temporal CLI**
 
-The Temporal CLI is available on MacOS, Windows, and Linux.
+The Temporal CLI is available on macOS, Windows, and Linux.
 
-### MacOS
+### macOS
 
-**How to install the Temporal CLI on Mac OS**
+**How to install the Temporal CLI on macOS**
 
-Choose one of the following install methods to install the Temporal CLI on MacOS:
+Choose one of the following install methods to install the Temporal CLI on macOS:
 
 **Install the Temporal CLI with Homebrew**
 
@@ -358,12 +358,13 @@ go get go.temporal.io/sdk
 
 ### Boilerplate Workflow code {#workflow-code}
 
-
 In the Temporal Go SDK programming model, a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition) is an exportable function.
 The `BackgroundCheck` function below is an example of a basic Workflow Definition.
 
 <!--SNIPSTART setup-chapter-workflow-->
+
 [docs/tutorials/go/background-check/code/setup/workflows/backgroundcheck.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/workflows/backgroundcheck.go)
+
 ```go
 package workflows
 
@@ -392,8 +393,8 @@ func BackgroundCheck(ctx workflow.Context, param string) (string, error) {
 	// Make the results of the Workflow available
 	return ssnTraceResult, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 The first parameter of a Go-based Workflow Definition must be of the [`workflow.Context`](https://pkg.go.dev/go.temporal.io/sdk/workflow#Context) type.
@@ -419,12 +420,13 @@ For example, in a small project like this, it is still a best practice to have a
 
 ### Boilerplate Activity code {#activity-code}
 
-
 In the Temporal Go SDK programming model, an Activity is an exportable function or a `struct` method.
 Below is an example of an Activity defined as a function.
 
 <!--SNIPSTART setup-chapter-activity-->
+
 [docs/tutorials/go/background-check/code/setup/activities/ssntraceactivity.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/activities/ssntraceactivity.go)
+
 ```go
 package activities
 
@@ -439,8 +441,8 @@ func SSNTraceActivity(ctx context.Context, param string) (*string, error) {
 	result := "pass"
 	return &result, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 The first parameter of an Activity Definition is `context.Context`.
@@ -462,7 +464,9 @@ To run a Worker Process with a local development server, define the following st
 In regards to organization, we recommend keeping Worker code separate from Workflow and Activity code.
 
 <!--SNIPSTART setup-chapter-worker-dev-->
+
 [docs/tutorials/go/background-check/code/setup/dev_server_worker/main.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/dev_server_worker/main.go)
+
 ```go
 package main
 
@@ -499,8 +503,8 @@ func main() {
 		log.Fatalln("Unable to start the Worker Process", err)
 	}
 }
-
 ```
+
 <!--SNIPEND-->
 
 :::info Auto restart worker when code changes
@@ -523,7 +527,9 @@ A Temporal Cloud Worker requires that you specify the following in the Client co
 - Certificate and private key associated with the Namespace
 
 <!--SNIPSTART setup-chapter-worker-cloud-->
+
 [docs/tutorials/go/background-check/code/setup/cloud_worker/main.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/cloud_worker/main.go)
+
 ```go
 package main
 
@@ -584,19 +590,19 @@ func main() {
 		log.Fatalln("Unable to start the Worker Process", err)
 	}
 }
-
 ```
+
 <!--SNIPEND-->
 
- To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
- You'll use:
- 
- - The [Temporal Cloud Namespace Id](https://docs.temporal.io/cloud/namespaces#temporal-cloud-namespace-id).
- - The [Namespace's gRPC endpoint](https://docs.temporal.io/cloud/namespaces#temporal-cloud-grpc-endpoint).
- The endpoint uses this format `(namespace.unique_id.tmprl.cloud:port)`.
- - [Paths to the SSL certificate (.pem) and private key (.key)](https://docs.temporal.io/cloud/saml#integrate-saml-with-your-temporal-cloud-account) registered to your Namespace and stored on your Worker's file system.
- 
- Copy the Namespace Id and the gRPC endpoint from the Namespace detail Web page on [Temporal Cloud Namespaces](https://cloud.temporal.io/namespaces). Click on a Namespace name to open the Namespace details.
+To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
+You'll use:
+
+- The [Temporal Cloud Namespace Id](https://docs.temporal.io/cloud/namespaces#temporal-cloud-namespace-id).
+- The [Namespace's gRPC endpoint](https://docs.temporal.io/cloud/namespaces#temporal-cloud-grpc-endpoint).
+  The endpoint uses this format `(namespace.unique_id.tmprl.cloud:port)`.
+- [Paths to the SSL certificate (.pem) and private key (.key)](https://docs.temporal.io/cloud/saml#integrate-saml-with-your-temporal-cloud-account) registered to your Namespace and stored on your Worker's file system.
+
+Copy the Namespace Id and the gRPC endpoint from the Namespace detail Web page on [Temporal Cloud Namespaces](https://cloud.temporal.io/namespaces). Click on a Namespace name to open the Namespace details.
 
 ### Run a Self-hosted Worker {#dockerfile}
 
@@ -667,7 +673,9 @@ Copy the IP address part.
 Set IP address, port, and Namespace in the Temporal Client options.
 
 <!--SNIPSTART setup-chapter-worker-self-hosted-->
+
 [docs/tutorials/go/background-check/code/setup/self_hosted_worker/main.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/self_hosted_worker/main.go)
+
 ```go
 package main
 
@@ -709,8 +717,8 @@ func main() {
 		log.Fatalln("Unable to start the Worker Process", err)
 	}
 }
-
 ```
+
 <!--SNIPEND-->
 
 #### Build and deploy Docker image {#dockerfile}
@@ -932,14 +940,15 @@ You should now be at [http://localhost:8080/namespaces/backgroundcheck_namespace
 
 ## Add a testing framework {#test-framework}
 
-
 **How to add a Testing Framework and Tests for the Workflow and Activity.**
 
 Each Temporal SDK has a testing suite that can be used in conjunction with a typical language specific testing framework.
-In the Temporal Go SDK, the `testsuite` package (https://pkg.go.dev/go.temporal.io/sdk/testsuite)  provides a test environment in which the Workflow and Activity code may be run for test purposes.
+In the Temporal Go SDK, the `testsuite` package (https://pkg.go.dev/go.temporal.io/sdk/testsuite) provides a test environment in which the Workflow and Activity code may be run for test purposes.
 
 <!--SNIPSTART setup-chapter-test-framework-->
+
 [docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go)
+
 ```go
 package setup
 
@@ -967,15 +976,14 @@ func Test_BackgroundCheckApplication(t *testing.T) {
 	s := &UnitTestSuite{}
 	suite.Run(t, s)
 }
-
 ```
+
 <!--SNIPEND-->
 
 In this example, we use a custom struct that absorbs both the testing functionality from testify (https://pkg.go.dev/github.com/stretchr/testify/suite) via `suite.Suite` and the testing functionality from the Temporal test framework via `testsuite.WorkflowTestSuite`.
 Next we create a regular test function recognized by the `go test` command, and pass an instance of the struct to `suite.Run`.
 
 ### Add Workflow function tests {#test-workflow-code}
-
 
 We can test Workflow code for the following conditions:
 
@@ -987,9 +995,10 @@ We can test Workflow code for the following conditions:
 We can also perform a Workflow Replay test, and we'll provide detailed coverage of this topic in another section.
 
 <!--SNIPSTART setup-chapter-test-workflow-->
-[docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go)
-```go
 
+[docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go)
+
+```go
 const ssn string = "555-55-5555"
 
 // Test_BackgroundCheckWorkflow tests the BackgroundCheck Workflow function
@@ -1013,8 +1022,8 @@ func (s *UnitTestSuite) Test_BackgroundCheckWorkflow() {
 	s.NoError(env.GetWorkflowResult(&result))
 	s.Equal(result, ssnTraceResult)
 }
-
 ```
+
 <!--SNIPEND-->
 
 Calling `env.ExecuteWorkflow(...)` executes the Workflow logic and any invoked Activities inside the test process.
@@ -1036,9 +1045,10 @@ We can test Activity code for the following conditions:
 - Activity return values. Check to ensure the return value is expected.
 
 <!--SNIPSTART setup-chapter-test-activity-->
-[docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go)
-```go
 
+[docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/setup/tests/backgroundcheckboilerplate_test.go)
+
+```go
 // Test_SSNTraceActivity tests the SSNTraceActivity function
 func (s *UnitTestSuite) Test_SSNTraceActivity() {
 	// Create a test environment
@@ -1055,6 +1065,6 @@ func (s *UnitTestSuite) Test_SSNTraceActivity() {
 	// Check for the expected return value.
 	s.Equal("pass", result)
 }
-
 ```
+
 <!--SNIPEND-->

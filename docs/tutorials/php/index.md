@@ -2,7 +2,7 @@
 title: "PHP tutorials"
 sidebar_position: 4
 keywords: [PHP,tutorial,temporal,workflows,laravel,roadrunner]
-description: "Build Temporal applications with these PHP tutorials"
+description: "Build Temporal applications with these PHP tutorials. Get started today."
 image: /img/temporal-logo-twitter-card.png
 ---
 
