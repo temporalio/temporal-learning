@@ -37,4 +37,4 @@ To be successful in this course, you should have an understanding of the fundame
 
 Since code used in examples and exercises are written in Go, you must also have at least basic proficiency with the Go programming language.
 
- <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:246">Go to Course</a> 
+ <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:246">Go to Course</a>

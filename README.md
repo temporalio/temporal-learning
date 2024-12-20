@@ -47,6 +47,10 @@ TypeScript code gets transpiled to JavaScript code during the build process. Any
 
 As a result, all code you include needs to be complete, or the site will fail to build.
 
+## dprint
+
+Consider running `yarn format` after the Snipsync toolchain or after making other edits. This runs `dprint` using the same configuration as the documentation repo, and should take care of dedenting and other formatting issues.
+
 ## Run the development server
 
 To preview the site, run the local server with the following command:

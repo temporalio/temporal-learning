@@ -19,6 +19,8 @@ Check out [our first Zine](../../static/zines/zines.pdf), a comic that delves in
 
 Whether you're an engineer, someone without a technical background, or just curious about durable execution, our Zine offers an engaging way to learn about Temporal. 
 
-[**Zine (PDF)**](../../static/zines/zines.pdf)
+* [**What is Durabel Execution Zine (PDF)**](../../static/zines/zines.pdf)
+    * _Authors_: Mason Egger, Angela Zhou
+    * _Illustrator_: Ash Ramos
 
-And, we have plans for future Zines as well!
+Check back soon for new Zines!

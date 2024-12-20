@@ -37,7 +37,6 @@ tags:
 - timer
 ---
 
-
 When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](https://docs.temporal.io/dev-guide/sdks#replays) a Workflow Execution is a major aspect of that.
 This chapter introduces the development patterns which enable that.
 
@@ -140,7 +139,6 @@ From the Workflow details page you can copy the Event History from the JSON tab 
 
 ## Add a Replay test {#add-replay-test}
 
-
 Add the Replay test to the set of application tests.
 The Replayer is available from the `go.temporal.io/sdk/worker` package in the SDK.
 Register the Workflow Definition and then specify an existing Event History to compare to.
@@ -149,9 +147,10 @@ Run the tests in the test directory (`go test`).
 If the Workflow Definition and the Event History are incompatible then the test fails.
 
 <!--SNIPSTART go-durability-chapter-replay-test-->
-[docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
-```go
 
+[docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/tests/backgroundcheck_test.go)
+
+```go
 // TestReplayWorkflowHistoryFromFile tests for Event History compatibility.
 func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {
 	// Create a new Replayer
@@ -163,8 +162,8 @@ func (s *UnitTestSuite) TestReplayWorkflowHistoryFromFile() {
 	err := replayer.ReplayWorkflowHistoryFromJSONFile(nil, "backgroundcheck_workflow_event_history.json")
 	s.NoError(err)
 }
-
 ```
+
 <!--SNIPEND-->
 
 ### Why add a Replay test? {#why-replay-test}
@@ -184,7 +183,6 @@ Workflow code becomes non-deterministic primarily through two main avenues:
 
 ## Intrinsic non-deterministic logic {#intrinsic-non-deterministic-logic}
 
-
 Referred to as "intrinsic non-determinism" this kind of "bad" Workflow code can prevent the Workflow code from completing because the Workflow can take a different code path than the one expected from the Event History.
 
 The following are some common operations that **can't** be done inside of a Workflow Definition:
@@ -196,10 +194,10 @@ The following are some common operations that **can't** be done inside of a Work
   - Use `workflow.Now()` as a replacement for `time.Now()`.
   - Use `workflow.Sleep()` as a replacement for `time.Sleep()`.
 - Working directly with threads or goroutines.
-	- Use `workflow.Go()` as a replacement for the `go` statement.
-    - Use `workflow.Channel()` as a replacement for the native `chan` type.
-	Temporal provides support for both buffered and unbuffered channels.
-	- Use `workflow.Selector()` as a replacement for the `select` statement.
+  - Use `workflow.Go()` as a replacement for the `go` statement.
+  - Use `workflow.Channel()` as a replacement for the native `chan` type.
+    Temporal provides support for both buffered and unbuffered channels.
+  - Use `workflow.Selector()` as a replacement for the `select` statement.
 - Iterating over data structures with unknown ordering.
   This includes iterating over maps using `range`, because with `range` the order of the map's iteration is randomized.
   Instead you can collect the keys of the map, sort them, and then iterate over the sorted keys to access the map.
@@ -210,7 +208,9 @@ The following are some common operations that **can't** be done inside of a Work
 One way to produce a non-deterministic error is to use a random number to determine whether to sleep inside the Workflow.
 
 <!--SNIPSTART go-durability-chapter-non-deterministic-workflow-->
+
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck_non_deterministic_code.go)
+
 ```go
 // CAUTION! Do not use this code!
 package workflows
@@ -247,8 +247,8 @@ func BackgroundCheckNonDeterministic(ctx workflow.Context, param string) (string
 	}
 	return ssnTraceResult, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 If you run the BackgroundCheckNonDeterministic Workflow enough times, eventually you will see a Workflow Task failure.
@@ -391,7 +391,6 @@ The [Event reference](https://docs.temporal.io/references/events) serves as a so
 
 ### Add a call to sleep {#add-sleep-call}
 
-
 In the following sample, we add a couple of logging statements and a Timer to the Workflow code to see how this affects the Event History.
 
 Use the `workflow.Sleep()` API to cause the Workflow to sleep for a minute before the call to execute the Activity.
@@ -400,7 +399,9 @@ The Temporal SDK offers both a `workflow.StartTimer()` API, and a `workflow.Slee
 Use the `workflow.GetLogger` API to log from Workflows to avoid seeing repeated logs from the Replay of the Workflow code.
 
 <!--SNIPSTART go-durability-chapter-workflow-->
+
 [docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/go/background-check/code/durability/workflows/backgroundcheck.go)
+
 ```go
 package workflows
 
@@ -438,12 +439,11 @@ func BackgroundCheck(ctx workflow.Context, param string) (string, error) {
 	// Make the results of the Workflow available
 	return ssnTraceResult, nil
 }
-
 ```
+
 <!--SNIPEND-->
 
 ### Inspect the new Event History {#inspect-new-event-history}
-
 
 After updating your Workflow code to include the logging and Timer, run your tests again.
 You should expect to see the `TestReplayWorkflowHistoryFromFile` test fail.
@@ -484,4 +484,3 @@ The following are a few examples of changes that do not lead to non-deterministi
 - Modifying non-Command generating statements in a Workflow Definition, such as logging statements
 - Changing attributes in the `ActivityOptions`
 - Modifying code inside of an Activity Definition
-
