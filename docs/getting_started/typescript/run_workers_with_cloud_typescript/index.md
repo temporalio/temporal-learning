@@ -2,7 +2,7 @@
 title: Run Workers with Temporal Cloud for the TypeScript SDK
 id: run-workers-with-cloud-typescript
 sidebar_position: 4
-description: In this tutorial, you'll learn how to migrate your TypeScript application from a local Temporal Server to a managed Temporal Cloud environment, leveraging the benefits of a scalable and reliable platform for running your Workflows and Activities.
+description: In this tutorial, you'll migrate your TypeScript application from a local Temporal Server to a managed Temporal Cloud environment, leveraging the benefits of a scalable and reliable platform for running your Workflows and Activities.
 keywords: [typescript, temporal, sdk, tutorial, example, workflow, worker, getting started, temporal cloud, managed service, migrating]
 tags: [TypeScript, SDK, Temporal Cloud]
 last_update:
