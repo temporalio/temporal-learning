@@ -27,6 +27,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 <Link className="button button--primary" to="typescript/dev_environment/">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python/dev_environment/">Python</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/dev_environment/">.NET</Link>&nbsp;
+<Link className="button button--primary" to="php/dev_environment/">PHP</Link>&nbsp;
 
 ----
 
@@ -41,6 +42,7 @@ Download and run a small application and explore how Temporal executes Workflows
 <Link className="button button--primary" to="typescript/first_program_in_typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python/first_program_in_python">Python</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/first_program_in_dotnet">.NET</Link>&nbsp;
+<Link className="button button--primary" to="php/hello_world_in_php">PHP</Link>&nbsp;
 
 -----
 
