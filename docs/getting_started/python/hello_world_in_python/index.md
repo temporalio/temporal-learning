@@ -164,7 +164,7 @@ You can pass multiple inputs to a Workflow, but it's a good practice to send a s
 
 :::
 
-The method calls the `workflow.execute_activty` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Start-To-Close Timeout](https://docs.temporal.io/activities#start-to-close-timeout) or [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout).
+The method calls the `workflow.execute_activity` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Start-To-Close Timeout](https://docs.temporal.io/activities#start-to-close-timeout) or [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout).
 
 Finally, the `run` method returns the result of the Activity Execution.
 
