@@ -307,7 +307,7 @@ In this tutorial, the file `client.ts` contains a program that connects to the T
 <!--SNIPSTART money-transfer-project-template-ts-start-workflow-->
 [src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/client.ts)
 ```ts
-import { Connection, WorkflowClient } from '@temporalio/client';
+import { Connection, Client } from '@temporalio/client';
 import { moneyTransfer } from './workflows';
 import type { PaymentDetails } from './shared';
 
@@ -315,7 +315,7 @@ import { namespace, taskQueueName } from './shared';
 
 async function run() {
   const connection = await Connection.connect();
-  const client = new WorkflowClient({ connection, namespace });
+  const client = new Client({ connection, namespace });
 
   const details: PaymentDetails = {
     amount: 400,
@@ -328,7 +328,7 @@ async function run() {
     `Starting transfer from account ${details.sourceAccount} to account ${details.targetAccount} for $${details.amount}`
   );
 
-  const handle = await client.start(moneyTransfer, {
+  const handle = await client.workflow.start(moneyTransfer, {
     args: [details],
     taskQueue: taskQueueName,
     workflowId: 'pay-invoice-801',
