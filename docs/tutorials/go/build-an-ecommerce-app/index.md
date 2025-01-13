@@ -358,7 +358,7 @@ func (a *Activities) CreateStripeCharge(_ context.Context, cart CartState) error
 ```
 
 With this, you're almost done creating your application.
-You're just missing a couple of essential Temporal application components -- a Worker and a Stater.
+You're just missing a couple of essential Temporal application components -- a Worker and a Starter.
 
 ## Define a Worker and a Starter 
 
