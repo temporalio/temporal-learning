@@ -9,7 +9,7 @@ description: "In this course, you’ll expand your ability to write dynamic Work
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2024-10-28
+  date: 2025-01-27
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -34,4 +34,4 @@ When you've completed the course, you'll be able to:
 <Link className="button button--primary" to="java">Java</Link>&nbsp;
 <Link className="button button--primary" to="python">Python</Link>&nbsp;
 <Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
-
+<Link className="button button--primary" to="dotnet">.NET</Link>&nbsp;
