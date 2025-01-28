@@ -41,7 +41,7 @@ const config = {
     announcementBar: {
       id: "replay_announcement",
       content:
-        'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024"> <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">Secure your ticket</a>.',
+        'Replay is coming to London, March 3-5! <a href="https://www.eventbrite.com/e/replay-conference-2025-tickets-1045108576887">Secure your ticket</a>',
       backgroundColor: "#141414",
       textColor: "#ffffff",
       isCloseable: true,
@@ -164,7 +164,7 @@ const config = {
             },
             {
               label: "Newsletter Signup",
-              href: "https://temporal.us17.list-manage.com/subscribe/post?u=2334a0f23e55fd1840613755d&id=3475f910fc",
+              href: "https://pages.temporal.io/newsletter-subscribe",
             },
           ],
         },

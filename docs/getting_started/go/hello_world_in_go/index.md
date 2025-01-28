@@ -5,13 +5,13 @@ sidebar_position: 3
 description: In this tutorial you will build a Temporal Application using the Go SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 keywords: [golang,go,temporal,sdk,tutorial, hello world, temporal application, workflow, activity]
 last_update:
-  date: 2023-03-03
+  author: Brian P. Hogan
+  date: 2024-12-17
 tags:
   - go
   - sdk
   - tutorial
 image: /img/temporal-logo-twitter-card.png
-pagination_next: courses/temporal_101/go
 ---
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)
@@ -19,61 +19,62 @@ pagination_next: courses/temporal_101/go
 :::note Tutorial information
 
 - **Level:** ⭐ Temporal beginner
-- **Time:** ⏱️ ~10 minutes
+- **Time:** ⏱️ ~15 minutes
 - **Goals:** 🙌
   - Set up, build, and test a Temporal Application project from scratch using the [Go SDK](https://github.com/temporalio/sdk-go).
-  - Identify the four parts of a Temporal Application.
+  - Identify the four parts of a Temporal Workflow application.
   - Describe how the Temporal Server gets information to the Worker.
-  - Explain how to define Workflow Definitions with the Temporal Go SDK.
+  - Observe how Temporal recovers from failed Activities.
 
 :::
 
-
 ### Introduction
 
-Creating reliable applications is a difficult task.  [Temporal](https://temporal.io) lets you create fault-tolerant resilient applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
+Creating reliable applications is a difficult chore. [Temporal](https://temporal.io/) lets you create fault-tolerant, resilient applications using programming languages you already know, so you can build complex applications that execute reliably and recover from failures.
 
-In this tutorial, you will build your first [Temporal Application](https://docs.temporal.io/temporal#temporal-application) from scratch using the [Temporal Go SDK](https://github.com/temporalio/go-sdk). The Temporal Application will consist of the following pieces:
+In this tutorial, you will build your first Temporal Application from scratch using the [Temporal Go SDK](https://github.com/temporalio/sdk-go). You'll develop a small application that asks for your name and then uses APIs to get your public IP address and your location based on that address. External requests can fail due to rate limiting, network interruptions, or other errors. Using Temporal for this application will let you automatically recover from these and other kinds of failures without having to write explicit error-handling code.
 
-1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application and represent the orchestration aspect of the business logic.
-2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
-3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
-4. An initiator: To start a Workflow, you need to send a message to the Temporal server to tell it to track the state of the Workflow. You'll write a separate program to do this.
+The app will consist of the following pieces:
 
-You'll also write a unit test to ensure your Workflow executes successfully.
+1. Two [Activities](https://docs.temporal.io/activities): Activities are functions called by Workflows, and they contain any logic that might fail or behave differently at different times. The first Activity will get your IP address, and the second Activity will use that IP address to get your location.
 
-When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal Applications.
+1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.  Your Workflow will execute both Activities you define. It will call the first Activity to fetch the IP address, and then use the result of that Activity to call the next Activity to find your location.
+2. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
+3. A client program: You'll need to start your Worfklow. In this tutorial you'll create a small program using the [Temporal Client](https://docs.temporal.io/encyclopedia/temporal-sdks#temporal-client) to start the Workflow.
 
-The code in this tutorial is available in the [hello-world Go template](https://github.com/temporalio/hello-world-project-template-go) repository.
+You'll also write tests to ensure your Workflow executes successfully.
+
+When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications in Go.
 
 ## Prerequisites
 
 Before starting this tutorial:
 
-- [Set up a local development environment for developing Temporal Applications using the Go programming language](/getting_started/go/dev_environment/index.md)
-- Follow the tutorial [Run your first Temporal application with the Go SDK](/getting_started/go/first_program_in_go/index.md) to gain a better understanding of what Temporal is and how its components fit together.
+- [Set up a local development environment for developing Temporal applications using Go](https://learn.temporal.io/getting_started/go/dev_environment/)
+  - Ensure that the Temporal Service is running in a terminal on your local machine and that you can access the Temporal Web UI. In this tutorial you'll use port `8233` for the Web UI, which is the default port.
 
-## ![](/img/icons/harbor-crane.png) Create a new Go project
+- Follow the tutorial [Run your first Temporal application with the Go SDK](https://learn.temporal.io/getting_started/go/first_program_in_go/) to gain a better understanding of what Temporal is and how its components fit together.
+
+## Create a New Temporal Go Project
 
 To get started with the Temporal Go SDK, you'll create a new Go project and initialize it as a module, just like any other Go program you're creating. Then you'll add the Temporal SDK package to your project.
 
 In a terminal, create a new project directory called `hello-world-temporal`:
 
 ```command
-mkdir hello-world-temporal
+mkdir temporal-ip-geolocation
 ```
 
 Switch to the new directory:
 
 ```command
-cd hello-world-temporal
+cd temporal-ip-geolocation
 ```
 
-From the root of your new project directory, initialize a new Go module. Make sure the module path (for example, `hello-world-temporal`) matches that of the directory in which you are creating the module. 
-
+From the root of your new project directory, initialize a new Go module. Make sure the module path (for example, `temporal-ip-geolocation`) matches that of the directory in which you are creating the module.
 
 ```command
-go mod init hello-world-temporal/app
+go mod init temporal-ip-geolocation/iplocate
 ```
 
 Then add the Temporal Go SDK as a project dependency:
@@ -84,193 +85,245 @@ go get go.temporal.io/sdk
 
 You'll see the following output, indicating that the SDK is now a project dependency:
 
+```output
+go: downloading go.temporal.io/sdk v1.31.0
+go: added go.temporal.io/sdk v1.31.0
 ```
-go: added go.temporal.io/sdk v1.17.0
+
+With the project created, you'll create the application's core logic.
+
+## Write functions to call external services
+
+Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information.
+
+You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
+
+If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
+
+Create the file `activities.go` in your project root:
+
+```command
+touch activities.go
 ```
 
-With your project workspace configured, you're ready to create your first Temporal Activity and Workflow. You'll start with the Workflow.
+Open the file `activities.go` in your editor and add the following code that imports dependencies and defines a struct to hold the Activities:
 
-## Create a Workflow
 
-Workflows are where you configure and organize the execution of Activities. You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*. 
-
-In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
-
-Create the file `workflow.go` in the root of your project and add the following code to create a `GreetingWorkflow` function to define the Workflow:
-
-<!--SNIPSTART hello-world-project-template-go-workflow-->
-[workflow.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/workflow.go)
+<!--SNIPSTART go-ipgeo-activity-setup-->
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
 ```go
-package app
-
-import (
-	"time"
-
-	"go.temporal.io/sdk/workflow"
-)
-
-func GreetingWorkflow(ctx workflow.Context, name string) (string, error) {
-	options := workflow.ActivityOptions{
-		StartToCloseTimeout: time.Second * 5,
-	}
-
-	ctx = workflow.WithActivityOptions(ctx, options)
-
-	var result string
-	err := workflow.ExecuteActivity(ctx, ComposeGreeting, name).Get(ctx, &result)
-
-	return result, err
-}
-
-```
-<!--SNIPEND-->
-
-The `GreetingWorkflow` function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
-
-:::tip
-
-You can pass multiple inputs to a Workflow, but it's a good practice to send a single input. If you have several values you want to send, you should define a Struct and pass that into the Workflow instead.
-
-:::
-
-The function defines the options to execute an Activity, and then executes an Activity called `ComposeGreeting`, which you'll define next. The function returns the result of the Activity.
-
-With your Workflow Definition created, you're ready to create the `ComposeGreeting` Activity.
-
-## Create an Activity
-
-In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
-
-For this tutorial, your Activity won't be complex; you'll create an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
-
-With the Temporal Go SDK, you define Activities similarly to how you define Workflows: using a regular exportable Go function.
-
-Create the file `activity.go` in the project root and add the following code to define a `ComposeGreeting` function:
-
-<!--SNIPSTART hello-world-project-template-go-activity-->
-[activity.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/activity.go)
-```go
-package app
+package iplocate
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
 )
 
-func ComposeGreeting(ctx context.Context, name string) (string, error) {
-	greeting := fmt.Sprintf("Hello %s!", name)
-	return greeting, nil
+type HTTPGetter interface {
+	Get(url string) (*http.Response, error)
+}
+
+type IPActivities struct {
+	HTTPClient HTTPGetter
 }
 
 ```
 <!--SNIPEND-->
 
-The `ComposeGreeting` Activity Definition also accepts a `Context` . This parameter is optional for Activity Definitions, but it's recommended because you may need it for other Go SDK features as your application evolves.
+With the Go SDK, you can define Activities as regular Go functions. You can also create them as members of a struct, which is necessary to pass shared objects like database connections. In this tutorial you'll pass an HTTP client into the struct. This will let you stub out the HTTP client implementation when you write tests for your Activities later.
 
-The logic within the `ComposeGreeting` function creates the string and returns the greeting, along with `nil` for the error. In a more complex case, you can return an error from your Activity and then configure your Workflow to handle the error.
+Now add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
-Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/dev-guide/go/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
-
-Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a struct rather than sending multiple input parameters. This will make future updates easier.
-
-
-You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
-
-## ![](/img/icons/check.png) Add a unit test
-
-The Temporal Go SDK includes functions that help you test your Workflow executions. Let's add a basic unit test to the application to make sure the Workflow works as expected. 
-
-You'll use the [testify](https://github.com/stretchr/testify) package to build your test cases and mock the Activity so you can test the Workflow in isolation.
-
-
-Add the required `testify` packages to your project by running the following commands in your terminal:
-
-```command
-go get github.com/stretchr/testify/mock
-```
-```command
-go get github.com/stretchr/testify/require
-```
-```command
-go mod tidy
-```
-
-Now create the file  `workflow_test.go` and add the following code to the file to define the Workflow test:
-
-
-<!--SNIPSTART hello-world-project-template-go-workflow-test-->
-[workflow_test.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/workflow_test.go)
+<!--SNIPSTART go-ipgeo-activity-ip-->
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
 ```go
-package app
+// GetIP fetches the public IP address.
+func (i *IPActivities) GetIP(ctx context.Context) (string, error) {
+	resp, err := i.HTTPClient.Get("https://icanhazip.com")
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	ip := strings.TrimSpace(string(body))
+	return ip, nil
+}
+
+```
+<!--SNIPEND-->
+
+With the Temporal Go SDK, both Activities and Workflows expect a Go `context` as their first argument. This argument is necessary to enable a number of other SDK features.
+
+Like other Go functions, Activities should return an `error` as one of their arguments, so it can be checked after the Activity completes. This is because Go does not use a `try`/`catch` construct like other languages.
+
+The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
+
+Notice that there's no error-handling code in this function. When you build your Workflow, you'll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
+
+Now add the second Activity that accepts an IP address and retrieves location data. In `activities.go`, add the following code to define it:
+
+<!--SNIPSTART go-ipgeo-activity-location-->
+[activities.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities.go)
+```go
+// GetLocationInfo uses the IP address to fetch location information.
+func (i *IPActivities) GetLocationInfo(ctx context.Context, ip string) (string, error) {
+	url := fmt.Sprintf("http://ip-api.com/json/%s", ip)
+	resp, err := i.HTTPClient.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var data struct {
+		City       string `json:"city"`
+		RegionName string `json:"regionName"`
+		Country    string `json:"country"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s, %s, %s", data.City, data.RegionName, data.Country), nil
+}
+
+```
+<!--SNIPEND-->
+
+This Activity follows the same pattern as the `getIP` Activity.  This time, the service returns JSON data rather than text, so you have to define a type to unmarshal the data.
+
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. This is because later revisions to your Workflows and Activities that change the number of arguments sent to them can otherwise introduce the need for versioning. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details.
+
+You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
+
+## Control application logic with a Workflow
+
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs.
+
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. Review the [Develop Workflows](https://docs.temporal.io/develop/go/core-application#develop-workflows) section of the Temporal documentation for more about Workflows in Go.
+
+Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
+
+Create the file `workflows.go` in the root of your project:
+
+```command
+touch workflows.go
+```
+
+Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
+
+<!--SNIPSTART go-ipgeo-workflow-imports-->
+[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows.go)
+```go
+package iplocate
 
 import (
-	"testing"
+	"fmt"
+	"time"
 
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
-	"go.temporal.io/sdk/testsuite"
+	"go.temporal.io/sdk/temporal"
+	"go.temporal.io/sdk/workflow"
 )
 
-func Test_Workflow(t *testing.T) {
-	// Set up the test suite and testing execution environment
-	testSuite := &testsuite.WorkflowTestSuite{}
-	env := testSuite.NewTestWorkflowEnvironment()
+```
+<!--SNIPEND-->
 
-	// Mock activity implementation
-	env.OnActivity(ComposeGreeting, mock.Anything, "World").Return("Hello World!", nil)
 
-	env.ExecuteWorkflow(GreetingWorkflow, "World")
-	require.True(t, env.IsWorkflowCompleted())
-	require.NoError(t, env.GetWorkflowError())
+With the imports and options in place, you can define the Workflow itself.
 
-	var greeting string
-	require.NoError(t, env.GetWorkflowResult(&greeting))
-	require.Equal(t, "Hello World!", greeting)
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
+
+Add the following code to define the `GetAddressFromIP` Workflow, which will call both Activities, using the value of the first as the input to the second:
+
+<!--SNIPSTART go-ipgeo-workflow-code-->
+[workflows.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows.go)
+```go
+// GetAddressFromIP is the Temporal Workflow that retrieves the IP address and location info.
+func GetAddressFromIP(ctx workflow.Context, name string) (string, error) {
+	// Define the activity options, including the retry policy
+	ao := workflow.ActivityOptions{
+		StartToCloseTimeout: time.Minute,
+		RetryPolicy: &temporal.RetryPolicy{
+			InitialInterval:    time.Second, //amount of time that must elapse before the first retry occurs
+			MaximumInterval:    time.Minute, //maximum interval between retries
+			BackoffCoefficient: 2,           //how much the retry interval increases
+			// MaximumAttempts: 5, // Uncomment this if you want to limit attempts
+		},
+	}
+	ctx = workflow.WithActivityOptions(ctx, ao)
+
+	var ipActivities *IPActivities
+
+	var ip string
+	err := workflow.ExecuteActivity(ctx, ipActivities.GetIP).Get(ctx, &ip)
+	if err != nil {
+		return "", fmt.Errorf("Failed to get IP: %s", err)
+	}
+
+	var location string
+	err = workflow.ExecuteActivity(ctx, ipActivities.GetLocationInfo, ip).Get(ctx, &location)
+	if err != nil {
+		return "", fmt.Errorf("Failed to get location: %s", err)
+	}
+	return fmt.Sprintf("Hello, %s. Your IP is %s and your location is %s", name, ip, location), nil
 }
 
 ```
 <!--SNIPEND-->
 
-This test creates a test execution environment and then mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+The function accepts a `workflow.Context` and a string value that holds the name. It returns a string value and an error, which follows the conventions you'll find in other Go programs.  Like with Activities, you can send multiple inputs into a Workflow, but it's a good practice to combine those into a struct.
 
-Run the following command from the project root to execute the unit tests:
+In this example, you have specified that the Start-to-Close Timeout for your Activities will be one minute, meaning that your Activity has one minute to complete before it times out. Of all the Temporal timeout options, `StartToCloseTimeout` is the one you should always set.
+
+You also set the Retry Policy for Activities. In this example, you're using the default Retry Policy values, so you don't need to specify the values, but by leaving them in you have a more clear picture of what happens. Note that the `MaximumAttempts` is commented out, which means there's no limit to the number of times Temporal will retry your Activities if they fail.
+
+
+This code does check for and handle errors, but because you've configured unlimited retries, there won't be any exceptions caught. However, if you change the Retry Policy's maximum retries, or you specify non-retryable exceptions, this code will be in place to handle those errors.
+
+Next you'll create a Worker that executes the Workflow and Activities.
+
+## Configure and run a Worker
+
+When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History. This records the Workflow's entire execution, enabling features like fault tolerance by allowing the Workflow to replay in case of Worker crashes or restarts.
+
+You use the Temporal SDK to define a Worker Program.
+
+In your Worker Program, you need to specify the name of the Task Queue, which must match the Task Queue name used whenever you interact with a Workflow from a client application. This ensures that the Worker processes tasks for the correct Workflow. The Task Queue name is a case-insensitive string. To ensure consistency and avoid errors, define the Task Queue name as a constant that can be reused throughout your code.
+
+Create the file `shared.go`:
 
 ```command
-go test
+touch shared.go
 ```
 
-You'll see output similar to the following from your test run indicating that the test was successful:
+Open the file and add the following lines to the file to define the constant for the Task Queue:
 
-```
-2022/09/28 16:16:32 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType ComposeGreeting
-PASS
-ok      hello-world-temporal/app        0.197s
-```
-
-You have a working application and a test to ensure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
-
-## Configure a Worker
-
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Server.
-
-When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use. A Worker listens and polls on the Task Queue, looking for work to do.
-
-To configure a Worker process using the Go SDK, you create an instance of `Worker` and give it the name of the Task Queue to poll. 
-
-You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
-
-Since you'll use the Task Queue name in multiple places in your project, create the file `shared.go` and define the Task Queue name there:
-
-<!--SNIPSTART hello-world-project-template-go-shared-->
-[shared.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/shared.go)
+<!--SNIPSTART go-ipgeo-shared-->
+[shared.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/shared.go)
 ```go
-package app
+package iplocate
 
-const GreetingTaskQueue = "GREETING_TASK_QUEUE"
+const TaskQueueName = "ip-address-go"
+
 ```
 <!--SNIPEND-->
 
-Now you'll create the Worker process. In this tutorial you'll create a small standalone Worker program so you can see how all of the components work together. 
+Now you can create the Worker program.
 
 Create a new directory called `worker` which will hold the program you'll create:
 
@@ -278,203 +331,523 @@ Create a new directory called `worker` which will hold the program you'll create
 mkdir worker
 ```
 
-Then create the file `worker/main.go` and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
+Now create the file `main.go` in that directory:
 
-<!--SNIPSTART hello-world-project-template-go-worker-->
-[worker/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/worker/main.go)
+```command
+touch worker/main.go
+```
+
+Then open `worker/main.go` in your editor and add the following code to define the Worker program:
+
+<!--SNIPSTART go-ipgeo-worker-->
+[worker/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/worker/main.go)
 ```go
 package main
 
 import (
-	"hello-world-temporal/app"
 	"log"
+	"net/http"
+
+	"temporal-ip-geolocation/iplocate"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 )
 
 func main() {
-	// Create the client object just once per process
+	// Create the Temporal client
 	c, err := client.Dial(client.Options{})
 	if err != nil {
-		log.Fatalln("unable to create Temporal client", err)
+		log.Fatalln("Unable to create Temporal client", err)
 	}
 	defer c.Close()
 
-	// This worker hosts both Workflow and Activity functions
-	w := worker.New(c, app.GreetingTaskQueue, worker.Options{})
-	w.RegisterWorkflow(app.GreetingWorkflow)
-	w.RegisterActivity(app.ComposeGreeting)
+	// Create the Temporal worker
+	w := worker.New(c, iplocate.TaskQueueName, worker.Options{})
 
-	// Start listening to the Task Queue
+	// inject HTTP client into the Activities Struct
+	activities := &iplocate.IPActivities{
+		HTTPClient: http.DefaultClient,
+	}
+
+	// Register Workflow and Activities
+	w.RegisterWorkflow(iplocate.GetAddressFromIP)
+	w.RegisterActivity(activities)
+
+	// Start the Worker
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
-		log.Fatalln("unable to start Worker", err)
+		log.Fatalln("Unable to start Temporal worker", err)
 	}
 }
 
 ```
 <!--SNIPEND-->
 
-This program uses `client.Dial` to connect to the Temporal server, and then uses `worker.New` to instantiate the Worker. You register the Workflow and Activity with the Worker and then use `Run` to start the Worker.
+The code imports the `iplocate` package, which includes your Workflow and Activity Definitions. It then defines a `main` function that creates and runs a Worker.
 
-By default, the client connects to the Temporal Cluster running at `localhost` on port `7233`, and connects to the `default` namespace. You can change this by setting values in `client.Options`.
+You first create a client, and then you create a Worker that uses the client, along with the Task Queue it should listen on. By default, the client connects to the Temporal Cluster running at `localhost` on port `7233`, and connects to the `default` namespace. You can change this by setting values in `client.Options`.
 
-You've created a program that instantiates a Worker to process the Workflow. Now you need to start the Workflow.
+Then you register your Workflow and Activities with the Worker. Since you defined your Activities as a struct, you use that instead of referencing your Activities directly. This is also where you inject the HTTP client so your Activities can access it.
 
-## Write code to start a Workflow Execution
+In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
 
-You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK. In this tutorial, you'll use the Temporal SDK to start the Workflow, which is how most real-world applications work. 
-
-Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
-
-Create a new directory called `start` to hold the program:
+Now you'll start the Worker. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
 
 ```command
-mkdir start
+go run worker/main.go
 ```
 
-Then create the file `start/main.go` and add the following code to the file to connect to the server and start the Workflow:
+The Worker runs and you see the following output:
 
-<!--SNIPSTART hello-world-project-template-go-start-workflow-->
-[start/main.go](https://github.com/temporalio/hello-world-project-template-go/blob/main/start/main.go)
+```output
+2024/12/16 14:32:44 INFO  No logger configured for temporal client. Created default one.
+2024/12/16 14:32:44 INFO  Started Worker Namespace default TaskQueue ip-address-go WorkerID 31530@temporal-2.local@
+```
+
+Your Worker is running and is polling the Temporal Service for Workflows to run, but before you start your Workflow, you'll write tests to prove it works as expected.
+
+## Write tests to ensure things work
+
+The Temporal Go SDK includes functions that help you test your Workflow executions. Let's add a basic unit test to the application to make sure the Workflow works as expected.
+
+You'll use the [testify](https://github.com/stretchr/testify) package to build your test cases and mock the Activity so you can test the Workflow in isolation.
+
+Add the `testify/mock` and `testify/assert` packages to your project by running the following commands in your terminal:
+
+```command
+go get github.com/stretchr/testify/mock
+```
+
+```command
+go get github.com/stretchr/testify/assert
+```
+
+```command
+go mod tidy
+```
+
+Now create a file to hold the test for your Workflow. Create the file `workflows_test.go` in your project root:
+
+```command
+touch workflows_test.go
+```
+
+Add the following code to set up the testing environment:
+
+<!--SNIPSTART go-ipgeo-workflow-test-setup-->
+[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows_test.go)
+```go
+package iplocate_test
+
+import (
+	"testing"
+
+	"temporal-ip-geolocation/iplocate"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+
+	"go.temporal.io/sdk/testsuite"
+)
+
+```
+<!--SNIPEND-->
+
+Add the following code to test the Workflow execution:
+
+<!--SNIPSTART go-ipgeo-workflow-test-workflow-->
+[workflows_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/workflows_test.go)
+```go
+
+func Test_Workflow(t *testing.T) {
+	testSuite := &testsuite.WorkflowTestSuite{}
+	env := testSuite.NewTestWorkflowEnvironment()
+	activities := &iplocate.IPActivities{}
+
+	// Mock activity implementation
+	env.OnActivity(activities.GetIP, mock.Anything).Return("1.1.1.1", nil)
+	env.OnActivity(activities.GetLocationInfo, mock.Anything, "1.1.1.1").Return("Planet Earth", nil)
+
+	env.ExecuteWorkflow(iplocate.GetAddressFromIP, "Temporal")
+
+	var result string
+	assert.NoError(t, env.GetWorkflowResult(&result))
+	assert.Equal(t, "Hello, Temporal. Your IP is 1.1.1.1 and your location is Planet Earth", result)
+}
+
+```
+<!--SNIPEND-->
+
+This test creates a test execution environment to run the Workflow.
+
+Instead of using your actual Activities, you replace the Activities `getIP` and `getAddress` with mocks that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you would omit these mocks from the test.  Since each Activity accepts a `context` as its first argument, you use `mock.Anything` as a substitute for the context since it isn't required for this test.
+
+The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the test ensures the Workflow's return value returns the expected value.
+
+Ensure you've saved all your files and execute your tests with the following command:
+
+```command
+go test
+```
+
+The test environment starts, spins up a Worker, and executes the Workflow in the test environment. At the end, you'll see that your test passes:
+
+```output
+2024/12/17 10:25:15 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType GetIP
+2024/12/17 10:25:15 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 2 ActivityType GetLocationInfo
+PASS
+ok      iplocate        0.397s
+```
+
+With a Workflow test in place, you can write unit tests for the Activities.
+
+Both of your Activities make external calls to services that will change their results based on who runs them. It will be challenging to test these Activities reliably. For example, the IP address may vary based on your machine's location.
+
+To ensure you can test the Activities in isolation, you’ll stub out the HTTP calls.
+
+Create the file `activities_test.go`
+
+```command
+touch activities_test.go
+```
+
+Add the following code to import the testing libraries and Activities you'll use, and then define types for your mock HTTP client and mock response:
+
+<!--SNIPSTART go-ipgeo-activity-test-setup-->
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
+```go
+package iplocate_test
+
+import (
+	"io"
+	"net/http"
+	"strings"
+	"testing"
+
+	"temporal-ip-geolocation/iplocate"
+
+	"github.com/stretchr/testify/assert"
+	"go.temporal.io/sdk/testsuite"
+)
+
+type MockHTTPClient struct {
+	Response *http.Response
+	Err      error
+}
+
+func (m *MockHTTPClient) Get(url string) (*http.Response, error) {
+	return m.Response, m.Err
+}
+
+```
+<!--SNIPEND-->
+
+
+To ensure you don't make real HTTP requests, you define a mock HTTP client struct with a `Get` function. When you write your tests you'll inject this mocked client into the Activity so you can control the response.
+
+Next, write the test for the `getIP` Activity, using your mocked HTTP client to stub out actual HTTP calls so your tests are consistent. Notice that the mock response adds the newline character so it replicates the actual response:
+
+<!--SNIPSTART go-ipgeo-activity-test-ip-->
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
+```go
+// TestGetIP tests the GetIP activity with a mock server.
+func TestGetIP(t *testing.T) {
+	// set up test environment
+	testSuite := &testsuite.WorkflowTestSuite{}
+	env := testSuite.NewTestActivityEnvironment()
+
+	// Create a mock response that returns the fake IP address
+	mockResponse := &http.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(strings.NewReader("127.0.0.1\n")),
+	}
+
+	// load Activities and inject mock response
+	ipActivities := &iplocate.IPActivities{
+		HTTPClient: &MockHTTPClient{Response: mockResponse},
+	}
+	env.RegisterActivity(ipActivities)
+
+	// Call the GetIP function
+	val, err := env.ExecuteActivity(ipActivities.GetIP)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	// get the Activity result
+	var ip string
+	val.Get(&ip)
+
+	// Validate the returned IP
+	expectedIP := "127.0.0.1"
+	assert.Equal(t, ip, expectedIP)
+}
+
+```
+<!--SNIPEND-->
+
+Like in your Worker, you inject the HTTP client into the Activities struct and then register the Activities with the test environment.
+
+To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `getIP` function. You get the result from the Activity Execution and then ensure it matches the value you expect.
+
+To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
+
+<!--SNIPSTART go-ipgeo-activity-test-location-->
+[activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
+```go
+// TestGetLocationInfo tests the GetLocationInfo activity with a mock server.
+func TestGetLocationInfo(t *testing.T) {
+	// set up test environment
+	testSuite := &testsuite.WorkflowTestSuite{}
+	env := testSuite.NewTestActivityEnvironment()
+
+	mockResponse := &http.Response{
+		StatusCode: 200,
+		Body: io.NopCloser(strings.NewReader(`{
+            "city": "San Francisco",
+            "regionName": "California",
+            "country": "United States"
+        }`)),
+	}
+
+	ipActivities := &iplocate.IPActivities{
+		HTTPClient: &MockHTTPClient{Response: mockResponse},
+	}
+
+	env.RegisterActivity(ipActivities)
+
+	ip := "127.0.0.1"
+	val, err := env.ExecuteActivity(ipActivities.GetLocationInfo, ip)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	var location string
+	val.Get(&location)
+
+	expectedLocation := "San Francisco, California, United States"
+	assert.Equal(t, location, expectedLocation)
+}
+
+```
+<!--SNIPEND-->
+
+This test looks similar to the previous test; you mock out the HTTP client and ensure it returns the expected data, and then you execute the Actiity in the test environment. Then you retrieve the value and ensure it's what you expect.
+
+Run the tests again to see them pass. Use the `-V` option to see verbose output so you can see that all the tests ran:
+
+```command
+go test -v
+```
+
+```output
+=== RUN   TestGetIP
+--- PASS: TestGetIP (0.03s)
+=== RUN   TestGetLocationInfo
+--- PASS: TestGetLocationInfo (0.00s)
+=== RUN   Test_Workflow
+2024/12/17 10:31:07 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 1 ActivityType GetIP
+2024/12/17 10:31:07 DEBUG handleActivityResult: *workflowservice.RespondActivityTaskCompletedRequest. ActivityID 2 ActivityType GetLocationInfo
+--- PASS: Test_Workflow (0.00s)
+PASS
+ok      iplocate        0.395s
+```
+
+Now that you have your tests passing, it's time to start a Workflow Execution.
+
+## Run the Workflow from a client
+
+You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK.
+
+Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a small CLI program that runs your Temporal Workflow.
+
+Create a new directory called `client` to hold the program:
+
+```command
+mkdir client
+```
+
+Then create the file `client/main.go` :
+
+```command
+touch client/main.go
+```
+
+Open `client/main.go` in your editor and add the following code to the file to connect to the server and start the Workflow:
+
+<!--SNIPSTART go-ipgeo-cli-client-->
+[client/main.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/client/main.go)
 ```go
 package main
 
 import (
 	"context"
 	"fmt"
-	"hello-world-temporal/app"
 	"log"
+	"os"
 
+	"temporal-ip-geolocation/iplocate"
+
+	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
 
 func main() {
+	if len(os.Args) <= 1 {
+		log.Fatalln("Must specify a name as the command-line argument")
+	}
+	name := os.Args[1]
 
-	// Create the client object just once per process
 	c, err := client.Dial(client.Options{})
 	if err != nil {
-		log.Fatalln("unable to create Temporal client", err)
+		log.Fatalln("Unable to create client", err)
 	}
 	defer c.Close()
 
+	workflowID := "getAddressFromIP-" + uuid.New().String()
+
 	options := client.StartWorkflowOptions{
-		ID:        "greeting-workflow",
-		TaskQueue: app.GreetingTaskQueue,
+		ID:        workflowID,
+		TaskQueue: iplocate.TaskQueueName,
 	}
 
-	// Start the Workflow
-	name := "World"
-	we, err := c.ExecuteWorkflow(context.Background(), options, app.GreetingWorkflow, name)
+	we, err := c.ExecuteWorkflow(context.Background(), options, iplocate.GetAddressFromIP, name)
 	if err != nil {
-		log.Fatalln("unable to complete Workflow", err)
+		log.Fatalln("Unable to execute workflow", err)
 	}
 
-	// Get the results
-	var greeting string
-	err = we.Get(context.Background(), &greeting)
+	var result string
+	err = we.Get(context.Background(), &result)
 	if err != nil {
-		log.Fatalln("unable to get Workflow result", err)
+		log.Fatalln("Unable get workflow result", err)
 	}
 
-	printResults(greeting, we.GetID(), we.GetRunID())
-}
-
-func printResults(greeting string, workflowID, runID string) {
-	fmt.Printf("\nWorkflowID: %s RunID: %s\n", workflowID, runID)
-	fmt.Printf("\n%s\n\n", greeting)
+	fmt.Println(result)
 }
 
 ```
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses `client.Dial` to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/dev-guide/go/foundations/#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
+In the `main` function you check to see if there is at least one argument passed and then capture the user's name from the arguments.
 
-:::tip Specify a Workflow ID
+The `main` function then sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name`, and assigns the Workflow a unique identifier using a UUID. The client dispatches the Workflow on the same Task Queue that the Worker is polling on. That's why you used a constant to ensure the Task Queue name is consistent. If there's a mismatch, your Workflow will execute on a different Task Queue and there won't be any Workers polling for tasks.
 
-You don't need to specify a Workflow ID, as Temporal will generate one for you, but defining the Workflow ID yourself makes it easier for you to find it later in logs or interact with a running Workflow in the future. 
+:::note Specify a Workflow Id
 
-Using a Workflow ID that reflects some business process or entity is a good practice. For example, you might use a customer identifier or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all the Workflow Executions related to that customer later.
+A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all Workflow Executions related to that customer later.
 
+In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
 :::
 
-You can [get the results](https://docs.temporal.io/dev-guide/go/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling  `we.Get`, which blocks the program's execution until the Workflow Execution completes.
+You can [get the results](https://docs.temporal.io/dev-guide/go/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling `we.Get`, which blocks the program's execution until the Workflow Execution completes.
 
-You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
+Now you can run your Workflow. First, ensure that your local Temporal Service is running, and that your Worker program is running also.
 
-## ![](/img/icons/run.png) Run the application
+Then open a new terminal and switch to the project directory:
+
+```command
+cd temporal-ip-geolocation
+```
+
+Now run the following command to run the Workflow using the client program you wrote:
+
+```command
+go run client/main.go Brian
+```
+
+You'll see the following output:
+
+```output
+2024/12/17 10:43:15 INFO  No logger configured for temporal client. Created default one.
+Hello, Brian. Your IP is 198.51.100.23 and your location is Seattle, Washington, United States
+```
+
+:::tip
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
-First, ensure that your local Temporal Cluster is running. 
+:::
 
-To start the Worker, run this command from the project root:
+Your Temporal Application works. Now review it in the Temporal Web UI.
+
+## Exploring your application in the Web UI
+
+The Temporal Web UI gives you insights into your Workflow's execution. Open the Temporal Web UI by visiting `http://localhost:8233` and click on your completed Workflow to view the execution history. You'll see results similar to the following image:
+
+![The UI shows the results of the Workflow including the output](images/overview.png)
+
+You'll see the dates the Workflow Exeuction ran, how long it took to run, the input to the Workflow, and the result.
+
+After that, you see the Event History, detailing the entire flow, including the inputs and outputs of the Activity Executions:
+
+![The Workflow History showing all Activities and their results, oldest to newest.](images/history.png)
+
+The most recent event is at the top, so read the history from the bottom up to see each step in the process. Using this history, you can see exactly how your Workflow executed and pinpoint any places things might have gone wrong.
+
+Temporal stores the results of each Activity in this history, as you can see in the image. If there was a system crash between the `getIP` and `getLocationInfo` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `getIP` function, it would use the previous run's value and continue on. This prevents duplicate executions. By relying on the stored Event History, Temporal ensures that the Workflow can recover seamlessly, maintaining reliability and consistency even after a crash.
+
+In this application, this recovery isn't crucial. But imagine a situation where each Activity execution was a bank transaction. If a crash occurred between transactions, the Worker can pick up where the previous one failed. Nobody gets charged multiple times because something failed.
+
+Next, you'll explore how Temporal handles failed Activities.
+
+## Observe automatic retries
+
+When you developed your Activities, you didn't include any error-handling code. So if there's a problem making the request, the Workflow will handle the error using the Retry Policy.
+
+Test this out. Disconnect your local machine from the Internet by turning off your Wi-Fi connection or unplugging your network cable.
+
+Then, with the local Temporal Service running and your Worker running, switch to the Terminal window where you ran your Workflow and run it again:
 
 ```command
-go run worker/main.go
+go run client/main.go Brian
 ```
 
-You'll see output like the following in your terminal, indicating that the Worker has started and has connected to the Task Queue:
+This time you don't get a response.
 
-```
-2022/09/30 13:57:56 INFO  No logger configured for temporal client. Created default one.
-2022/09/30 13:57:56 INFO  Started Worker Namespace default TaskQueue GREETING_TASK_QUEUE WorkerID 45122@temporal.local@
-```
+Visit `http://localhost:8233` to open the Temporal Web UI and locate the Workflow Execution that's currently running. When you select it, you'll see something like the following image, indicating that there's a problem:
 
-Leave this program running.
+![The timeline shows the Activity failure](images/timeline_failed.png)
 
-To start the Workflow, open a new terminal window and switch to your project root:
+As you can see, the `getIP` Activity has failed and Temporal is retrying it. Scroll down to the Event History and you'll see the failure represented there:
 
-```command
-cd hello-world-temporal
-```
+![The Event History shows the failed Activity](images/history_failed.png)
+Select the **Pending Activity** item in the table to see why it failed and you'll see the stack trace:
 
-Then run `start/main.go` from the project root to start the Workflow Execution:
+![The Activity stack trace shows the error](images/activity_stack_trace.png)
 
-```command
-go run start/main.go
-```
+In the **Last Failure** field, you can see there was a TypeScript error indicating that `fetch` failed.
 
-The program runs and returns the result:
+Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
 
-```
-2022/09/30 14:00:07 INFO  No logger configured for temporal client. Created default one.
+![Once the network comes back the history updates and shows that things completed.](images/history_recovered.png)
 
-WorkflowID: greeting-workflow RunID: 0c189fd9-57aa-4155-8b1e-cd6c50cf1761
+If you return to your terminal where you launched the Workflow, you'll find your results there as well.
 
-Hello World!
-```
-
-Switch to the terminal window that's running the Worker and you'll see that its output updated to show that it executed the Workflow and the Activity:
-
-```
-2022/09/30 14:00:07 DEBUG ExecuteActivity Namespace default TaskQueue GREETING_TASK_QUEUE WorkerID 46038@temporal.local@ WorkflowType GreetingWorkflow WorkflowID greeting-workflow RunID 0c189fd9-57aa-4155-8b1e-cd6c50cf1761 Attempt 1 ActivityID 5 ActivityType ComposeGreeting
-
-```
-
-You can stop the Worker with `CTRL-C`.
-
-You have successfully built a Temporal application from scratch.
+You can recover from failures by letting Temporal handle them for you instead of writing complex error-handling logic. You can also decide that you only want to retry a fixed number of times, or that you only want to recover on certain kinds of errors.
 
 ## Conclusion
 
-You now know how to build a Temporal Workflow application using the Go SDK.
+In this tutorial you built your first Temporal Application. You used the Temporal Go SDK to build a resilient application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an internet connection to understand how Temporal recovers from failures like network outages.
+
+Take this application one step further and add a new Activity that gets the current weather for the location you found.
+
+Then [get your application working on Temporal Cloud](https://learn.temporal.io/getting_started/typescript/run_workers_with_cloud_typescript/).
 
 ### Review
 
-Answer the following questions to see if you remember some of the more important concepts from this tutorial:
+Answer the following questions to see whether you remember some important concepts from this tutorial:
 
 <details>
 <summary>
 
-**What are the minimum four pieces of a Temporal Workflow application?**
+**What are the four parts of a Temporal Workflow application?**
 
 </summary>
 
-1. An Activity function.
-2. A Workflow function.
-3. A Worker to host the Activity and Workflow code.
+1. A Workflow function.
+2. An Activity function.
+3. A Worker to host the Workflow and Activity code.
 4. Some way to start the Workflow.
 
 </details>
@@ -482,21 +855,10 @@ Answer the following questions to see if you remember some of the more important
 <details>
 <summary>
 
-**How does the Temporal server get information to the Worker?**
+**How does the Temporal Server get information to the Worker?**
 
 </summary>
 
-It adds the information to a Task Queue.
-
-</details>
-
-<details>
-<summary>
-
-**True or false, with the Temporal Go SDK, you define Activities and Workflows by writing Go functions?**
-
-</summary>
-
-True. Workflows and Activities are Go functions that must be exportable.
+The Temporal Server adds Tasks to a Task Queue, and the Worker polls the Task Queue.
 
 </details>

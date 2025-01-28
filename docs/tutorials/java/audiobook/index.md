@@ -5,7 +5,7 @@ tags: [Java, SDK]
 last_update:
   date: 2024-07-16
 title: Create audiobooks from text with OpenAI and Java
-description: Learn to build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
+description: Build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
 sidebar_label: Create audiobooks from text with OpenAI and Java
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -69,6 +69,8 @@ This approach isn't durable so you wouldn't develop durable software with them.
 Durable execution refers to maintaining state and progress even in the face of failures, crashes, or server outages. 
 For durable execution, you must be able to rebuild progress state and store information somewhere more reliable.
 If you expand on this project, consider a API-based Cloud storage solution.
+
+For single-host work, check out [this sample](https://github.com/temporalio/samples-java/tree/main/core/src/main/java/io/temporal/samples/fileprocessing), which shows how to pick up work off a shared Task Queue to start a Workflow, and then use a host-specific Task Queue for the following Activity tasks.
 
 :::
 

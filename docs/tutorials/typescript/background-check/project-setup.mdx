@@ -86,17 +86,17 @@ In this chapter you will do the following:
 
 ## Install the Temporal CLI {#install-cli}
 
-The Temporal CLI is available on MacOS, Windows, and Linux.
+The Temporal CLI is available on macOS, Windows, and Linux.
 Reference [the documentation](https://docs.temporal.io/cli) for detailed install information.
 
 ### Install via download
 
 1. Download the version for your OS and architecture:
-    - [Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
-    - [Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
-    - [macOS amd64](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
-    - [macOS arm64](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64) (Apple silicon)
-    - [Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
+   - [Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
+   - [Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
+   - [macOS amd64](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
+   - [macOS arm64](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64) (Apple silicon)
+   - [Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
 2. Extract the downloaded archive.
 3. Add the `temporal` binary to your `PATH` (`temporal.exe` for Windows).
 
@@ -111,6 +111,7 @@ Reference [the documentation](https://docs.temporal.io/cli) for detailed install
 3. Switch to cloned directory, and run `go build ./cmd/temporal`
 
 :::note
+
 - The executable will be at `temporal` (`temporal.exe` for Windows).
   Reference [the documentation](https://docs.temporal.io/cli) for detailed usage information.
 
@@ -387,7 +388,9 @@ Define the Activity Execution options. `StartToCloseTimeout` or `ScheduleToClose
 The `backgroundCheck` function that follows is an example of a basic Workflow Definition.
 
 <!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-workflow-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/workflows.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/workflows.ts)
+
 ```ts
 import * as workflow from '@temporalio/workflow';
 import type * as activities from './activities';
@@ -400,6 +403,7 @@ export async function backgroundCheck(ssn: string): Promise<string> {
   return await ssnTrace(ssn);
 }
 ```
+
 <!--SNIPEND-->
 
 Temporal Workflows may have any number of custom parameters. However, we
@@ -445,7 +449,9 @@ You'll define your Activities in this file.
 Add the following code to define your Activity:
 
 <!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-activity-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/activities.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/activities.ts)
+
 ```ts
 export async function ssnTrace(param: string): Promise<string> {
   // This is where a call to another service is made
@@ -453,6 +459,7 @@ export async function ssnTrace(param: string): Promise<string> {
   return 'pass';
 }
 ```
+
 <!--SNIPEND-->
 
 This Activity definition uses a single input parameter and returns a string.
@@ -477,7 +484,9 @@ In regards to organization, we recommend keeping Worker code separate from Workf
 Add the following code to `src/worker.ts` to define a worker process that communicates with a local development server:
 
 <!--SNIPSTART typescript-project-setup-chapter-dev-service-worker-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker.ts)
+
 ```ts
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
@@ -517,8 +526,8 @@ run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
 ```
+
 <!--SNIPEND-->
 
 :::info Auto restart Worker when code changes
@@ -543,11 +552,13 @@ Add the following code to `src/worker.ts` to define a worker process that commun
 configuration provided via environment variables:
 
 <!--SNIPSTART typescript-project-setup-chapter-cloud-worker-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker-cloud.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker-cloud.ts)
+
 ```ts
 import fs from 'fs/promises';
 
-import { Worker, NativeConnection } from '@temporalio/worker';
+import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
 
 // Note that serverNameOverride and serverRootCACertificate are optional.
@@ -625,8 +636,8 @@ export function getEnv(): Env {
     taskQueue: process.env.TEMPORAL_TASK_QUEUE || 'hello-world-mtls',
   };
 }
-
 ```
+
 <!--SNIPEND-->
 
 To run a Temporal Cloud Worker, you'll change some parameters in your Client connection code, such as updating the namespace and gRPC endpoint.
@@ -710,7 +721,9 @@ To use a Worker with a self-hosted Temporal Cluster, set the IP address, port, a
 Add the following code to `src/worker.ts` to define a worker process that communicates with a self-hosted Temporal cluster using a specific namespace and IP address:
 
 <!--SNIPSTART typescript-project-setup-chapter-self-hosted-worker-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker-self-hosted.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/worker-self-hosted.ts)
+
 ```ts
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
@@ -742,8 +755,8 @@ run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
 ```
+
 <!--SNIPEND-->
 
 #### Build and deploy Docker image {#dockerfile}
@@ -987,13 +1000,15 @@ You can test Workflow code for the following conditions:
 Add the following code to `src/mocha/backgroundcheck.test.ts` to test that the Workflow executes successfully.
 
 <!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-workflow-test-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/mocha/backgroundcheck.test.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/mocha/backgroundcheck.test.ts)
+
 ```ts
 import { TestWorkflowEnvironment } from '@temporalio/testing';
-import { before, describe, it } from 'mocha';
 import { Worker } from '@temporalio/worker';
-import { backgroundCheck } from '../workflows';
 import assert from 'assert';
+import { before, describe, it } from 'mocha';
+import { backgroundCheck } from '../workflows';
 
 describe('Background check workflow', () => {
   let testEnv: TestWorkflowEnvironment;
@@ -1030,8 +1045,8 @@ describe('Background check workflow', () => {
     assert.equal(result, 'pass');
   });
 });
-
 ```
+
 <!--SNIPEND-->
 
 This test uses a local testing server that ships with the Temporal TypeScript SDK.
@@ -1059,12 +1074,14 @@ Add the following code to `src/mocha/ssntrace.test.ts` to test the `ssnTrace`
 Activity and ensure it returns the expected value:
 
 <!--SNIPSTART typescript-project-setup-chapter-backgroundcheck-activity-test-->
+
 [docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/mocha/ssntrace.test.ts](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/typescript/background-check/code/chapter_project_setup/backgroundcheck/src/mocha/ssntrace.test.ts)
+
 ```ts
 import { MockActivityEnvironment } from '@temporalio/testing';
+import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as activities from '../activities';
-import assert from 'assert';
 
 describe('ssnTrace activity', async () => {
   it('successfully passes the ssn trace', async () => {
@@ -1074,8 +1091,8 @@ describe('ssnTrace activity', async () => {
     assert.equal(result, 'pass');
   });
 });
-
 ```
+
 <!--SNIPEND-->
 
 ## Conclusion {#conclusion}

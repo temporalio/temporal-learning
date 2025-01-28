@@ -307,7 +307,7 @@ In this tutorial, the file `client.ts` contains a program that connects to the T
 <!--SNIPSTART money-transfer-project-template-ts-start-workflow-->
 [src/client.ts](https://github.com/temporalio/money-transfer-project-template-ts/blob/main/src/client.ts)
 ```ts
-import { Connection, WorkflowClient } from '@temporalio/client';
+import { Connection, Client } from '@temporalio/client';
 import { moneyTransfer } from './workflows';
 import type { PaymentDetails } from './shared';
 
@@ -315,7 +315,7 @@ import { namespace, taskQueueName } from './shared';
 
 async function run() {
   const connection = await Connection.connect();
-  const client = new WorkflowClient({ connection, namespace });
+  const client = new Client({ connection, namespace });
 
   const details: PaymentDetails = {
     amount: 400,
@@ -328,7 +328,7 @@ async function run() {
     `Starting transfer from account ${details.sourceAccount} to account ${details.targetAccount} for $${details.amount}`
   );
 
-  const handle = await client.start(moneyTransfer, {
+  const handle = await client.workflow.start(moneyTransfer, {
     args: [details],
     taskQueue: taskQueueName,
     workflowId: 'pay-invoice-801',
@@ -600,9 +600,8 @@ You can view more information about the process in the [Temporal Web UI](localho
 
 ![The next Activity](images/activity_failure.png)
 
-Click the **Stack Trace** link to see a stack trace showing you the errors, as well as details about the pending Activity:
-
-![The stack trace of the Activity](images/stack_trace.png)
+Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
+This lets you explore the location and reason for failed Activity Tasks.
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors.  With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). 
 

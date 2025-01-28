@@ -87,7 +87,7 @@ The Temporal Application will consist of the following pieces:
 
 Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
 
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three [Activity methods](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities), `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
+These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
 
 The following diagram illustrates what happens when you start the Workflow:
 
@@ -586,9 +586,8 @@ You can view more information about the process in the [Temporal Web UI](http://
 
 ![The next Activity](images/activity_failure.png)
 
-5. Click the **Stack Trace** link to see a stack trace showing you the errors, as well as details about the pending Activity:
-
-![The stack trace of the Activity](images/stack_trace.png)
+5. Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
+This lets you explore the location and reason for failed Activity Tasks.
 
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
 

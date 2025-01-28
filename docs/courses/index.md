@@ -10,11 +10,14 @@ last_update:
   date: 2024-03-28
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]
 image: /img/temporal-logo-twitter-card.png
+description: "Grow your Temporal knowledge with free self-paced, hands-on online courses."
 ---
 
 import Link from '@docusaurus/Link';
 
-![Temporal Courses](/img/banners/courses.png)
+<h1>
+  <img alt="Temporal Courses" src="/img/banners/courses.png" />
+</h1>
 
 Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
 
@@ -32,6 +35,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
 
 -----
 
@@ -49,6 +53,23 @@ In this course, you will go beyond the basics of Temporal application developmen
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
+
+-----
+
+## [Crafting an Error Handling Strategy](errstrat/index.md)
+
+In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application.
+
+**Estimated time**: ~⏱️ 2.5 hours, self-paced.
+
+**Cost**: Free
+
+### Select your programming language to learn more and enroll
+
+<Link className="button button--primary" to="errstrat/go">Go</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -89,7 +110,7 @@ By implementing Custom Data Converters and a Codec Server, you can expand this b
 
 ## [Interacting with Workflows](interacting_with_workflows/index.md)
 
-In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli. 
+In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli.
 
 **Estimated time**: ⏱️ 3 hours, self-paced.
 

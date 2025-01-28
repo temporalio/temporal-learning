@@ -97,16 +97,56 @@ const courseData = [
     metaDescription: "Master the essentials of Temporal Cloud with this comprehensive course. Dive into Web UI navigation, Namespace setup, user management, custom Search Attribute definition, and more. Perfect for newcomers, it simplifies onboarding and benefits even those evaluating Temporal Cloud's potential."
   },
   {
-    code: `interactwf_ts`, main: true, language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "interacting_with_workflows/typescript.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+    code: `interactwf_ts`, main: true, language: "TypeScript", banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", filename: "interacting_with_workflows/typescript.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
   },  
   {
-    code: `interactwf_go`, main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "interacting_with_workflows/go.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+    code: `interactwf_go`, main: true, language: "Go", banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", filename: "interacting_with_workflows/go.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
   },
   {
-    code: `interactwf_java`, main: true, language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "interacting_with_workflows/java.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+    code: `interactwf_java`, main: true, language: "Java", banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", filename: "interacting_with_workflows/java.md", index: 3,keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
   },
   {
-    code: `interactwf_python`, main: true, language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "interacting_with_workflows/python.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you'll expand your ability to write dynamic Workflows by learning how to interact with them and enabling them to respond to external stimuli."
+    code: `interactwf_python`, main: true, language: "Python", banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", filename: "interacting_with_workflows/python.md", index: 3, keywords: '[Temporal, application development, best practices, signals, queries, asynchronous activity completion, async activity completion, cancellations, search attributes]', metaDescription: "In this course, you’ll expand your ability to write dynamic Workflows by interacting with them and enabling them to respond to external stimuli."
+  },
+  {
+    code: `errstrat_typescript`, 
+    main: true, 
+    language: "TypeScript", 
+    banner: "![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)", 
+    filename: "errstrat/typescript.md", 
+    index: 4, 
+    keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
+    metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
+  },  
+  {
+    code: `errstrat_go`, 
+    main: true, 
+    language: "Go", 
+    banner: "![Temporal Go SDK](/img/sdk_banners/banner_go.png)", 
+    filename: "errstrat/go.md", 
+    index: 1,
+    keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
+    metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
+  },
+  {
+    code: `errstrat_java`, 
+    main: true, 
+    language: "Java", 
+    banner: "![Temporal Java SDK](/img/sdk_banners/banner_java.png)", 
+    filename: "errstrat/java.md", 
+    index: 2,
+    keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
+    metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
+  },
+  {
+    code: `errstrat_python`, 
+    main: true, 
+    language: "Python", 
+    banner: "![Temporal Python SDK](/img/sdk_banners/banner_python.png)", 
+    filename: "errstrat/python.md", 
+    index: 3, 
+    keywords: '[Temporal, application development, best practices, failures, errors, timeouts, retry policies, heartbeats, saga pattern, non-retryable errors, idempotence]', 
+    metaDescription: "In this course, you will design and implement effective error handling strategies that map your business logic to the Temporal platform. You will explore the nature of different types of failures and investigate the support that Temporal provides for addressing them. Along the way, you will learn essential concepts and techniques, such as idempotence, Heartbeating, and the Saga Pattern, which will help you to ensure the correctness and responsiveness of your application."
   },
 ]
 
