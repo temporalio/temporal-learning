@@ -322,17 +322,36 @@ At this point, the
 application is running. If you look at the terminal
 that's running the Worker (not the terminal that's running the Workflow),
 it should be asking you for your
-API key. 
+API key.
 
-3. Enter the Geoapify API key mentioned in the prerequisites.
-  
+3. Enter the Geoapify API key mentioned in the prerequisites:
+
+```txt
+python run_worker.py
+
+Please give your API key: 1234567890abcdefghijklmnopqrstuv
+```
+
 Next, it will ask you for an address.
 
-4. Enter an address.
+4. Enter an address:
+
+```txt
+python run_worker.py
+
+Please give your API key: 1234567890abcdefghijklmnopqrstuv
+Please give an address: 1 Arrowhead Dr, Kansas City, MO 64129
+```
 
 It will query Geoapify to
 geocode the address, and it will print the latitude and longitude
-to the terminal running the Workflow.
+to the terminal running the Workflow:
+
+```txt
+python run_workflow.py
+
+Lat long: [-94.486453, 39.048855]
+```
 
 ## Conclusion
 
