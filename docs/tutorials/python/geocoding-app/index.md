@@ -8,7 +8,7 @@ tags:
 - Python
 image: /img/temporal-logo-twitter-card.png
 last_update:
-  date: 2024-08-15
+  date: 2025-01-28
 ---
 
 ![Temporal Python SDK](/img/sdk_banners/banner_python.png)
