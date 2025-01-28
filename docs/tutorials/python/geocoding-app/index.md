@@ -204,46 +204,10 @@ the next section, you'll begin that process by making and running a Worker.
 The Worker
 is the process that connects to the Temporal Service and listens
 on a Task Queue. Here is how you can make
-a Worker factory.
+and run a Worker.
 
-Make a new file called `make_worker.py` and
+Make a new file called `run_worker.py` and
 enter the following:
-
-<!--SNIPSTART python-geocode-tutorial-make-worker-->
-[make_worker.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/make_worker.py)
-```py
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import get_address_from_user, get_api_key_from_user, get_lat_long
-from workflow import GeoCode
-
-
-def make_worker(client: Client):
-
-    worker = Worker(
-        client,
-        task_queue="geocode-task-queue",
-        workflows=[GeoCode],
-        activities=[get_address_from_user, get_api_key_from_user, get_lat_long]
-    )
-
-    return worker
-```
-<!--SNIPEND-->
-
-The arguments are the following:
-
-- `client`, is the connection to the Temporal Service.
-- `task_queue` is the Task Queue that the Worker listens on (later,
-when you run the Workflow, you'll put items on that Task Queue).
-- `workflows` is the list of Workflows it can process.
-- `activities` is a list of Activities that it can work on.
-
-Now that you have a factory to make a Worker, it's time to connect to the
-Temporal Service, use that factory to make a Worker, and run the Worker.
-
-Make a new file called `run_worker.py` and enter the following:
 
 <!--SNIPSTART python-geocode-tutorial-run-worker-->
 [run_worker.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/run_worker.py)
@@ -251,31 +215,45 @@ Make a new file called `run_worker.py` and enter the following:
 import asyncio
 
 from temporalio.client import Client
+from temporalio.worker import Worker
 
-from make_worker import make_worker
+from activities import get_address_from_user, get_api_key_from_user, get_lat_long
+from workflow import GeoCode
 
 
 async def main():
 
     client = await Client.connect("localhost:7233", namespace="default")
 
-    worker = make_worker(client)
+    worker = Worker(
+        client,
+        task_queue="geocode-task-queue",
+        workflows=[GeoCode],
+        activities=[get_address_from_user, get_api_key_from_user, get_lat_long],
+    )
 
     await worker.run()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 <!--SNIPEND-->
 
-This snippet connects to the Temporal Service using `Client.connect`.
+This snippet connects to the Temporal Service using `Client.connect()`.
 For this to work, the Temporal Service
 needs to be running, as mentioned in the prerequisites.
 
-Next, the code passes that `client` into the `make_worker` function you made earlier.
-This returns a Worker, which you use to
-call the `.run()` method. This is what makes the Worker run
-and start listening for work on the Task Queue. You will run it now.
+The arguments to the Worker constructor are the following:
+
+- `client` - the connection to the Temporal Service.
+- `task_queue` - the Task Queue that the Worker listens on (later,
+when you run the Workflow, you'll put items on that Task Queue).
+- `workflows` - the list of Workflows it can process.
+- `activities` - a list of Activities that it can process.
+
+The last step is to await the Worker's `.run()` method. This is what makes the Worker run
+and start listening for work on the Task Queue. You will run it now:
 
 1. Open a new terminal (keep the service running
    in a different terminal).
