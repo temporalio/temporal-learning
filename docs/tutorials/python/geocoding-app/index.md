@@ -53,7 +53,7 @@ Create a new file called `workflow.py` and add
 the following code:
 
 <!--SNIPSTART python-geocode-tutorial-workflow-->
-[workflow.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/workflow.py)
+[workflow.py](https://github.com/temporalio/geocoding-project-python/blob/master/workflow.py)
 ```py
 from datetime import timedelta
 from temporalio import workflow
@@ -129,7 +129,7 @@ and the Activities are doing the atomic actions.
 Add the following to a new file called `activities.py`:
 
 <!--SNIPSTART python-geocode-tutorial-activity-1-->
-[activities.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/activities.py)
+[activities.py](https://github.com/temporalio/geocoding-project-python/blob/master/activities.py)
 
 ```py
 from temporalio import activity
@@ -162,7 +162,7 @@ Add the following
 to the end of the `activities.py` file that you just made:
 
 <!--SNIPSTART python-geocode-tutorial-activity-2-->
-[activities.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/activities.py)
+[activities.py](https://github.com/temporalio/geocoding-project-python/blob/master/activities.py)
 ```py
 import requests
 from dataclasses import dataclass
@@ -210,7 +210,7 @@ Make a new file called `run_worker.py` and
 enter the following:
 
 <!--SNIPSTART python-geocode-tutorial-run-worker-->
-[run_worker.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/run_worker.py)
+[run_worker.py](https://github.com/temporalio/geocoding-project-python/blob/master/run_worker.py)
 ```py
 import asyncio
 
@@ -275,7 +275,7 @@ The last piece is executing the Workflow.
 Enter the following code in a new file called `run_workflow.py`.
 
 <!--SNIPSTART python-geocode-tutorial-run-workflow-->
-[run_workflow.py](https://github.com/GSmithApps/temporal-project-tutorial/blob/master/run_workflow.py)
+[run_workflow.py](https://github.com/temporalio/geocoding-project-python/blob/master/run_workflow.py)
 ```py
 import asyncio
 
