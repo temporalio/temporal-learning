@@ -1,6 +1,6 @@
 ---
 title: "Temporal 102: Exploring Durable Execution with .NET"
-sidebar_position: 1
+sidebar_position: 3
 sidebar_label: "Temporal 102: Exploring Durable Execution with .NET"
 draft: false
 tags: [courses, dotnet]
