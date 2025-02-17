@@ -172,7 +172,7 @@ Finally, the `run` method returns the result of the Activity Execution.
 
 In the Temporal Python SDK, Workflow files are reloaded in a sandbox for every run. To keep from reloading an import on every run, you can mark it as *passthrough* so it reuses the module from outside the sandbox. Standard library modules and `temporalio` modules are passed through by default. All other modules that are used in a deterministic way, such as activity function references or third-party modules, should be passed through this way.
 
-This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [knowledge base](https://docs.temporal.io/kb/python-sandbox-environment).
+This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [sandbox documentation](https://docs.temporal.io/develop/python/python-sdk-sandbox).
 
 :::
 

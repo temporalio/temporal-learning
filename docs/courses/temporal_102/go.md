@@ -9,7 +9,7 @@ description: "Go beyond the basics and gain a deeper understand of how Temporal 
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2024-03-28
+  date: 2025-01-29
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -18,7 +18,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ![Temporal Go SDK](/img/sdk_banners/banner_go.png)
 
-**Estimated time**: ~⏱️ null hour, self-paced.
+**Estimated time**: ~⏱️ 4 hours, self-paced.
 
 **Cost**: Free
 
