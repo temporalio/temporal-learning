@@ -33,9 +33,9 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 <Link className="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
-<Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
 
 -----
 
@@ -51,6 +51,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
@@ -68,6 +69,7 @@ In this course, you will design and implement effective error handling strategie
 
 <Link className="button button--primary" to="errstrat/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/typescript">TypeScript</Link>&nbsp;
 
