@@ -1,6 +1,6 @@
 ---
 title: "Temporal 101 with .NET"
-sidebar_position: 1
+sidebar_position: 3
 sidebar_label: "Temporal 101 with .NET"
 draft: false
 tags: [courses, dotnet]
