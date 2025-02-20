@@ -32,14 +32,15 @@ Thank you for your interest in Temporal, we hope you enjoy this Meetup in a Box!
 To be successful presenting this presentation, you should already be familiar with the core fundamentals of Temporal.
 You don't need to be a Temporal expert to give this presentation, but it is recommended that you understand Workflows, Activities, Timers, Workers, and their interactions with the Temporal Service.
 
-**Resources**
+### Resources
+
 <a className="button button--primary" href="https://docs.google.com/document/d/1bAs25orA0rqp5H4HOqH9P4svVVtnO68lmH2beC9SZfc/edit?usp=sharing">Instructions</a>&nbsp;
 <a className="button button--primary" href="https://docs.google.com/presentation/d/1n3WXPfkIxxLsbtqqsd2NEhetJVfqbggoIee9kEhsVhQ/edit?usp=sharing">Slides</a>&nbsp;
 <a className="button button--primary" href="https://github.com/temporal-community/miab-build-invincible-apps-python">Sample Code</a>
 
 <br/><br/>
 
-**Forms**
+### Forms
 
 <a className="button button--primary" href="https://t.mp/miab-request">Request Swag</a>&nbsp;
 <a className="button button--primary" href="https://forms.gle/EQXJVAFqM34vHbtm8">Give Feedback</a>&nbsp;
