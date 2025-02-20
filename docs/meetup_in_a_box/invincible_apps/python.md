@@ -35,7 +35,7 @@ You don't need to be a Temporal expert to give this presentation, but it is reco
 **Resources**
 <a className="button button--primary" href="https://docs.google.com/document/d/1bAs25orA0rqp5H4HOqH9P4svVVtnO68lmH2beC9SZfc/edit?usp=sharing">Instructions</a>&nbsp;
 <a className="button button--primary" href="https://docs.google.com/presentation/d/1n3WXPfkIxxLsbtqqsd2NEhetJVfqbggoIee9kEhsVhQ/edit?usp=sharing">Slides</a>&nbsp;
-<a className="button button--primary" href="https://github.com/temporal-community/miab-intro-durable-execution-python">Sample Code</a>
+<a className="button button--primary" href="https://github.com/temporal-community/miab-build-invincible-apps-python">Sample Code</a>
 
 <br/><br/>
 
@@ -43,4 +43,4 @@ You don't need to be a Temporal expert to give this presentation, but it is reco
 
 <a className="button button--primary" href="https://t.mp/miab-request">Request Swag</a>&nbsp;
 <a className="button button--primary" href="https://forms.gle/EQXJVAFqM34vHbtm8">Give Feedback</a>&nbsp;
-<a className="button button--primary" href="https://github.com/temporal-community/miab-intro-durable-execution-python/issues">Report an Issue</a>&nbsp;
+<a className="button button--primary" href="https://github.com/temporal-community/miab-build-invincible-apps-python/issues">Report an Issue</a>&nbsp;
