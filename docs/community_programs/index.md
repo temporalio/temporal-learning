@@ -18,6 +18,6 @@ This section of the site provides an entry point to various Community Engagement
 
 ## Learn with Jason
 
-On March 11, 2025, Temporal will be featured on a Web Dev Challenge Episode of the [Learn with Jason](https://www.learnwithjason.dev/) show. This is a pair programming challenge during which people try to produce a working application within a few hours. You can review Temporal's Learn with Jason prompt, or follow along at home.
+On March 11, 2025, Temporal will be featured on a Web Dev Challenge Episode of the [Learn with Jason](https://www.learnwithjason.dev/) show. This is a pair programming challenge during which people try to produce a working application within a few hours. You can review Temporal's Web Dev Challenge prompt, or follow along at home.
 
-<Link className="button button--primary" to="learn_with_jason/">Learn with Jason</Link>&nbsp;
+<Link className="button button--primary" to="learn_with_jason/">Web Dev Challenge</Link>&nbsp;

@@ -1,5 +1,5 @@
 ---
-title: "Learn with Jason - Web Dev Challenge"
+title: "Web Dev Challenge"
 sidebar_position: 1
 public: false
 draft: false
@@ -49,4 +49,13 @@ You can also add the Temporal TypeScript SDK to an existing project with `npm`:
 npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity
 ```
 
-Temporal is a durable execution platform, which means you can orchestrate complex logic across multiple services in a way that’s resilient and flexible. The [getting started docs](https://learn.temporal.io/getting_started/typescript/) are a great way to get familiar with what Temporal is and how you can use it in this challenge. I'd also recommend looking at the [Message Passing documentation](https://docs.temporal.io/develop/typescript/message-passing), or taking Temporal's [Interacting with Workflows course](https://learn.temporal.io/courses/interacting_with_workflows/), to understand how to send input back and forth from running Workflows. You can also look at Temporal’s new [Code Exchange](https://temporal.io/code-exchange) for examples of community-created projects (We even have a community-contributed [React template](https://github.com/proyecto26/projectx)). Finally, if you want to see an example of a (real-time!) game that was created using Temporal, take a look at the [keynote demo](https://github.com/temporalio/replay2024-demo) from the 2024 Replay Conference.
+Temporal is a durable execution platform, which means you can orchestrate complex logic across multiple services in a way that’s resilient and flexible. The [getting started docs](https://learn.temporal.io/getting_started/typescript/) are a great way to get familiar with what Temporal is and how you can use it in this challenge. I'd also recommend looking at the [Message Passing documentation](https://docs.temporal.io/develop/typescript/message-passing), or taking Temporal's [Interacting with Workflows course](https://learn.temporal.io/courses/interacting_with_workflows/), to understand how to send input back and forth from running Workflows. You can also look at Temporal’s new [Code Exchange](https://temporal.io/code-exchange) for examples of community-created projects -- we even have a community-contributed [React template](https://github.com/proyecto26/projectx). Finally, if you want to see an example of a (real-time!) game that was created using Temporal, take a look at the [keynote demo](https://github.com/temporalio/replay2024-demo) from the 2024 Replay Conference, which uses Svelte.
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+    <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/XCRLSy5AJPI?si=lyb_LXg2um6A_1OT"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
