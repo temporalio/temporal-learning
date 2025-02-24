@@ -56,18 +56,6 @@ Write a program from the ground up in one of the supported languages:
 <Link className="button button--primary" to="python/hello_world_in_python">Python</Link>&nbsp;
 
 ----
-## Run Workers with Temporal Cloud
-
-**Estimated time**: ⏱️ ~10 minutes
-
-Update your Worker code to connect to Temporal Cloud and run your Workflows.
-
-<Link className="button button--primary" to="go/run_workers_with_cloud_go">Go</Link>&nbsp;
-<Link className="button button--primary" to="java/run_workers_with_cloud_java">Java</Link>&nbsp;
-<Link className="button button--primary" to="typescript/run_workers_with_cloud_typescript">TypeScript</Link>&nbsp;
-<Link className="button button--primary" to="python/run_workers_with_cloud_python">Python</Link>&nbsp;
-
-----
 
 ## Next steps
 
