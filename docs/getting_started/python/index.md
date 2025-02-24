@@ -35,14 +35,6 @@ Write a program from the ground up with tests.
 
 ----
 
-## [Run Workers with Temporal Cloud](run_workers_with_cloud_python/index.md)
-
-**Estimated time**: ⏱️ ~10 minutes
-
-Update your Worker code to connect to Temporal Cloud and run your Workflows.
-
-----
-
 ## [Take Temporal 101 with Python](/courses/temporal_101/python.md)
 
 **Estimated time**: ⏱️ ~2 hours, self-paced.
