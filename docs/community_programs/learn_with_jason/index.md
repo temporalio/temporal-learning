@@ -56,6 +56,6 @@ Temporal is a durable execution platform, which means you can orchestrate comple
         src="https://www.youtube.com/embed/XCRLSy5AJPI?si=lyb_LXg2um6A_1OT"
         title="YouTube video player"
         frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; fullscreen; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div>
