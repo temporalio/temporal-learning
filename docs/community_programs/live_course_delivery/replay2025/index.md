@@ -36,24 +36,24 @@ The courses were delivered by the following instructors and TAs:
 
 * **Go**
     * _Temporal 102_
-        * [Slides](../../../../static/pdfs/replay2025/temporal-102-with-go-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/temporal-102-with-go-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-102-go-code)
     * _Crafting an Error Handling Strategy_
-        * [Slides](../../../../static/pdfs/replay2025/crafting-an-error-handling-strategy-go-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/crafting-an-error-handling-strategy-go-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-errstrat-go-code)
 * **Java**
     * _Temporal 102_
-        * [Slides](../../../../static/pdfs/replay2025/temporal-102-with-java-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/temporal-102-with-java-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-102-java-code)
     * _Crafting an Error Handling Strategy_
-        * [Slides](../../../../static/pdfs/replay2025/crafting-an-error-handling-strategy-java-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/crafting-an-error-handling-strategy-java-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-errstrat-java-code)
 * **.NET**
     * _Temporal 102_
-        * [Slides](../../../../static/pdfs/replay2025/temporal-102-with-dotnet-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/temporal-102-with-dotnet-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-102-dotnet-code)
     * _Crafting an Error Handling Strategy_
-        * [Slides](../../../../static/pdfs/replay2025/crafting-an-error-handling-strategy-dotnet-replay2025.pdf)
+        * [Slides](/pdfs/replay2025/crafting-an-error-handling-strategy-dotnet-replay2025.pdf)
         * [Exercises](https://github.com/temporalio/edu-errstrat-dotnet-code)
 
 
@@ -61,3 +61,9 @@ The courses were delivered by the following instructors and TAs:
 
 <a className="button button--primary" href="../../../courses/temporal_102/">Temporal 102: Exploring Durable Execution</a> &nbsp;
 <a className="button button--primary" href="../../../courses/temporal_102/">Crafting an Error Handling Strategy</a>  
+
+### Continue Learning Temporal
+
+<a className="button button--primary" href="https://docs.temporal.io/">Read the Docs</a> &nbsp;
+<a className="button button--primary" href="/courses/">Take Our Other Courses</a> &nbsp;
+<a className="button button--primary" href="/tutorials/">Explore a Project Based Tutorial</a>
