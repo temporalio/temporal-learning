@@ -60,7 +60,7 @@ The courses were delivered by the following instructors and TAs:
 ### Retake the Courses Online
 
 <a className="button button--primary" href="../../../courses/temporal_102/">Temporal 102: Exploring Durable Execution</a> &nbsp;
-<a className="button button--primary" href="../../../courses/temporal_102/">Crafting an Error Handling Strategy</a>  
+<a className="button button--primary" href="../../../courses/errstrat/">Crafting an Error Handling Strategy</a>  
 
 ### Continue Learning Temporal
 
