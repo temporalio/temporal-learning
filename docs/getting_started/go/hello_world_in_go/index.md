@@ -591,7 +591,7 @@ Like in your Worker, you inject the HTTP client into the Activities struct and t
 
 To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `getIP` function. You get the result from the Activity Execution and then ensure it matches the value you expect.
 
-To test the `getLocation` Activity, you use a similar approach. Add the following code to the `src/mocha/activities.ts` file:
+To test the `getLocation` Activity, you use a similar approach. Add the following code to the `activities_test.go` file:
 
 <!--SNIPSTART go-ipgeo-activity-test-location-->
 [activities_test.go](https://github.com/temporalio/temporal-tutorial-ipgeo-go/blob/main/activities_test.go)
