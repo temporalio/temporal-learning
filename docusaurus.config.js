@@ -38,14 +38,14 @@ const config = {
     },
   ],
   themeConfig: {
-    announcementBar: {
-      id: "replay_announcement",
-      content:
-        'Replay is coming to London, March 3-5! <a href="https://www.eventbrite.com/e/replay-conference-2025-tickets-1045108576887">Secure your ticket</a>',
-      backgroundColor: "#141414",
-      textColor: "#ffffff",
-      isCloseable: true,
-    },
+    // announcementBar: {
+    //   id: "replay_announcement",
+    //   content:
+    //     'Replay is coming to London, March 3-5! <a href="https://www.eventbrite.com/e/replay-conference-2025-tickets-1045108576887">Secure your ticket</a>',
+    //   backgroundColor: "#141414",
+    //   textColor: "#ffffff",
+    //   isCloseable: true,
+    // },
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,
