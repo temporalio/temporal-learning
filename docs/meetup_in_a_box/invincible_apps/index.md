@@ -27,6 +27,9 @@ Along the way, you'll demonstrate various failure scenarios, and how Temporal ha
 
 ### Select the programming language you wish to present in
 
-_We currently support this presentation in Python, with more SDK languages in the works!_
+_Java & Ruby port coming soon!_
 
+<Link className="button button--primary" to="go">Go</Link>&nbsp;
+<Link className="button button--primary" to="dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="python">Python</Link>&nbsp;
+<Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
