@@ -9,9 +9,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-<h1>
-  <img alt="Temporal Meetup in a Box" src="/img/banners/blank.png" />
-</h1>
+<img className="banner" src="/img/banners/meetupinabox.png" alt="Temporal Meetup in a Box" />
 
 Do you want to present about Temporal to your local community, but don't have the time to create an entire presentation?
 The Temporal Meetup in a Box program can help you.

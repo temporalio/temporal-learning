@@ -13,6 +13,8 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
+<img className="banner" src="/img/banners/meetupinabox.png" alt="Temporal Meetup in a Box" />
+
 import Link from '@docusaurus/Link';
 
 **Estimated presentation time**: ~⏱️ 45 minutes

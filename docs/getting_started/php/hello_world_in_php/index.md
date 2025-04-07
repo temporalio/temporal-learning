@@ -10,7 +10,7 @@ description: Explore the components that make up a Temporal project in PHP.
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+<img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
 import { OutdatedNotice } from '@site/src/components'
 

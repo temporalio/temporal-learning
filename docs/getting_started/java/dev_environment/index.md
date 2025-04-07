@@ -13,7 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 Ready to dive into the Java SDK or to start building Temporal Apps? Ensure you have all your components in place. The following sections help you set up your development environment.
 

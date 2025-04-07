@@ -19,7 +19,7 @@ code_notes: branch 'main' has Gradle snipsync source, branch 'maven' has Maven
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem'; 
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 :::note Tutorial information
 

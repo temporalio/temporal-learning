@@ -7,7 +7,7 @@ pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 Take your first steps into building apps with Temporal and Python by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
