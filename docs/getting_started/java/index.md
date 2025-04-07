@@ -7,7 +7,7 @@ pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 Take your first steps into building apps with Temporal and Java by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 

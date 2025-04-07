@@ -9,9 +9,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-<h1>
-  <img alt="Community Programs" src="/img/banners/blank.png" />
-</h1>
+<img className="banner" src="/img/banners/communityprograms.png" alt="Community Programs" />
 
 This section of the site provides an entry point to various Community Engagement Programs.
 

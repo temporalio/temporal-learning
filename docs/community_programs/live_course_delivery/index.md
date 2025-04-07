@@ -15,7 +15,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-![Temporal .NET SDK](/img/banners/courses.png)
+<img className="banner" src="/img/banners/courses.png" alt="Temporal Courses" />
 
 ## Take Our Courses Live
 

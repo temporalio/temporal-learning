@@ -331,3 +331,7 @@ html[data-theme="light"] a.button--primary:hover {
 .DocSearch-Container {
   min-width: 100vw;
 }
+
+.banner {
+  width: 100%;
+}

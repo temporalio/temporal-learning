@@ -13,7 +13,7 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 **Estimated presentation time**: ~⏱️ 45 minutes
 

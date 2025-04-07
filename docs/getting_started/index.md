@@ -10,9 +10,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-<h1>
-  <img alt="Get Started with Temporal" src="/img/banners/getstarted.png" />
-</h1>
+<img className="banner" src="/img/banners/getstarted.png" alt="Get Started with Temporal" />
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 

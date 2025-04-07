@@ -13,10 +13,9 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 **Estimated presentation time**: ~⏱️ 45 minutes
-
 
 ## Description
 

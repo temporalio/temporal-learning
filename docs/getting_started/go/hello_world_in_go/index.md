@@ -14,7 +14,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 :::note Tutorial information
 
