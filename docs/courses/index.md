@@ -17,7 +17,7 @@ import Link from '@docusaurus/Link';
 
 <img className="banner" src="/img/banners/courses.png" alt="Temporal Courses" />
 
-Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
+<h3>Go deeper with our free, self-paced online courses that provide in-depth hands-on learning experiences.</h3>
 
 ## [Temporal 101: Introducing the Temporal Platform](temporal_101/index.md)
 
