@@ -47,8 +47,6 @@ For the best quality experience, you’ll need:
 
 - GitHub accounts for each participant.
 
-- Ability to access [github.com](http://github.com) from the individual workstations.
-
 ### Courses offered
 
 | Course                                                                                             | Hours     | Languages Offered                  |
@@ -71,7 +69,7 @@ For the best quality experience, you’ll need:
 
 If you’d like to request a training, please post your request in the `#request-live-workshop` channel in the [Temporal Community Slack](https://t.mp/slack) with the following details:
 
-- **Courses**: Which courses you want us to deliver
+- **Courses**: Which courses you would like delivered
 
 - **Delivery type**: Online or in-person
 
