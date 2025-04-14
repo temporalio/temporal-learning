@@ -6,7 +6,7 @@ description: "Build Temporal applications with these PHP tutorials. Get started 
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 PHP is a popular programming language for back-end web development that powers WordPress, Drupal, and thousands of web applications world-wide. Temporal's [PHP SDK](https://docs.temporal.io/dev-guide/php) lets you use PHP to build applications that take advantage of Temporal's features.
 

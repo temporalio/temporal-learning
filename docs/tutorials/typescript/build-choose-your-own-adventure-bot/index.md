@@ -11,7 +11,7 @@ last_update:
   date: 2021-10-01
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 import { OutdatedNotice } from '@site/src/components'
 

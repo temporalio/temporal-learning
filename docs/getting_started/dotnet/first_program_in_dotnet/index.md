@@ -11,9 +11,7 @@ code_repo: https://github.com/temporalio/money-transfer-project-template-dotnet
 image: /img/temporal-logo-twitter-card.png
 ---
 
-
-![Temporal .NET SDK](/img/sdk_banners/banner_dotnet.png)
-
+<img className="banner" src="/img/sdk_banners/banner_dotnet.png" alt="Temporal Dotnet SDK" />
 
 :::note Tutorial information
 

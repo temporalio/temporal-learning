@@ -7,7 +7,7 @@ pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+<img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
 Take your first steps into building apps with Temporal and PHP by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
