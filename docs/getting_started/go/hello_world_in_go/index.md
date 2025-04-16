@@ -59,7 +59,7 @@ Before starting this tutorial:
 
 To get started with the Temporal Go SDK, you'll create a new Go project and initialize it as a module, just like any other Go program you're creating. Then you'll add the Temporal SDK package to your project.
 
-In a terminal, create a new project directory called `hello-world-temporal`:
+In a terminal, create a new project directory called `temporal-ip-geolocation`:
 
 ```command
 mkdir temporal-ip-geolocation
