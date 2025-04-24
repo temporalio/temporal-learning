@@ -22,10 +22,10 @@ import Link from '@docusaurus/Link';
 Join us Friday May 2, 2025 in San Francisco for the MCP & A2A Hackathon.
 Come build your AI Agents with Temporal for a chance to win a cash prize!
 
-**Date**: Friday, May 2, 2025
-**Time**: 9:30am - 7:30pm
-**Location**: San Francisco, CA
-**Registration**: [Luma](https://lu.ma/vibecode)
+**Date**: Friday, May 2, 2025  
+**Time**: 9:30am - 7:30pm  
+**Location**: San Francisco, CA  
+**Registration**: [Luma](https://lu.ma/vibecode)  
 
 ### Temporal AI Specific Resource
 

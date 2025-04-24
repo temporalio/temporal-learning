@@ -27,10 +27,10 @@ Temporal hosts and attends various hackathons throughout the year. Whether you j
 
 ### MCP and A2A Hackathon
 
-**Date**: Friday, May 2, 2025
-**Time**: 9:30am - 7:30pm
-**Location**: San Francisco, CA
-**Registration**: [Luma](https://lu.ma/vibecode)
+**Date**: Friday, May 2, 2025  
+**Time**: 9:30am - 7:30pm  
+**Location**: San Francisco, CA  
+**Registration**: [Luma](https://lu.ma/vibecode)  
 
 Join us in San Francisco for the MCP and A2A Hackathon! 
 Come build your AI Agents with Temporal for a chance to win a cash prize!
