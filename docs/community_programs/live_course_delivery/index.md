@@ -4,7 +4,7 @@ sidebar_position: 1
 public: false
 draft: false
 tags: [Community Programs]
-keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, games, signals, queries, updates]
+keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, Signals, Queries, Updates, Versioning, Codec Server]
 description: "Want to take a Temporal course live? Discover where our courses are being taught live or request a live delivery for your community."
 custom_edit_url: null
 hide_table_of_contents: true
