@@ -15,7 +15,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-<img className="banner" src="/img/banners/communityprograms.png" alt="Community Programs" />
+<img className="banner" src="/img/banners/hackathons.png" alt="Community Programs" />
 
 # MCP and A2A Hackathon
 
