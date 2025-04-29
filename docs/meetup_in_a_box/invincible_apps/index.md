@@ -4,7 +4,7 @@ sidebar_position: 1
 public: false
 draft: false
 tags: [meetups]
-keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Python SDK, external service, recovery, event history, Temporal Web UI]
+keywords: [Temporal, Workflows, Activities, Workers, Task Queues, external service, recovery, event history, Temporal Web UI]
 description: "In this presentation, you will lead the audience through the fundamental building blocks of Temporal, including the Temporal Service, Workflows, Activities, Workers, Durable Timers, and Task Queues."
 custom_edit_url: null
 hide_table_of_contents: true
@@ -29,9 +29,10 @@ Along the way, you'll demonstrate various failure scenarios, and how Temporal ha
 
 ### Select the programming language you wish to present in
 
-_Java & Ruby port coming soon!_
-
 <Link className="button button--primary" to="go">Go</Link>&nbsp;
 <Link className="button button--primary" to="dotnet">.NET</Link>&nbsp;
+<Link className="button button--primary" to="java">Java</Link>&nbsp;
 <Link className="button button--primary" to="python">Python</Link>&nbsp;
 <Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
+
+_Ruby port coming soon!_
