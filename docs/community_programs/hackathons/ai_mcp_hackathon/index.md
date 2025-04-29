@@ -29,6 +29,8 @@ Come build your AI Agents with Temporal for a chance to win a cash prize!
 
 ### Temporal AI Specific Resource
 
+* [Calling an MCP Server with Temporal Sample](https://github.com/temporal-community/mcp-sample)
+* [Community Temporal MCP Implementation](https://github.com/Mocksi/temporal-mcp/tree/main)
 * [Build an AI Agent with Temporal Video](https://www.youtube.com/watch?v=GEXllEH2XiQ)
 * [Temporal Agentic AI Sample](https://github.com/temporal-community/temporal-ai-agent)
 
