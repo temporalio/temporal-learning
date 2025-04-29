@@ -46,6 +46,7 @@ In this presentation, you will lead the audience through the fundamental buildin
 _Java and Ruby port coming soon!_
 
 <Link className="button button--primary" to="invincible_apps/go/">Go</Link>&nbsp;
+<Link className="button button--primary" to="invincible_apps/java/">Java</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/dotnet/">.NET</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/python/">Python</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/typescript/">TypeScript</Link>&nbsp;
