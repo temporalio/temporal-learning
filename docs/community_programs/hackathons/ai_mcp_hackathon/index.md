@@ -79,3 +79,9 @@ Come by the Temporal Booth and speak with Brandon about our [Temporal Startup Pr
 * Get $6,000 in credits for Temporal Cloud and gain full access to the platform so you can get building today.
 * Gain full access to all of our support and services, and work with our team to tune and optimize your application code.
 * **And more!**
+
+## We're Hiring!
+
+We're hiring talented engineers, marketers, developer advocates and more in San Francisco, New York City, and Remote!
+
+[**Check out our job board**](https://temporal.io/careers)
