@@ -11,7 +11,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and Ruby by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-## [Set up a local development environment for Temporal and Ruby](dev_environment/index.md)
+## [Set up a local development environment for Temporal and Ruby](./dev_environment/index.md)
 
 **Estimated time**: ⏱️ ~5 minutes
 

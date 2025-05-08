@@ -4,7 +4,7 @@ title: Build a Temporal Application from scratch in Ruby
 sidebar_position: 3
 keywords: [ruby,temporal,sdk,tutorial, hello world, temporal application, workflow, activity, test temporal workflows, mock temporal activities, minitest]
 last_update:
-  date: 2023-03-02
+  date: 2025-05-08
 description: In this tutorial you will build a Temporal Application using the Ruby SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 tags: [Ruby, SDK]
 image: /img/temporal-logo-twitter-card.png
@@ -20,494 +20,425 @@ import TabItem from '@theme/TabItem';
 - **Level:** ⭐ Temporal beginner
 - **Time:** ⏱️ ~15 minutes
 - **Goals:** 🙌
-  - Set up, build, and test a Temporal Application project using the [Ruby SDK](https://github.com/temporalio/sdk-ruby).
-  - Identify the four parts of a Temporal Application.
+  - Set up, build, and test a Temporal Application project from scratch using the [Ruby SDK](https://github.com/temporalio/sdk-ruby).
+  - Identify the four parts of a Temporal Workflow application.
   - Describe how the Temporal Server gets information to the Worker.
-  - Explain how to define Workflow Definitions with the Temporal Ruby SDK.
+  - Observe how Temporal recovers from failed Activities.
 
 :::
 
 ### Introduction
 
-Creating reliable applications is a difficult task. [Temporal](https://temporal.io) lets you create fault-tolerant resilient applications using programming languages you already know, so you can build complex applications that execute successfully and recover from failures.
+Creating reliable applications is a difficult chore. [Temporal](https://temporal.io/) lets you create fault-tolerant, resilient applications using programming languages you already know, so you can build complex applications that execute reliably and recover from failures.
 
-In this tutorial, you will build a [Temporal Application](https://docs.temporal.io/temporal#temporal-application) using the [Temporal Python SDK](https://github.com/temporalio/sdk-python). The Application will consist of the following pieces.
+In this tutorial, you will build your first Temporal Application from scratch using the [Temporal Ruby SDK](https://github.com/temporalio/sdk-ruby). You'll develop a small application that asks for your name and then uses APIs to get your public IP address and your location based on that address. External requests can fail due to rate limiting, network interruptions, or other errors. Using Temporal for this application will let you automatically recover from these and other kinds of failures without having to write explicit error-handling code.
 
-1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the Application and represent the orchestration aspect of the business logic.
-2. An [Activity](https://docs.temporal.io/activities): Activities are functions called during Workflow Execution and represent the execution aspect of your business logic. The Workflow you'll create executes a single Activity, which takes a string from the Workflow as input and returns a formatted version of this string to the Workflow.
+The app will consist of the following pieces:
+
+1. Two [Activities](https://docs.temporal.io/activities): Activities are functions called by Workflows, and they contain any logic that might fail or behave differently at different times. The first Activity will get your IP address, and the second Activity will use that IP address to get your location.
+2. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.  Your Workflow will execute both Activities you define. It will call the first Activity to fetch the IP address, and then use the result of that Activity to call the next Activity to find your location.
 3. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
+4. A client program: You'll need to start your Worfklow. In this tutorial you'll create a small program using the [Temporal Client](https://docs.temporal.io/encyclopedia/temporal-sdks#temporal-client) to start the Workflow.
 
-You'll also write a test with the [pytest](https://pytest.org) framework to ensure your Workflow executes successfully.
+You'll also write tests to ensure your Workflow executes successfully.
 
-When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal Applications.
-
-All the code in this tutorial is available in the [hello-world python template](https://github.com/temporalio/hello-world-project-template-python) repository.
+When you're done, you'll have a basic application and a clear understanding of how to build out the components you'll need in future Temporal applications in Ruby.
 
 ## Prerequisites
 
 Before starting this tutorial:
 
-- [Set up a local development environment for Temporal and Python](../dev_environment/index.md).
+- [Set up a local development environment for developing Temporal applications using Ruby](https://learn.temporal.io/getting_started/ruby/dev_environment/)
+  - Ensure that the Temporal Service is running in a terminal on your local machine and that you can access the Temporal Web UI. In this tutorial you'll use port `8233` for the Web UI, which is the default port.
 
-## ![](/img/icons/harbor-crane.png) Create a new Python project
+- Follow the tutorial [Run your first Temporal application with the Ruby SDK](https://learn.temporal.io/getting_started/ruby/first_program_in_ruby/) to gain a better understanding of what Temporal is and how its components fit together.
 
-To get started with the Temporal Python SDK, create a new Python project and initialize a new virtual environment, just like any other Python program.
+## Create a New Temporal Ruby Project
 
-In a terminal, create a directory called `hello-world-temporal`:
+To get started with the Temporal Ruby SDK, you'll create a new Bundler project, just like any other Ruby program you're creating. Then you'll add the Temporal SDK package to your project.
 
-```command
-mkdir hello-world-temporal
-```
-
-Change into that directory:
+In a terminal, create a new project directory called `temporal-ip-geolocation`:
 
 ```command
-cd hello-world-temporal
+mkdir temporal-ip-geolocation
 ```
 
-Create a Python virtual environment with `venv`:
-
-<Tabs queryString groupId="os">
-  <TabItem value="win" label="Windows">
+Switch to the new directory:
 
 ```command
-python -m venv env
+cd temporal-ip-geolocation
 ```
 
-  </TabItem>
-  <TabItem value="mac" label="macOS">
+From the root of your new project directory, set up a Bundler project. This creates a Gemfile in the current directory.
 
 ```command
-python3 -m venv env
+bundle init
 ```
 
-  </TabItem>
-</Tabs>
-
-
-Activate the environment:
-
-<Tabs queryString groupId="os">
-  <TabItem value="win" label="Windows">
+Then add the Temporal Ruby SDK to the Gemfile:
 
 ```command
-env\Scripts\activate
+bundle add temporalio
 ```
 
-  </TabItem>
-  <TabItem value="mac" label="macOS">
+You'll see the following output, indicating that the SDK is now a project dependency:
+
+```output
+Fetching gem metadata from https://rubygems.org/.....
+Resolving dependencies...
+```
+
+Next, install the Temporal SDK from the Gemfile:
 
 ```command
-source env/bin/activate
+bundle install 
 ```
 
-  </TabItem>
-</Tabs>
+You'll see an output similar to the following:
 
-Then install the Temporal SDK:
+```output
+Installing temporalio 0.4.0 (arm64-darwin)
+Bundle complete! 1 Gemfile dependency, 6 gems now installed.
+Use `bundle info [gemname]` to see where a bundled gem is installed.
+```
+
+With the project created, you'll create the application's core logic.
+
+## Write functions to call external services
+
+Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information.
+
+You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
+
+If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
+
+Create a new folder which will hold your Activity logic:
 
 ```command
-python -m pip install temporalio
+mkdir -p lib
 ```
 
-You'll use the [pytest](https://docs.pytest.org/) framework to create and run your tests. To install pytest, use the following command:
+Create the file `get_ip_activity.rb` which will return your current public IP.
 
 ```command
-python -m pip install pytest
+touch lib/get_ip_activity.rb
 ```
 
-You'll also need the `pytest_asyncio` package. Install that with the following command:
+With the Ruby SDK, you can define Activities as regular Ruby methods. Open the file `get_ip_activity.rb` in your editor and add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
-```command
-python -m pip install pytest_asyncio
-```
-
-With your project workspace configured, you're ready to create your first Temporal Workflow and Activity. In this tutorial, you'll start with the Workflow.
-
-## Create a Workflow
-
-Workflows are where you configure and organize the execution of Activities. You write a Workflow using one of the programming languages supported by a Temporal SDK. This code is known as a *Workflow Definition*.
-
-In the Temporal Python SDK, you define [Workflow Definitions](https://docs.temporal.io/workflows#workflow-definition) by creating a class and annotate it with the `@workflow.defn` decorator.
-
-You then use the `@workflow.run` decorator to specify the method that the Workflow should invoke. Exactly one method must have this decorator and it must be added to an `async def` method.
-
-Create the file `workflows.py` in the root of your project and add the following code to create a `SayHello` class to define the Workflow:
-
-<!--SNIPSTART python-project-template-workflows -->
-[workflows.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/workflows.py)
-```py
-from datetime import timedelta
-from temporalio import workflow
-
-# Import activity, passing it through the sandbox without reloading the module
-with workflow.unsafe.imports_passed_through():
-    from activities import say_hello
-
-@workflow.defn
-class SayHello:
-    @workflow.run
-    async def run(self, name: str) -> str:
-        return await workflow.execute_activity(
-            say_hello, name, start_to_close_timeout=timedelta(seconds=5)
-        )
-```
+<!--SNIPSTART ruby-ipgeo-get-public-ip-->
 <!--SNIPEND-->
 
-In this example, the `run` method is decorated with `@workflow.run`, so it's the method that the Workflow will invoke.
+The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
 
-This method accepts a string value that will hold the name, and it returns a string. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/python/foundations#workflow-parameters) section of the Temporal documentation.
+Notice that there's no error-handling code in this function. When you build your Workflow, you'll use Temporal's Activity Retry policies to retry this code automatically if there's an error.
+
+Now add the second Activity that accepts an IP address and retrieves location data. 
+
+Create the file `get_location_activity.rb` which will return your current location.
+
+```command
+touch lib/get_location_activity.rb
+```
+
+Now add the following code to `get_location_activity.rb`:
+
+<!--SNIPSTART ruby-ipgeo-get-location-->
+<!--SNIPEND-->
+
+This Activity follows the same pattern as the `GetIPActivity` Activity. It's a method that calls a remote service. This time, the service returns JSON data rather than text.
+
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details.
+
+You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
+
+## Control application logic with a Workflow
+
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs.
+
+Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
+
+Create the file `get_address_from_ip_workflow.rb` in the `ip_geolocate` folder:
+
+```command
+touch lib/get_address_from_ip_workflow.rb
+```
+
+Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
+
+<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["2-14"]}-->
+<!--SNIPEND-->
+
+With the imports and options in place, you can define the Workflow itself.
+
+With the imports and options in place, you can define the Workflow itself. In the Ruby SDK, you implement a Workflow the same way you define an Activity; using a method. Add the following code to call both Activities, using the value of the first as the input to the second:
+
+Add the following code to define the `GetAddressFromIPWorkflow` Workflow, which will call both Activities, using the value of the first as the input to the second:
+
+<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["15-32"]}-->
+<!--SNIPEND-->
+
+
+In this example, you have specified that the Start-to-Close Timeout for your Activities will be five minutes, meaning that your Activity has five minutes to complete before it times out. Of all the Temporal timeout options, `StartToCloseTimeout` is the one you should always set.
+
+Temporal's default behavior is to automatically retry an Activity that fails, which means that transient or intermittent failures require no action on your part. This behavior is defined by the Retry Policy. If you don't specify the values on your Retry policy, you will be automatically using Temporal's [default retry policy values](https://docs.temporal.io/encyclopedia/retry-policies#default-values-for-retry-policy). Note that the `max_attempts` is commented out, which means there's no limit to the number of times Temporal will retry your Activities if they fail. The `non_retryable_error_types` are also commented out, meaning that Temporal will retry all error types.
+
+Next you'll create a Worker that executes the Workflow and Activities.
+
+## Configure and run a Worker
+
+When you start a Temporal Workflow, the Workflow and its Activities get scheduled on the Temporal Service's [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and polls the Task Queue for tasks related to those Workflows and Activities. After the Worker runs the code, it communicates the results back to the Temporal Service where they're stored in the Event History. This records the Workflow's entire execution, enabling features like fault tolerance by allowing the Workflow to replay in case of Worker crashes or restarts.
+
+You use the Temporal SDK to define a Worker Program.
+
+In your Worker Program, you need to specify the name of the Task Queue, which must match the Task Queue name used whenever you interact with a Workflow from a client application. This ensures that the Worker processes tasks for the correct Workflow. The Task Queue name is a case-insensitive string. To ensure consistency and avoid errors, define the Task Queue name as a constant that can be reused throughout your code.
+
+Create the file `task_queue_name.rb`:
+
+```command
+touch lib/task_queue_name.rb
+```
+
+Open the file and add the following lines to the file to define the constant for the Task Queue:
+
+<!--SNIPSTART ruby-ipgeo-shared-->
+<!--SNIPEND-->
+
+Now you can create the Worker program.
+
+Now create the file `worker.rb` in that directory:
+
+```command
+touch lib/worker.rb
+```
+
+Then open `worker.rb` in your editor and add the following code to define the Worker program:
+
+<!--SNIPSTART ruby-ipgeo-worker-->
+<!--SNIPEND-->
+
+The code imports the `iplocate` package, which includes your Workflow and Activity Definitions. It also uses the `task_queue` constant.
+
+You first create a client, and then you create a Worker that uses the client, along with the Task Queue it should listen on. By default, the client connects to the Temporal Service running at `localhost` on port `7233`, and connects to the `default` namespace. You can change this by setting values in the Client Options.
+
+In this case your Worker will run your Workflow and your two Activities, but there are cases where you could configure one Worker to run Activities, and another Worker to run the Workflows.
+
+Now you'll start the Worker. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
+
+```command
+ruby lib/worker.rb
+```
+
+Your Worker will then begin running and is polling the Temporal Service for Workflows to run, but before you start your Workflow, you'll write tests to prove it works as expected.
+
+## Write tests to ensure things work
+
+The Temporal Ruby SDK includes methods that help you test your Workflow executions. Let's add a basic unit test to the application to make sure the Workflow works as expected.
+
+You'll use the `@temporalio/testing` package, which will download a test server that provides a `TestWorkflowEnvironment`.
+
+Create the file `test/get_address_from_ip_workflow_test.rb` and add the following code to test the Workflow execution:
+
+<!--SNIPSTART ruby-get-address-from-ip-workflow-test {"selectedLines": ["24-43"]}-->
+<!--SNIPEND-->
+
+`TestWorkflowEnvironment` is a runtime environment used to test a Workflow. You use it to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the TestWorkflowEnvironment will be shared across tests, you will set it up before all of your tests, and tear it down after your tests finish.
+
+This test sets up a test environment to run Workflows that uses a lightweight Temporal Service specifically for testing. In the test itself, you create a Worker that connects to the test environment. This should look familiar, as it's similar to the code you wrote to define your Worker Program.
+
+Instead of using your actual Activities, you replace the Activities `GetIPActivity` and `GetLocationActivity` with methods that return hard-coded values. This way you're testing the Workflow's logic independently of the Activities. If you wanted to test the Activities directly as part of an integration test, you'd specify them directly as you did when you wrote the Worker program.
+
+```command
+bundle exec ruby -Ilib:test test/get_address_from_ip_workflow_test.rb
+```
+
+The test environment starts, spins up a Worker, and executes the Workflow in the test environment. At the end, you'll see that your test passes:
+
+```output
+Finished tests in 2.358264s, 0.4240 tests/s, 0.4240 assertions/s.
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+```
+
+With a Workflow test in place, you can write unit tests for the Activities.
+
+Both of your Activities make external calls to services that will change their results based on who runs them. It will be challenging to test these Activities reliably. For example, the IP address may vary based on your machine's location.
+
+To ensure you can test the Activities in isolation, you’ll stub out the HTTP calls.
+
+Create the file `get_ip_activity_test.rb`:
+
+```command
+touch test/get_ip_activity_test.rb
+```
+
+The `MockActivityEnvironment` from the `@temporalio/testing` package lets you test Activities as if they were part of a Temporal Application.
+
+Next, write the test for the `GetIPActivityActivity` Activity.
+
+<!--SNIPSTART ruby-ip-activity-test {"selectedLines": ["2-17"]}-->
+<!--SNIPEND-->
+
+Now, create a test file for `get_location_activity_test.rb`:
+
+```command
+touch test/get_location_activity_test.rb
+```
+
+Next, write the test for the `GetLocationActivityActivity` Activity, using [`Net::HTTP`](https://ruby-doc.org/stdlib-2.7.0/libdoc/net/http/rdoc/Net/HTTP.html) to stub out actual HTTP calls so your tests are consistent.
+
+<!--SNIPSTART ruby-get-location-activity-test {"selectedLines": ["2-23"]}-->
+<!--SNIPEND-->
+
+To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `GetLocationActivityActivity` method. You get the result from the Activity Execution and then ensure it matches the value you expect.
+
+This test looks similar to the previous test; you mock out the HTTP client and ensure it returns the expected data, and then you execute the Actiity in the test environment. Then you retrieve the value and ensure it's what you expect.
+
+Run the tests again to see them pass. 
+
+```command
+bundle exec ruby -Ilib:test test/get_ip_activity_test.rb
+```
+
+```command
+bundle exec ruby -Ilib:test test/get_location_activity_test.rb
+```
+
+```output
+Finished tests in 0.000718s, 1392.7570 tests/s, 1392.7570 assertions/s.
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+```
+
+Now that you have your tests passing, it's time to start a Workflow Execution.
+
+## Run the Workflow from a client
+
+You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK.
+
+Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you will create a small CLI program that runs your Temporal Workflow.
+
+Create a new directory called `client` to hold the program:
+
+```command
+touch lib/client.rb
+```
+
+Open `client.rb` in your editor and add the following code to the file to connect to the server and start the Workflow:
+
+<!--SNIPSTART ruby-ipgeo-client-->
+<!--SNIPEND-->
+
+In the `result` method you check to see if there is at least one argument passed and then capture the user's name from the arguments.
+
+The client sets up a connection to your Temporal Server, invokes your Workflow, passes in an argument for the `name`, and assigns the Workflow a unique identifier using a UUID. The client dispatches the Workflow on the same Task Queue that the Worker is polling on. That's why you used a constant to ensure the Task Queue name is consistent. If there's a mismatch, your Workflow will execute on a different Task Queue and there won't be any Workers polling for tasks.
+
+:::note Specify a Workflow Id
+
+A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Using an identifier that reflects some business process or entity is a good practice. For example, you might use a customer identifier as part of the Workflow Id if you run one Workflow per customer. This would make it easier to find all Workflow Executions related to that customer later.
+
+In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
+:::
+
+Now you can run your Workflow. First, ensure that your local Temporal Service is running, and that your Worker program is running also.
+
+Then open a new terminal and switch to the project directory:
+
+```command
+cd temporal-tutorial-ipgeo-ruby
+```
+
+Now run the following command to run the Workflow using the client program you wrote:
+
+```command
+ruby lib/client.rb Angela
+```
+
+You'll see the following output:
+
+```output
+Hello, Angela. Your IP is 204.148.195.242 and you are located in Washington, District of Columbia, United States.
+```
 
 :::tip
 
-You can pass multiple inputs to a Workflow, but it's a good practice to send a single input. If you have several values you want to send, you should define an object or a [data class](https://docs.python.org/3/library/dataclasses.html) and pass that into the Workflow instead.
-
-:::
-
-The method calls the `workflow.execute_activity` method which executes an Activity called `say_hello`, which you'll define next. `workflow.execute_activity` needs the [Activity Type](https://docs.temporal.io/activities#activity-type), the input parameters for the Activity, and a [Start-To-Close Timeout](https://docs.temporal.io/activities#start-to-close-timeout) or [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout).
-
-Finally, the `run` method returns the result of the Activity Execution.
-
-:::info
-
-In the Temporal Python SDK, Workflow files are reloaded in a sandbox for every run. To keep from reloading an import on every run, you can mark it as *passthrough* so it reuses the module from outside the sandbox. Standard library modules and `temporalio` modules are passed through by default. All other modules that are used in a deterministic way, such as activity function references or third-party modules, should be passed through this way.
-
-This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [sandbox documentation](https://docs.temporal.io/develop/python/python-sdk-sandbox).
-
-:::
-
-With your Workflow Definition created, you're ready to create the `say_hello` Activity.
-
-## Create an Activity
-
-In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
-
-For this tutorial, your Activity won't be complex; you'll define an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
-
-In the Temporal Python SDK, you define an Activity by decorating a function with `@activity.defn`.
-
-Create a new file called `activities.py` and add the following code to define a `say_hello` function to define the Activity:
-
-<!--SNIPSTART python-project-template-activities -->
-[activities.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/activities.py)
-```py
-from temporalio import activity
-
-@activity.defn
-async def say_hello(name: str) -> str:
-    return f"Hello, {name}!"
-
-```
-<!--SNIPEND-->
-
-The logic within the `say_hello` function creates the string and returns the greeting.
-
-Your [Activity Definition](https://docs.temporal.io/dev-guide/python/foundations#develop-activities) can accept input parameters just like Workflow Definitions.  Review the [Activity parameters](https://docs.temporal.io/dev-guide/python/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
-
-Like Workflow Definitions, if you have more than one parameter for an Activity, you should bundle the data into a data class rather than sending multiple input parameters. This will make future updates easier.
-
-
-You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on, you'll write a unit test for your Workflow.
-
-## ![](/img/icons/check.png) Add a unit test
-
-The Temporal Python SDK includes functions that help you test your Workflow executions. Let's add tests to the application to make sure the Workflow works as expected.
-
-Create a new folder in your project directory called `tests`:
-
-```command
-mkdir tests
-```
-
-Create an empty `__init__.py` file within that directory:
-
-```command
-touch tests/__init__.py
-```
-
-Create the `test_run_workflow.py` file in the `tests` directory and add the following content to test the Workflow:
-
-```command
-touch tests/test_run_workflow.py
-```
-
-<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-28"]} -->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
-```py
-import uuid
-
-import pytest
-
-from temporalio import activity
-from temporalio.worker import Worker
-from temporalio.testing import WorkflowEnvironment
-
-from activities import say_hello
-from workflows import SayHello
-
-@pytest.mark.asyncio
-async def test_execute_workflow():
-    task_queue_name = str(uuid.uuid4())
-    async with await WorkflowEnvironment.start_time_skipping() as env:
-
-        async with Worker(
-            env.client,
-            task_queue=task_queue_name,
-            workflows=[SayHello],
-            activities=[say_hello],
-        ):
-            assert "Hello, World!" == await env.client.execute_workflow(
-                SayHello.run,
-                "World",
-                id=str(uuid.uuid4()),
-                task_queue=task_queue_name,
-            )
-```
-<!--SNIPEND-->
-
-This code snippet imports the `uuid` and `pytest` packages, along with `Activity` and `Worker` from the Temporal SDK. It then imports `WorkflowEnvironment` from the Temporal SDK so you can create an environment for testing. It then imports your Activity and Workflow.
-
-The test function `test_execute_workflow` creates a `WorkflowEnvironment` so it can run the tests. It then creates a random Task Queue name and initiates the Worker with `env.client.execute_workflow`. It then checks if the result of the Workflow Execution is `Hello, World!` when the input parameter is `World`.
-
-:::note
-
-The `start_time_skipping()` option starts a new environment that lets you test long-running Workflows without waiting for them to complete in real-time. You can use the `start_local()` option instead, which uses a full local instance of the Temporal server instead. Both of these options download an instances of Temporal server on your first test run. This instance runs as a separate process during your test runs.
-
-The `start_time_skipping()` option isn't a full implementation of the Temporal server, but it's good for basic tests like the ones in this tutorial.
-
-:::
-
-This code tests the Workflow and invokes the actual `say_hello` Activity. However, you may want to test your Workflows and mock out the Activity so you can see how your Workflow responds to different inputs and results.
-
-Add the following code to create a test that uses a mocked `say_hello` Activity:
-
-<!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-51"]}-->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
-```py
-# ...
-
-
-@activity.defn(name="say_hello")
-async def say_hello_mocked(name: str) -> str:
-    return f"Hello, {name} from mocked activity!"
-
-
-@pytest.mark.asyncio
-async def test_mock_activity():
-    task_queue_name = str(uuid.uuid4())
-    async with await WorkflowEnvironment.start_time_skipping() as env:
-        async with Worker(
-            env.client,
-            task_queue=task_queue_name,
-            workflows=[SayHello],
-            activities=[say_hello_mocked],
-        ):
-            assert "Hello, World from mocked activity!" == await env.client.execute_workflow(
-                SayHello.run,
-                "World",
-                id=str(uuid.uuid4()),
-                task_queue=task_queue_name,
-            )
-```
-<!--SNIPEND-->
-
-This creates a function called `say_hello_mocked` which the Workflow test will use as the mock Activity function. The `test_mock_activity` test then checks that the outcome of the Workflow is `"Hello, World from mocked activity!"` for the passed input parameter `World`, using the same type of test setup as the previous test function.
-
-Run the following command from the project root to start the tests:
-
-```command
-pytest
-```
-
-This command will search for files in your `tests` folder that match the pattern `test_*.py` or `*_test.py`.
-
-You'll see output similar to the following from your test run indicating that the test was successful:
-
-```bash
-===================== test session starts =====================
-platform darwin -- Python 3.10.9, pytest-7.2.0, pluggy-1.0.0
-rootdir: /hello-world-python-getting-started
-plugins: asyncio-0.20.3, anyio-3.6.2
-asyncio: mode=strict
-collected 2 items
-
-tests/test_run_worker.py ..                             [100%]
-===================== 2 passed in 10.29s ======================
-```
-
-You can also pass the command line option `--workflow-environment` at runtime to change the test environment.
-
-Most test suites reuse the local environment across tests. You can explore [fixtures in Pytest](https://docs.pytest.org/en/6.2.x/fixture.html) to set this up.
-
-You've built a test suite and you've successfully tested your Workflow. You can reuse the `conftest.py` file you've built in future Temporal Python projects.
-
-You have a working Temporal Application and tests that make sure the Workflow executes as expected. Next, you'll configure a Worker to execute your Workflow.
-
-## Configure a Worker
-
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity functions and executes them. The Temporal Cluster tells the Worker to execute a specific function from information it pulls from the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue). After the Worker runs the code, it communicates the results back to the Temporal Cluster.
-
-When you start a Workflow, you tell the server which Task Queue the Workflow and Activities use. A Worker listens and polls on the Task Queue, looking for work to do.
-
-To configure a Worker process using the Python SDK, you'll connect to the Temporal Cluster and give it the name of the Task Queue to poll.
-
-You'll connect to the Temporal Cluster using a Temporal Client, which provides a set of APIs to communicate with a Temporal Cluster. You'll use Clients to interact with existing Workflows or to start new ones.
-
-In this tutorial you'll create a small standalone Worker program so you can see how all of the components work together.
-
-Create the file `run_worker.py` in the root of your project and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activity:
-
-<!--SNIPSTART python-project-template-run-worker-->
-[run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/run_worker.py)
-```py
-import asyncio
-
-from temporalio import activity, workflow
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import say_hello
-from workflows import SayHello
-
-async def main():
-    client = await Client.connect("localhost:7233", namespace="default")
-    # Run the worker
-    worker = Worker(
-        client, task_queue="hello-task-queue", workflows=[SayHello], activities=[say_hello]
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-<!--SNIPEND-->
-
-This program connects to the Temporal Cluster using `client.Connect`. In this example, you only need to provide a target host and a Namespace. Since you're running this locally, you use [localhost:7233](http://localhost:7233) for the target host, and you specify the optional default Namespace name, `default`.
-
-You then create a new Worker instance by specifying the client, the Task Queue to poll, and the Workflows and Activities to monitor. Then you run the worker.
-
-You've created a program that instantiates a Worker to process the Workflow. Now you need to start the Workflow.
-
-## Write code to start a Workflow Execution
-
-You can start a Workflow Execution by using the Temporal CLI or by writing code using the Temporal SDK. In this tutorial, you'll use the Temporal SDK to start the Workflow, which is how most real-world applications work.
-
-Starting a Workflow Execution using the Temporal SDK involves connecting to the Temporal Server, configuring the Task Queue the Workflow should use, and starting the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
-
-Create the file `run_workflow.py` and add the following to connect to the server and start the Workflow:
-
-<!--SNIPSTART python-project-template-run-workflow-hello-world-->
-[run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/run_workflow.py)
-```py
-import asyncio
-
-from run_worker import SayHello
-from temporalio.client import Client
-
-
-async def main():
-    # Create client connected to server at the given address
-    client = await Client.connect("localhost:7233")
-
-    # Execute a workflow
-    result = await client.execute_workflow(
-        SayHello.run, "Temporal", id="hello-workflow", task_queue="hello-task-queue"
-    )
-
-    print(f"Result: {result}")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-<!--SNIPEND-->
-
-Like the Worker you created, this program uses `client.Connect` to connect to the Temporal server. It then executes the Workflow using `client.ExecuteWorkflow`, which requires the Workflow to run, the input parameters for the Workflow, a [Workflow ID](https://docs.temporal.io/dev-guide/python/foundations#workflow-id) for the Workflow, and the Task Queue to use. The Worker you configured is looking for tasks on that Task Queue.
-
-:::tip Specify a Workflow ID
-
-You need to specify a Workflow ID when executing a Workflow. You'll use this ID to locate the Workflow Execution later in logs or to interact with a running Workflow in the future.
-
-Using a Workflow ID that reflects some business process or entity is a good practice. For example, you might use a customer identifier or email address as part of the Workflow ID  if you ran one Workflow per customer. This would make it easier to find all the Workflow Executions related to that customer later.
-
-:::
-
-You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
-
-## ![](/img/icons/run.png) Run the Temporal Application
-
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
-First, ensure that your local Temporal Cluster is running.
+:::
 
-To start the Worker, run this command from the project root:
+Your Temporal Application works. Now review it in the Temporal Web UI.
 
-```command
-python run_worker.py
-```
+## Exploring your application in the Web UI
 
-You won't see any output right away, but leave the program running.
+The Temporal Web UI gives you insights into your Workflow's execution. Open the Temporal Web UI by visiting `http://localhost:8233` and click on your completed Workflow to view the execution history. You'll see results similar to the following image:
 
-To start the Workflow, open a new terminal window and switch to your project root:
+![The UI shows the results of the Workflow including the output](images/overview.png)
 
-```command
-cd hello-world-temporal
-```
+You'll see the dates the Workflow Exeuction ran, how long it took to run, the input to the Workflow, and the result.
 
-Activate the virtual environment in this terminal:
+After that, you see the Event History, detailing the entire flow, including the inputs and outputs of the Activity Executions:
 
-<Tabs queryString groupId="os">
-  <TabItem value="win" label="Windows">
+![The Workflow History showing all Activities and their results, oldest to newest.](images/history.png)
 
-```command
-env\Scripts\activate
-```
+The most recent event is at the top, so read the history from the bottom up to see each step in the process. Using this history, you can see exactly how your Workflow executed and pinpoint any places things might have gone wrong.
 
-  </TabItem>
-  <TabItem value="mac" label="macOS">
+Temporal stores the results of each Activity in this history, as you can see in the image. If there was a system crash between the `GetIPActivityActivity` and `GetLocationActivityActivity` Activity Executions, a new Worker would re-run the Workflow, but would use the previous Event History to reconstruct the Workflow's state. Instead of re-running the `GetIPActivity` function, it would use the previous run's value and continue on. This prevents duplicate executions. By relying on the stored Event History, Temporal ensures that the Workflow can recover seamlessly, maintaining reliability and consistency even after a crash.
 
-```command
-source env/bin/activate
-```
+In this application, this recovery isn't crucial. But imagine a situation where each Activity execution was a bank transaction. If a crash occurred between transactions, the Worker can pick up where the previous one failed. Nobody gets charged multiple times because something failed.
 
-  </TabItem>
-</Tabs>
+Next, you'll explore how Temporal handles failed Activities.
 
-Then run `run_workflow.py` from the project root to start the Workflow Execution:
+## Observe automatic retries
+
+When you developed your Activities, you didn't include any error-handling code. So if there's a problem making the request, the Workflow will handle the error using the Retry Policy.
+
+Test this out. Disconnect your local machine from the Internet by turning off your Wi-Fi connection or unplugging your network cable.
+
+Then, with the local Temporal Service running and your Worker running, switch to the Terminal window where you ran your Workflow and run it again:
 
 ```command
-python run_workflow.py
+ruby lib/client.rb Angela
 ```
 
-The program runs and returns the result:
+This time you don't get a response.
 
-```command
-Result: Hello, Temporal!
-```
+Visit `http://localhost:8233` to open the Temporal Web UI and locate the Workflow Execution that's currently running. When you select it, you'll see something like the following image, indicating that there's a problem:
 
-Switch to the terminal window that's running the Worker. Stop the Worker process with `CTRL-C` in the terminal.
+![The timeline shows the Activity failure](images/timeline_failed.png)
 
-You have successfully built a Temporal Application from scratch.
+As you can see, the `GetIPActivity` Activity has failed and Temporal is retrying it. Scroll down to the Event History and you'll see the failure represented there:
+
+![The Event History shows the failed Activity](images/history_failed.png)
+Select the **Pending Activity** item in the table to see why it failed and you'll see the stack trace:
+
+![The Activity stack trace shows the error](images/activity_stack_trace.png)
+
+Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
+
+![Once the network comes back the history updates and shows that things completed.](images/history_recovered.png)
+
+If you return to your terminal where you launched the Workflow, you'll find your results there as well.
+
+You can recover from failures by letting Temporal handle them for you instead of writing complex error-handling logic. You can also decide that you only want to retry a fixed number of times, or that you only want to recover on certain kinds of errors.
 
 ## Conclusion
 
-You now know how to build a Temporal Application using the Python SDK. You've built a Workflow, an Activity, a test suite, and a Worker.
+In this tutorial you built your first Temporal Application. You used the Temporal Ruby SDK to build a resilient application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an internet connection to understand how Temporal recovers from failures like network outages.
+
+Take this application one step further and add a new Activity that gets the current weather for the location you found.
 
 ### Review
 
-Answer the following questions to see if you remember the important concepts from this tutorial.
+Answer the following questions to see whether you remember some important concepts from this tutorial:
 
 <details>
 <summary>
 
-**What are the minimum four pieces of a Temporal Application?**
+**What are the four parts of a Temporal Workflow application?**
 
 </summary>
 
-1. A Workflow Definition.
-2. An Activity Definition.
-3. A Worker to host the Activity and Workflow code.
+1. A Workflow function.
+2. An Activity function.
+3. A Worker to host the Workflow and Activity code.
 4. Some way to start the Workflow.
 
 </details>
@@ -515,21 +446,10 @@ Answer the following questions to see if you remember the important concepts fro
 <details>
 <summary>
 
-**How does the Temporal server get information to the Worker?**
+**How does the Temporal Server get information to the Worker?**
 
 </summary>
 
 The Temporal Server adds Tasks to a Task Queue, and the Worker polls the Task Queue.
-
-</details>
-
-<details>
-<summary>
-
-**True or false, with the Temporal Python SDK, you define Workflow Definition by writing functions?**
-
-</summary>
-
-False. Workflow Definitions are classes.
 
 </details>

@@ -6,7 +6,7 @@ description: Set up a local development environment for developing Temporal Appl
 keywords: [ruby, temporal, sdk, development environment]
 tags: [Ruby, SDK, development environment]
 last_update:
-  date: 2023-03-27
+  date: 2025-05-08
 image: /img/temporal-logo-twitter-card.png
 ---
 
