@@ -112,16 +112,21 @@ You'll use Temporal Activities to make these requests. You use Activities in you
 
 If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
 
-Create a new folder which will hold your Activity logic:
+Create a new folder which will hold your Temporal logic
 
 ```command
 mkdir -p lib
+```
+Within `lib`, create another folder - `ip_geolocate` - which will contain your Workflow and Activity logic.
+
+```command
+mkdir -p lib/ip_geolocate
 ```
 
 Create the file `get_ip_activity.rb` which will return your current public IP.
 
 ```command
-touch lib/get_ip_activity.rb
+touch lib/ip_geolocate/get_ip_activity.rb
 ```
 
 With the Ruby SDK, you can define Activities as regular Ruby methods. Open the file `get_ip_activity.rb` in your editor and add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
@@ -138,7 +143,7 @@ Now add the second Activity that accepts an IP address and retrieves location da
 Create the file `get_location_activity.rb` which will return your current location.
 
 ```command
-touch lib/get_location_activity.rb
+touch lib/ip_geolocate/get_location_activity.rb
 ```
 
 Now add the following code to `get_location_activity.rb`:
@@ -161,12 +166,12 @@ Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#de
 Create the file `get_address_from_ip_workflow.rb` in the `ip_geolocate` folder:
 
 ```command
-touch lib/get_address_from_ip_workflow.rb
+touch lib/ip_geolocate/get_address_from_ip_workflow.rb
 ```
 
 Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
-<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["2-14"]}-->
+<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["13-19"]}-->
 <!--SNIPEND-->
 
 With the imports and options in place, you can define the Workflow itself.
@@ -175,11 +180,11 @@ With the imports and options in place, you can define the Workflow itself. In th
 
 Add the following code to define the `GetAddressFromIPWorkflow` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
-<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["15-32"]}-->
+<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["2-32"]}-->
 <!--SNIPEND-->
 
 
-In this example, you have specified that the Start-to-Close Timeout for your Activities will be five minutes, meaning that your Activity has five minutes to complete before it times out. Of all the Temporal timeout options, `StartToCloseTimeout` is the one you should always set.
+In this example, you have specified that the Start-to-Close Timeout for your Activities will be five minutes, meaning that your Activity has five minutes to complete before it times out. Of all the Temporal timeout options, `start_to_close_timeout` is the one you should always set.
 
 Temporal's default behavior is to automatically retry an Activity that fails, which means that transient or intermittent failures require no action on your part. This behavior is defined by the Retry Policy. If you don't specify the values on your Retry policy, you will be automatically using Temporal's [default retry policy values](https://docs.temporal.io/encyclopedia/retry-policies#default-values-for-retry-policy). Note that the `max_attempts` is commented out, which means there's no limit to the number of times Temporal will retry your Activities if they fail. The `non_retryable_error_types` are also commented out, meaning that Temporal will retry all error types.
 
@@ -193,13 +198,13 @@ You use the Temporal SDK to define a Worker Program.
 
 In your Worker Program, you need to specify the name of the Task Queue, which must match the Task Queue name used whenever you interact with a Workflow from a client application. This ensures that the Worker processes tasks for the correct Workflow. The Task Queue name is a case-insensitive string. To ensure consistency and avoid errors, define the Task Queue name as a constant that can be reused throughout your code.
 
-Create the file `task_queue_name.rb`:
+Create the file `ip_geolcoate.rb` within your `lib` folder:
 
 ```command
-touch lib/task_queue_name.rb
+touch lib/ip_geolocate.rb
 ```
 
-Open the file and add the following lines to the file to define the constant for the Task Queue:
+This file should declare the `IpGeolocate` module, requires all children of the `IpGeolocate` module, and also defines the `Task_Queue_Name`. Open the file and add the following lines to the file to define the constant for the Task Queue:
 
 <!--SNIPSTART ruby-ipgeo-shared-->
 <!--SNIPEND-->
@@ -217,7 +222,7 @@ Then open `worker.rb` in your editor and add the following code to define the Wo
 <!--SNIPSTART ruby-ipgeo-worker-->
 <!--SNIPEND-->
 
-The code imports the `iplocate` package, which includes your Workflow and Activity Definitions. It also uses the `task_queue` constant.
+The code imports the `iplocate` package, which includes your Workflow and Activity Definitions. It also uses the `TASK_QUEUE_NAME` constant.
 
 You first create a client, and then you create a Worker that uses the client, along with the Task Queue it should listen on. By default, the client connects to the Temporal Service running at `localhost` on port `7233`, and connects to the `default` namespace. You can change this by setting values in the Client Options.
 
@@ -226,7 +231,7 @@ In this case your Worker will run your Workflow and your two Activities, but the
 Now you'll start the Worker. Be sure you have started the local Temporal Service and execute the following command to start your Worker:
 
 ```command
-ruby lib/worker.rb
+bundle exec ruby lib/worker.rb
 ```
 
 Your Worker will then begin running and is polling the Temporal Service for Workflows to run, but before you start your Workflow, you'll write tests to prove it works as expected.
@@ -237,9 +242,19 @@ The Temporal Ruby SDK includes methods that help you test your Workflow executio
 
 You'll use the `@temporalio/testing` package, which will download a test server that provides a `TestWorkflowEnvironment`.
 
-Create the file `test/get_address_from_ip_workflow_test.rb` and add the following code to test the Workflow execution:
+Create a test directory:
 
-<!--SNIPSTART ruby-get-address-from-ip-workflow-test {"selectedLines": ["24-43"]}-->
+`mkdir test`
+
+Then create the file `get_address_from_ip_workflow_test.rb` within the `test` directory:
+
+```command
+touch test/get_address_from_ip_workflow_test.rb
+```
+
+Add the following code to `get_ip_activity_test.rb` to test the Workflow execution:
+
+<!--SNIPSTART ruby-get-address-from-ip-workflow-test-->
 <!--SNIPEND-->
 
 `TestWorkflowEnvironment` is a runtime environment used to test a Workflow. You use it to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the TestWorkflowEnvironment will be shared across tests, you will set it up before all of your tests, and tear it down after your tests finish.
@@ -275,7 +290,7 @@ The `MockActivityEnvironment` from the `@temporalio/testing` package lets you te
 
 Next, write the test for the `GetIPActivityActivity` Activity.
 
-<!--SNIPSTART ruby-ip-activity-test {"selectedLines": ["2-17"]}-->
+<!--SNIPSTART ruby-ip-activity-test-->
 <!--SNIPEND-->
 
 Now, create a test file for `get_location_activity_test.rb`:
@@ -286,7 +301,7 @@ touch test/get_location_activity_test.rb
 
 Next, write the test for the `GetLocationActivityActivity` Activity, using [`Net::HTTP`](https://ruby-doc.org/stdlib-2.7.0/libdoc/net/http/rdoc/Net/HTTP.html) to stub out actual HTTP calls so your tests are consistent.
 
-<!--SNIPSTART ruby-get-location-activity-test {"selectedLines": ["2-23"]}-->
+<!--SNIPSTART ruby-get-location-activity-test-->
 <!--SNIPEND-->
 
 To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `GetLocationActivityActivity` method. You get the result from the Activity Execution and then ensure it matches the value you expect.
@@ -349,7 +364,7 @@ cd temporal-tutorial-ipgeo-ruby
 Now run the following command to run the Workflow using the client program you wrote:
 
 ```command
-ruby lib/client.rb Angela
+bundle exec ruby lib/client.rb Angela
 ```
 
 You'll see the following output:
@@ -395,7 +410,7 @@ Test this out. Disconnect your local machine from the Internet by turning off yo
 Then, with the local Temporal Service running and your Worker running, switch to the Terminal window where you ran your Workflow and run it again:
 
 ```command
-ruby lib/client.rb Angela
+bundle exec ruby lib/client.rb Angela
 ```
 
 This time you don't get a response.
