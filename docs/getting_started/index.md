@@ -25,6 +25,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 <Link className="button button--primary" to="typescript/dev_environment/">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="python/dev_environment/">Python</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/dev_environment/">.NET</Link>&nbsp;
+<Link className="button button--primary" to="php/dev_environment/">PHP</Link>&nbsp;
 
 ----
 
