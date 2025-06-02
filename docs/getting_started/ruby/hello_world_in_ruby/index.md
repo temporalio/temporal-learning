@@ -132,6 +132,35 @@ touch lib/ip_geolocate/get_ip_activity.rb
 With the Ruby SDK, you can define Activities as regular Ruby methods. Open the file `get_ip_activity.rb` in your editor and add the following code to define a Temporal Activity that retrieves your IP address from `icanhazip.com`:
 
 <!--SNIPSTART ruby-ipgeo-get-public-ip-->
+[lib/ip_geolocate/get_ip_activity.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/ip_geolocate/get_ip_activity.rb)
+```rb
+require 'json'
+require 'net/http'
+require 'uri'
+require 'temporalio/activity'
+
+module IPGeolocate
+  class GetIPActivity < Temporalio::Activity::Definition
+    def execute
+      url = URI('https://icanhazip.com')
+      
+      # Create an HTTP session that can be reused
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = (url.scheme == 'https')
+      
+      # Start a session
+      http.start do |session|
+        # Make the request within the session
+        request = Net::HTTP::Get.new(url.request_uri)
+        response = session.request(request)
+        
+        # Return the response body with whitespace removed
+        response.body.strip
+      end
+    end
+  end
+end
+```
 <!--SNIPEND-->
 
 The response from `icanhazip.com` is plain-text, and it includes a newline, so you trim off the newline character before returning the result.
@@ -149,6 +178,25 @@ touch lib/ip_geolocate/get_location_activity.rb
 Now add the following code to `get_location_activity.rb`:
 
 <!--SNIPSTART ruby-ipgeo-get-location-->
+[lib/ip_geolocate/get_location_activity.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/ip_geolocate/get_location_activity.rb)
+```rb
+require 'temporalio/activity'
+require 'net/http'
+require 'uri'
+require 'json'
+
+module IPGeolocate
+  class GetLocationActivity < Temporalio::Activity::Definition
+    # Use the IP address to get the location
+    def execute(ip)
+      url = URI("http://ip-api.com/json/#{ip}")
+      response = Net::HTTP.get(url)
+      data = JSON.parse(response)
+      "#{data['city']}, #{data['regionName']}, #{data['country']}"
+    end
+  end
+end
+```
 <!--SNIPEND-->
 
 This Activity follows the same pattern as the `GetIPActivity` Activity. It's a method that calls a remote service. This time, the service returns JSON data rather than text.
@@ -172,6 +220,17 @@ touch lib/ip_geolocate/get_address_from_ip_workflow.rb
 Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
 <!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["13-19"]}-->
+[lib/ip_geolocate/get_address_from_ip_workflow.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/ip_geolocate/get_address_from_ip_workflow.rb)
+```rb
+# ...
+        retry_policy: Temporalio::RetryPolicy.new(
+          initial_interval: 2.0,      # amount of time that must elapse before the first retry occurs
+          backoff_coefficient: 1.5,   # Coefficient used to calculate the next retry interval
+          max_interval: 30.0          # maximum interval between retries
+          # max_attempts: 5,          # Uncomment this if you want to limit attempts
+          # non_retryable_error_types: # Defines non-retryable error types
+        )
+```
 <!--SNIPEND-->
 
 With the imports and options in place, you can define the Workflow itself.
@@ -180,9 +239,42 @@ With the imports and options in place, you can define the Workflow itself. In th
 
 Add the following code to define the `GetAddressFromIPWorkflow` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
-<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow {"selectedLines": ["2-32"]}-->
-<!--SNIPEND-->
+<!--SNIPSTART ruby-ipgeo-get-address-from-ip-workflow-->
+[lib/ip_geolocate/get_address_from_ip_workflow.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/ip_geolocate/get_address_from_ip_workflow.rb)
+```rb
+require 'temporalio/workflow'
+require 'temporalio/retry_policy' 
 
+require_relative 'get_ip_activity'
+require_relative 'get_location_activity'
+
+module IPGeolocate
+  class GetAddressFromIPWorkflow < Temporalio::Workflow::Definition
+    def execute(name)
+      ip = Temporalio::Workflow.execute_activity(
+        GetIPActivity,
+        start_to_close_timeout: 300,
+        retry_policy: Temporalio::RetryPolicy.new(
+          initial_interval: 2.0,      # amount of time that must elapse before the first retry occurs
+          backoff_coefficient: 1.5,   # Coefficient used to calculate the next retry interval
+          max_interval: 30.0          # maximum interval between retries
+          # max_attempts: 5,          # Uncomment this if you want to limit attempts
+          # non_retryable_error_types: # Defines non-retryable error types
+        )
+      )
+      
+      location = Temporalio::Workflow.execute_activity(
+        GetLocationActivity,
+        ip,
+        schedule_to_close_timeout: 300
+      )
+      
+      "Hello, #{name}. Your IP is #{ip} and you are located in #{location}."
+    end
+  end
+end
+```
+<!--SNIPEND-->
 
 In this example, you have specified that the Start-to-Close Timeout for your Activities will be five minutes, meaning that your Activity has five minutes to complete before it times out. Of all the Temporal timeout options, `start_to_close_timeout` is the one you should always set.
 
@@ -207,6 +299,17 @@ touch lib/ip_geolocate.rb
 This file should declare the `IpGeolocate` module, requires all children of the `IpGeolocate` module, and also defines the `Task_Queue_Name`. Open the file and add the following lines to the file to define the constant for the Task Queue:
 
 <!--SNIPSTART ruby-ipgeo-shared-->
+[lib/ip_geolocate.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/ip_geolocate.rb)
+```rb
+# Load Bundler and load all your gems
+require_relative "ip_geolocate/get_ip_activity"
+require_relative "ip_geolocate/get_location_activity"
+require_relative "ip_geolocate/get_address_from_ip_workflow"
+
+module IPGeolocate
+  TASK_QUEUE_NAME = "ip-address-ruby"
+end
+```
 <!--SNIPEND-->
 
 Now you can create the Worker program.
@@ -220,6 +323,31 @@ touch lib/worker.rb
 Then open `worker.rb` in your editor and add the following code to define the Worker program:
 
 <!--SNIPSTART ruby-ipgeo-worker-->
+[lib/worker.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/worker.rb)
+```rb
+require_relative 'ip_geolocate'
+require 'temporalio/client'
+require 'temporalio/worker'
+
+# Create a client
+begin
+  client = Temporalio::Client.connect('localhost:7233', 'default')
+rescue StandardError => e
+  puts e.message
+  exit 1
+end
+
+# Create a worker with the client, activities, and workflows
+worker = Temporalio::Worker.new(
+  client:,
+  task_queue: IPGeolocate::TASK_QUEUE_NAME,
+  workflows: [IPGeolocate::GetAddressFromIPWorkflow],
+  activities: [IPGeolocate::GetIPActivity, IPGeolocate::GetLocationActivity]
+)
+
+# Run the worker until SIGINT. This can be done in many ways, see "Workers" section for details.
+worker.run(shutdown_signals: ['SIGINT'])
+```
 <!--SNIPEND-->
 
 The code imports the `iplocate` package, which includes your Workflow and Activity Definitions. It also uses the `TASK_QUEUE_NAME` constant.
@@ -255,6 +383,53 @@ touch test/get_address_from_ip_workflow_test.rb
 Add the following code to `get_ip_activity_test.rb` to test the Workflow execution:
 
 <!--SNIPSTART ruby-get-address-from-ip-workflow-test-->
+[test/get_address_from_ip_workflow_test.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/test/get_address_from_ip_workflow_test.rb)
+```rb
+require 'test_helper'
+require 'securerandom'
+require 'temporalio/testing'
+require 'temporalio/worker'
+require 'ip_geolocate'
+
+class GetAddressFromIPWorkflowTest < Minitest::Test
+  class MockGetIPActivity < Temporalio::Activity::Definition
+    activity_name :GetIPActivity
+
+    def execute
+      "1.1.1.1"
+    end
+  end
+  
+  class MockGetLocationActivity < Temporalio::Activity::Definition
+    activity_name :GetLocationActivity
+
+    def execute(ip)
+      "Planet Earth"
+    end
+  end
+
+  def test_gets_location_from_ip_with_mocked_activities
+    Temporalio::Testing::WorkflowEnvironment.start_local do |env|
+      worker = Temporalio::Worker.new(
+        client: env.client,
+        task_queue: "test",
+        workflows: [IPGeolocate::GetAddressFromIPWorkflow],
+        activities: [MockGetIPActivity, MockGetLocationActivity],
+        workflow_executor: Temporalio::Worker::WorkflowExecutor::ThreadPool.default
+      )
+      worker.run do
+        result = env.client.execute_workflow(
+          IPGeolocate::GetAddressFromIPWorkflow,
+          "Testing",
+          id: "test-#{SecureRandom.uuid}",
+          task_queue: worker.task_queue
+        )
+        assert_equal 'Hello, Testing. Your IP is 1.1.1.1 and you are located in Planet Earth.', result
+      end
+    end
+  end
+end
+```
 <!--SNIPEND-->
 
 `TestWorkflowEnvironment` is a runtime environment used to test a Workflow. You use it to connect the Client and Worker to the test server and interact with the test server. You'll use this to register your Workflow Type and access information about the Workflow Execution, such as whether it completed successfully and the result or error it returned. Since the TestWorkflowEnvironment will be shared across tests, you will set it up before all of your tests, and tear it down after your tests finish.
@@ -291,6 +466,25 @@ The `MockActivityEnvironment` from the `@temporalio/testing` package lets you te
 Next, write the test for the `GetIPActivityActivity` Activity.
 
 <!--SNIPSTART ruby-ip-activity-test-->
+[test/get_ip_activity_test.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/test/get_ip_activity_test.rb)
+```rb
+require 'test_helper'
+require 'securerandom'
+require 'temporalio/testing'
+require 'ip_geolocate/get_ip_activity'
+
+class GetIPActivityTest < Minitest::Test
+  def test_gets_ip
+    env = Temporalio::Testing::ActivityEnvironment.new
+
+    Net::HTTP.stub(:get, ->(*) { "1.1.1.1" }) do
+      result = env.run(IPGeolocate::GetIPActivity)
+      assert_equal "1.1.1.1", result
+    end
+  end
+
+end
+```
 <!--SNIPEND-->
 
 Now, create a test file for `get_location_activity_test.rb`:
@@ -302,6 +496,31 @@ touch test/get_location_activity_test.rb
 Next, write the test for the `GetLocationActivityActivity` Activity, using [`Net::HTTP`](https://ruby-doc.org/stdlib-2.7.0/libdoc/net/http/rdoc/Net/HTTP.html) to stub out actual HTTP calls so your tests are consistent.
 
 <!--SNIPSTART ruby-get-location-activity-test-->
+[test/get_location_activity_test.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/test/get_location_activity_test.rb)
+```rb
+require "test_helper"
+require 'securerandom'
+require 'temporalio/testing'
+require "ip_geolocate/get_location_activity"
+
+class GetLocationActivityTest < Minitest::Test
+  def test_gets_ip
+    env = Temporalio::Testing::ActivityEnvironment.new
+
+    fake_location = {
+      city: 'Sample City',
+      regionName: 'Sample Region',
+      country: 'Sample Country'
+    }.to_json;
+
+    Net::HTTP.stub(:get, ->(*) { fake_location }) do
+      result = env.run(IPGeolocate::GetLocationActivity, "1.1.1.1")
+      assert_equal "Sample City, Sample Region, Sample Country", result
+    end
+  end
+
+end
+```
 <!--SNIPEND-->
 
 To test the Activity itself, you use the test environment to execute the Activity rather than directly calling the `GetLocationActivityActivity` method. You get the result from the Activity Execution and then ensure it matches the value you expect.
@@ -340,6 +559,35 @@ touch lib/client.rb
 Open `client.rb` in your editor and add the following code to the file to connect to the server and start the Workflow:
 
 <!--SNIPSTART ruby-ipgeo-client-->
+[lib/client.rb](https://github.com/temporalio/temporal-tutorial-ipgeo-ruby/blob/main/lib/client.rb)
+```rb
+require_relative 'ip_geolocate'
+require 'temporalio/client'
+
+name = ARGV[0]
+unless name
+  puts "Please provide your name when running the program."
+  exit 1
+end
+
+# Create a client
+begin
+  client = Temporalio::Client.connect('localhost:7233', 'default')
+rescue StandardError => e
+  puts e.message
+  exit 1
+end
+
+# Run workflow
+result = client.execute_workflow(
+  IPGeolocate::GetAddressFromIPWorkflow,
+  name, # This is the input to the workflow
+  id: 'my-workflow-id',
+  task_queue: IPGeolocate::TASK_QUEUE_NAME,
+)
+
+puts result
+```
 <!--SNIPEND-->
 
 In the `result` method you check to see if there is at least one argument passed and then capture the user's name from the arguments.
