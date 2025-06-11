@@ -293,7 +293,7 @@ Let's see that in action.
 
 ## Start the Workflow 
 
-You have two ways to start a Workflow with Temporal, either via the SDK or via the [tctl command-line tool](https://docs.temporal.io/tctl). In this tutorial you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
+You have two ways to start a Workflow with Temporal, either via the SDK or via the [temporal command-line tool](https://docs.temporal.io/cli). In this tutorial you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
 To start a Workflow Execution, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue) the Workflow should use, and start the Workflow with the input parameters it expects. In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL. In this tutorial, you'll create a small command-line program that starts the Workflow Execution.
 
