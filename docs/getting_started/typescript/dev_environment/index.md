@@ -10,7 +10,7 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 To follow the TypeScript SDK tutorials and build your own Temporal applications, you'll need the TypeScript SDK and a Temporal server.
 

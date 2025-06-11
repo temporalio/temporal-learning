@@ -7,7 +7,7 @@ pagination_next: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Zines](/img/banners/zines.png)
+<img className="banner" src="/img/banners/zines.png" alt="Zines" />
 
 Check out [our first Zine](../../static/zines/zines.pdf), a comic that delves into the world of Temporal and Durable Execution. This Zine illustrates how Temporal works to ensure reliable and durable execution of tasks and covers the following from a high-level perspective:
 
@@ -19,7 +19,7 @@ Check out [our first Zine](../../static/zines/zines.pdf), a comic that delves in
 
 Whether you're an engineer, someone without a technical background, or just curious about durable execution, our Zine offers an engaging way to learn about Temporal. 
 
-* [**What is Durabel Execution Zine (PDF)**](../../static/zines/zines.pdf)
+* [**What is Durable Execution Zine (PDF)**](../../static/zines/zines.pdf)
     * _Authors_: Mason Egger, Angela Zhou
     * _Illustrator_: Ash Ramos
 

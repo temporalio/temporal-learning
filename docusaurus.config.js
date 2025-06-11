@@ -41,7 +41,7 @@ const config = {
     // announcementBar: {
     //   id: "replay_announcement",
     //   content:
-    //     'Replay will return September 18-20 in Seattle! <a href="https://www.papercall.io/replay2024"> <a href="https://www.eventbrite.com/e/replay-2024-tickets-744609486017?aff=ebdsoporgprofile">Secure your ticket</a>.',
+    //     'Replay is coming to London, March 3-5! <a href="https://www.eventbrite.com/e/replay-conference-2025-tickets-1045108576887">Secure your ticket</a>',
     //   backgroundColor: "#141414",
     //   textColor: "#ffffff",
     //   isCloseable: true,
@@ -63,6 +63,7 @@ const config = {
       //   },
       // },
     },
+    image: "/img/open-graph-shiny.png",
     prism: {
       theme: require("prism-react-renderer/themes/nightOwlLight"),
       darkTheme: require("prism-react-renderer/themes/dracula"),
@@ -85,9 +86,8 @@ const config = {
       items: [
         {to: "/", label: "Home", position: "left", activeBasePath: "none"},
         {to: "/getting_started", label: "Get started", position: "left"},
-        {to: "/courses", label: "Courses", position: "left"},
-        {to: "/tutorials", label: "Project-based tutorials", position: "left"},
-        {to: "/examples", label: "Example applications", position: "left"},
+        { to: "/courses", label: "Courses", position: "left" },
+        {href: "https://temporal.io/code-exchange", label: "Code Exchange", position: "left"},
         {
           href: "https://docs.temporal.io",
           label: "Documentation",

@@ -7,7 +7,7 @@ pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 Take your first steps into building apps with Temporal and Python by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
@@ -32,14 +32,6 @@ Run a Temporal Application using the Temporal Python SDK.
 **Estimated time**: ⏱️ ~20 minutes
 
 Write a program from the ground up with tests.
-
-----
-
-## [Run Workers with Temporal Cloud](run_workers_with_cloud_python/index.md)
-
-**Estimated time**: ⏱️ ~10 minutes
-
-Update your Worker code to connect to Temporal Cloud and run your Workflows.
 
 ----
 
