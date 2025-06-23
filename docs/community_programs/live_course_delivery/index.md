@@ -84,10 +84,3 @@ If you’d like to request a training, please post your request in the `#request
 - **Time zone**: What time zone are you in, or what time zone would work best for your workshop?
 
 Please allow a 2-business-day turnaround time for a response.
-
-## Upcoming Public Courses
-
-| Course Offered | Date & Time | Location | Registration Link | 
-| -------------- | ---- | -------- | ----------------- |
-| Temporal 101 in .NET | April 9, 2025 @ 12:00 EST | Virtual | [Register today](https://pages.temporal.io/workshop-dotnet-101-2504) |
-| Temporal 101 in Go | May 14, 2025 @ 12:00 EST | Virtual | [Register today](https://pages.temporal.io/workshop-go-101-2505) |
