@@ -6,27 +6,38 @@ tags: [AI, Series]
 last_update:
   date: 2025-06-30
   author: Mason Egger
-title: How To Build a Durable Agentic AI with Temporal Workflows and Python
-description: Build a durable agentic AI from scratch using the Temporal Python SDK
+title: How To Build a Durable AI Agent with Temporal and Python
+description: Build a durable AI agent from scratch using the Temporal Python SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 
 
 ## Introduction
 
-<!--WRITE INTRODUCTION-->
+An AI agent uses large language models (LLMs) to plan and execute steps towards a goal.
+While attempting to reach its goal, the agents can perform actions such as searching for information, interacting with external services, and even calling other agents. 
+However, building reliable AI agents presents various challenges. 
+Network failures, long running workflows, observability challenges, and more make building AI agents a textbook distributed systems problem.
 
-In this tutorial you'll create includes several key components:
+Temporal orchestrates long running workflows, automatically handles failure cases from network outages to server crashes, provides robust insights into your running applications, and more.
+These features provide the resiliency and durability necessary to build reliable agents that users can rely on.
 
-* **Tools** that can search for events, find flights, and generate invoices using mock data for demonstration purposes. 
-    These tools will be provided to the Agent, which in turn will decide when to use them.
-* **Temporal Workflows** that orchestrate multi-turn conversations and ensure durability across failures
+In this tutorial you'll build an AI agent using Temporal that searches for events in a given city, helps you book a plane ticket, and creates an invoice for the trip. 
+The user will interact with this application through a chatbot interface, communicating with the agent using natural language.
+Throughout this tutorial you will implement the following components:
+
+* Various **tools** the agent will use to search for events, find flights, and generate invoices.
+* **An agent goal** that will specify what overall task the agent is trying to achieve and what tools it is allowed to use.
+* A **Temporal Workflows** that will orchestrate multi-turn conversations and ensure durability across failures
 * **Temporal Activities** that execute tools and language model calls with automatic retry logic
-* **A web-based chat interface** built with React that allows users to interact with the agent
 * **A FastAPI backend** that connects the web interface to your Temporal Workflows
+* **A web-based chat interface** that allow users to interact with the agent
 
-By the end of this tutorial, you will have a working AI agent that can handle complex conversations, execute multiple tools in sequence, and recover gracefully from system failures. 
-You'll understand how to use Temporal to build reliable AI applications that maintain state and provide consistent user experiences.
+By the end of this tutorial, you will have a modular, durable AI agent that you can extend to run any goal using any set of tools.
+Your agent will be able to recover from failure, whether it's' a hardware failure, a tool failure, or an LLM failure.
+And you'll understand how to use Temporal to build reliable AI applications that maintain state and provide consistent user experiences.
+
+You can find the code for this tutorial on GitHub in the [tutorial-temporal-ai-agent](https://github.com/temporal-community/tutorial-temporal-ai-agent) repository.
 
 ## Prerequisites
 
@@ -65,40 +76,48 @@ You can opt to use real API services for your tools, or use provided mock functi
 
 Additionally, this tutorial assumes you have basic familiarity with:
 
+#### Programming Concepts
+
 * Temporal fundamentals such as [Workflows](https://docs.temporal.io/develop/python/core-application#develop-workflows), [Activities](https://docs.temporal.io/develop/python/core-application#develop-activities), [Workers](https://docs.temporal.io/develop/python/core-application#run-a-dev-worker), [Signals](https://docs.temporal.io/develop/python/message-passing#signals), and [Queries](https://docs.temporal.io/develop/python/message-passing#queries)
 * Python fundamentals such as functions, classes, async/await syntax, and virtual environments
 * Command line interface and running commands in terminal or command prompt  
 * REST API concepts including HTTP requests and JSON responses
 * How to set and use environment variables in your operating system
 
+#### AI Concepts
+
+* [A Mental Model for Agentic AI Applications](https://temporal.io/blog/a-mental-model-for-agentic-ai-applications)
+* [Building an agentic system that's actually production ready](https://temporal.io/blog/building-an-agentic-system-thats-actually-production-ready)
+* [Why Agentic Flows Need Distributed Systems](https://temporal.io/blog/from-ai-hype-to-durable-reality-why-agentic-flows-need-distributed-systems)
+
 ## Setting up your development environment
 
 Before you start coding, you need to set up your Python developer environment.
 In this step, you will set up your project structure, install the necessary Python packages, and configure the Python environment needed to build your AI agent.
 
-First, create a directory for your project and navigate into it:
+First, create your project using `uv`:
 
 ```command
-mkdir temporal-ai-agent
-cd temporal-ai-agent
+uv init temporal-ai-agent
+
 ```
 
-Next, initialize a new Python project using `uv`:
+Next, change directories into your newly created projcect:
 
 ```command
-uv init
+cd temporal-ai-agent
 ```
 
 `uv` is a modern Python project and packaging tool that sets up a project structure for  you.
 Running this command creates the following default Python package structure for you:
 
 ```
-.git
-.gitignore
-.python-version
-README.md
-main.py
-pyproject.toml
+temporal-ai-agent/
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+└── uv.lock
 ```
 
 It automatically runs a `git init` command for you, provides you with the default `.gitignore` for Python, creates a `.python-version` file that has the project's default Python version, a README.md, a Hello World `main.py` program, and a `pyproject.toml` file for managing the projects packages and environment.
@@ -567,388 +586,509 @@ Next, run the test using the following command the same way you would the mocked
 uv run scripts/search_flight_test.py
 ```
 
-The result will be JSON that contains an `invoiceURL`, as well as the status of the invoice and a reference.
+The result will contain an `invoiceURL`, as well as the status of the invoice and a reference.
 
-```json
+```output
 {'invoiceStatus': 'open', 'invoiceURL': 'https://invoice.stripe.com/i/acct_1RMFbIQej3CO0i8K/test_YWNjdF8xUk1GYklRZWozQ08waThLLF9TWVJpYWZ2WXREVXZrcDJqMGhIM0hSdkVEa2hVYmM0LDE0MTI2NjEwNg0200VaZpBdSc?s=ap', 'reference': 'FEUS4MXS-0001'}
 ```
 
-By following that invoice link in a browser, you will be presented with a sample invoice in your sandbox environment. 
+By following that invoice link in a browser, Stripe will present you with a sample invoice in your sandbox environment. 
 
-And those are the three tools in the agent's toolkit. 
+Before you move on, verify you created all the necessary files in the correct structure.
+
+
+### Verifying the toolkit directory and file layout
+
+So far you've implemented and tested the agents tools.
+Verify your directory structure and files look and are named appropriately according to the following diagram before continuing:
+
+```
+code/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+└── tools/
+    ├── __init__.py
+    ├── create_invoice.py
+    ├── find_events.py
+    ├── search_flights.py
+    └── data/
+        └── find_events_data.json
+```
+
+And those are the three tools in this agent's toolkit to achieve its goal.
+Other goals may have different tools, and you could add more tools.
 Next, you'll make the tools available to the agent to use.
 
 ## Exposing the tools to the agent
 
+Now that you have the tools necessary to complete the agent's goal, you need to implement a way to inform the agent that these tools are available.
+To do this, you'll create a tool registry. 
+The tool registry will contain a definition of each tool, along with information such as the tools name, description, and what arguments the tool accepts. 
 
-### Building tool definitions for language models
+However, before you create the registry, you should define the tool definition and tool argument as models that can be shared across your codebase.
 
-The first challenge is describing your tools to language models in a structured way that enables intelligent decision-making about when and how to use each tool.
+### Defining the core models
 
-Open your text editor and create `tool_registry.py` with the language model interface definitions:
+Defining the tool arguments, tool definition, and agent goal as custom types allows for better reusability and type hinting.
+Temporal also recommends passing a single object between functions, and requires these objects to be serializable.
+Given these requirements, you'll implement the `ToolArgument` and `ToolDefinition` types as a Python `dataclass`.
 
-```python
-from models.core import ToolArgument, ToolDefinition
-
-search_flights_tool = ToolDefinition(
-    name="SearchFlights",
-    description="Search for return flights from an origin to a destination within a date range (dateDepart, dateReturn). "
-    "You are allowed to suggest dates from the conversation history, but ALWAYS ask the user if ok.",
-    arguments=[
-        ToolArgument(
-            name="origin",
-            type="string",
-            description="Airport or city (infer airport code from city and store)",
-        ),
-        ToolArgument(
-            name="destination",
-            type="string",
-            description="Airport or city code for arrival (infer airport code from city and store)",
-        ),
-        ToolArgument(
-            name="dateDepart",
-            type="ISO8601",
-            description="Start of date range in human readable format, when you want to depart",
-        ),
-        ToolArgument(
-            name="dateReturn",
-            type="ISO8601",
-            description="End of date range in human readable format, when you want to return",
-        ),
-        ToolArgument(
-            name="userConfirmation",
-            type="string",
-            description="Indication of the user's desire to search flights, and to confirm the details "
-            + "before moving on to the next step",
-        ),
-    ],
-)
-```
-
-This tool definition provides the language model with detailed information about flight search capabilities. 
-The description explains not just what the tool does, but includes behavioral guidance like "ALWAYS ask the user if ok" for date suggestions. 
-Each argument includes semantic descriptions that help the language model understand how to extract the right information from conversation context.
-
-Continue building the tool definitions by adding the invoice creation tool:
-
-```python
-create_invoice_tool = ToolDefinition(
-    name="CreateInvoice",
-    description="Generate an invoice for the items described for the total inferred by the conversation history so far. Returns URL to invoice.",
-    arguments=[
-        ToolArgument(
-            name="amount",
-            type="float",
-            description="The total cost to be invoiced. Infer this from the conversation history.",
-        ),
-        ToolArgument(
-            name="tripDetails",
-            type="string",
-            description="A description of the item details to be invoiced, inferred from the conversation history.",
-        ),
-        ToolArgument(
-            name="userConfirmation",
-            type="string",
-            description="Indication of user's desire to create an invoice",
-        ),
-    ],
-)
-```
-
-The invoice tool definition demonstrates how to guide language models to infer information from conversation context. 
-Rather than requiring explicit user input for all fields, the descriptions tell the language model to extract amounts and details from previous conversation turns.
-
-Add the event discovery tool:
-
-```python
-find_events_tool = ToolDefinition(
-    name="FindEvents",
-    description="Find upcoming events to travel to a given city (e.g., 'New York City') and a date or month. "
-    "It knows about events in North America only (e.g. major North American cities). "
-    "It will search 1 month either side of the month provided. "
-    "Returns a list of events. ",
-    arguments=[
-        ToolArgument(
-            name="city",
-            type="string",
-            description="Which city to search for events",
-        ),
-        ToolArgument(
-            name="month",
-            type="string",
-            description="The month to search for events (will search 1 month either side of the month provided)",
-        ),
-    ],
-)
-```
-
-The event tool definition includes important constraints that help the language model set appropriate user expectations. 
-It explicitly states geographic limitations ("North America only") and explains search behavior ("1 month either side").
-
-### Creating the tool handler registry
-
-The next challenge is mapping tool names to their implementation functions in a way that supports dynamic dispatch during workflow execution.
-
-Create `__init__.py` with the tool handler system:
-
-```python
-from typing import Any, Callable, Dict
-
-from .create_invoice import create_invoice
-from .find_events import find_events
-from .search_flights import search_flights
-
-# Dictionary mapping tool names to their handler functions
-TOOL_HANDLERS: Dict[str, Callable[..., Any]] = {
-    "SearchFlights": search_flights,
-    "CreateInvoice": create_invoice,
-    "FindEvents": find_events,
-}
-
-
-def get_handler(tool_name: str) -> Callable[..., Any]:
-    """Get the handler function for a given tool name.
-
-    Args:
-        tool_name: The name of the tool to get the handler for.
-
-    Returns:
-        The handler function for the specified tool.
-
-    Raises:
-        ValueError: If the tool name is not found in the registry.
-    """
-    if tool_name not in TOOL_HANDLERS:
-        raise ValueError(f"Unknown tool: {tool_name}")
-
-    return TOOL_HANDLERS[tool_name]
-```
-
-This registry system provides centralized tool management with runtime dispatch capabilities. 
-The `get_handler` function enables your Temporal Activities to execute any tool by name, supporting the dynamic tool execution pattern essential for flexible agent systems.
-
-
-
-
-### Combining tools into agent workflows
-
-The final component combines individual tools into cohesive agent workflows that guide multi-step interactions.
-
-Create `goal_registry.py` with the complete workflow definition:
-
-```python
-import tools.tool_registry as tool_registry
-from models.core import AgentGoal
-
-goal_event_flight_invoice = AgentGoal(
-    id="goal_event_flight_invoice",
-    category_tag="travel-flights",
-    agent_name="North America Event Flight Booking",
-    agent_friendly_description="Book a trip to a city in North America around the dates of events in that city.",
-    tools=[
-        tool_registry.find_events_tool,
-        tool_registry.search_flights_tool,
-        tool_registry.create_invoice_tool,
-    ],
-    description="Help the user gather args for these tools in order: "
-    "1. FindEvents: Find an event to travel to "
-    "2. SearchFlights: search for a flight around the event dates "
-    "3. CreateInvoice: Create a simple invoice for the cost of that flight ",
-    starter_prompt="Welcome me, give me a description of what you can do, then ask me for the details you need to do your job.",
-    example_conversation_history="\n ".join(
-        [
-            "user: I'd like to travel to an event",
-            "agent: Sure! Let's start by finding an event you'd like to attend. I know about events in North American cities. Could you tell me which city and month you're interested in?",
-            "user: sydney in may please",
-            "agent: Great! Let's find an events in New York City in May.",
-            "user_confirmed_tool_run: <user clicks confirm on FindEvents tool>",
-            "tool_result: { 'event_name': 'Vivid New York City', 'event_date': '2023-05-01' }",
-            "agent: Found an event! There's Vivid New York City on May 1 2025, ending on May 14 2025. Would you like to search for flights around these dates?",
-            "user: Yes, please",
-            "agent: Let's search for flights around these dates. Could you provide your departure city?",
-            "user: San Francisco",
-            "agent: Thanks, searching for flights from San Francisco to New York City around 2023-02-25 to 2023-02-28.",
-            "user_confirmed_tool_run: <user clicks confirm on SearchFlights tool>"
-            'tool_result: results including {"flight_number": "CX101", "return_flight_number": "CX102", "price": 850.0}',
-            "agent: Found some flights! The cheapest is CX101 for $850. Would you like to generate an invoice for this flight?",
-            "user_confirmed_tool_run: <user clicks confirm on CreateInvoice tool>",
-            'tool_result: { "status": "success", "invoice": { "flight_number": "CX101", "amount": 850.0 }, invoiceURL: "https://example.com/invoice" }',
-            "agent: Invoice generated! Here's the link: https://example.com/invoice",
-        ]
-    ),
-)
-```
-
-This goal definition demonstrates how to combine individual tools into cohesive agent workflows. 
-It includes step-by-step guidance for the language model, example conversation patterns, and clear behavioral expectations for multi-turn interactions.
-
-### Bringing it all together
-
-Your complete tools implementation provides the foundation for intelligent agent behavior. Here are the complete files:
-
-**Tool Registry (`tool_registry.py`):**
-```python
-from models.core import ToolArgument, ToolDefinition
-
-search_flights_tool = ToolDefinition(
-    name="SearchFlights",
-    description="Search for return flights from an origin to a destination within a date range (dateDepart, dateReturn). "
-    "You are allowed to suggest dates from the conversation history, but ALWAYS ask the user if ok.",
-    arguments=[
-        ToolArgument(
-            name="origin",
-            type="string",
-            description="Airport or city (infer airport code from city and store)",
-        ),
-        ToolArgument(
-            name="destination",
-            type="string",
-            description="Airport or city code for arrival (infer airport code from city and store)",
-        ),
-        ToolArgument(
-            name="dateDepart",
-            type="ISO8601",
-            description="Start of date range in human readable format, when you want to depart",
-        ),
-        ToolArgument(
-            name="dateReturn",
-            type="ISO8601",
-            description="End of date range in human readable format, when you want to return",
-        ),
-        ToolArgument(
-            name="userConfirmation",
-            type="string",
-            description="Indication of the user's desire to search flights, and to confirm the details "
-            + "before moving on to the next step",
-        ),
-    ],
-)
-
-create_invoice_tool = ToolDefinition(
-    name="CreateInvoice",
-    description="Generate an invoice for the items described for the total inferred by the conversation history so far. Returns URL to invoice.",
-    arguments=[
-        ToolArgument(
-            name="amount",
-            type="float",
-            description="The total cost to be invoiced. Infer this from the conversation history.",
-        ),
-        ToolArgument(
-            name="tripDetails",
-            type="string",
-            description="A description of the item details to be invoiced, inferred from the conversation history.",
-        ),
-        ToolArgument(
-            name="userConfirmation",
-            type="string",
-            description="Indication of user's desire to create an invoice",
-        ),
-    ],
-)
-
-find_events_tool = ToolDefinition(
-    name="FindEvents",
-    description="Find upcoming events to travel to a given city (e.g., 'New York City') and a date or month. "
-    "It knows about events in North America only (e.g. major North American cities). "
-    "It will search 1 month either side of the month provided. "
-    "Returns a list of events. ",
-    arguments=[
-        ToolArgument(
-            name="city",
-            type="string",
-            description="Which city to search for events",
-        ),
-        ToolArgument(
-            name="month",
-            type="string",
-            description="The month to search for events (will search 1 month either side of the month provided)",
-        ),
-    ],
-)
-```
-
-**Tool Handler Registry (`__init__.py`):**
-```python
-from typing import Any, Callable, Dict
-
-from .create_invoice import create_invoice
-from .find_events import find_events
-from .search_flights import search_flights
-
-# Dictionary mapping tool names to their handler functions
-TOOL_HANDLERS: Dict[str, Callable[..., Any]] = {
-    "SearchFlights": search_flights,
-    "CreateInvoice": create_invoice,
-    "FindEvents": find_events,
-}
-
-
-def get_handler(tool_name: str) -> Callable[..., Any]:
-    """Get the handler function for a given tool name.
-
-    Args:
-        tool_name: The name of the tool to get the handler for.
-
-    Returns:
-        The handler function for the specified tool.
-
-    Raises:
-        ValueError: If the tool name is not found in the registry.
-    """
-    if tool_name not in TOOL_HANDLERS:
-        raise ValueError(f"Unknown tool: {tool_name}")
-
-    return TOOL_HANDLERS[tool_name]
-```
-
-This tools implementation demonstrates key patterns for building capable AI agents: structured tool definitions for language model understanding, flexible implementation supporting both development and production, and workflow composition that guides multi-step interactions toward successful completion.
-
-In the next step, you will create Temporal Activities that wrap these tools with durability and retry logic.
-
-## Building a Temporal Activity to execute the tools
-
-In this step, you will create Activities that wrap your AI agent tools with durability and retry logic. 
-Temporal Activities handle external system interactions like language model calls and tool execution, providing automatic recovery when failures occur.
-
-### Understanding the durability challenge
-
-Your AI agent needs to make multiple external calls during each conversation - validating user input with language models, executing tools that search for flights or events, and generating responses. 
-Each of these calls can fail due to network issues, API rate limits, or temporary service outages. 
-Without proper handling, a single failure would restart the entire conversation from the beginning.
-
-Activities solve this problem by providing durability boundaries around external operations. 
-When an Activity fails, Temporal automatically retries it without affecting the broader Workflow state. 
-This means your agent can recover from temporary failures while maintaining the conversation context.
-
-### Creating the data models
-
-Your Activities require specific data structures for input and output. 
-Start by creating the models directory and the core data types:
+Before you define these models, navigate to the root directory of your project and create the `models` directory:
 
 ```command
 mkdir models
 ```
 
-Open your text editor and create `models/core.py` with the fundamental data structures:
+Since this directory will be imported throughout your project, it needs to be configured as a module.
+To do this, create a blank `__init__.py` file by running the following command:
+
+```command
+touch models/__init__.py
+```
+
+Next, create the file `core.py`. This file will contain the tool argument and definition models used to in your agent. 
+Open `models/core.py` and add the following imports:
 
 ```python
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, Union
-
-# Common type aliases
-
-Message = Dict[str, Union[str, Dict[str, Any]]]
-ConversationHistory = Dict[str, List[Message]]
-NextStep = Literal["confirm", "question", "pick-new-goal", "done"]
-CurrentTool = str
+from typing import List
 ```
 
-These type aliases define the basic data structures your agent uses for conversation management. 
-`Message` represents individual conversation messages, `ConversationHistory` stores the entire conversation state, and `NextStep` defines the possible agent actions.
-
-Next, add the tool and goal definitions:
+Next, add the `ToolArgument` `dataclass` to the file:
 
 ```python
+@dataclass
+class ToolArgument:
+    name: str
+    type: str
+    description: str
+```
+
+An instance of this `dataclass` will represent an argument that your tool can accept, including the name of the argument, a description of what the argument represents, and the type of the argument, such as an `int` or `str`. 
+
+Next, add the `ToolDefinition` `dataclass` to the file:
+
+```python
+@dataclass
+class ToolDefinition:
+    name: str
+    description: str
+    arguments: List[ToolArgument]
+```
+
+This will hold information about the tool that's provided to the agent so it can determine what action to take.
+It defines the name of the tool, a description of what the can do, and an argument list. This list is composed of your `ToolArgument` objects.
+
+Now that you have the appropriate model to define your tools, you can create a registry of the tools for the agent to access.
+
+### Creating the tool registry
+
+Agents use LLMs to determine what action to take and then execute a tool from their toolkit.
+However, you have to make those tools available to the agent.
+Now that you have structure for defining your tools, you should create a registry that your agent reads to load the available tools.
+
+Navigate back to the `tools` directory and create the file `tools/tool_registry.py` file.
+In this file you will define all of your tools using the models you defined in the previous step.
+
+First, add the following import to the file to import the models:
+
+```python
+from models.core import ToolArgument, ToolDefinition
+```
+
+Next, add the first part of the `ToolDefinition` for the `find_events` tool:
+
+```python
+find_events_tool = ToolDefinition(
+    name="FindEvents",
+    description="Find upcoming events to travel to a given city (e.g., 'New York City') and a date or month. "
+    "It knows about events in North America only (e.g. major North American cities). "
+    "It will search 1 month either side of the month provided. "
+    "Returns a list of events. ",
+    # arguments to be inserted here in the next step
+)
+```
+
+This defines your tool using the `ToolDefinition` model you defined, gives it a name and a description that the LLM can use to understand the tool and also use as a prompt.
+Next you need to add the arguments to this instantiation.
+The arguments in the `ToolDefinition` model were defined as a `List[ToolArgument]`, so you may have multiple arguments within your list.
+
+To complete the definition, add the following code to your `find_events_tool` instantiation within the `find_events_tool` instantiation to add the arguments:
+
+```python
+    arguments=[
+        ToolArgument(
+            name="city",
+            type="string",
+            description="Which city to search for events",
+        ),
+        ToolArgument(
+            name="month",
+            type="string",
+            description="The month to search for events (will search 1 month either side of the month provided)",
+        ),
+    ]
+```
+
+The `find_events` tool requires two arguments, and it also provides a string description so the LLM would know how to prompt the user if an argument is missing.
+
+Bringing it all together, the complete `ToolDefinition` would be:
+
+```python
+find_events_tool = ToolDefinition(
+    name="FindEvents",
+    description="Find upcoming events to travel to a given city (e.g., 'New York City') and a date or month. "
+    "It knows about events in North America only (e.g. major North American cities). "
+    "It will search 1 month either side of the month provided. "
+    "Returns a list of events. ",
+    arguments=[
+        ToolArgument(
+            name="city",
+            type="string",
+            description="Which city to search for events",
+        ),
+        ToolArgument(
+            name="month",
+            type="string",
+            description="The month to search for events (will search 1 month either side of the month provided)",
+        ),
+    ],
+)
+```
+
+Now that you have the first tool defined in your registry, implement the remaining tool definitions. 
+
+Add the following code to register the `search_flights` tool:
+
+```python
+search_flights_tool = ToolDefinition(
+    name="SearchFlights",
+    description="Search for return flights from an origin to a destination within a date range (dateDepart, dateReturn). "
+    "You are allowed to suggest dates from the conversation history, but ALWAYS ask the user if ok.",
+    arguments=[
+        ToolArgument(
+            name="origin",
+            type="string",
+            description="Airport or city (infer airport code from city and store)",
+        ),
+        ToolArgument(
+            name="destination",
+            type="string",
+            description="Airport or city code for arrival (infer airport code from city and store)",
+        ),
+        ToolArgument(
+            name="dateDepart",
+            type="ISO8601",
+            description="Start of date range in human readable format, when you want to depart",
+        ),
+        ToolArgument(
+            name="dateReturn",
+            type="ISO8601",
+            description="End of date range in human readable format, when you want to return",
+        ),
+        ToolArgument(
+            name="userConfirmation",
+            type="string",
+            description="Indication of the user's desire to search flights, and to confirm the details "
+            + "before moving on to the next step",
+        ),
+    ],
+)
+```
+
+And then add the following code to register the `create_invoice` tool:
+
+```python
+create_invoice_tool = ToolDefinition(
+    name="CreateInvoice",
+    description="Generate an invoice for the items described for the total inferred by the conversation history so far. Returns URL to invoice.",
+    arguments=[
+        ToolArgument(
+            name="amount",
+            type="float",
+            description="The total cost to be invoiced. Infer this from the conversation history.",
+        ),
+        ToolArgument(
+            name="tripDetails",
+            type="string",
+            description="A description of the item details to be invoiced, inferred from the conversation history.",
+        ),
+        ToolArgument(
+            name="userConfirmation",
+            type="string",
+            description="Indication of user's desire to create an invoice",
+        ),
+    ],
+)
+```
+
+
+You now have a tool registry your agent imports to inform it of what tools it has available to execute.
+Finally, you need to create a mapping between the tool registered in `tool_registry.py` with the actual functions the Activity will invoke during Workflow execution.
+
+### Mapping the registry to the functions
+
+Your code will use the registry to identify which tool it should use, but it still needs to translate the string `name` of the tool to the function definition the code will execute.
+You will modify the code in `tool_registry` to add this functionality.
+
+First, add the following imports with the other imports in `tool_registry.py`:
+
+```python
+from typing import Any, Callable, Dict
+
+from tools.create_invoice import create_invoice
+from tools.find_events import find_events
+from tools.search_flights import search_flights
+```
+
+These handle the appropriate typings, as well as import the function from each of the tool files.
+
+Next, go to the bottom of the file after the previous tool definitions and add the code to map the string representation of the `ToolDefinition` to the function:
+
+```python
+# Dictionary mapping tool names to their handler functions
+TOOL_HANDLERS: Dict[str, Callable[..., Any]] = {
+    "SearchFlights": search_flights,
+    "CreateInvoice": create_invoice,
+    "FindEvents": find_events,
+}
+```
+
+Finally, add a function named `get_handler` that returns the function given the tool name:
+
+```python
+def get_handler(tool_name: str) -> Callable[..., Any]:
+    """Get the handler function for a given tool name.
+
+    Args:
+        tool_name: The name of the tool to get the handler for.
+
+    Returns:
+        The handler function for the specified tool.
+
+    Raises:
+        ValueError: If the tool name is not found in the registry.
+    """
+    if tool_name not in TOOL_HANDLERS:
+        raise ValueError(f"Unknown tool: {tool_name}")
+
+    return TOOL_HANDLERS[tool_name]
+```
+
+You have now successfully implemented a structured model for expressing tools available to your AI agent. 
+This is necessary for building a robust, capable agent.
+
+<details>
+
+<summary>
+The <code>tools/tool_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+[models/core.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/tool_registry.py)
+
+```python
+from typing import Any, Callable, Dict
+
+from models.core import ToolArgument, ToolDefinition
+from tools.create_invoice import create_invoice
+from tools.find_events import find_events
+from tools.search_flights import search_flights
+
+find_events_tool = ToolDefinition(
+    name="FindEvents",
+    description="Find upcoming events to travel to a given city (e.g., 'New York City') and a date or month. "
+    "It knows about events in North America only (e.g. major North American cities). "
+    "It will search 1 month either side of the month provided. "
+    "Returns a list of events. ",
+    arguments=[
+        ToolArgument(
+            name="city",
+            type="string",
+            description="Which city to search for events",
+        ),
+        ToolArgument(
+            name="month",
+            type="string",
+            description="The month to search for events (will search 1 month either side of the month provided)",
+        ),
+    ],
+)
+
+
+search_flights_tool = ToolDefinition(
+    name="SearchFlights",
+    description="Search for return flights from an origin to a destination within a date range (dateDepart, dateReturn). "
+    "You are allowed to suggest dates from the conversation history, but ALWAYS ask the user if ok.",
+    arguments=[
+        ToolArgument(
+            name="origin",
+            type="string",
+            description="Airport or city (infer airport code from city and store)",
+        ),
+        ToolArgument(
+            name="destination",
+            type="string",
+            description="Airport or city code for arrival (infer airport code from city and store)",
+        ),
+        ToolArgument(
+            name="dateDepart",
+            type="ISO8601",
+            description="Start of date range in human readable format, when you want to depart",
+        ),
+        ToolArgument(
+            name="dateReturn",
+            type="ISO8601",
+            description="End of date range in human readable format, when you want to return",
+        ),
+        ToolArgument(
+            name="userConfirmation",
+            type="string",
+            description="Indication of the user's desire to search flights, and to confirm the details "
+            + "before moving on to the next step",
+        ),
+    ],
+)
+
+create_invoice_tool = ToolDefinition(
+    name="CreateInvoice",
+    description="Generate an invoice for the items described for the total inferred by the conversation history so far. Returns URL to invoice.",
+    arguments=[
+        ToolArgument(
+            name="amount",
+            type="float",
+            description="The total cost to be invoiced. Infer this from the conversation history.",
+        ),
+        ToolArgument(
+            name="tripDetails",
+            type="string",
+            description="A description of the item details to be invoiced, inferred from the conversation history.",
+        ),
+        ToolArgument(
+            name="userConfirmation",
+            type="string",
+            description="Indication of user's desire to create an invoice",
+        ),
+    ],
+)
+
+
+# Dictionary mapping tool names to their handler functions
+TOOL_HANDLERS: Dict[str, Callable[..., Any]] = {
+    "SearchFlights": search_flights,
+    "CreateInvoice": create_invoice,
+    "FindEvents": find_events,
+}
+
+
+def get_handler(tool_name: str) -> Callable[..., Any]:
+    """Get the handler function for a given tool name.
+
+    Args:
+        tool_name: The name of the tool to get the handler for.
+
+    Returns:
+        The handler function for the specified tool.
+
+    Raises:
+        ValueError: If the tool name is not found in the registry.
+    """
+    if tool_name not in TOOL_HANDLERS:
+        raise ValueError(f"Unknown tool: {tool_name}")
+
+    return TOOL_HANDLERS[tool_name]
+```
+</details>
+
+Before moving on to the next section, verify your files and directory structure is correct.
+
+
+### Verifying the models and tool registry directory and file layout
+
+You just implemented a model for defining your tools in a way that your agent could discover and use them.
+Verify your directory structure and file names are correct according to the following diagram before continuing:
+
+```
+code/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+└── tools/
+    ├── __init__.py
+    ├── create_invoice.py
+    ├── find_events.py
+    ├── search_flights.py
+    ├── tool_registry.py
+    └── data/
+        └── find_events_data.json
+```
+
+In the next step, you will define the use the tool definitions you just created to define the agent's goal. 
+
+## Designating the agent's goal
+
+An agent's goal is the definition of the task it's trying to achieve.
+It achieves this goal by executing tools, analyzing the results, and using an LLM to decide what to do next.
+In this tutorial you will define the goal as a combination of several fields, including a description, a starter prompt, an example conversation history, and the list of tools the agent can use to achieve its goal.
+Now that you've defined the `ToolDefinition` that will be available for your agent, you can define the `AgentGoal` type and create your agent's goal.
+
+### Definining the `AgentGoal` type
+
+To define the `AgentGoal` type, open `models/core.py` and add the following code:
+
+```python
+@dataclass
+class AgentGoal:
+    agent_name: str
+    tools: List[ToolDefinition]
+    description: str
+    starter_prompt: str
+    example_conversation_history: str
+```
+
+This `dataclass` defines your `AgentGoal` as a combination of a few attributes:
+* `agent_name` - A human readable name for the agent
+* `tools` - A list of tools, defined as `ToolDefinition` types, that the agent can use to achieve its goal
+* `description` - A description of the goal, in a bulleted list format specifying how to achieve it.
+* `starter_prompt` - A starter prompt for the AI agent to run
+* `example_conversation_history` - A sample conversation history of what a successful interaction with this agent would look like
+
+<details>
+
+<summary>
+The <code>models/core.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[models/core.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/models/core.py)
+
+```python
+from dataclasses import dataclass
+from typing import List
+
+
 @dataclass
 class ToolArgument:
     name: str
@@ -976,19 +1116,254 @@ class AgentGoal:
         "Example conversation history to help the AI agent understand the context of the conversation"
     )
 ```
+</details>
 
-These dataclasses define how your agent understands its capabilities. 
-`ToolArgument` describes individual tool parameters, `ToolDefinition` defines complete tools with their descriptions and arguments, and `AgentGoal` combines multiple tools into cohesive workflows.
+Now that you have the type available to define the goal, you will implement the goal for your agent.
 
-Now create `models/requests.py` for Activity input and output structures:
+### Implementing the goal registry
+
+Similar to implementing the `tool_registry`, next you will implement a `goal_registry` to define your agent's goal and make it available to the Workflow. 
+You will do this by creating an instance of your `AgentGoal` type for every goal you wish to implement.
+For this tutorial you will only implement a single goal, but you may want to use this framework going forward to create your own agent goals at a later date.
+
+To implement your agent's goal, create the file `models/goal_registry.py` and add the following imports to the file:
+
+```python
+import tools.tool_registry as tool_registry
+from models.core import AgentGoal
+```
+
+To create the goal, first create an instance of the `AgentGoal` `dataclass` and add the first parameter, `agent_name`, to identify the goal:
+
+```python
+goal_event_flight_invoice = AgentGoal(
+    agent_name="North America Event Flight Booking",
+    # ...
+```
+
+Next, pass in the tools that the agent is allowed to use to accomplish its goal to the `tools` parameter.
+Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+
+```python
+    # ...
+    tools=[
+        tool_registry.find_events_tool,
+        tool_registry.search_flights_tool,
+        tool_registry.create_invoice_tool,
+    ],
+    # ...
+```
+
+The following parameter defines a detailed description of what the goal is and the ideal path for the agent to take to achieve its goal.
+Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+
+```python
+    # ...
+    description="Help the user gather args for these tools in order: "
+    "1. FindEvents: Find an event to travel to "
+    "2. SearchFlights: search for a flight around the event dates "
+    "3. CreateInvoice: Create a simple invoice for the cost of that flight ",
+    # ...
+```
+
+The next parameter provides a starter prompt for the agent, detailing how it should begin its interaction with every user.
+Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+
+```python
+    # ...
+    starter_prompt="Welcome me, give me a description of what you can do, then ask me for the details you need to do your job.",
+    # ...
+```
+
+Finally, draft an example conversation of a successful interaction with your agent to pass in.
+LLMs perform better when they have an example of expected output, so providing this aids the LLM in its goal.
+Since this is a `str` type, but the conversation is long, you will define each statement as a line in a list and then use `"\n ".join()` to create a string from your conversation.
+Add the conversation as the final parameter when creating the `goal_event_flight_invoice` object.
+
+```python
+    # ...
+    example_conversation_history="\n ".join(
+        [
+            "user: I'd like to travel to an event",
+            "agent: Sure! Let's start by finding an event you'd like to attend. I know about events in North American cities. Could you tell me which city and month you're interested in?",
+            "user: sydney in may please",
+            "agent: Great! Let's find an events in New York City in May.",
+            "user_confirmed_tool_run: <user clicks confirm on FindEvents tool>",
+            "tool_result: { 'event_name': 'Vivid New York City', 'event_date': '2023-05-01' }",
+            "agent: Found an event! There's Vivid New York City on May 1 2025, ending on May 14 2025. Would you like to search for flights around these dates?",
+            "user: Yes, please",
+            "agent: Let's search for flights around these dates. Could you provide your departure city?",
+            "user: San Francisco",
+            "agent: Thanks, searching for flights from San Francisco to New York City around 2023-02-25 to 2023-02-28.",
+            "user_confirmed_tool_run: <user clicks confirm on SearchFlights tool>"
+            'tool_result: results including {"flight_number": "AA101", "return_flight_number": "AA102", "price": 850.0}',
+            "agent: Found some flights! The cheapest is AA101 for $850. Would you like to generate an invoice for this flight?",
+            "user_confirmed_tool_run: <user clicks confirm on CreateInvoice tool>",
+            'tool_result: { "status": "success", "invoice": { "flight_number": "AA101", "amount": 850.0 }, invoiceURL: "https://example.com/invoice" }',
+            "agent: Invoice generated! Here's the link: https://example.com/invoice",
+        ]
+    ),
+)
+```
+
+<details>
+
+<summary>
+The <code>tools/goal_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[models/core.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/goal_registry.py)
+
+```python
+import tools.tool_registry as tool_registry
+from models.core import AgentGoal
+
+goal_event_flight_invoice = AgentGoal(
+    agent_name="North America Event Flight Booking",
+    tools=[
+        tool_registry.find_events_tool,
+        tool_registry.search_flights_tool,
+        tool_registry.create_invoice_tool,
+    ],
+    description="Help the user gather args for these tools in order: "
+    "1. FindEvents: Find an event to travel to "
+    "2. SearchFlights: search for a flight around the event dates "
+    "3. CreateInvoice: Create a simple invoice for the cost of that flight ",
+    starter_prompt="Welcome me, give me a description of what you can do, then ask me for the details you need to do your job.",
+    example_conversation_history="\n ".join(
+        [
+            "user: I'd like to travel to an event",
+            "agent: Sure! Let's start by finding an event you'd like to attend. I know about events in North American cities. Could you tell me which city and month you're interested in?",
+            "user: sydney in may please",
+            "agent: Great! Let's find an events in New York City in May.",
+            "user_confirmed_tool_run: <user clicks confirm on FindEvents tool>",
+            "tool_result: { 'event_name': 'Vivid New York City', 'event_date': '2023-05-01' }",
+            "agent: Found an event! There's Vivid New York City on May 1 2025, ending on May 14 2025. Would you like to search for flights around these dates?",
+            "user: Yes, please",
+            "agent: Let's search for flights around these dates. Could you provide your departure city?",
+            "user: San Francisco",
+            "agent: Thanks, searching for flights from San Francisco to New York City around 2023-02-25 to 2023-02-28.",
+            "user_confirmed_tool_run: <user clicks confirm on SearchFlights tool>"
+            'tool_result: results including {"flight_number": "AA101", "return_flight_number": "AA102", "price": 850.0}',
+            "agent: Found some flights! The cheapest is AA101 for $850. Would you like to generate an invoice for this flight?",
+            "user_confirmed_tool_run: <user clicks confirm on CreateInvoice tool>",
+            'tool_result: { "status": "success", "invoice": { "flight_number": "AA101", "amount": 850.0 }, invoiceURL: "https://example.com/invoice" }',
+            "agent: Invoice generated! Here's the link: https://example.com/invoice",
+        ]
+    ),
+)
+```
+</details>
+
+Now that you have defined your agent's goal, you need to define the data types that your agent uses to communicate..
+
+## Creating the `requests` data models
+
+Your agent will require specific types for input and output for both the Activities and the Workflow.
+You will put all request based models in a new file in the models directory named `requests.py`.
+
+First, open `models/requests.py` and add the following import statements:
 
 ```python
 from dataclasses import dataclass, field
-from typing import Any, Deque, Dict, Optional, TypedDict
+from typing import Any, Deque, Dict, List, Literal, Optional, TypedDict, Union
 
-from models.core import AgentGoal, ConversationHistory, NextStep
+from models.core import AgentGoal
+```
+
+You will use these when creating the new types for your agent.
+
+Next, add the following single attribute data types to the file:
+
+```python
+Message = Dict[str, Union[str, Dict[str, Any]]]
+ConversationHistory = Dict[str, List[Message]]
+NextStep = Literal["confirm", "question", "done"]
+CurrentTool = str
+```
+
+These types are used to compose other, multi-attribute `dataclass` types, or sent as a single parameter.
+They are used in the following context of the agent:
+
+* `Message` - A nested dictionary that represents one turn of a conversation between the LLM and the user
+* `ConversationHistory` - A dictionary containing an `str` key and a `List` of `Messages` that keeps track of the conversation between the LLM and the user
+* `NextStep` - A `Literal` containing four options, picked by the agent to decide the next action to take and interpreted by the Workflow
+* `CurrentTool` - An `str` representation of the current tool the agent is using
+
+Next, add the following `dataclass`es for handling the primary agent parameters:
+
+```python
+@dataclass
+class AgentGoalWorkflowParams:
+    conversation_summary: Optional[str] = None
+    prompt_queue: Optional[Deque[str]] = None
 
 
+@dataclass
+class CombinedInput:
+    agent_goal: AgentGoal
+    tool_params: AgentGoalWorkflowParams
+```
+
+The `AgentWorkflowParams` type contains a summary of the conversation and a queue of prompts that the agent needs to process via the LLM. 
+The `CombinedInput` type contains the agent's goal and the parameters.
+This type is the input that is passed to the main agent Workflow and is used to start the initial Workflow Execution.
+
+Next, add the `dataclass` that handles the input for calling the LLM for tool planning:
+
+```python
+@dataclass
+class ToolPromptInput:
+    prompt: str
+    context_instructions: str
+```
+
+`ToolPromptInput` contains the prompt the Activity will issue to the LLM, along with any context that the LLM needs when executing the prompt.
+
+To go along with the this type, you need to add types that store the results of validation of the prompt:
+
+```python
+@dataclass
+class ValidationInput:
+    prompt: str
+    conversation_history: ConversationHistory
+    agent_goal: AgentGoal
+
+
+@dataclass
+class ValidationResult:
+    validationResult: bool
+    validationFailedReason: Dict[str, Any] = field(default_factory=dict)
+```
+
+The `ValidationInput` type contains the prompt given by the user, the conversation history, and the agent's goal.
+An Activity will use this type as input and validate the prompt against the agent's goal.
+Conversely, the `ValidationResult` type will contain the results of this validation Activity and will return a boolean signifying if the prompt passed or failed, and if it did fail a reason why.
+
+Next, add two more `dataclass`es for handling the input and output of reading environment variables into the Workflow:
+
+```python
+@dataclass
+class EnvLookupInput:
+    show_confirm_env_var_name: str
+    show_confirm_default: bool
+
+
+@dataclass
+class EnvLookupOutput:
+    show_confirm: bool
+```
+
+Since reading from the filesystem is a non-deterministic operation, this action must be done from an Activity, so it is best practice to define types to handle this in case you ever need to add more environment variables.
+
+Finally, add the class that will contain the next step the agent should take and the data the tool needs to execute:
+
+```python
 class ToolData(TypedDict, total=False):
     next: NextStep
     tool: str
@@ -997,12 +1372,45 @@ class ToolData(TypedDict, total=False):
     force_confirm: bool
 ```
 
-The `ToolData` TypedDict defines the structure for tool execution results. 
-It includes the next step to take, tool information, response content, arguments, and confirmation requirements.
+`ToolData` contains the `NextStep` that the agent shoudl take, along with the tool that should be used, the arguments for the tool, the response from the LLM, and a force_confirm boolean.
+You may notice this type is different from the previous types, as it is a subclass of `TypedDict` and not a `dataclass`.
+This is done to handle converting the type to JSON for use in the API later, which `dataclass`es don't support conversion of nested custom types to JSON.
 
-Add the Activity input structures:
+<details>
+
+<summary>
+The <code>models/requests.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[models/requests.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/models/requests.py)
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Deque, Dict, List, Literal, Optional, TypedDict, Union
+
+from models.core import AgentGoal
+
+# Common type aliases
+
+Message = Dict[str, Union[str, Dict[str, Any]]]
+ConversationHistory = Dict[str, List[Message]]
+NextStep = Literal["confirm", "question", "pick-new-goal", "done"]
+CurrentTool = str
+
+
+class ToolData(TypedDict, total=False):
+    next: NextStep
+    tool: str
+    response: str
+    args: Dict[str, Any]
+    force_confirm: bool
+
+
 @dataclass
 class AgentGoalWorkflowParams:
     conversation_summary: Optional[str] = None
@@ -1026,14 +1434,8 @@ class ValidationInput:
     prompt: str
     conversation_history: ConversationHistory
     agent_goal: AgentGoal
-```
 
-These dataclasses structure the inputs your Activities receive. 
-`ToolPromptInput` carries prompts and context for language model calls, while `ValidationInput` provides all the information needed to validate user input against conversation context.
 
-Complete the file with output structures:
-
-```python
 @dataclass
 class ValidationResult:
     validationResult: bool
@@ -1049,26 +1451,30 @@ class EnvLookupInput:
 @dataclass
 class EnvLookupOutput:
     show_confirm: bool
+
 ```
+</details>
 
-Finally, create an empty `models/__init__.py` file to make the directory a Python package:
+Now that you have defined the types responsible for handling the arguments throughout the agent, you can begin implementing the Activities.
 
-```command
-touch models/__init__.py
-```
+## Building Temporal Activities to execute non-deterministic agent code
 
-### Creating the Activities directory
+Now that you have built the agent's goal, the tools it needs to achieve it, and the custom types for proper data passing, you can start building the agent code. 
+In this step, you will create Activities that execute code in your AI agent that can behave non-deterministically, such as making the LLM calls or calling tools..
+As tools can call out to external services, have the possibility to fail, be rate limited, or perform other non-deterministic operations, it's safer to always call them in an Activity.
+When an Activity fails, they're by default automatically retried until it succeeds or is canceled.
+Another added benefit of executing your tool as an Activity is after the Activity completes, the result is saved to an Event History managed by Temporal.
+If your application were to then crash after executing a few tools, it could reconstruct the state of the execution without having to re-execute the tools and use the previous executions results.
+This provides durability to your agent for intermittent issues, which are common in distributed systems.
 
-Create the directory structure for your Activities:
+First, create the directory structure for your Activities and make it a module:
 
 ```command
 mkdir activities
+touch activities/__init__.py
 ```
 
-### Understanding the ToolActivities class structure
-
-Open your text editor and create `activities/tool_activities.py`. 
-Start with the imports and class initialization:
+Next, create the file `activities/activities.py` and add the necessary import statements and a statement to load the environment variables:
 
 ```python
 import inspect
@@ -1091,119 +1497,95 @@ from models.requests import (
 )
 
 load_dotenv(override=True)
+```
 
+This imports various system packages, Temporal libraries, the `litellm` package for making LLM calls, the `dotenv` package for loading environment variables, and a number of custom types you defined in `models/requests.py`. 
+Next, you'll create the `AgentActivities` class, which contains activities the agent will call to achieve its goal. 
 
-class ToolActivities:
+### Constructing the `AgentActivities` Class
+
+The `AgentActivities` class will allow the Workflow to plan which tools to use, validate prompts, read in environment variables, and more.
+
+To implement it, open `activities/activities.py` and create the class and define the `__init__` method:
+
+```python
+class AgentActivities:
     def __init__(self):
         """Initialize LLM client using LiteLLM."""
         self.llm_model = os.environ.get("LLM_MODEL", "openai/gpt-4")
         self.llm_key = os.environ.get("LLM_KEY")
         self.llm_base_url = os.environ.get("LLM_BASE_URL")
         activity.logger.info(
-            f"Initializing ToolActivities with LLM model: {self.llm_model}"
+            f"Initializing AgentActivities with LLM model: {self.llm_model}"
         )
         if self.llm_base_url:
             activity.logger.info(f"Using custom base URL: {self.llm_base_url}")
 ```
 
-This initialization pattern loads language model configuration from environment variables, supporting different LLM providers through LiteLLM. 
-The class uses the Activity logger for debugging and tracks which model and base URL are configured.
+Temporal Activities can be implemented as either a function or a class and method.
+As the agent requires a persistent object for communication, in this to the LLM, it's good practice to use a class and set the parameters as part of the initialization of the Activity, so to not waste resources re-initializing the object for every LLM call.
+The `__init__` method reads the LLM configuration from environment variables and assigns the values to instance variables.
 
-### Implementing prompt validation with Activities
+#### Implementing various helper methods
 
-The first core Activity handles user input validation to maintain conversation coherence. 
-This Activity prevents your agent from processing irrelevant or confusing user input.
+Before you implement the Activities, implement the following helper functions:
 
-Add the validation Activity method to your class:
+The first method sanitizes the JSON response you get from the LLM and sanitizing it to a proper JSON string.
+The LLM may return a string with extra whitespace, or formatted as markdown, so sanitizing the string is necessary prior to parsing it.
+
+Add the following helper method to the bottom of your `activities.py` file:
 
 ```python
-    @activity.defn
-    async def agent_validatePrompt(
-        self, validation_input: ValidationInput
-    ) -> ValidationResult:
+    def sanitize_json_response(self, response_content: str) -> str:
         """
-        Validates the prompt in the context of the conversation history and agent goal.
-        Returns a ValidationResult indicating if the prompt makes sense given the context.
+        Sanitizes the response content to ensure it's valid JSON.
         """
-        # Create simple context string describing tools and goals
-        tools_description = []
-        for tool in validation_input.agent_goal.tools:
-            tool_str = f"Tool: {tool.name}\n"
-            tool_str += f"Description: {tool.description}\n"
-            tool_str += "Arguments: " + ", ".join(
-                [f"{arg.name} ({arg.type})" for arg in tool.arguments]
-            )
-            tools_description.append(tool_str)
-        tools_str = "\n".join(tools_description)
+        # Remove any markdown code block markers
+        response_content = response_content.replace("```json", "").replace("```", "")
+
+        # Remove any leading/trailing whitespace
+        response_content = response_content.strip()
+
+        return response_content
 ```
 
-The validation Activity first builds a comprehensive context description that includes all available tools and their argument specifications. 
-This context helps the language model understand what capabilities are available to the agent.
-
-Continue the validation method by adding conversation context:
+The second helper function takes a string as input and returns a dictionary after attempting to parse the string as valid JSON.
+Add this method to the bottom of your `activities.py` file:
 
 ```python
-        # Convert conversation history to string
-        history_str = json.dumps(validation_input.conversation_history, indent=2)
-
-        # Create context instructions
-        context_instructions = f"""The agent goal and tools are as follows:
-            Description: {validation_input.agent_goal.description}
-            Available Tools:
-            {tools_str}
-            The conversation history to date is:
-            {history_str}"""
+    def parse_json_response(self, response_content: str) -> dict:
+        """
+        Parses the JSON response content and returns it as a dictionary.
+        """
+        try:
+            data = json.loads(response_content)
+            return data
+        except json.JSONDecodeError as e:
+            activity.logger.error(f"Invalid JSON: {e}")
+            raise
 ```
 
-The Activity then combines the tool descriptions with the conversation history to create complete context instructions. 
-This gives the language model full visibility into the current conversation state and agent capabilities.
+Now that you have the helper methods implemented, you can implement the Activity responsible for making LLM calls.
 
-Add the validation prompt construction:
 
-```python
-        # Create validation prompt
-        validation_prompt = f"""The user's prompt is: "{validation_input.prompt}"
-            Please validate if this prompt makes sense given the agent goal and conversation history.
-            If the prompt makes sense toward the goal then validationResult should be true.
-            If the prompt is wildly nonsensical or makes no sense toward the goal and current conversation history then validationResult should be false.
-            If the response is low content such as "yes" or "that's right" then the user is probably responding to a previous prompt.  
-             Therefore examine it in the context of the conversation history to determine if it makes sense and return true if it makes sense.
-            Return ONLY a JSON object with the following structure:
-                "validationResult": true/false,
-                "validationFailedReason": "If validationResult is false, provide a clear explanation to the user in the response field 
-                about why their request doesn't make sense in the context and what information they should provide instead.
-                validationFailedReason should contain JSON in the format
-                {{
-                    "next": "question",
-                    "response": "[your reason here and a response to get the user back on track with the agent goal]"
-                }}
-                If validationResult is true (the prompt makes sense), return an empty dict as its value {{}}"
-            """
+#### Implementing the Activity for making LLM calls
 
-        # Call the LLM with the validation prompt
-        prompt_input = ToolPromptInput(
-            prompt=validation_prompt, context_instructions=context_instructions
-        )
+The `agent_toolPlanner` Activity handles all interactions with your chosen LLM.
+It makes the call to the LLM, parses the response and returns JSON on success, and raises an Exception on failure.
 
-        result = await self.agent_toolPlanner(prompt_input)
-
-        return ValidationResult(
-            validationResult=result.get("validationResult", False),
-            validationFailedReason=result.get("validationFailedReason", {}),
-        )
-```
-
-The validation prompt provides specific instructions for the language model to evaluate user input against the conversation context. 
-It handles edge cases like simple confirmations ("yes") and provides structured guidance for invalid inputs.
-
-### Building the language model integration Activity
-
-The core language model Activity handles all interactions with your chosen LLM provider, including error handling and response processing. 
-Add this method to your class:
+Add the method header with the appropriate decorator to your `activities.py` file, underneath the `__init__` method:
 
 ```python
     @activity.defn
     async def agent_toolPlanner(self, input: ToolPromptInput) -> dict:
+```
+
+Next, create the `messages` list, which contains various dictionaries to the specification of the LLM for prompting.
+This format is specifically OpenAIs format, which you can use for any LLM since you are using `LiteLLM` to as your LLM abstraction library.
+
+Add the following code to craft the `messages` list:
+
+```python
         messages = [
             {
                 "role": "system",
@@ -1217,6 +1599,7 @@ Add this method to your class:
             },
         ]
 ```
+
 
 The toolPlanner Activity constructs standard OpenAI-format messages with system context and user input. 
 It automatically includes the current date, which helps the language model provide accurate responses for time-sensitive queries.
@@ -1253,43 +1636,104 @@ The Activity uses LiteLLM to make the language model call with proper configurat
 LiteLLM enables your agent to work with different providers (OpenAI, Anthropic, local models) through a unified interface. 
 The Activity logs all responses for debugging conversation flows and includes robust error handling that catches and logs failures while re-raising exceptions for Temporal to handle retry logic.
 
-### Processing language model responses
 
-The Activities class includes utility methods for handling language model response formatting. Add these methods to your class:
+#### Implementing the Activity for prompt validation
+
+Next, create the `agent_validatePrompt` Activity to validate any prompt sent to the LLM in the context of the conversation history and agent goal.
+
+Within the `AgentActivities` class, add the following method header:
 
 ```python
-    def sanitize_json_response(self, response_content: str) -> str:
+    @activity.defn
+    async def agent_validatePrompt(
+        self, validation_input: ValidationInput
+    ) -> ValidationResult:
         """
-        Sanitizes the response content to ensure it's valid JSON.
+        Validates the prompt in the context of the conversation history and agent goal.
+        Returns a ValidationResult indicating if the prompt makes sense given the context.
         """
-        # Remove any markdown code block markers
-        response_content = response_content.replace("```json", "").replace("```", "")
-
-        # Remove any leading/trailing whitespace
-        response_content = response_content.strip()
-
-        return response_content
-
-    def parse_json_response(self, response_content: str) -> dict:
-        """
-        Parses the JSON response content and returns it as a dictionary.
-        """
-        try:
-            data = json.loads(response_content)
-            return data
-        except json.JSONDecodeError as e:
-            activity.logger.error(f"Invalid JSON: {e}")
-            raise
 ```
 
-These utility methods handle common issues with language model outputs. 
-The sanitize method removes markdown formatting that models sometimes include, while the parse method provides clear error handling for invalid JSON responses.
+This Activity takes in a single argument, using the custom `ValidationInput` type you specified, and returns a single value, `ValidationResult`, in accordance with Temporal best practices.
 
-### Managing environment configuration deterministically
+Next, add the code following code to iterate over the tools specified in the agent's goal and add them to a list.
 
-Temporal Workflows must be deterministic, which means they cannot directly access environment variables. 
-This Activity provides deterministic environment access. 
-Add this method to your class:
+```python
+        # Create simple context string describing tools and goals
+        tools_description = []
+        for tool in validation_input.agent_goal.tools:
+            tool_str = f"Tool: {tool.name}\n"
+            tool_str += f"Description: {tool.description}\n"
+            tool_str += "Arguments: " + ", ".join(
+                [f"{arg.name} ({arg.type})" for arg in tool.arguments]
+            )
+            tools_description.append(tool_str)
+        tools_str = "\n".join(tools_description)
+```
+
+By doing this, you are creating a string the LLM can use as context to validate against.
+This context helps the LLM understand what capabilities are available to the agent, and whether or not the prompt that was sent makes sense.
+
+Continue the validation method by adding conversation context:
+
+```python
+        # Convert conversation history to string
+        history_str = json.dumps(validation_input.conversation_history, indent=2)
+
+        # Create context instructions
+        context_instructions = f"""The agent goal and tools are as follows:
+            Description: {validation_input.agent_goal.description}
+            Available Tools:
+            {tools_str}
+            The conversation history to date is:
+            {history_str}"""
+```
+
+This section gathers the past conversation history and concatenates it with the available tool context, creating a complete context for the LLM.
+
+Next, add the following prompt for the LLM to use to validate the prompt:
+
+```python
+        # Create validation prompt
+        validation_prompt = f"""The user's prompt is: "{validation_input.prompt}"
+            Please validate if this prompt makes sense given the agent goal and conversation history.
+            If the prompt makes sense toward the goal then validationResult should be true.
+            If the prompt is wildly nonsensical or makes no sense toward the goal and current conversation history then validationResult should be false.
+            If the response is low content such as "yes" or "that's right" then the user is probably responding to a previous prompt.  
+             Therefore examine it in the context of the conversation history to determine if it makes sense and return true if it makes sense.
+            Return ONLY a JSON object with the following structure:
+                "validationResult": true/false,
+                "validationFailedReason": "If validationResult is false, provide a clear explanation to the user in the response field 
+                about why their request doesn't make sense in the context and what information they should provide instead.
+                validationFailedReason should contain JSON in the format
+                {{
+                    "next": "question",
+                    "response": "[your reason here and a response to get the user back on track with the agent goal]"
+                }}
+                If validationResult is true (the prompt makes sense), return an empty dict as its value {{}}"
+            """
+```
+
+Finally, craft a `ToolPromptInput` object and pass that to `agent_toolPlanner` to execute:
+
+```python
+        # Call the LLM with the validation prompt
+        prompt_input = ToolPromptInput(
+            prompt=validation_prompt, context_instructions=context_instructions
+        )
+
+        result = await self.agent_toolPlanner(prompt_input)
+
+        return ValidationResult(
+            validationResult=result.get("validationResult", False),
+            validationFailedReason=result.get("validationFailedReason", {}),
+        )
+```
+
+Calling an Activity within another Activity will invoke that Activity, which you will see in the Event History later.
+The Activity then returns a `ValidationResult` for the agent to interpret and continue with its execution.
+
+#### Implementing the Activity for retrieving environment variables
 
 ```python
     @activity.defn
@@ -1310,9 +1754,6 @@ Add this method to your class:
 
         return output
 ```
-
-This Activity safely retrieves environment variables and returns them as Activity results, which Workflows can access deterministically. 
-It handles the specific case of boolean environment variables with proper default values.
 
 ### Implementing dynamic tool execution
 
@@ -1350,207 +1791,6 @@ Create an empty `activities/__init__.py` file to make the directory a Python pac
 
 ```command
 touch activities/__init__.py
-```
-
-### Bringing it all together
-
-Here is the complete Activities implementation that provides durability for your AI agent:
-
-```python
-import inspect
-import json
-import os
-from datetime import datetime
-from typing import Sequence
-
-from dotenv import load_dotenv
-from litellm import completion
-from temporalio import activity
-from temporalio.common import RawValue
-
-from models.requests import (
-    EnvLookupInput,
-    EnvLookupOutput,
-    ToolPromptInput,
-    ValidationInput,
-    ValidationResult,
-)
-
-load_dotenv(override=True)
-
-
-class ToolActivities:
-    def __init__(self):
-        """Initialize LLM client using LiteLLM."""
-        self.llm_model = os.environ.get("LLM_MODEL", "openai/gpt-4")
-        self.llm_key = os.environ.get("LLM_KEY")
-        self.llm_base_url = os.environ.get("LLM_BASE_URL")
-        activity.logger.info(
-            f"Initializing ToolActivities with LLM model: {self.llm_model}"
-        )
-        if self.llm_base_url:
-            activity.logger.info(f"Using custom base URL: {self.llm_base_url}")
-
-    @activity.defn
-    async def agent_validatePrompt(
-        self, validation_input: ValidationInput
-    ) -> ValidationResult:
-        """
-        Validates the prompt in the context of the conversation history and agent goal.
-        Returns a ValidationResult indicating if the prompt makes sense given the context.
-        """
-        # Create simple context string describing tools and goals
-        tools_description = []
-        for tool in validation_input.agent_goal.tools:
-            tool_str = f"Tool: {tool.name}\n"
-            tool_str += f"Description: {tool.description}\n"
-            tool_str += "Arguments: " + ", ".join(
-                [f"{arg.name} ({arg.type})" for arg in tool.arguments]
-            )
-            tools_description.append(tool_str)
-        tools_str = "\n".join(tools_description)
-
-        # Convert conversation history to string
-        history_str = json.dumps(validation_input.conversation_history, indent=2)
-
-        # Create context instructions
-        context_instructions = f"""The agent goal and tools are as follows:
-            Description: {validation_input.agent_goal.description}
-            Available Tools:
-            {tools_str}
-            The conversation history to date is:
-            {history_str}"""
-
-        # Create validation prompt
-        validation_prompt = f"""The user's prompt is: "{validation_input.prompt}"
-            Please validate if this prompt makes sense given the agent goal and conversation history.
-            If the prompt makes sense toward the goal then validationResult should be true.
-            If the prompt is wildly nonsensical or makes no sense toward the goal and current conversation history then validationResult should be false.
-            If the response is low content such as "yes" or "that's right" then the user is probably responding to a previous prompt.  
-             Therefore examine it in the context of the conversation history to determine if it makes sense and return true if it makes sense.
-            Return ONLY a JSON object with the following structure:
-                "validationResult": true/false,
-                "validationFailedReason": "If validationResult is false, provide a clear explanation to the user in the response field 
-                about why their request doesn't make sense in the context and what information they should provide instead.
-                validationFailedReason should contain JSON in the format
-                {{
-                    "next": "question",
-                    "response": "[your reason here and a response to get the user back on track with the agent goal]"
-                }}
-                If validationResult is true (the prompt makes sense), return an empty dict as its value {{}}"
-            """
-
-        # Call the LLM with the validation prompt
-        prompt_input = ToolPromptInput(
-            prompt=validation_prompt, context_instructions=context_instructions
-        )
-
-        result = await self.agent_toolPlanner(prompt_input)
-
-        return ValidationResult(
-            validationResult=result.get("validationResult", False),
-            validationFailedReason=result.get("validationFailedReason", {}),
-        )
-
-    @activity.defn
-    async def agent_toolPlanner(self, input: ToolPromptInput) -> dict:
-        messages = [
-            {
-                "role": "system",
-                "content": input.context_instructions
-                + ". The current date is "
-                + datetime.now().strftime("%B %d, %Y"),
-            },
-            {
-                "role": "user",
-                "content": input.prompt,
-            },
-        ]
-
-        try:
-            completion_kwargs = {
-                "model": self.llm_model,
-                "messages": messages,
-                "api_key": self.llm_key,
-            }
-
-            # Add base_url if configured
-            if self.llm_base_url:
-                completion_kwargs["base_url"] = self.llm_base_url
-
-            response = completion(**completion_kwargs)
-
-            response_content = response.choices[0].message.content
-            activity.logger.info(f"LLM response: {response_content}")
-
-            # Use the new sanitize function
-            response_content = self.sanitize_json_response(response_content)
-
-            return self.parse_json_response(response_content)
-        except Exception as e:
-            activity.logger.error(f"Error in LLM completion: {str(e)}")
-            raise
-
-    def parse_json_response(self, response_content: str) -> dict:
-        """
-        Parses the JSON response content and returns it as a dictionary.
-        """
-        try:
-            data = json.loads(response_content)
-            return data
-        except json.JSONDecodeError as e:
-            activity.logger.error(f"Invalid JSON: {e}")
-            raise
-
-    def sanitize_json_response(self, response_content: str) -> str:
-        """
-        Sanitizes the response content to ensure it's valid JSON.
-        """
-        # Remove any markdown code block markers
-        response_content = response_content.replace("```json", "").replace("```", "")
-
-        # Remove any leading/trailing whitespace
-        response_content = response_content.strip()
-
-        return response_content
-
-    @activity.defn
-    async def get_wf_env_vars(self, input: EnvLookupInput) -> EnvLookupOutput:
-        """gets env vars for workflow as an activity result so it's deterministic
-        handles default/None
-        """
-        output: EnvLookupOutput = EnvLookupOutput(
-            show_confirm=input.show_confirm_default
-        )
-        show_confirm_value = os.getenv(input.show_confirm_env_var_name)
-        if show_confirm_value is None:
-            output.show_confirm = input.show_confirm_default
-        elif show_confirm_value is not None and show_confirm_value.lower() == "false":
-            output.show_confirm = False
-        else:
-            output.show_confirm = True
-
-        return output
-
-
-@activity.defn(dynamic=True)
-async def dynamic_tool_activity(args: Sequence[RawValue]) -> dict:
-    from tools import get_handler
-
-    tool_name = activity.info().activity_type  # e.g. "FindEvents"
-    tool_args = activity.payload_converter().from_payload(args[0].payload, dict)
-    activity.logger.info(f"Running dynamic tool '{tool_name}' with args: {tool_args}")
-
-    # Delegate to the relevant function
-    handler = get_handler(tool_name)
-    if inspect.iscoroutinefunction(handler):
-        result = await handler(tool_args)
-    else:
-        result = handler(tool_args)
-
-    # Optionally log or augment the result
-    activity.logger.info(f"Tool '{tool_name}' result: {result}")
-    return result
 ```
 
 This Activities implementation provides the durability layer that makes your AI agent resilient to failures. 
@@ -1602,7 +1842,7 @@ from workflows.workflow_helpers import (
 )
 
 with workflow.unsafe.imports_passed_through():
-    from activities.tool_activities import ToolActivities
+    from activities.activities import AgentActivities
     from models.requests import CombinedInput, ToolPromptInput
     from prompts.agent_prompt_generators import generate_genai_prompt
 
@@ -1721,7 +1961,7 @@ Continue with the prompt processing logic:
                         agent_goal=self.goal,
                     )
                     validation_result = await workflow.execute_activity_method(
-                        ToolActivities.agent_validatePrompt,
+                        AgentActivities.agent_validatePrompt,
                         args=[validation_input],
                         schedule_to_close_timeout=LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT,
                         start_to_close_timeout=LLM_ACTIVITY_START_TO_CLOSE_TIMEOUT,
@@ -1764,7 +2004,7 @@ Continue with the LLM integration:
 
                 # connect to LLM and execute to get next steps
                 tool_data = await workflow.execute_activity_method(
-                    ToolActivities.agent_toolPlanner,
+                    AgentActivities.agent_toolPlanner,
                     prompt_input,
                     schedule_to_close_timeout=LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT,
                     start_to_close_timeout=LLM_ACTIVITY_START_TO_CLOSE_TIMEOUT,
@@ -1957,7 +2197,7 @@ Complete the class with the remaining methods:
             show_confirm_default=True,
         )
         env_output: EnvLookupOutput = await workflow.execute_activity_method(
-            ToolActivities.get_wf_env_vars,
+            AgentActivities.get_wf_env_vars,
             env_lookup_input,
             start_to_close_timeout=LLM_ACTIVITY_START_TO_CLOSE_TIMEOUT,
             retry_policy=RetryPolicy(
@@ -2006,7 +2246,7 @@ from temporalio.common import RetryPolicy
 from temporalio.exceptions import ActivityError
 
 with workflow.unsafe.imports_passed_through():
-    from activities.tool_activities import ToolActivities
+    from activities.activities import AgentActivities
     from models.requests import ConversationHistory, ToolData, ToolPromptInput
     from prompts.agent_prompt_generators import (
         generate_missing_args_prompt,
@@ -2119,7 +2359,7 @@ async def continue_as_new_if_needed(
             prompt=summary_prompt, context_instructions=summary_context
         )
         conversation_summary = await workflow.start_activity_method(
-            ToolActivities.agent_toolPlanner,
+            AgentActivities.agent_toolPlanner,
             summary_input,
             schedule_to_close_timeout=LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT,
         )
@@ -2163,102 +2403,6 @@ Create an empty `workflows/__init__.py` file to make the directory a Python pack
 touch workflows/__init__.py
 ```
 
-### Bringing it all together
-
-Your complete Workflow orchestration system provides durable conversation management for AI agents. 
-Here are the complete files:
-
-**Main Workflow (`workflows/agent_goal_workflow.py`):**
-```python
-from collections import deque
-from datetime import timedelta
-from typing import Any, Deque, Dict, Optional, Union
-
-from temporalio import workflow
-from temporalio.common import RetryPolicy
-
-from models.core import AgentGoal, ConversationHistory, CurrentTool
-from models.requests import EnvLookupInput, EnvLookupOutput, ToolData, ValidationInput
-from workflows import workflow_helpers as helpers
-from workflows.workflow_helpers import (
-    LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT,
-    LLM_ACTIVITY_START_TO_CLOSE_TIMEOUT,
-)
-
-with workflow.unsafe.imports_passed_through():
-    from activities.tool_activities import ToolActivities
-    from models.requests import CombinedInput, ToolPromptInput
-    from prompts.agent_prompt_generators import generate_genai_prompt
-
-# Constants
-MAX_TURNS_BEFORE_CONTINUE = 250
-
-
-@workflow.defn
-class AgentGoalWorkflow:
-    """Workflow that manages tool execution with user confirmation and conversation history."""
-
-    def __init__(self) -> None:
-        self.conversation_history: ConversationHistory = {"messages": []}
-        self.prompt_queue: Deque[str] = deque()
-        self.conversation_summary: Optional[str] = None
-        self.chat_ended: bool = False
-        self.tool_data: Optional[ToolData] = None
-        self.confirmed: bool = (
-            False  # indicates that we have confirmation to proceed to run tool
-        )
-        self.goal: Optional[AgentGoal] = None
-        self.show_tool_args_confirmation: bool = (
-            True  # set from env file in activity lookup_wf_env_settings
-        )
-
-    @workflow.run
-    async def run(self, combined_input: CombinedInput) -> str:
-        """Main workflow execution method."""
-        # [Complete implementation with setup, main loop, validation, and tool execution]
-
-    @workflow.signal
-    async def user_prompt(self, prompt: str) -> None:
-        """Signal handler for receiving user prompts."""
-        # [Implementation for handling user input signals]
-
-    @workflow.signal
-    async def confirm(self) -> None:
-        """Signal handler for user confirmation of tool execution."""
-        # [Implementation for handling confirmation signals]
-
-    @workflow.signal
-    async def end_chat(self) -> None:
-        """Signal handler for ending the chat session."""
-        # [Implementation for handling chat termination]
-
-    @workflow.query
-    def get_conversation_history(self) -> ConversationHistory:
-        """Query handler to retrieve the full conversation history."""
-        # [Implementation for conversation state access]
-
-    # [Additional utility methods for state management and execution control]
-```
-
-**Workflow Helpers (`workflows/workflow_helpers.py`):**
-```python
-from datetime import timedelta
-from typing import Any, Callable, Deque, Dict
-
-from temporalio import workflow
-from temporalio.common import RetryPolicy
-from temporalio.exceptions import ActivityError
-
-with workflow.unsafe.imports_passed_through():
-    from activities.tool_activities import ToolActivities
-    from models.requests import ConversationHistory, ToolData, ToolPromptInput
-    from prompts.agent_prompt_generators import (
-        generate_missing_args_prompt,
-        generate_tool_completion_prompt,
-    )
-
-# [Timeout constants and helper functions for tool execution, argument validation, and conversation management]
-```
 
 This Workflow orchestration system demonstrates key patterns for building durable AI agent conversations: event-driven processing with Signals and Queries, validation-first user interaction, confirmation-based tool execution, and continuation patterns for long-running sessions. 
 The system maintains conversation coherence across failures while providing responsive real-time interaction capabilities.
@@ -2325,7 +2469,7 @@ The conditional example section demonstrates proper tool usage patterns when ava
 
 Continue the template with tool definitions:
 
-```
+```python
 === Tools Definitions ===
 There are {{ agent_goal.tools|length }} available tools:
 {{ agent_goal.tools|map(attribute='name')|join(', ') }}
@@ -2350,7 +2494,7 @@ This provides the language model with complete information about agent capabilit
 
 Add the JSON schema and behavioral instructions:
 
-```
+```python
 === Instructions for JSON Generation ===
 Your JSON format must be:
 {
@@ -2558,160 +2702,6 @@ Create an empty `prompts/__init__.py` file to make the directory a Python packag
 touch prompts/__init__.py
 ```
 
-### Bringing it all together
-
-Your complete prompt engineering system provides the foundation for reliable language model interactions. Here are the complete files:
-
-**Prompt Templates (`prompts/prompts.py`):**
-```python
-from jinja2 import Template
-
-# Define the Jinja2 template
-GENAI_PROMPT = Template(
-    """
-You are an AI agent that helps fill required arguments for the tools described below. 
-You must respond with valid JSON ONLY, using the schema provided in the instructions.
-
-=== Conversation History ===
-This is the ongoing history to determine which tool and arguments to gather:
-*BEGIN CONVERSATION HISTORY*
-{{ conversation_history_json }}
-*END CONVERSATION HISTORY*
-REMINDER: You can use the conversation history to infer arguments for the tools.
-
-{% if agent_goal.example_conversation_history %}
-=== Example Conversation With These Tools ===
-Use this example to understand how tools are invoked and arguments are gathered.
-BEGIN EXAMPLE
-{{ agent_goal.example_conversation_history }}
-END EXAMPLE
-
-{% endif %}
-=== Tools Definitions ===
-There are {{ agent_goal.tools|length }} available tools:
-{{ agent_goal.tools|map(attribute='name')|join(', ') }}
-Goal: {{ agent_goal.description }}
-Gather the necessary information for each tool in the sequence described above.
-Only ask for arguments listed below. Do not add extra arguments.
-
-{% for tool in agent_goal.tools %}
-Tool name: {{ tool.name }}
-  Description: {{ tool.description }}
-  Required args:
-{% for arg in tool.arguments %}
-    - {{ arg.name }} ({{ arg.type }}): {{ arg.description }}
-{% endfor %}
-
-{% endfor %}
-When all required args for a tool are known, you can propose next='confirm' to run it.
-
-=== Instructions for JSON Generation ===
-Your JSON format must be:
-{
-  "response": "<plain text>",
-  "next": "<question|confirm|pick-new-goal|done>",
-  "tool": "<tool_name or null>",
-  "args": {
-    "<arg1>": "<value1 or null>",
-    "<arg2>": "<value2 or null>",
-    ...
-  }
-}
-1) If any required argument is missing, set next='question' and ask the user.
-2) If all required arguments are known, set next='confirm' and specify the tool.
-   The user will confirm before the tool is run.
-3) {{ toolchain_complete_guidance }}
-4) response should be short and user-friendly.
-
-Guardrails (always remember!)
-1) If any required argument is missing, set next='question' and ask the user.
-1) ALWAYS ask a question in your response if next='question'.
-2) ALWAYS set next='confirm' if you have arguments
- And respond with "let's proceed with <tool> (and any other useful info)" 
- DON'T set next='confirm' if you have a question to ask.
-EXAMPLE: If you have a question to ask, set next='question' and ask the user.
-3) You can carry over arguments from one tool to another.
- EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
-4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
-EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
-
-{% if raw_json is not none %}
-
-=== Validation Task ===
-Validate and correct the following JSON if needed:
-{{ raw_json_str }}
-
-Check syntax, 'tool' validity, 'args' completeness, and set 'next' appropriately. Return ONLY corrected JSON.
-{% endif %}
-
-{% if raw_json is not none %}
-Begin by validating the provided JSON if necessary.
-{% else %}
-Begin by producing a valid JSON response for the next tool or question.
-{% endif %}
-""".strip()
-)
-
-TOOL_COMPLETION_PROMPT = """### The '{current_tool}' tool completed successfully 
-with {dynamic_result}. 
-INSTRUCTIONS: Parse this tool result as plain text, and use the system prompt 
-containing the list of tools in sequence and the conversation history (and 
-previous tool_results) to figure out next steps, if any. 
-You will need to use the tool_results to auto-fill arguments for subsequent 
-tools and also to figure out if all tools have been run. 
-{{"next": "<question|confirm|pick-new-goal|done>", "tool": "<tool_name or null>", "args": {{"<arg1>": "<value1 or null>", "<arg2>": "<value2 or null>"}}, "response": "<plain text (can include \\n line breaks)>"}}
-ONLY return those json keys (next, tool, args, response), nothing else. 
-Next should be "question" if the tool is not the last one in the sequence. 
-Next should be "done" if the user is asking to be done with the chat."""
-
-
-MISSING_ARGS_PROMPT = """### INSTRUCTIONS set next='question', combine 
-this response response='{response}' and following missing arguments for tool 
-{current_tool}: {missing_args}. Only provide a valid JSON response without any 
-comments or metadata."""
-```
-
-**Prompt Generators (`prompts/agent_prompt_generators.py`):**
-```python
-import json
-from typing import Optional
-
-from models.core import AgentGoal
-from models.requests import ConversationHistory, ToolData
-from prompts.prompts import GENAI_PROMPT, MISSING_ARGS_PROMPT, TOOL_COMPLETION_PROMPT
-
-
-def generate_genai_prompt(
-    agent_goal: AgentGoal,
-    conversation_history: ConversationHistory,
-    raw_json: Optional[ToolData] = None,
-) -> str:
-    """
-    Generates a concise prompt for producing or validating JSON instructions
-    with the provided tools and conversation history.
-    """
-    # [Template variable preparation and rendering logic]
-
-def generate_tool_completion_prompt(current_tool: str, dynamic_result: dict) -> str:
-    """
-    Generates a prompt for handling tool completion and determining next steps.
-    """
-    # [Tool completion prompt generation logic]
-
-def generate_missing_args_prompt(
-    current_tool: str, tool_data: dict, missing_args: list[str]
-) -> str:
-    """
-    Generates a prompt for handling missing arguments for a tool.
-    """
-    # [Missing arguments prompt generation logic]
-
-def generate_toolchain_complete_guidance() -> str:
-    """
-    Generates a prompt for guiding the LLM to handle the end of the toolchain.
-    """
-    # [Workflow completion guidance logic]
-```
 
 This prompt engineering system demonstrates key patterns for building reliable AI agent interactions: template-driven prompt generation, context stratification, constraint specification, and state serialization. 
 The system provides language models with comprehensive situational awareness while ensuring predictable, structured responses that drive consistent agent behavior.
@@ -3096,61 +3086,6 @@ touch api/__init__.py
 touch shared/__init__.py
 ```
 
-### Bringing it all together
-
-Your complete FastAPI backend provides a robust HTTP interface for interacting with Temporal AI agent workflows.
-Here are the complete files:
-
-**Temporal Configuration (`shared/config.py`):**
-```python
-import os
-
-from dotenv import load_dotenv
-from temporalio.client import Client
-from temporalio.service import TLSConfig
-
-load_dotenv(override=True)
-
-# Temporal connection settings
-TEMPORAL_ADDRESS = os.getenv("TEMPORAL_ADDRESS", "localhost:7233")
-TEMPORAL_NAMESPACE = os.getenv("TEMPORAL_NAMESPACE", "default")
-TEMPORAL_TASK_QUEUE = os.getenv("TEMPORAL_TASK_QUEUE", "agent-task-queue")
-
-# Authentication settings
-TEMPORAL_TLS_CERT = os.getenv("TEMPORAL_TLS_CERT", "")
-TEMPORAL_TLS_KEY = os.getenv("TEMPORAL_TLS_KEY", "")
-TEMPORAL_API_KEY = os.getenv("TEMPORAL_API_KEY", "")
-
-
-async def get_temporal_client() -> Client:
-    """
-    Creates a Temporal client based on environment configuration.
-    Supports local server, mTLS, and API key authentication methods.
-    """
-    # [Complete client creation logic with authentication handling]
-```
-
-**FastAPI Application (`api/main.py`):**
-```python
-import asyncio
-import os
-from contextlib import asynccontextmanager
-from typing import Dict, Optional
-
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from temporalio.api.enums.v1 import WorkflowExecutionStatus
-from temporalio.client import Client
-from temporalio.exceptions import TemporalError
-
-from models.requests import AgentGoalWorkflowParams, CombinedInput, ConversationHistory
-from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
-from tools.goal_registry import goal_event_flight_invoice
-from workflows.agent_goal_workflow import AgentGoalWorkflow
-
-# [Complete application with lifecycle management, endpoints, and error handling]
-```
 
 **Key Endpoints:**
 - `GET /get-conversation-history` - Real-time conversation state access
@@ -3164,782 +3099,10 @@ The system provides a clean HTTP interface that abstracts Temporal's complexity 
 
 In the next step, you will create the React frontend that provides a user-friendly web interface for interacting with your AI agent system.
 
-## Step 8 — Creating React frontend
+## Step 8 — Testing with a  React frontend
 
-In this step, you will create the React frontend that provides a user-friendly web interface for interacting with your AI agent system. 
+In this step, you will test the React frontend that provides a user-friendly web interface for interacting with your AI agent system. 
 This frontend handles real-time conversation display, user input processing, and tool confirmation workflows while maintaining responsive performance through optimized polling and state management.
-
-### Understanding the frontend architecture challenge
-
-Modern AI agent interfaces require sophisticated state management to handle real-time conversations, asynchronous backend operations, and various user interaction flows. 
-The challenge is creating a React application that maintains conversation coherence, provides immediate user feedback, handles network failures gracefully, and manages complex UI states for tool confirmations.
-
-Your frontend needs to poll for conversation updates without overwhelming the backend, render different message types appropriately, provide intuitive controls for agent interactions, handle loading and error states smoothly, and maintain responsive performance even during long conversations.
-
-### Setting up the React project foundation
-
-Create the React application with modern tooling and dependencies for optimal development experience.
-
-Create the frontend directory and initialize the project:
-
-```command
-mkdir frontend
-cd frontend
-```
-
-Open your text editor and create `package.json` with the project configuration:
-
-```json
-{
-  "name": "temporal-ai-agent-frontend",
-  "version": "1.0.0",
-  "description": "React and Tailwind",
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "vite": "^6.3.5"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17"
-  }
-}
-```
-
-This configuration uses the latest React version with Vite for fast development builds and Tailwind CSS for utility-first styling. 
-The minimal dependency set ensures fast build times and reduced bundle size.
-
-### Building the API service layer
-
-The frontend requires a robust API service layer that handles communication with your FastAPI backend while providing proper error handling and type safety.
-
-Create the source directory and API service:
-
-```command
-mkdir src
-mkdir src/services
-```
-
-Open your text editor and create `src/services/api.js` with the API communication layer:
-
-```javascript
-const API_BASE_URL = 'http://127.0.0.1:8000';
-
-class ApiError extends Error {
-    constructor(message, status) {
-        super(message);
-        this.status = status;
-        this.name = 'ApiError';
-    }
-}
-
-async function handleResponse(response) {
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new ApiError(
-            errorData.message || 'An error occurred',
-            response.status
-        );
-    }
-    return response.json();
-}
-```
-
-This API foundation provides structured error handling with status codes and standardized response processing. The `ApiError` class enables differentiated error handling based on HTTP status codes.
-
-Add the core API methods:
-
-```javascript
-export const apiService = {
-    async getConversationHistory() {
-        try {
-            const res = await fetch(`${API_BASE_URL}/get-conversation-history`);
-            return handleResponse(res);
-        } catch (error) {
-            throw new ApiError(
-                'Failed to fetch conversation history',
-                error.status || 500
-            );
-        }
-    },
-
-    async sendMessage(message) {
-        if (!message?.trim()) {
-            throw new ApiError('Message cannot be empty', 400);
-        }
-
-        try {
-            const res = await fetch(
-                `${API_BASE_URL}/send-prompt?prompt=${encodeURIComponent(message)}`,
-                { 
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            return handleResponse(res);
-        } catch (error) {
-            throw new ApiError(
-                'Failed to send message',
-                error.status || 500
-            );
-        }
-    },
-```
-
-The message sending method demonstrates proper URL encoding for user input and includes client-side validation to prevent empty message submissions.
-
-Complete the API service with workflow management methods:
-
-```javascript
-    async startWorkflow() {
-        try {
-            const res = await fetch(
-                `${API_BASE_URL}/start-workflow`,
-                { 
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            return handleResponse(res);
-        } catch (error) {
-            throw new ApiError(
-                'Failed to start workflow',
-                error.status || 500
-            );
-        }
-    },
-
-    async confirm() {
-        try {
-            const res = await fetch(`${API_BASE_URL}/confirm`, { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            return handleResponse(res);
-        } catch (error) {
-            throw new ApiError(
-                'Failed to confirm action',
-                error.status || 500
-            );
-        }
-    }
-};
-```
-
-These methods provide clean interfaces for workflow lifecycle management and tool confirmation, enabling the UI to control agent behavior through simple function calls.
-
-### Creating advanced state management with debouncing
-
-The main application component requires sophisticated state management to handle real-time updates, user interactions, and error conditions while maintaining optimal performance.
-
-Create `src/pages/App.jsx` with the application foundation:
-
-```javascript
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import NavBar from "../components/NavBar";
-import ChatWindow from "../components/ChatWindow";
-import { apiService } from "../services/api";
-
-const POLL_INTERVAL = 600; // 0.6 seconds
-const INITIAL_ERROR_STATE = { visible: false, message: '' };
-const DEBOUNCE_DELAY = 300; // 300ms debounce for user input
-
-function useDebounce(value, delay) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
-}
-```
-
-The debouncing hook prevents excessive API calls during rapid user input, improving performance and reducing server load. 
-The polling interval is optimized for responsive updates without overwhelming the backend.
-
-Add the main application state and error handling:
-
-```javascript
-export default function App() {
-    const containerRef = useRef(null);
-    const inputRef = useRef(null);
-    const pollingRef = useRef(null);
-    const scrollTimeoutRef = useRef(null);
-    
-    const [conversation, setConversation] = useState([]);
-    const [lastMessage, setLastMessage] = useState(null);
-    const [userInput, setUserInput] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(INITIAL_ERROR_STATE);
-    const [done, setDone] = useState(true);
-
-    const debouncedUserInput = useDebounce(userInput, DEBOUNCE_DELAY);
-
-    const errorTimerRef = useRef(null);
-
-    const handleError = useCallback((error, context) => {
-        console.error(`${context}:`, error);
-        
-        const isConversationFetchError = error.status === 404;
-        const errorMessage = isConversationFetchError 
-            ? "Error fetching conversation. Retrying..."
-            : `Error ${context.toLowerCase()}. Please try again.`;
-    
-        setError(prevError => {
-            // If the same 404 error is already being displayed, don't reset state (prevents flickering)
-            if (prevError.visible && prevError.message === errorMessage) {
-                return prevError;
-            }
-            return { visible: true, message: errorMessage };
-        });
-    
-        // Clear any existing timeout
-        if (errorTimerRef.current) {
-            clearTimeout(errorTimerRef.current);
-        }
-    
-        // Only auto-dismiss non-404 errors after 3 seconds
-        if (!isConversationFetchError) {
-            errorTimerRef.current = setTimeout(() => setError(INITIAL_ERROR_STATE), 3000);
-        }
-    }, []);
-```
-
-The error handling system provides differentiated treatment for different error types. 
-404 errors (indicating missing workflows) persist until resolved, while other errors auto-dismiss to avoid cluttering the interface.
-
-### Implementing intelligent conversation synchronization
-
-The application requires sophisticated conversation state management that handles real-time updates, prevents unnecessary re-renders, and maintains UI consistency.
-
-Add the conversation fetching and state management:
-
-```javascript
-    const clearErrorOnSuccess = useCallback(() => {
-        if (errorTimerRef.current) {
-            clearTimeout(errorTimerRef.current);
-        }
-        setError(INITIAL_ERROR_STATE);
-    }, []);
-    
-    const fetchConversationHistory = useCallback(async () => {
-        try {
-            const data = await apiService.getConversationHistory();
-            const newConversation = data.messages || [];
-            
-            setConversation(prevConversation => 
-                JSON.stringify(prevConversation) !== JSON.stringify(newConversation) ? newConversation : prevConversation
-            );
-    
-            if (newConversation.length > 0) {
-                const lastMsg = newConversation[newConversation.length - 1];
-                const isAgentMessage = lastMsg.actor === "agent";
-                
-                setLoading(!isAgentMessage);
-                setDone(lastMsg.response.next === "done");
-    
-                setLastMessage(prevLastMessage =>
-                    !prevLastMessage || lastMsg.response.response !== prevLastMessage.response.response
-                        ? lastMsg
-                        : prevLastMessage
-                );
-            } else {
-                setLoading(false);
-                setDone(true);
-                setLastMessage(null);
-            }
-    
-            // Successfully fetched data, clear any persistent errors
-            clearErrorOnSuccess();
-        } catch (err) {
-            handleError(err, "fetching conversation");
-        }
-    }, [handleError, clearErrorOnSuccess]);
-```
-
-This fetching logic uses JSON comparison to prevent unnecessary re-renders and intelligently determines loading states based on the last message actor. 
-It automatically detects conversation completion through the agent's "done" status.
-
-Add the polling setup and scroll management:
-
-```javascript
-    // Setup polling with cleanup
-    useEffect(() => {
-        pollingRef.current = setInterval(fetchConversationHistory, POLL_INTERVAL);
-        
-        return () => clearInterval(pollingRef.current);
-    }, [fetchConversationHistory]);
-    
-
-    const scrollToBottom = useCallback(() => {
-        if (containerRef.current) {
-            if (scrollTimeoutRef.current) {
-                clearTimeout(scrollTimeoutRef.current);
-            }
-            
-            scrollTimeoutRef.current = setTimeout(() => {
-                const element = containerRef.current;
-                element.scrollTop = element.scrollHeight;
-                scrollTimeoutRef.current = null;
-            }, 100);
-        }
-    }, []);
-
-    const handleContentChange = useCallback(() => {
-        scrollToBottom();
-    }, [scrollToBottom]);
-
-    useEffect(() => {
-        if (lastMessage) {
-            scrollToBottom();
-        }
-    }, [lastMessage, scrollToBottom]);
-
-    useEffect(() => {
-        if (inputRef.current && !loading && !done) {
-            inputRef.current.focus();
-        }
-        
-        return () => {
-            if (scrollTimeoutRef.current) {
-                clearTimeout(scrollTimeoutRef.current);
-            }
-        };
-    }, [loading, done]);
-```
-
-The scroll management system ensures the interface stays focused on the latest conversation content while providing smooth animated scrolling. 
-Input focus management enhances user experience by automatically focusing the input field when ready for user interaction.
-
-### Building user interaction handlers
-
-The application requires handlers for different user actions that maintain proper loading states and error handling while coordinating with the backend system.
-
-Add the user interaction methods:
-
-```javascript
-    const handleSendMessage = async () => {
-        const trimmedInput = userInput.trim();
-        if (!trimmedInput) return;
-        
-        try {
-            setLoading(true);
-            setError(INITIAL_ERROR_STATE);
-            await apiService.sendMessage(trimmedInput);
-            setUserInput("");
-        } catch (err) {
-            handleError(err, "sending message");
-            setLoading(false);
-        }
-    };
-
-    const handleConfirm = async () => {
-        try {
-            setLoading(true);
-            setError(INITIAL_ERROR_STATE);
-            await apiService.confirm();
-        } catch (err) {
-            handleError(err, "confirming action");
-            setLoading(false);
-        }
-    };
-
-    const handleStartNewChat = async () => {
-        try {
-            setError(INITIAL_ERROR_STATE);
-            setLoading(true);
-            await apiService.startWorkflow();
-            setConversation([]);
-            setLastMessage(null);
-        } catch (err) {
-            handleError(err, "starting new chat");
-        } finally {
-            setLoading(false);
-        }
-    };
-```
-
-These handlers demonstrate consistent error handling patterns and proper state management. 
-The new chat handler resets conversation state while the confirm handler integrates with the tool execution workflow.
-
-### Creating the responsive user interface
-
-The application layout provides a modern, responsive interface with proper error display, conversation area, and input controls.
-
-Complete the App component with the render method:
-
-```javascript
-    return (
-        <div className="flex flex-col h-screen">
-            <NavBar title="Temporal AI Agent 🤖" />
-
-            {error.visible && (
-                <div className="fixed top-16 left-1/2 transform -translate-x-1/2 
-                    bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50 
-                    transition-opacity duration-300">
-                    {error.message}
-                </div>
-            )}
-
-            <div className="flex-grow flex justify-center px-4 py-2 overflow-hidden">
-                <div className="w-full max-w-lg bg-white dark:bg-gray-900 p-8 px-3 rounded shadow-md 
-                    flex flex-col overflow-hidden">
-                    <div ref={containerRef} 
-                        className="flex-grow overflow-y-auto pb-20 pt-10 scroll-smooth">
-                        <ChatWindow
-                            conversation={conversation}
-                            loading={loading}
-                            onConfirm={handleConfirm}
-                            onContentChange={handleContentChange}
-                        />
-                        {done && (
-                            <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4 
-                                animate-fade-in">
-                                Chat ended
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
-                w-full max-w-lg bg-white dark:bg-gray-900 p-4
-                border-t border-gray-300 dark:border-gray-700 shadow-lg
-                transition-all duration-200"
-                style={{ zIndex: 10 }}>
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSendMessage();
-                }} className="flex items-center">
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        className={`flex-grow rounded-l px-3 py-2 border border-gray-300
-                            dark:bg-gray-700 dark:border-gray-600 focus:outline-none
-                            transition-opacity duration-200
-                            ${loading || done ? "opacity-50 cursor-not-allowed" : ""}`}
-                        placeholder="Type your message..."
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        disabled={loading || done}
-                        aria-label="Type your message"
-                    />
-                    <button
-                        type="submit"
-                        className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r 
-                            transition-all duration-200
-                            ${loading || done ? "opacity-50 cursor-not-allowed" : ""}`}
-                        disabled={loading || done}
-                        aria-label="Send message"
-                    >
-                        Send
-                    </button>
-                </form>
-                
-                <div className="text-right mt-3">
-                    <button
-                        onClick={handleStartNewChat}
-                        className={`text-sm underline text-gray-600 dark:text-gray-400 
-                            hover:text-gray-800 dark:hover:text-gray-200 
-                            transition-all duration-200
-                            ${!done ? "opacity-0 cursor-not-allowed" : ""}`}
-                        disabled={!done}
-                        aria-label="Start new chat"
-                    >
-                        Start New Chat
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-```
-
-The interface design includes dark mode support, responsive layout with proper mobile considerations, accessibility labels, and smooth transitions. 
-The fixed input area ensures easy access while the scrollable conversation area accommodates long discussions.
-
-### Building the conversation display system
-
-The conversation display requires sophisticated message rendering that handles different actor types and provides proper error boundaries.
-
-Create `src/components/ChatWindow.jsx` with the conversation management system:
-
-```javascript
-import React, { memo, useCallback } from "react";
-import LLMResponse from "./LLMResponse";
-import MessageBubble from "./MessageBubble";
-import LoadingIndicator from "./LoadingIndicator";
-
-class ChatErrorBoundary extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { hasError: false };
-    }
-
-    static getDerivedStateFromError(error) {
-        return { hasError: true };
-    }
-
-    componentDidCatch(error, errorInfo) {
-        console.error("ChatWindow error:", error, errorInfo);
-    }
-
-    render() {
-        if (this.state.hasError) {
-            return (
-                <div className="text-red-500 p-4 text-center">
-                    Something went wrong. Please Terminate the workflow and try again.
-                </div>
-            );
-        }
-        return this.props.children;
-    }
-}
-```
-
-The error boundary provides graceful degradation when conversation rendering fails, ensuring the entire application doesn't crash due to malformed message data.
-
-Add the message parsing and rendering logic:
-
-```javascript
-const safeParse = (str) => {
-    try {
-        return typeof str === 'string' ? JSON.parse(str) : str;
-    } catch (err) {
-        console.error("safeParse error:", err, "Original string:", str);
-        return str;
-    }
-};
-
-const Message = memo(({ msg, idx, isLastMessage, onConfirm, onContentChange }) => {
-    const { actor, response } = msg;
-    
-    if (actor === "user") {
-        return <MessageBubble message={{ response }} isUser />;
-    }
-    
-    if (actor === "agent") {
-        const data = safeParse(response);
-        return (
-            <LLMResponse
-                data={data}
-                onConfirm={onConfirm}
-                isLastMessage={isLastMessage}
-                onHeightChange={onContentChange}
-            />
-        );
-    }
-    
-    return null;
-});
-
-Message.displayName = 'Message';
-```
-
-The message rendering system safely parses JSON responses and delegates to specialized components based on actor type. 
-Memoization prevents unnecessary re-renders during conversation updates.
-
-Complete the chat window with conversation filtering and layout:
-
-```javascript
-const ChatWindow = memo(({ conversation, loading, onConfirm, onContentChange }) => {
-    const validateConversation = useCallback((conv) => {
-        if (!Array.isArray(conv)) {
-            console.error("ChatWindow expected conversation to be an array, got:", conv);
-            return [];
-        }
-        return conv;
-    }, []);
-
-    const filtered = validateConversation(conversation).filter((msg) => {
-        const { actor } = msg;
-        return actor === "user" || actor === "agent";
-    });
-
-    return (
-        <ChatErrorBoundary>
-            <div className="flex-grow flex flex-col">
-                <div className="flex-grow flex flex-col justify-end overflow-y-auto space-y-3">
-                    {filtered.map((msg, idx) => (
-                        <Message
-                            key={`${msg.actor}-${idx}-${typeof msg.response === 'string' ? msg.response : msg.response?.response}`}
-                            msg={msg}
-                            idx={idx}
-                            isLastMessage={idx === filtered.length - 1}
-                            onConfirm={onConfirm}
-                            onContentChange={onContentChange}
-                        />
-                    ))}
-                    {loading && (
-                        <div className="pt-2 flex justify-center">
-                            <LoadingIndicator />
-                        </div>
-                    )}
-                </div>
-            </div>
-        </ChatErrorBoundary>
-    );
-});
-
-ChatWindow.displayName = 'ChatWindow';
-
-export default ChatWindow;
-```
-
-The conversation filtering ensures only user and agent messages appear in the UI, while the loading indicator provides clear feedback during processing. 
-The keying strategy prevents React rendering issues with dynamic conversation content.
-
-### Setting up the application entry point and configuration
-
-The application requires proper initialization and build configuration for development and production deployment.
-
-Create `src/main.jsx` with the React application entry point:
-
-```javascript
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './pages/App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-```
-
-Create `src/index.css` with Tailwind CSS integration:
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-in;
-}
-```
-
-### Creating build and development configuration
-
-Create `vite.config.js` for the Vite build configuration:
-
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5173,
-    host: true
-  }
-})
-```
-
-Create `tailwind.config.js` for Tailwind CSS configuration:
-
-```javascript
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-  darkMode: 'class',
-}
-```
-
-Create the HTML template as `index.html`:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Temporal AI Agent</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
-```
-
-### Bringing it all together
-
-Your complete React frontend provides a sophisticated, real-time interface for AI agent interactions. Here are the key components:
-
-**Advanced State Management (`src/pages/App.jsx`):**
-- Intelligent polling system with 600ms intervals for real-time updates
-- Debounced user input to prevent excessive API calls
-- Differentiated error handling with auto-dismissal for transient errors
-- Smart conversation synchronization that prevents unnecessary re-renders
-
-**Robust API Layer (`src/services/api.js`):**
-- Structured error handling with status code awareness
-- Proper URL encoding and request formatting
-- Clean async/await patterns with comprehensive error recovery
-
-**Sophisticated UI Components:**
-- Error boundaries preventing application crashes
-- Memoized components for optimal rendering performance
-- Message type differentiation with specialized rendering
-- Responsive design with dark mode support
-
-**Development Experience:**
-- Vite for fast development builds and hot module replacement
-- Tailwind CSS for utility-first styling with dark mode
-- Modern React patterns with hooks and functional components
-- Comprehensive error logging and debugging support
-
-This React frontend demonstrates key patterns for building production-ready AI agent interfaces: intelligent state management, robust error handling, performance optimization through memoization and debouncing, and responsive design that works across devices. 
-The system provides immediate feedback while gracefully handling the asynchronous nature of AI agent processing.
-
-In the next step, you will integrate and test your complete AI agent system to ensure all components work together seamlessly.
 
 ## Step 9 — Integration and testing
 
@@ -3981,7 +3144,7 @@ import os
 from dotenv import load_dotenv
 from temporalio.worker import Worker
 
-from activities.tool_activities import ToolActivities, dynamic_tool_activity
+from activities.activities import AgentActivities, dynamic_tool_activity
 from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
 from workflows.agent_goal_workflow import AgentGoalWorkflow
 
@@ -3998,8 +3161,8 @@ async def main():
     client = await get_temporal_client()
 
     # Initialize the activities class
-    activities = ToolActivities()
-    print(f"ToolActivities initialized with LLM model: {llm_model}")
+    activities = AgentActivities()
+    print(f"AgentActivities initialized with LLM model: {llm_model}")
 
     print("Worker ready to process tasks!")
     logging.basicConfig(level=logging.WARN)
@@ -4048,7 +3211,7 @@ You should see output confirming the worker is connected and ready to process ta
 
 ```
 Worker will use LLM model: openai/gpt-4
-ToolActivities initialized with LLM model: openai/gpt-4
+AgentActivities initialized with LLM model: openai/gpt-4
 Worker ready to process tasks!
 Starting worker, connecting to task queue: agent-task-queue
 Ready to begin processing...
@@ -4262,22 +3425,6 @@ Monitor your system's performance characteristics during testing:
 
 **Workflow history size**: Long conversations accumulate history. The workflow implements continuation patterns to handle conversations exceeding 250 messages.
 
-### Debugging common integration issues
-
-**"Workflow worker unavailable" errors** indicate the worker isn't running or can't connect to Temporal. Verify:
-- Worker process is running
-- Temporal server is accessible
-- Task queue names match between worker and API
-
-**Empty conversation history** might indicate workflow initialization issues. Check:
-- API logs for workflow start confirmation
-- Temporal UI for workflow existence
-- Browser console for API errors
-
-**Tool execution failures** appear in activity retry attempts. Investigate:
-- Worker logs for detailed error messages
-- Activity input parameters in Temporal UI
-- Environment variables for tool configuration
 
 ### Bringing it all together
 
