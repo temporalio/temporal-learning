@@ -276,7 +276,7 @@ end
 
 By default, every Activity Execution is associated with a
 [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies), which
-specifies that a Activity will be retried soon after it fails and will be
+specifies that an Activity will be retried soon after it fails and will be
 retried continuously (with a delay between each attempt) until it succeeds
 or is requested to stop. You can change this behavior to suit your needs, as
 this Workflow Definition does. For demonstration purposes, it specifies that
