@@ -68,9 +68,10 @@ Before starting this tutorial:
 ## Application overview
 
 The project in this tutorial mimics a "money transfer" application. It is
-implemented with a single _Workflow_, which orchestrates the execution of
-two _Activities_ (`Withdraw` and `Deposit`) that move money between the
-accounts.
+implemented with a single _[Workflow](https://docs.temporal.io/workflows)_,
+which orchestrates the execution of two 
+_[Activities](https://docs.temporal.io/activities)_ (`Withdraw` and `Deposit`)
+that move money between the accounts.
 
 To perform a money transfer, you will do the following:
 
@@ -92,7 +93,7 @@ and Activities run on your infrastructure, just like your other applications.
 
 Now that you know how the application works, it's time to try it for yourself.
 
-## ![](images/download.png) Retrieve the application source code
+## ![Retrieve the application source code](images/download.png) Retrieve the application source code
 
 The application source code is available in a GitHub repository named
 [`money-transfer-project-template-ruby`](https://github.com/temporalio/money-transfer-project-template-ruby/).
@@ -173,7 +174,7 @@ into a separate method, known as an
 :::tip Why you use Activities
 At first glance, you might think you can incorporate your logic into the
 Workflow Definition. However, Temporal Workflows have certain [deterministic
-constraints](https://docs.temporal.io/workflows#deterministic-constraints).
+constraints](https://docs.temporal.io/workflow-definition#deterministic-constraints)
 Operations that could behave differently from one invocation to the next,
 which includes any operations that interact with an external system, are
 not allowed in the Workflow Definition—it must go in an Activity instead.
@@ -672,7 +673,7 @@ each Activity.
 
 
 
-## ![](images/warning.png) Simulate failures
+## ![Simulate Failures](images/warning.png) Simulate failures
 
 Despite your best efforts, there will be times when something goes wrong in
 your application. It might encounter a network glitch, a server might go
