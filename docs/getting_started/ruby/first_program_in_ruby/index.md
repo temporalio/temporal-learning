@@ -85,7 +85,7 @@ To perform a money transfer, you will do the following:
 The following diagram illustrates the communication that takes place when you
 start the money transfer Workflow:
 
-![High level project design](/assets/images/temporal-high-level-application-design.png)
+![High level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
 
 Notice that the Temporal Service doesn't run your code. Your Worker, Workflow,
 and Activities run on your infrastructure, just like your other applications.
