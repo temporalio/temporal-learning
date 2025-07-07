@@ -95,7 +95,7 @@ Now that you know how the application works, it's time to try it for yourself.
 ## ![](images/download.png) Retrieve the application source code
 
 The application source code is available in a GitHub repository named
-[money-transfer-project-template-ruby](https://github.com/temporalio/money-transfer-project-template-ruby/).
+[`money-transfer-project-template-ruby`](https://github.com/temporalio/money-transfer-project-template-ruby/).
 
 Open a new terminal window and clone the repository:
 
