@@ -200,10 +200,12 @@ succeeds, but the deposit fails because the recipient closed their account.
 A deposit that fails due to a network outage can be resolved by retrying the
 deposit, but this is a permanent error. To ensure that the money isn't lost,
 you must undo the transaction you started. A common technique for this in
-distributed systems is known as the *saga pattern*, which uses one or more
-*compensating transactions* to revert earlier operations. The `Refund`
-Activity, which is called if the deposit fails, is an example of this. It
-returns the withdrawn money back to the sender's account.
+distributed systems is known as the 
+*[saga pattern](https://docs.temporal.io/evaluate/use-cases-design-patterns#saga)*,
+which uses one or more *compensating transactions* to revert earlier 
+operations. The `Refund` Activity, which is called if the deposit fails,
+is an example of this. It returns the withdrawn money back to the sender's
+account.
 
 ### Workflow Definition Code
 
