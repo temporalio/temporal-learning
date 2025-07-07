@@ -211,7 +211,66 @@ Here is the Workflow Definition for the money transfer:
 <!--SNIPSTART money-transfer-project-template-ruby-workflow-->
 [workflow.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/workflow.rb)
 ```ruby
-TO BE REPLACED WITH SNIPSYNC'ED CODE
+require_relative 'activities'
+require_relative 'shared'
+require 'temporalio/retry_policy'
+require 'temporalio/workflow'
+
+module MoneyTransfer
+  # Temporal Workflow that withdraws the specified amount from the source
+  # account and deposits it into the target account, refunding the source
+  # account if the deposit cannot be completed.
+  class MoneyTransferWorkflow < Temporalio::Workflow::Definition
+    def execute(details)
+      retry_policy = Temporalio::RetryPolicy.new(
+        max_interval: 10,
+        non_retryable_error_types: [
+          'InvalidAccountError',
+          'InsufficientFundsError'
+        ]
+      )
+
+      Temporalio::Workflow.logger.info("Starting workflow (#{details})")
+
+      withdraw_result = Temporalio::Workflow.execute_activity(
+        BankActivities::Withdraw,
+        details,
+        start_to_close_timeout: 5,
+        retry_policy: retry_policy
+      )
+      Temporalio::Workflow.logger.info("Withdrawal confirmation: #{withdraw_result}")
+
+      begin
+        deposit_result = Temporalio::Workflow.execute_activity(
+          BankActivities::Deposit,
+          details,
+          start_to_close_timeout: 5,
+          retry_policy: retry_policy
+        )
+        Temporalio::Workflow.logger.info("Deposit confirmation: #{deposit_result}")
+
+        "Transfer complete (transaction IDs: #{withdraw_result}, #{deposit_result})"
+      rescue Temporalio::Error::ActivityError => e
+        Temporalio::Workflow.logger.error("Deposit failed: #{e}")
+
+        # Since the deposit failed, attempt to recover by refunding the withdrawal
+        begin
+          refund_result = Temporalio::Workflow.execute_activity(
+            BankActivities::Refund,
+            details,
+            start_to_close_timeout: 5,
+            retry_policy: retry_policy
+          )
+          Temporalio::Workflow.logger.info("Refund confirmation: #{refund_result}")
+
+          "Transfer complete (transaction IDs: #{withdraw_result}, #{refund_result})"
+        rescue Temporalio::Error::ActivityError => refund_error
+          Temporalio::Workflow.logger.error("Refund failed: #{refund_error}")
+        end
+      end
+    end
+  end
+end
 ```
 <!--SNIPEND-->
 
@@ -260,7 +319,14 @@ file that contains code used by multiple parts of this application:
 <!--SNIPSTART money-transfer-project-template-ruby-shared-transfer-details-->
 [shared.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/shared.rb)
 ```ruby
-TO BE REPLACED WITH SNIPSYNC'ED CODE
+  # TransferDetails is the input to MoneyTransferWorkflow (and its Activities).
+  # It specifies the source (sender) and target (recipient) accounts, the amount
+  # to transfer, and a reference ID that uniquely identifies the transaction.
+  TransferDetails = Struct.new(:source_account, :target_account, :amount, :reference_id) do
+    def to_s
+      "TransferDetails { #{source_account}, #{target_account}, #{amount}, #{reference_id} }"
+    end
+  end
 ```
 <!--SNIPEND-->
 
@@ -287,7 +353,58 @@ how they are defined:
 <!--SNIPSTART money-transfer-project-template-ruby-activities-->
 [activities.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/activities.rb)
 ```ruby
-TO BE REPLACED WITH SNIPSYNC'ED CODE
+require_relative 'shared'
+require 'temporalio/activity'
+
+module MoneyTransfer
+  module BankActivities
+    # Activity that withdraws a specified amount from the source account,
+    # raising an InsufficientFundsError if the amount is too large.
+    # It returns the transaction ID for the withdrawal.
+    class Withdraw < Temporalio::Activity::Definition
+      def execute(details)
+        puts("Doing a withdrawal from #{details.source_account} for #{details.amount}")
+        raise InsufficientFundsError, 'Transfer amount too large' if details.amount > 1000
+
+        # Uncomment to expose a bug and cause the Activity to fail
+        # x = details.amount / 0
+
+        # Generate and returnt the transaction ID
+        "OKW-#{details.amount}-#{details.source_account}"
+      end
+    end
+
+    # Activity that deposits a specified amount into the target account,
+    # raising an InvalidAccountError if that is not a valid account.
+    # It returns the transaction ID for the deposit.
+    class Deposit < Temporalio::Activity::Definition
+      def execute(details)
+        puts("Doing a deposit into #{details.target_account} for #{details.amount}")
+        raise InvalidAccountError, 'Invalid account number' if details.target_account == 'B5555'
+
+        # Generate and returnt the transaction ID
+        "OKD-#{details.amount}-#{details.target_account}"
+      end
+    end
+
+    # Activity that deposits a specified amount into the source account,
+    # intended for cases in which a previous deposit attempt failed. This
+    # is defined as a separate Activity, distinct from the Deposit, so
+    # that it can perform any special handling that might be needed to
+    # process the refund (such as making a call to a third-party system).
+    # In this implementation, however, the behavior is identical to the
+    # deposit (with the exception of the transaction ID and log message).
+    # It returns the transaction ID for the refund.
+    class Refund < Temporalio::Activity::Definition
+      def execute(details)
+        puts("Refunding #{details.amount} back to account #{details.source_account}")
+
+        # Generate and returnt the transaction ID
+        "OKR-#{details.amount}-#{details.source_account}"
+      end
+    end
+  end
+end
 ```
 <!--SNIPEND-->
 
@@ -363,7 +480,35 @@ Here is the code used to configure and start the Worker:
 <!--SNIPSTART money-transfer-project-template-ruby-worker-->
 [worker.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/worker.rb)
 ```ruby
-TO BE REPLACED WITH SNIPSYNC'ED CODE
+require_relative 'activities'
+require_relative 'shared'
+require_relative 'workflow'
+require 'logger'
+require 'temporalio/client'
+require 'temporalio/worker'
+
+# Create a Temporal Client that connects to a local Temporal Service, uses
+# a Namespace called 'default', and displays log messages to standard output
+client = Temporalio::Client.connect(
+  'localhost:7233',
+  'default',
+  logger: Logger.new($stdout, level: Logger::INFO)
+)
+
+# Create a Worker that polls the specified Task Queue and can 
+# fulfill requests for the specified Workflow and Activities
+worker = Temporalio::Worker.new(
+  client:,
+  task_queue: MoneyTransfer::TASK_QUEUE_NAME,
+  workflows: [MoneyTransfer::MoneyTransferWorkflow],
+  activities: [MoneyTransfer::BankActivities::Withdraw, 
+               MoneyTransfer::BankActivities::Deposit,
+			   MoneyTransfer::BankActivities::Refund]
+)
+
+# Start the Worker, which will poll the Task Queue until stopped
+puts 'Starting Worker (press Ctrl+C to exit)'
+worker.run(shutdown_signals: ['SIGINT'])
 ```
 <!--SNIPEND-->
 
@@ -423,7 +568,43 @@ Workflow Execution request when a user clicks a button.
 <!--SNIPSTART money-transfer-project-template-ruby-starter-->
 [starter.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/starter.rb)
 ```ruby
-THIS WILL BE REPLACED WITH SNIPSYNC'ED CODE
+require_relative 'shared'
+require_relative 'workflow'
+require 'securerandom'
+require 'temporalio/client'
+
+# Create the Temporal Client that the Worker will use to connect to the
+# Temporal Service (in this case, it will connect to one running locally,
+# on the standard port, and use the default namespace)
+client = Temporalio::Client.connect('localhost:7233', 'default')
+
+# Default values for the payment details (can override via positional commandline parameters)
+details = MoneyTransfer::TransferDetails.new('A1001', 'B2002', 100, SecureRandom.uuid)
+details.source_account = ARGV[0] if ARGV.length >= 1
+details.target_account = ARGV[1] if ARGV.length >= 2
+details.amount = ARGV[2].to_i if ARGV.length >= 3
+details.reference_id = ARGV[3] if ARGV.length >= 4
+
+# Use the Temporal Client to submit a Workflow Execution request to the
+# Temporal Service, wait for the result returned by executing the Workflow,
+# and then display that value to standard output.
+handle = client.start_workflow(
+  MoneyTransfer::MoneyTransferWorkflow,
+  details,
+  id: "moneytransfer-#{details.reference_id}",
+  task_queue: MoneyTransfer::TASK_QUEUE_NAME
+)
+
+puts "Initiated transfer of $#{details.amount} from #{details.source_account} to #{details.target_account}"
+puts "Workflow ID: #{handle.id}"
+
+# Keep running (and retry) if the Temporal Service becomes unavailable
+begin
+  puts "Workflow result: #{handle.result}"
+rescue Temporalio::Error::RPCError
+  puts 'Temporal Service unavailable while awaiting result'
+  retry
+end
 ```
 <!--SNIPEND-->
 
