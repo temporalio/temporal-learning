@@ -6,12 +6,11 @@ description: In this tutorial, you'll run your first Temporal application using 
 keywords: [ruby, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, saga, compensating transactions]
 tags: [Ruby, SDK]
 last_update:
-  date: 2025-06-30
+  date: 2025-07-06
 code_repo: https://github.com/temporalio/money-transfer-project-template-ruby/
 image: /img/temporal-logo-twitter-card.png
 ---
 
-<!-- TODO: Publish this banner (https://github.com/temporalio/temporal-learning/pull/394) -->
 <img className="banner" src="/img/sdk_banners/banner_ruby.png" alt="Temporal Ruby SDK" />
 
 :::note Tutorial information
