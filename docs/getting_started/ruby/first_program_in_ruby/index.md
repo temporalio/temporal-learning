@@ -299,7 +299,7 @@ can handle different types of failures. However, money movement is a complex
 subject and this tutorial makes no attempt to handle every possible situation.
 For example, it doesn't attempt to revert the transaction upon cancellation.
 It also doesn't handle failure of the refund operation, which might involve
-a human-in-the-loop step where in which someone is notified of the error
+a human-in-the-loop step in which someone is notified of the error
 and can intervene directly.
 
 This example is designed to demonstrate several core features to someone
