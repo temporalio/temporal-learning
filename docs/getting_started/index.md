@@ -23,6 +23,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 <Link className="button button--primary" to="go/dev_environment/">Go</Link>&nbsp;
 <Link className="button button--primary" to="java/dev_environment/">Java</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/dev_environment/">.NET</Link>&nbsp;
+<Link className="button button--primary" to="php/dev_environment/">PHP</Link>&nbsp;
 <Link className="button button--primary" to="python/dev_environment/">Python</Link>&nbsp;
 <Link className="button button--primary" to="ruby/dev_environment/">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="typescript/dev_environment/">TypeScript</Link>&nbsp;
@@ -31,17 +32,17 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 ## Run your first Temporal Application
 
-**Estimated time**: ⏱️ ~10 minutes
+**Estimated time**: ⏱️ ~20 minutes
 
 Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 
 <Link className="button button--primary" to="go/first_program_in_go">Go</Link>&nbsp;
 <Link className="button button--primary" to="java/first_program_in_java">Java</Link>&nbsp;
 <Link className="button button--primary" to="dotnet/first_program_in_dotnet">.NET</Link>&nbsp;
+<Link className="button button--primary" to="php/hello_world_in_php">PHP</Link>&nbsp;
 <Link className="button button--primary" to="python/first_program_in_python">Python</Link>&nbsp;
 <Link className="button button--primary" to="ruby/first_program_in_ruby">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="typescript/first_program_in_typescript">TypeScript</Link>&nbsp;
-
 
 -----
 

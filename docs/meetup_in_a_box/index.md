@@ -43,9 +43,10 @@ _We are currently limited to shipping within North America. If you are not in No
 
 In this presentation, you will lead the audience through the fundamental building blocks of Temporal, including the Temporal Service, Workflows, Activities, Workers, Durable Timers, and Task Queues.
 
-_Java and Ruby port coming soon!_
+_Ruby port coming soon!_
 
 <Link className="button button--primary" to="invincible_apps/go/">Go</Link>&nbsp;
+<Link className="button button--primary" to="invincible_apps/java/">Java</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/dotnet/">.NET</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/python/">Python</Link>&nbsp;
 <Link className="button button--primary" to="invincible_apps/typescript/">TypeScript</Link>&nbsp;

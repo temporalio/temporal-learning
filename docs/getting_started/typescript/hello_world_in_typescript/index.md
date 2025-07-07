@@ -762,8 +762,6 @@ In this tutorial you built your first Temporal Application, using TypeScript fun
 
 Take this application one step further and add a new Activity that gets the current weather for the location you found.
 
-Then [get your application working on Temporal Cloud](https://learn.temporal.io/getting_started/typescript/run_workers_with_cloud_typescript/).
-
 ### Review
 
 Answer the following questions to see whether you remember some important concepts from this tutorial:
