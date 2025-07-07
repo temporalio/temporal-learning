@@ -702,7 +702,7 @@ concepts from this tutorial:
 
 Because the Task Queue name is specified in two different parts of the code
 (the first starts the Workflow and the second configures the Worker). If their
-values differ, the Worker and Temporal Cluster would not share the same Task
+values differ, the Worker and Temporal Service would not share the same Task
 Queue, and the Workflow Execution would not progress.
 
 </details>
