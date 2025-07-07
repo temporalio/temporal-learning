@@ -40,7 +40,7 @@ potential problem. For example, you might write code to handle retries and
 timeouts in order to work around a service or network outage. Likewise, you
 might rearchitect your application to use a database or message queue to avoid
 losing state in case of a crash. All too often, the result is code that takes
-longer to developer, is harder to debug, and becomes a burden to maintain.
+longer to develop, is harder to debug, and becomes a burden to maintain.
 
 Temporal provides a better way to address these challenges. Instead of adding
 complexity to your application, you build on the foundation provided by the
