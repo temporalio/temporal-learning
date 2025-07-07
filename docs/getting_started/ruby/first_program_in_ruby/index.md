@@ -661,7 +661,7 @@ detail page, which shows you much more information.
 The top section shows the status (completed), Workflow ID, timestamps for
 the start and end time, Task Queue name, and other details.
 
-The **Input** and **Result** sections below that shows the input data supplied
+The **Input** and **Result** sections below show the input data supplied
 to the Workflow Execution and the value that it returned upon completion.
 
 The Event History section begins with a graphical timeline view, depicting
