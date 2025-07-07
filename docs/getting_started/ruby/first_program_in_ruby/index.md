@@ -313,7 +313,7 @@ The Workflow's `execute` method is passed a struct called `TransferDetails`,
 which defines the source (sender) account, target (recipient) account,
 amount of the transfer, and a user-supplied reference ID that serves to
 uniquely identify this transfer operation. Here is the definition of the
-`TransferDetails` struct, which is defined at the bottom `shared.rb`, a
+`TransferDetails` struct, which is defined at the bottom of `shared.rb`, a
 file that contains code used by multiple parts of this application:
 
 <!--SNIPSTART money-transfer-project-template-ruby-shared-transfer-details-->
