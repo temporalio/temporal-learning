@@ -2,712 +2,696 @@
 title: Run your first Temporal application with the Ruby SDK
 id: run-your-first-app-tutorial-ruby
 sidebar_position: 2
-description: In this tutorial, you'll run your first Temporal app using the Ruby SDK and explore Workflows, Activities, Task Queues, and compensating transactions. Then you'll see how Temporal recovers from failures.
-keywords: [ruby, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
+description: In this tutorial, you'll run your first Temporal application using the Ruby SDK and explore Workflows, Activities, Task Queues, and compensating transactions. You'll also see how Temporal recovers from failures.
+keywords: [ruby, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, saga, compensating transactions]
 tags: [Ruby, SDK]
 last_update:
-  date: 2025-05-08
-code_repo: https://github.com/temporalio/money-transfer-project-template-ruby
+  date: 2025-06-30
+code_repo: https://github.com/temporalio/money-transfer-project-template-ruby/
 image: /img/temporal-logo-twitter-card.png
 ---
 
+<!-- TODO: Publish this banner (https://github.com/temporalio/temporal-learning/pull/394) -->
 <img className="banner" src="/img/sdk_banners/banner_ruby.png" alt="Temporal Ruby SDK" />
 
 :::note Tutorial information
-
 - **Level**: ⭐ Temporal beginner
-- **Time**: ⏱️ ~10 minutes
+- **Time**: ⏱️ ~20 minutes
 - **Goals**: 🙌
-  - Explore Temporal's core terminology and concepts.
-  - Complete several runs of a Temporal Workflow application using a Temporal Cluster and the [Ruby SDK](https://github.com/temporalio/sdk-Ruby).
-  - Practice reviewing the state of the Workflow.
-  - Understand the inherent reliability of Workflow methods.
-
+  - Explore Temporal's core terminology and concepts
+  - Start a local Temporal Service
+  - Review Temporal application code written using the
+    [Ruby SDK](https://github.com/temporalio/sdk-ruby)
+  - Run the application multiple times, observing how it
+    overcomes different failure scenarios
+  - Use the Temporal Web UI to view details of each execution
 :::
 
 ### Introduction
 
-You can think of Temporal as a sort of "cure-all" for the pains you experience as a developer when trying to build reliable applications. Whether you're writing a complex transaction-based Workflow or working with remote APIs, you know that creating reliable applications is a complex process. Developing your application on the Temporal Platform guarantees that your code runs to completion no matter what.
+As a developer in today's world, many of the challenges that you face stem
+from the fact that modern applications are effectively distributed systems.
+The components from which applications are composed are deployed to multiple
+machines, sometimes in different data centers or cloud providers, and often
+rely on third-party services and APIs.  Unfortunately, networks go down,
+services become unresponsive, hardware fails, and applications crash.
 
-The language-specific SDK, in this case the Temporal [Python SDK](https://github.com/temporalio/sdk-python), provides a comprehensive solution to the complexities that arise from modern application development.
+Most developers attempt to address this by developing workarounds for each
+potential problem. For example, you might write code to handle retries and
+timeouts in order to work around a service or network outage. Likewise, you
+might rearchitect your application to use a database or message queue to avoid
+losing state in case of a crash. All too often, the result is code that takes
+longer to developer, is harder to debug, and becomes a burden to maintain.
 
-Temporal provides reliability primitives to ensure durable execution of your code, such as seamless and fault-tolerant application state tracking, automatic retries, timeouts, rollbacks due to process failures, and more.
+Temporal provides a better way to address these challenges. Instead of adding
+complexity to your application, you build on the foundation provided by the
+Temporal platform. Durable Execution ensures that your application will survive
+a crash—even if it was caused by hardware failure—recovering and then continuing
+on as if it never even happened. Its built-in support for retries and timeouts
+enables your application to overcome service and network outages. As a result,
+you'll be able to create reliable and scalable applications that are faster to
+develop and easier to maintain.
 
-In this tutorial, you'll run your first Temporal Application. You'll use Temporal's Web UI for application state visibility, and then explore how Temporal helps you recover from a couple of common failures.
+In this tutorial, you'll explore the code for a Temporal application and run
+that application multiple times, observing how it works in both success and
+failure scenarios. You'll also use Temporal's Web UI to gain visibility into
+what took place during execution.
 
 ## Prerequisites
 
 Before starting this tutorial:
 
-- [Set up a local development environment for developing Temporal Applications using the Python programming language](/getting_started/python/dev_environment/index.md)
-- Ensure you have Git installed to clone the project.
+<!-- TODO: Ensure that this content is available -->
+- [Set up a local development environment for Temporal Applications written
+  in the Ruby programming language](/getting_started/ruby/dev_environment/)
+- Ensure you have Git installed to clone the project
 
-## ![](/img/icons/workflow.png) Application overview
-In this tutorial, you will run a [Temporal Application](https://docs.temporal.io/temporal#temporal-application) using the [Temporal Python SDK](https://github.com/temporalio/sdk-python).
+## Application overview
 
-This project in this tutorial simulates a money transfer application, focusing on essential transactions such as withdrawals, deposits, and refunds. The importance of Temporal in this context lies in its ability to handle your code efficiently and reliably.
+The project in this tutorial mimics a "money transfer" application. It is
+implemented with a single _Workflow_, which orchestrates the execution of
+two _Activities_ (`Withdraw` and `Deposit`) that move money between the
+accounts.
 
-In this sample application, money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there is no need to try to make a deposit. But if the withdrawal succeeds, but the deposit fails, then the money needs to go back to the original account.
+To perform a money transfer, you will do the following:
 
-One of Temporal's most important features is its ability to maintain the application state when something fails. When failures happen, Temporal recovers processes where they left off or rolls them back correctly. This allows you to focus on business logic, instead of writing application code to recover from failure.
+1. Launch a Worker.
+   Since a Worker is responsible for executing the Workflow and Activity code,
+   at least one Worker must be running for the money transfer to make progress.
+2. Submit a Workflow Execution request to the Temporal Service.
+   After the Worker communicates with the Temporal Service, the Worker will
+   begin executing the Workflow and Activity code. It reports the results to
+   the Temporal Service, which tracks the progress of the Workflow Execution.
 
-Now that you know how the application will work, it's time to download the application to your local machine, so you can try it out yourself.
+The following diagram illustrates the communication that takes place when you
+start the money transfer Workflow:
 
-## ![](/img/icons/download.png) Download the example application
+![High level project design](/assets/images/temporal-high-level-application-design.png)
 
-The application you'll use in this tutorial is available in a [GitHub repository](https://github.com/temporalio/money-transfer-project-template-python).
+Notice that the Temporal Service doesn't run your code. Your Worker, Workflow,
+and Activities run on your infrastructure, just like your other applications.
 
-Open a new terminal window and use `git` to clone the repository:
+Now that you know how the application works, it's time to try it for yourself.
+
+## ![](images/download.png) Retrieve the application source code
+
+The application source code is available in a GitHub repository named
+[money-transfer-project-template-ruby](https://github.com/temporalio/money-transfer-project-template-ruby/).
+
+Open a new terminal window and clone the repository:
 
 ```command
-git clone https://github.com/temporalio/money-transfer-project-template-python
+git clone https://github.com/temporalio/money-transfer-project-template-ruby/
 ```
 
-Once you have the repository cloned, change to the project directory:
+Once that's complete, change to the project directory:
 
 ```command
-cd money-transfer-project-template-python
+cd money-transfer-project-template-ruby
 ```
 
 :::tip
-
-The repository for this tutorial is a GitHub Template repository, which means you could clone it to your own account and use it as the foundation for your own Temporal application. GitHub's [Creating a Repository from a Template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template) guide walks you through the steps.
-
+This repository also serves as a GitHub Template, which means that you can
+use it as the foundation for creating your own project. See
+[Creating a Repository from a Template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template)
+in GitHub's documentation for details.
 :::
 
-Now that you've downloaded the project, let's dive into the code.
-
-## Explore the application's Workflow and Activity Definitions
-
-The Temporal Application will consist of the following pieces:
-
-1. A [Workflow](https://docs.temporal.io/workflows) written in your programming language of choice using the Python SDK. A Workflow defines the overall flow of the application.
-2. An [Activity](https://docs.temporal.io/activities) is a method that encapsulates business logic prone to failure (e.g., calling a service that may go down). These Activities can be automatically retried upon some failure.
-3. A [Worker](https://docs.temporal.io/workers), provided by the Temporal SDK, which runs your Workflow and Activities reliably and consistently.
-
-Temporal applications are built using an abstraction called Workflows. You'll develop those Workflows by writing code in a general-purpose programming language such as Python. Conceptually, a Workflow defines a sequence of steps. With Temporal, those steps are defined by writing code, known as a [Workflow Definition](https://docs.temporal.io/workflows#workflow-definition), and are carried out by running that code, which results in a [Workflow Execution](https://docs.temporal.io/workflows#workflow-execution).
-
-These Workflow Executions orchestrate the execution of [Activities](https://docs.temporal.io/activities), which execute a single, well-defined action, such as calling another service, transcoding a media file, or sending an email message. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. These symbolize the movement of funds between accounts.
-
-The following diagram illustrates what happens when you start the Workflow:
-
-![High-level project design](https://raw.githubusercontent.com/temporalio/documentation-images/main/static/temporal-high-level-application-design.png)
-
-None of your application code runs on the Temporal Server. Your Worker, Workflow, and Activity run on your infrastructure, along with the rest of your applications.
+Next, you'll use the `temporal`
+[command-line interface](https://docs.temporal.io/cli/) (CLI) to start a
+local Temporal Service.
 
 
-### Workflow Definition
+## Start a local Temporal Service
 
-A Workflow Definition in Python uses the **`@workflow.defn`** decorator on the Workflow class to identify a Workflow.
+Make sure you've [installed Temporal CLI on your local machine](/getting_started/ruby/dev_environment/index.md).
 
-This is what the Workflow Definition looks like for this kind of process:
+Run the following command:
 
-<!--SNIPSTART python-money-transfer-project-template-workflows-->
-[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
-```py
-from datetime import timedelta
-
-from temporalio import workflow
-from temporalio.common import RetryPolicy
-from temporalio.exceptions import ActivityError
-
-with workflow.unsafe.imports_passed_through():
-    from activities import BankingActivities
-    from shared import PaymentDetails
-
-
-@workflow.defn
-class MoneyTransfer:
-    @workflow.run
-    async def run(self, payment_details: PaymentDetails) -> str:
-        retry_policy = RetryPolicy(
-            maximum_attempts=3,
-            maximum_interval=timedelta(seconds=2),
-            non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
-        )
-
-        # Withdraw money
-        withdraw_output = await workflow.execute_activity_method(
-            BankingActivities.withdraw,
-            payment_details,
-            start_to_close_timeout=timedelta(seconds=5),
-            retry_policy=retry_policy,
-        )
-
-        # Deposit money
-        try:
-            deposit_output = await workflow.execute_activity_method(
-                BankingActivities.deposit,
-                payment_details,
-                start_to_close_timeout=timedelta(seconds=5),
-                retry_policy=retry_policy,
-            )
-
-            result = f"Transfer complete (transaction IDs: {withdraw_output}, {deposit_output})"
-            return result
-        except ActivityError as deposit_err:
-            # Handle deposit error
-            workflow.logger.error(f"Deposit failed: {deposit_err}")
-            # Attempt to refund
-            try:
-                refund_output = await workflow.execute_activity_method(
-                    BankingActivities.refund,
-                    payment_details,
-                    start_to_close_timeout=timedelta(seconds=5),
-                    retry_policy=retry_policy,
-                )
-                workflow.logger.info(
-                    f"Refund successful. Confirmation ID: {refund_output}"
-                )
-                raise deposit_err
-            except ActivityError as refund_error:
-                workflow.logger.error(f"Refund failed: {refund_error}")
-                raise refund_error
-
-
+```command
+temporal server start-dev --db-filename temporal.db --ui-port 8080
 ```
-<!--SNIPEND-->
-
-- The `MoneyTransfer` class takes in transaction details. It executes Activities to withdraw and deposit the money. It also returns the results of the process.
-
-- The asynchronous `run` method signature includes an `input` variable typed as `PaymentDetails`. This class stores details that the Workflow uses to perform the money transfer.
-
-This type is defined in the file `shared.py`:
-
-<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["1", "6-12"]}-->
-[shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/shared.py)
-```py
-from dataclasses import dataclass
-# ...
-@dataclass
-class PaymentDetails:
-    source_account: str
-    target_account: str
-    amount: int
-    reference_id: str
-
-```
-<!--SNIPEND-->
-
-:::tip
-
-It's a good practice to send a single data class object into a Workflow as its input, rather than multiple, separate input variables. As your Workflows evolve, you may need to add additional inputs, and using a single argument will make it easier for you to change long-running Workflows in the future.
-
-:::
+This starts the Temporal Service, which will listen for connections on the
+default port (7233). It specifies a custom port (8080) for the Temporal Web
+UI. It also specifies the path to a file (`temporal.db`) where the Temporal
+Service will store its data.
 
 :::note
+The Temporal Service started with the `temporal` CLI is intended for local
+development, so it uses an in-memory database by default. The `--db-filename`
+option overrides that behavior by specifying the path to a file where the
+data should be persisted. This enables it to retain information after you
+restart the service, as it would in a production deployment.
 
-Notice that the `PaymentDetails` includes a `reference_id` field. Some APIs let you send a unique _idempotency key_ along with the transaction details. This guarantees that if a failure occurs and you have to retry the transaction, the API you're calling will use the key to ensure it only executes the transaction once.
-
+This file will be created if it does not exist. Be sure to specify the same
+path each time you start the Temporal Service so that it will have access to
+data saved during your previous session.
 :::
 
-### Activity Definition
 
-In the Temporal Python SDK, you define an Activity by decorating a method with **`@activity.defn`**.
+## Explore the Workflow and Activity Definitions
 
-[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
+### Workflow Definition Overview
+The fundamental building block in a Temporal application is the
+[Workflow Definition](https://docs.temporal.io/workflows#workflow-definition),
+which is code that orchestrates a sequence of steps.
 
-First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
+In the Ruby SDK, a Workflow Definition is a class that extends
+`Temporalio::Workflow::Definition`. The `execute` method is its
+entry point for execution and is invoked when the Workflow is started.
+Data supplied as input to the Workflow Execution is available through
+the parameter(s) defined in the `execute` method.
 
-<!--SNIPSTART python-money-transfer-project-template-withdraw {"selectedLines": ["12-35"]}-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
-```py
-# ...
 
-    @activity.defn
-    async def withdraw(self, data: PaymentDetails) -> str:
-        reference_id = f"{data.reference_id}-withdrawal"
-        try:
-            confirmation = await asyncio.to_thread(
-                self.bank.withdraw, data.source_account, data.amount, reference_id
-            )
-            return confirmation
-        except InvalidAccountError:
-            raise
-        except Exception:
-            activity.logger.exception("Withdrawal failed")
-            raise
+### Activity Definition Overview
 
-```
-<!--SNIPEND-->
-
-Second, if the transfer succeeded, the `withdraw()` method returns the confirmation.
-
-Lastly, the `deposit()` Activity method looks almost identical to the `withdraw()` method. It similarly takes the transfer details and calls a service to process the deposit, ensuring the money is successfully added to the receiving account:
-
-<!--SNIPSTART python-money-transfer-project-template-deposit-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
-```py
-    @activity.defn
-    async def deposit(self, data: PaymentDetails) -> str:
-        reference_id = f"{data.reference_id}-deposit"
-        try:
-            confirmation = await asyncio.to_thread(
-                self.bank.deposit, data.target_account, data.amount, reference_id
-            )
-            """
-            confirmation = await asyncio.to_thread(
-                self.bank.deposit_that_fails,
-                data.target_account,
-                data.amount,
-                reference_id,
-            )
-            """
-            return confirmation
-        except InvalidAccountError:
-            raise
-        except Exception:
-            activity.logger.exception("Deposit failed")
-            raise
-
-```
-<!--SNIPEND-->
+When a step involves the possibility of failure, such as calling a
+service, querying a database, or writing data to a file, its code
+is not allowed in the Workflow Definition. Instead, that code goes
+into a separate method, known as an
+[Activity Definition](https://docs.temporal.io/activities).
 
 :::tip Why you use Activities
+At first glance, you might think you can incorporate your logic into the
+Workflow Definition. However, Temporal Workflows have certain [deterministic
+constraints](https://docs.temporal.io/workflows#deterministic-constraints).
+Operations that could behave differently from one invocation to the next,
+which includes any operations that interact with an external system, are
+not allowed in the Workflow Definition—it must go in an Activity instead.
+This separation of code is fundamental to how Temporal achieves
+[Durable Execution](https://docs.temporal.io/evaluate/understanding-temporal#durable-execution).
 
-At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints) and must produce the same output each time, given the same input. This means that any non-deterministic work such as interacting with the outside world, like accessing files or network resources, must be done by Activities.
-
-In addition, by using Activities, you can take advantage of Temporal's ability to retry Activities indefinitely, which you'll explore later in this tutorial.
-
-Use Activities for your business logic, and use Workflows to coordinate the Activities.
-
+Use Activities for your business logic, and use Workflows to orchestrate
+the Activities.
 :::
 
-## Set the Retry Policy
+Activities are defined in much the same way as Workflows. The key
+difference is that they derive from the `Temporalio::Activity::Definition`
+class. They can accept input data through the parameter(s) defined in
+the Activity's `execute` method.
 
-Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems.
+As mentioned earlier, this Workflow relies on two Activities to move money
+between two accounts. It uses the `Withdraw` Activity to debit the source
+account and the `Deposit` Activity to credit the target account. However, it
+also has a third Activity (`Refund`), which is used for failure handling.
 
-If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the [Retry Policy](https://docs.temporal.io/dev-guide/python/features#activity-retries).
+To understand the role of the `Refund` Activity, imagine that the withdrawal
+succeeds, but the deposit fails because the recipient closed their account.
+A deposit that fails due to a network outage can be resolved by retrying the
+deposit, but this is a permanent error. To ensure that the money isn't lost,
+you must undo the transaction you started. A common technique for this in
+distributed systems is known as the *saga pattern*, which uses one or more
+*compensating transactions* to revert earlier operations. The `Refund`
+Activity, which is called if the deposit fails, is an example of this. It
+returns the withdrawn money back to the sender's account.
 
-At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
+### Workflow Definition Code
 
-<!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
-[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
-```py
-# ...
-        retry_policy = RetryPolicy(
-            maximum_attempts=3,
-            maximum_interval=timedelta(seconds=2),
-            non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
-        )
+Here is the Workflow Definition for the money transfer:
+
+<!--SNIPSTART money-transfer-project-template-ruby-workflow-->
+[workflow.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/workflow.rb)
+```ruby
+TO BE REPLACED WITH SNIPSYNC'ED CODE
 ```
 <!--SNIPEND-->
 
+By default, every Activity Execution is associated with a
+[Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies), which
+specifies that a Activity will be retried soon after it fails and will be
+retried continuously (with a delay between each attempt) until it succeeds
+or is requested to stop. You can change this behavior to suit your needs, as
+this Workflow Definition does. For demonstration purposes, it specifies that
+the delay between retry attempts should be limited to two seconds, that there
+should be no more than three retry attempts, and that a failure caused by
+`InsufficientFundsError` should not be retried at all.
 
-By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
+As you see, most of the code is devoted to executing the sequence of steps
+(Activities) for the money transfer. It first withdraws from the source
+account, attempts to deposit into the target account, and refunds the money
+to the source account if the deposit fails. Each of those Activities receives
+input data (containing the account number and amount of the transfer) and
+returns a result (a transaction ID provided by the bank as confirmation).
 
-In the case of an error with the `deposit()` Activity, the Workflow will attempt to put the money back.
-
-In this Workflow, each Activity uses the same Retry Policy options, but you could specify different options for each Activity.
 
 :::caution This is a simplified example.
+We've chosen a money transfer scenario for this introductory tutorial because
+it's a familiar concept and gives you an idea of how Temporal applications
+can handle different types of failures. However, money movement is a complex
+subject and this tutorial makes no attempt to handle every possible situation.
+For example, it doesn't attempt to revert the transaction upon cancellation.
+It also doesn't handle failure of the refund operation, which might involve
+a human-in-the-loop step where in which someone is notified of the error
+and can intervene directly.
 
-Transferring money is a tricky subject, and this tutorial's example doesn't cover all possible issues that can go wrong. It doesn't include logic to clean things up if a Workflow is cancelled, and it doesn't handle other edge cases where money would be withdrawn but not deposited. There's also the possibility that this Workflow can fail when refunding the money to the original account. In a production scenario, you'll want to account for those cases with more advanced logic, including adding a "human in the loop" step where someone is notified of the refund issue and can intervene.
-
-This example only shows some core features of Temporal and is not intended for production use.
+This example is designed to demonstrate several core features to someone
+learning the Temporal platform. It is not intended for production use.
 :::
 
-When you _start_ a Workflow, you are telling the Temporal Server, "Track the state of the Workflow with this method signature." Workers execute the Workflow code piece by piece, relaying the execution events and results back to the server.
 
-Let's see that in action.
+### Input Data
 
-## Start the Workflow
+The Workflow's `execute` method is passed a struct called `TransferDetails`,
+which defines the source (sender) account, target (recipient) account,
+amount of the transfer, and a user-supplied reference ID that serves to
+uniquely identify this transfer operation. Here is the definition of the
+`TransferDetails` struct, which is defined at the bottom `shared.rb`, a
+file that contains code used by multiple parts of this application:
 
-You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/encyclopedia/temporal-sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
-
-First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command:
-```command
-temporal server start-dev
-```
-
-To start the Workflow, run `run_workflow.py` from the project root using the following command:
-
-```command
-python run_workflow.py
-```
-
-The Workflow is now running. Leave the program running.
-
-To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
-
-In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL.
-
-The Temporal Server is an essential part of the overall system, but requires additional components for operation. The complete system is known as the Temporal Cluster, which is a deployment of the Temporal Server, plus the additional components used with it such as a database like Apache Cassandra, PostgreSQL, or MySQL.
-
-The Task Queue is where Temporal Workflows look for Workflows and Activities to execute. You define Task Queues by assigning a name as a string. You'll use this Task Queue name when you start a Workflow Execution, and you'll use it again when you define your Workers.
-
-<!--SNIPSTART python-money-transfer-project-template-shared {"selectedLines": ["3"]}-->
-[shared.py](https://github.com/temporalio/money-transfer-project-template-python/blob/cloud/shared.py)
-```py
-# ...
-MONEY_TRANSFER_TASK_QUEUE_NAME = "TRANSFER_MONEY_TASK_QUEUE"
+<!--SNIPSTART money-transfer-project-template-ruby-shared-transfer-details-->
+[shared.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/shared.rb)
+```ruby
+TO BE REPLACED WITH SNIPSYNC'ED CODE
 ```
 <!--SNIPEND-->
 
-:::note
+Although it's possible to specify a list of individual fields as input, it's
+considered a best practice to define a single, serializable data structure
+that will serve as input. This enables you to evolve your Workflows in the
+future by changing the composition of the data structure instead of changing
+the method signature.
 
-This tutorial uses a separate program to start the Workflow, but you don't have to follow this pattern. In fact, most real applications start a Workflow as part of another program. For example, you might start the Workflow in response to a button press or an API call.
+Notice that the `TransferDetails` struct includes a `reference_id` field.
+Some APIs let you send a unique _idempotency key_ along with the transaction
+details to guarantee that if you retry the transaction due to some kind of
+failure, the API you're calling will use the key to ensure it only executes
+the transaction once. This example generates the reference ID using Ruby's
+UUID support.
 
-:::
 
+### Activity Definition Code
 
-Next, you'll explore one of the unique value propositions Temporal offers: application state visibility.
+The Workflow Definition above shows when and how the Activities are invoked
+during execution. The following excerpt from the `activities.rb` file shows
+how they are defined:
 
-## View the state of the Workflow with the Temporal Web UI
-
-Temporal records every execution, its progress, and application state through Temporal's Web UI. This provides insights into errors and app performance.
-
-Temporal's Web UI lets you see details about the Workflow you're running. You can use this tool to see the results of Activities and Workflows, and also identify problems with your Workflow Execution.
-
-1. Visit the [Temporal Web UI](http://localhost:8233) where you will see your Workflow listed. The link will direct you to localhost:8233.
-
-![The Workflow running](images/workflow_running.png)
-
-2. Click the **Workflow ID** for your Workflow.
-
-Now you can see everything you want to know about the execution of the Workflow, including the input values it received, timeout configurations, scheduled retries, number of attempts, stack traceable errors, and more.
-
-![The details of the run.](images/workflow_status.png)
-
-3. You can see the inputs and results of the Workflow Execution by clicking the **Input and Results** section:
-
-![Input and results](images/inputs_results.png)
-
-You see your inputs, but the results are in progress.
-
-You started the Workflow, and the interface shows that the Workflow is running, but the Workflow hasn't executed yet. As you see from the Web UI, there are no Workers connected to the Task Queue.
-
-You need at least one Worker running to execute your Workflows. You'll start the Worker next.
-
-## Start the Worker
-
-A Worker is responsible for executing pieces of Workflow and Activity code. In this project, the file `run_worker.py` contains the code for the Worker.
-
-Your `run_workflow.py` program is still running in your terminal, waiting for the Workflow to complete. Leave it running.
-
-Open a new terminal window.
-
-In this new terminal window, run `run_worker.py` from the project root using the following command:
-
-```command
-python run_worker.py
+<!--SNIPSTART money-transfer-project-template-ruby-activities-->
+[activities.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/activities.rb)
+```ruby
+TO BE REPLACED WITH SNIPSYNC'ED CODE
 ```
+<!--SNIPEND-->
 
-In production environments, Temporal applications often operate with hundreds or thousands of Workers. This is because adding more Workers not only enhances your application's availability but also boosts its scalability.
+The `Withdraw` Activity takes the details about the transfer, simulates a
+call to a service to process the withdrawal, and returns a transaction ID.
+Note that while it happens to use the same input (the `TransferDetails`
+struct) as the Workflow, that need not be the case. It was done here for
+simplicity, since the Activity uses many of the same fields.
 
-One thing that people new to Temporal may find surprising is that the Temporal Cluster does not execute your code. The entity responsible for executing your code is known as a Worker, and it's common to run Workers on multiple servers.
+This Activity will fail with `InsufficientFundsError` if the amount exceeds
+$1000. You may have observed in the Workflow Definition that this specific
+type of error will not be retried. Most errors in Temporal are automatically
+retried, enabling a Workflow to overcome intermittent failures and outages.
+The custom Retry Policy used here declares that `InsufficientFundsError` will
+not be retried, and since there's no custom code to trap the error, the
+Workflow Execution will fail if this error occurs. We chose this design
+in the tutorial to demonstrate how you can customize Retry Policies to
+match your business logic. If you were implementing this in the real world,
+you might instead consider letting the `Withdraw` retry until the source
+account finally _does_ have sufficient funds, after which the money transfer
+would automatically proceed.
+
+The `Deposit` Activity is similar to the `Withdraw` Activity. It also has
+a special case, which is that it will fail with `InvalidAccountError` if the
+target account value is `B5555`. The Workflow Definition does trap this
+(generically, as `Temporalio::Error::ActivityError`) and compensates the
+source account by executing the `Refund` Activity to return the withdrawn
+funds.
+
+The `Refund` Activity Definition is almost identical to `Deposit`. While
+you could reuse the existing `Deposit` Activity to refund the money, using
+a separate Activity lets you add additional logic around the refund process,
+such as logging, sending notifications, or making a call to a third-party
+service.
+
+
+
+## Explore the Worker configuration
+
+As you learned earlier, a Worker is responsible for executing the Workflow
+and Activity code.
 
 A Worker:
 
-- Can only execute Workflows and Activities registered to it.
-- Knows which piece of code to execute based on the Tasks it gets from the Task Queue.
-- Only listens to the Task Queue that it's registered to.
+- polls a specific [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue)
+  within the Temporal Service
+- accepts Tasks that correspond to the Workflow and Activity
+  Types that it has been configured to support
+- knows how to execute the code (Workflow and Activity Definitions)
+  based on details provided in those Tasks
+- reports the results of execution to the Temporal Service, which
+  tracks the history and progress of each Workflow Execution
 
-After the Worker executes code, it returns the results back to the Temporal Server. Note that the Worker listens to the same Task Queue you used when you started the Workflow Execution.
-
-Like the program that started the Workflow, it connects to the Temporal Cluster and specifies the Task Queue to use. It also registers the Workflow and the three Activities:
-
-
-<!--SNIPSTART python-money-transfer-project-template-run-worker-->
-[run_worker.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/run_worker.py)
-```py
-import asyncio
-
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import BankingActivities
-from shared import MONEY_TRANSFER_TASK_QUEUE_NAME
-from workflows import MoneyTransfer
+The `worker.rb` file in this project contains the code used to configure
+and start the Worker. It registers support for the money transfer Workflow
+and the three Activities described earlier. It also specifies the name
+of the Task Queue on the Temporal Service that the Worker should poll.
 
 
-async def main() -> None:
-    client: Client = await Client.connect("localhost:7233", namespace="default")
-    # Run the worker
-    activities = BankingActivities()
-    worker: Worker = Worker(
-        client,
-        task_queue=MONEY_TRANSFER_TASK_QUEUE_NAME,
-        workflows=[MoneyTransfer],
-        activities=[activities.withdraw, activities.deposit, activities.refund],
-    )
-    await worker.run()
+:::tip Defining Task Queues
+A Task Queue is where Temporal Workers look for Tasks about Workflows and
+Activities to execute. Each Task Queue is identified by a name, which you will
+specify when you configure the Worker and again in the code that starts the
+Workflow Execution. To ensure that the same name is used in both places, this
+project follows the recommended practice of specifying the Task Queue name in
+a constant referenced from both places. In this project, that constant is named
+`TASK_QUEUE_NAME`, which is defined in the `shared.rb` file.
+:::
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+Here is the code used to configure and start the Worker:
+
+<!--SNIPSTART money-transfer-project-template-ruby-worker-->
+[worker.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/worker.rb)
+```ruby
+TO BE REPLACED WITH SNIPSYNC'ED CODE
 ```
 <!--SNIPEND-->
 
-When you start the Worker, it begins polling the Task Queue for Tasks to process. The terminal output from the Worker looks like this:
+Now that you've seen the code, you will launch a Worker so that it will
+be ready to run the money transfer code when you submit a Workflow Execution
+request later in the tutorial.
 
-```output
-2024/02/12 10:55:43 INFO  No logger configured for temporal client. Created default one.
-2024/02/12 10:55:43 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@
-2024/02/12 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 5 ActivityType Withdraw
-2024/02/12 10:55:43 Withdrawing $250 from account 85-150.
 
-2024/02/12 10:55:43 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 76984@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID 3312715c-9fea-4dc3-8040-cf8f270eb53c Attempt 1 ActivityID 11 ActivityType Deposit
-2024/02/12 10:55:43 Depositing $250 into account 43-812.
+## Launch a Worker
+
+Open a new terminal and change to the project directory:
+
+```command
+cd money-transfer-project-template-ruby
 ```
 
-The Worker continues running, waiting for more Tasks to execute.
+In this new terminal, launch a Worker by running the following command:
 
-Switch back to the terminal window where your `python run_workflow.py` program is running, and you'll see it's completed:
-
-```output
-Transfer complete.
-Withdraw: {'amount': 250, 'receiver': '43-812', 'reference_id': 'fff4d970-226d-4db5-8e1c-3047a63f9c85', 'sender': '85-150'}
-Deposit: {'amount': 250, 'receiver': '43-812', 'reference_id': 'fff4d970-226d-4db5-8e1c-3047a63f9c85', 'sender': '85-150'}
+```command
+bundle exec ruby worker.rb
 ```
 
-Check the Temporal Web UI again. You will see one Worker registered where previously there was none, and the Workflow status shows that it completed:
+The terminal output looks like this:
 
-![There is now one Worker and the Workflow is complete](images/completed_workflow.png)
+```output
+Starting Worker (press Ctrl+C to exit)
+```
 
-Here's what happens when the Worker runs and connects to the Temporal Cluster:
+There will be no further output for now. The Worker is now polling the Task
+Queue, but since there haven't yet been any Workflow Execution requests, that
+queue is currently empty.
 
-- The first Task the Worker finds is the one that tells it to execute the Workflow method.
-- The Worker communicates the event back to the Server.
-- This causes the Server to send Activity Tasks to the Task Queue.
-- The Worker then grabs each of the Activity Tasks in sequence from the Task Queue and executes each of the corresponding Activities.
+In the next section, you will run a Ruby program to submit a request, which
+will create Tasks for the Worker to perform.
 
-Each of these steps gets recorded in the Event History. You can audit them in Temporal Web by clicking on the **History** tab next to **Summary**.
+## Review the code that starts the Workflow Execution
 
-After a Workflow completes, the full history persists for a set retention period (typically 7 to 30 days) before the history is deleted.
+There are multiple ways to start a Workflow with Temporal. You can do it by 
+using the `temporal` CLI or the Temporal Web UI. Another option is to do it 
+through code, which is what you'll do in this tutorial since it's the typical
+approach for real-world applications.
+
+All three methods involve connecting to the Temporal Service, providing the
+Task Queue name, and specifying the Workflow Type along with any input data.
+In this tutorial, you'll run a small Ruby program that does these things.
 
 :::note
-
-You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
-
+This tutorial uses a program within the same project to start the Workflow, but
+that's not required. In fact, it's common to request Workflow Execution from code
+that lives in a separate project, or which is part of a different application, and
+which might be implemented in a different programming language. For example, a web
+application written in TypeScript could initiate a money transfer by submitting a
+Workflow Execution request when a user clicks a button.
 :::
 
-You just ran a Temporal Workflow application and saw how Workflows, Activities, and Workers interact. Now you'll explore how Temporal gives you tools to handle failures.
 
-## ![](/img/icons/warning.png) Simulate failures
+<!--SNIPSTART money-transfer-project-template-ruby-starter-->
+[starter.rb](https://github.com/temporalio/money-transfer-project-template-ruby/blob/main/starter.rb)
+```ruby
+THIS WILL BE REPLACED WITH SNIPSYNC'ED CODE
+```
+<!--SNIPEND-->
 
-Despite your best efforts, there's going to be a time when something goes wrong in your application. You might encounter a network glitch, a server might go offline, or you might introduce a bug into your code. One of Temporal's most important features is its ability to maintain the state of a Workflow when something fails. To demonstrate this, you will simulate some failures for your Workflow and see how Temporal responds.
+This code uses a Temporal Client to connect to the Temporal Service, calling its
+`start_workflow` method to request execution. This returns a handle, and calling
+`result` on that handle will block until execution is complete, at which point
+it provides the result.
+
+
+## Start the Workflow Execution
+
+Open a new terminal and change to the project directory:
+
+```command
+cd money-transfer-project-template-ruby
+```
+
+In this new terminal, run the program to start the Workflow:
+
+```command
+bundle exec ruby starter.rb
+```
+
+You should see output similar to the following:
+
+```output
+Initiated transfer of $100 from A1001 to B2002
+Workflow ID: moneytransfer-2926a650-1aaf-49d9-bf87-0e3a09ef7b32
+Workflow result: Transfer complete (transaction IDs: OKW-100-A1001, OKD-100-B2002)
+```
+
+Next, you'll experience how Temporal provides visibility into your applications
+through it Web UI.
+
+
+## View the Workflow Execution in the Temporal Web UI
+
+Temporal's Web UI provides a convenient way to see details about both current
+and past Workflow Executions. You can use it to see the timeline of each
+execution as well as the input parameters and return values of the Workflow
+and all of its Activities. The Web UI will even help you to identify problems
+in your application at runtime so that you can resolve them more quickly.
+
+Visit the [Temporal Web UI](http://localhost:8080), where you will see your
+Workflow Execution listed.
+
+![The screen listing Workflow Executions](images/web-ui-main-page.png)
+
+Click the **Workflow ID** for your Workflow Execution. This will show you the
+detail page, which shows you much more information.
+
+![The detail page for this Workflow Execution.](images/web-ui-detail-page.png)
+
+The top section shows the status (completed), Workflow ID, timestamps for
+the start and end time, Task Queue name, and other details.
+
+The **Input** and **Result** sections below that shows the input data supplied
+to the Workflow Execution and the value that it returned upon completion.
+
+The Event History section begins with a graphical timeline view, depicting
+the points at which each Activity started and finished within the Workflow
+Execution. Below that is a table with a detailed history of every event that
+took place during the execution, which includes the inputs and result for
+each Activity.
+
+
+
+## ![](images/warning.png) Simulate failures
+
+Despite your best efforts, there will be times when something goes wrong in
+your application. It might encounter a network glitch, a server might go
+offline, or there might be bug that causes it to crash. One of Temporal's
+most important features is its ability to maintain the Workflow Execution's
+state when something fails. To observe this, you will simulate some failures
+to see how the application responds.
 
 ### Recover from a server crash
 
-Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
+Unlike many modern applications that require complex leader election processes
+and external databases to handle failure, Temporal automatically preserves
+the state of your Workflow even if the server is down. You can test this by
+stopping the Temporal Service while a Workflow Execution is in progress.
 
 Try it out by following these steps:
 
-1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
-2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python run_workflow.py`.
-3. Verify the Workflow is running in the UI.
-4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
-5. After the Temporal Cluster has stopped, restart it and visit the UI.
+1. Press `Ctrl+C` in the terminal where your Worker is running. This will kill
+   it, ensuring that a Workflow Execution cannot finish.
+2. Switch back to the terminal where your Workflow ran. Start a new Workflow
+   Execution by running `bundle exec ruby starter.rb` again.
+3. Return to the [main page in the Temporal Web UI](http://localhost:8080/) and
+   verify the new Workflow Execution has a status of "Running"
+4. Switch to the terminal where you started the Temporal Service and press
+   `Ctrl+C` to stop the service.
+5. After the Temporal Service has stopped, run the previous command 
+   (`temporal server start-dev --db-filename temporal.db --ui-port 8080`)
+   to restart it, ensuring that it uses the same database file as before.
 
-Your Workflow is still listed:
+No data is lost when the Temporal Service went offline. When it came back
+online, the work picked up where it left off before the outage. Keep in mind
+that this example uses a single instance of the service running on a single
+machine. In a production deployment, the Temporal Service can be deployed
+as a cluster, spread across several machines for higher availability and
+increased throughput.
 
-![The second Workflow appears in the list of Workflows](images/second_workflow.png)
+Visit the Web UI. You should find that the Workflow Execution you started
+in step 2 is still listed. However, when you view its detail page, you'll
+see a message informing you that no Workers are currently polling the
+Task Queue that it uses.
 
-If the Temporal Cluster goes offline, you can pick up where you left off when it comes back online again.
+![No Workers are polling this Task Queue](images/web-ui-detail-page-no-workers-polling-task-queue.png)
+
+Although a Workflow Execution can not progress if no Workers are running,
+it remains open. When a Worker becomes available, execution will continue
+automatically. In production, it's common to run multiple Workers at once.
+In this case, if a Worker happens to crash, other Workers automatically
+take over any work that was already underway.
+
+Now, switch to the terminal where your Worker was running and run the previous
+command (`bundle exec ruby worker.rb`) to start the Worker. When you refresh
+the Web UI, you should find that the status of the Workflow Execution changed
+from "Running" to "Completed."
+
+![The Workflow Execution has completed](images/web-ui-detail-page-workflow-completed.png)
+
 
 ### Recover from an unknown error in an Activity
 
-This demo application makes a call to an external service in an Activity. If that call fails due to a bug in your code, the Activity produces an error.
+The `Withdraw` Activity contains a bug, although it hasn't been a problem yet
+because that statement is currently commented out. You will now uncomment it
+to expose the bug. You'll see that this causes the Activity to fail, but you'll
+also see that it retries automatically. More importantly, you'll observe that
+after you fix the bug, the Workflow Execution that was failing will complete
+successfully.
 
-To test this out and see how Temporal responds, you'll simulate a bug in the `deposit()` Activity method.
+By the way, the timeline view in the Web UI will show you that the Activity
+is failing. In the screenshot below, the red line near the bottom indicates
+that the `Withdraw` Activity has failed and is being retried.
 
-Let your Workflow continue to run but don't start the Worker yet.
+![Activity failure shown in Web UI timeline view](images/web-ui-detail-page-failing-activity.png)
 
-1. Open the `activities.py` file and switch out the comments on the `return` statements so that the `deposit()` method returns an error:
+The **Pending Activities** tab (above the **Input** section) is labeled
+with a 1, which indicates that there is currently one failing Activity.
+That tab shows additional information about the failure, including the
+cause of the error and a stack trace that identifies the specific line
+of code that is failing.
 
-<!--SNIPSTART  python-money-transfer-project-template-deposit-->
-[activities.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/activities.py)
-```py
-    @activity.defn
-    async def deposit(self, data: PaymentDetails) -> str:
-        reference_id = f"{data.reference_id}-deposit"
-        try:
-            confirmation = await asyncio.to_thread(
-                self.bank.deposit, data.target_account, data.amount, reference_id
-            )
-            """
-            confirmation = await asyncio.to_thread(
-                self.bank.deposit_that_fails,
-                data.target_account,
-                data.amount,
-                reference_id,
-            )
-            """
-            return confirmation
-        except InvalidAccountError:
-            raise
-        except Exception:
-            activity.logger.exception("Deposit failed")
-            raise
-
-```
-<!--SNIPEND-->
-
-2. Save your changes and switch to the terminal that was running your Worker.
-
-3. Start the Worker again:
-
-```command
-python run_worker.py
-```
-
-Note, that you must restart the Worker every time there's a change in code. You will see the Worker complete the `withdraw()` Activity method, but it errors when it attempts the `deposit()` Activity method.
-
-The important thing to note here is that the Worker keeps retrying the `deposit()` method:
-
-```output
-2024/02/12 10:59:09 INFO  No logger configured for temporal client. Created default one.
-2024/02/12 10:59:09 INFO  Started Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 5 ActivityType Withdraw
-2024/02/12 10:59:09 Withdrawing $250 from account 85-150.
-
-2024/02/12 10:59:09 DEBUG ExecuteActivity Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowType MoneyTransfer WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 Attempt 1 ActivityID 11 ActivityType Deposit
-2024/02/12 10:59:09 Depositing $250 into account 43-812.
-
-2024/02/12 10:59:09 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 1 Error This deposit has failed.
-2024/02/12 10:59:10 Depositing $250 into account 43-812.
-
-2024/02/12 10:59:10 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 2 Error This deposit has failed.
-2024/02/12 10:59:12 Depositing $250 into account 43-812.
-
-2024/02/12 10:59:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 3 Error This deposit has failed.
-2024/02/12 10:59:16 Depositing $250 into account 43-812.
-
-...
-
-```
-
-The Workflow keeps retrying using the `RetryPolicy` specified when the Workflow first executes the Activity.
-
-You can view more information about the process in the [Temporal Web UI](http://localhost:8233).
-
-4. Click the Workflow. You'll see more details including the state, the number of attempts run, and the next scheduled run time:
-
-![The next Activity](images/activity_failure.png)
-
-5. Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
-This lets you explore the location and reason for failed Activity Tasks.
-
-Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
-
-In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
-
-<!--SNIPSTART python-project-template-run-workflow-->
-[run_workflow.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/run_workflow.py)
-```py
-import asyncio
-import traceback
-
-from temporalio.client import Client, WorkflowFailureError
-
-from shared import MONEY_TRANSFER_TASK_QUEUE_NAME, PaymentDetails
-from workflows import MoneyTransfer
+![Pending Activities tab in Web UI](images/web-ui-detail-pending-activities.png)
 
 
-async def main() -> None:
-    # Create client connected to server at the given address
-    client: Client = await Client.connect("localhost:7233")
+Try it out by following these steps:
 
-    data: PaymentDetails = PaymentDetails(
-        source_account="85-150",
-        target_account="43-812",
-        amount=250,
-        reference_id="12345",
-    )
+1. Whenever you modify the code, you must restart the Worker for the changes to
+   take effect. Press `Ctrl+C` in the terminal where your Worker is running to
+   stop the Worker so that you can introduce the bug in the next step.
+2. Edit the `activities.rb` file, uncomment the line in the `Withdraw` Activity
+   that causes a divide-by-zero error, and save the change
+3. Start the Worker again by running `bundle exec ruby worker.rb`
+4. Start a new Workflow Execution by running `bundle exec ruby starter.rb`
+5. Go to the [main page in the Temporal Web UI](http://localhost:8080/) and
+   click the Workflow Execution you just started to view its detail page.
+   You should see that the Withdraw Activity is failing. Click the **Pending
+   Activities** tab to see the cause, and then click the **History** tab to
+   return to the previous view.
+6. Edit the `activities.rb` file, comment out the line with the divide-by-zero
+   error, and then save the change.
+7. Press `Ctrl+C` in the terminal where your Worker is running and then run
+   `bundle exec ruby worker.rb` to start it again. The Worker will now use
+   the code that contains the change you made in the previous step.
 
-    try:
-        result = await client.execute_workflow(
-            MoneyTransfer.run,
-            data,
-            id="pay-invoice-701",
-            task_queue=MONEY_TRANSFER_TASK_QUEUE_NAME,
-        )
+You should see that the Workflow Execution completes successfully. This will
+be visible both in the Web UI and in the terminal where you started the
+Workflow Execution.
 
-        print(f"Result: {result}")
-
-    except WorkflowFailureError:
-        print("Got expected exception: ", traceback.format_exc())
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-<!--SNIPEND-->
-
-You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
-
-Your Workflow is running, but only the `withdraw()` Activity method has succeeded. In any other application, you would likely have to abandon the entire process and perform a rollback.
-
-With Temporal, you can debug and resolve the issue while the Workflow is running.
-
-6. Pretend that you found a fix for the issue. Switch the comments back to the `return` statements of the `deposit()` method in the `activities.py` file and save your changes.
-
-How can you possibly update a Workflow that's already halfway complete? You restart the Worker.
-
-7. To restart the Worker, cancel the currently running worker with `CTRL+C`:
-
-```output
-# continuing logs from previous retries...
-
-2024/02/12 10:59:40 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 6 Error This deposit has failed.
-2024/02/12 11:00:12 Depositing $250 into account 43-812.
-
-2024/02/12 11:00:12 ERROR Activity error. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkflowID pay-invoice-701 RunID d321c45e-c0b8-4dd8-a8cb-8dcbf2c7d137 ActivityType Deposit Attempt 7 Error This deposit has failed.
-
-^C
-
-2024/02/12 11:01:10 INFO  Worker has been stopped. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ Signal interrupt
-2024/02/12 11:01:10 INFO  Stopped Worker Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@
-2024/02/12 11:01:10 WARN  Failed to poll for task. Namespace default TaskQueue money-transfer WorkerID 77310@temporal.local@ WorkerType WorkflowWorker Error worker stopping
-
-```
-
-8. Then restart the Worker by running the following command:
-
-```command
-python run_worker.py
-```
-
-The Worker starts again. On the next scheduled attempt, the Worker picks up right where the Workflow was failing and successfully executes the newly compiled `deposit()` Activity method.
-
-9. Switch back to the terminal where your `run_workflow.py` program is running, and you'll see it complete:
-
-```output
-Transfer complete.
-            Withdraw: {'amount': 250, 'receiver': '43-812', 'reference_id': '1f35f7c6-4376-4fb8-881a-569dfd64d472', 'sender': '85-150'}
-            Deposit: {'amount': 250, 'receiver': '43-812', 'reference_id': '1f35f7c6-4376-4fb8-881a-569dfd64d472', 'sender': '85-150'}
-```
-
-10. Visit the [Web UI](http://localhost:8233) again, and you'll see the Workflow has completed:
-
-![Both Workflows completed successfully](images/completed_workflows.png)
-
-You have just fixed a bug in a running application without losing the state of the Workflow or restarting the transaction!
 
 ## Conclusion
 
-You now know how to run a Temporal Workflow and understand some value Temporal offers. You explored Workflows and Activities, you started a Workflow Execution, and you ran a Worker to handle that execution.
+You now know how to run a Temporal Workflow and understand some of the value
+that Temporal offers. You explored Workflows and Activities, you started a
+Workflow Execution, and you ran a Worker to handle that execution. You also
+saw how Temporal recovers from failures and how it retries Activities.
 
-You also saw how Temporal recovers from failures and how it retries Activities.
-
-Exploring the key advantages Temporal offers:
-
-1. Temporal gives you full visibility in the state of your Workflow and code execution.
-2. Temporal maintains the state of your Workflow, even through server outages and errors.
-3. Temporal lets you time out and retry Activity code using options that exist outside your business logic.
-4. Temporal enables you to perform "live debugging" of your business logic while the Workflow is running.
 
 ### Further exploration
 
-Try the following things before moving on to get more practice working with a Temporal application:
+Try the following things before moving on to learn more about Temporal
+applications in Ruby.
 
-- Change the Retry Policy in `workflows.py` so it only retries 1 time. Then change the `deposit()` Activity in `activities.py`, so it uses the `refund()` method.
-  - Does the Workflow place the money back into the original account?
+The `starter.rb` file used in this example has built-in values for the source
+account, target account, amount, and reference ID. However, it's designed so
+that you can override those through positional command-line arguments. You'll
+use some specific values to trigger special cases that are built into this
+application.
+
+
+#### Trigger a compensating transaction
+
+
+The user who had account `B5555` closed their account. Attempting to deposit
+there fails because the `Deposit` Activity raises an `InvalidAccountError`.
+Normally, failures in an Activity will be automatically tried, but this type
+of error has been designated as non-retryable in the Workflow's Retry Policy.
+
+As mentioned above, the money transfer Workflow is designed to handle this
+situation by refunding the money to the source account. To see this in action,
+run the command below to transfer $100 from account `A1234` to `B5555`:
+
+```command
+bundle exec ruby starter.rb A1234 B5555 100
+```
+
+Afterwards, go to the [main page in the Temporal Web UI](http://localhost:8080/)
+and click the Workflow Execution you just started to view its detail page. The
+timeline view should show you that the withdrawal succeeded, the deposit failed,
+and it was able to recover by running the `Refund` Activity.
+
+![Timeline view in the Web UI showing Refund](images/web-ui-detail-refund-complete.png)
+
+Review the `workflow.rb` file to see how to implement this logic.
+
+You should also note that despite the earlier failure, this Workflow Execution
+ends with a "completed" status, which equates to success. Although that might
+seem surprising at first, it's typical in Temporal. You should view it as an
+indication that the Workflow completed the final step, which does not preclude
+it from encountering (and overcoming) one or more problems along the way.
+
+
+#### Trigger a non-retryable error that fails the Workflow Execution
+
+If the transfer amount exceeds $1000, withdrawal will fail due to insufficient
+funds. As per the custom Retry Policy in `workflow.rb`, this type of error is
+also defined as non-retryable. Unlike the `InvalidAccountError` mentioned above,
+however, the Workflow provides no special handling in this situation. Therefore,
+when the Activity fails, it won't be retried, and the Workflow Execution will
+immediately fail.
+
+To see this in action, run the command below to transfer $5000 from account
+ `A1234` to `B5678`:
+
+```command
+bundle exec ruby starter.rb A1234 B5678 5000
+```
 
 ### Review
 
-Answer the following questions to see if you remember some of the more important concepts from this tutorial:
+Answer the following questions to see if you remember some of the more important
+concepts from this tutorial:
+
+<details>
+<summary>
+
+**What are four of Temporal's value propositions that you learned about in this tutorial?**
+
+</summary>
+
+1. Temporal automatically maintains the state of your Workflow, despite crashes
+   or even outages of the Temporal Service itself.
+2. Temporal's built-in support for retries and timeouts enables your code to
+   overcome transient and intermittent failures.
+3. Temporal provides full visibility in the state of the Workflow Execution
+   and its Web UI offers a convenient way to see the details of both current
+   and past executions.
+4. Temporal makes it possible to fix a bug in a Workflow Execution that you've
+   already started. After updating the code and restarting the Worker, the
+   failing Activity is retried using the code containing the bug fix, completes
+   successfully, and execution continues with what comes next.
+
+</details>
 
 <details>
 <summary>
@@ -717,17 +701,22 @@ Answer the following questions to see if you remember some of the more important
 
 </summary>
 
-Because the Task Queue name is specified in two different parts of the code (the first starts the Workflow and the second configures the Worker). If their values differ, the Worker and Temporal Cluster would not share the same Task Queue, and the Workflow Execution would not progress.
+Because the Task Queue name is specified in two different parts of the code
+(the first starts the Workflow and the second configures the Worker). If their
+values differ, the Worker and Temporal Cluster would not share the same Task
+Queue, and the Workflow Execution would not progress.
 
 </details>
 
 <details>
 <summary>
 
-**What do you have to do if you modify Activity code for a Workflow that is running?**
+**What do you have to do if you make changes to Activity code for a
+Workflow that is running?**
 
 </summary>
 
 Restart the Worker.
 
 </details>
+
