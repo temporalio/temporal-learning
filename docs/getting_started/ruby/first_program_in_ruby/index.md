@@ -676,7 +676,7 @@ each Activity.
 
 Despite your best efforts, there will be times when something goes wrong in
 your application. It might encounter a network glitch, a server might go
-offline, or there might be bug that causes it to crash. One of Temporal's
+offline, or there might be a bug that causes it to crash. One of Temporal's
 most important features is its ability to maintain the Workflow Execution's
 state when something fails. To observe this, you will simulate some failures
 to see how the application responds.
