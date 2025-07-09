@@ -597,13 +597,13 @@ By following that invoice link in a browser, Stripe will present you with a samp
 Before you move on, verify you created all the necessary files in the correct structure.
 
 
-### Verifying the toolkit directory and file layout
+<details>
 
 So far you've implemented and tested the agents tools.
 Verify your directory structure and files look and are named appropriately according to the following diagram before continuing:
 
 ```
-code/
+temporal-ai-agent/
 ├── .env.example
 ├── .gitignore
 ├── .python-version
@@ -622,6 +622,7 @@ code/
     └── data/
         └── find_events_data.json
 ```
+</details>
 
 And those are the three tools in this agent's toolkit to achieve its goal.
 Other goals may have different tools, and you could add more tools.
@@ -892,7 +893,7 @@ This is necessary for building a robust, capable agent.
 The <code>tools/tool_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
 </summary>
 
-[models/core.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/tool_registry.py)
+[tools/tool_registry](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/tool_registry.py)
 
 ```python
 from typing import Any, Callable, Dict
@@ -1010,13 +1011,12 @@ def get_handler(tool_name: str) -> Callable[..., Any]:
 Before moving on to the next section, verify your files and directory structure is correct.
 
 
-### Verifying the models and tool registry directory and file layout
-
+<details>
 You just implemented a model for defining your tools in a way that your agent could discover and use them.
 Verify your directory structure and file names are correct according to the following diagram before continuing:
 
 ```
-code/
+temporal-ai-agent/
 ├── .env.example
 ├── .gitignore
 ├── .python-version
@@ -1025,8 +1025,7 @@ code/
 ├── uv.lock
 ├── models/
 │   ├── __init__.py
-│   ├── core.py
-│   └── requests.py
+│   └── core.py
 ├── scripts/
 │   ├── create_invoice_test.py
 │   ├── find_events_test.py
@@ -1040,6 +1039,7 @@ code/
     └── data/
         └── find_events_data.json
 ```
+</details>
 
 In the next step, you will define the use the tool definitions you just created to define the agent's goal. 
 
@@ -1260,9 +1260,52 @@ goal_event_flight_invoice = AgentGoal(
 ```
 </details>
 
-Now that you have defined your agent's goal, you need to define the data types that your agent uses to communicate..
+Now that you have defined your agent's goal, you can begin implementing the Activities.
 
-## Creating the `requests` data models
+<details>
+
+At this point, your file and directory structure should resemble this:
+
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── models/
+│   ├── __init__.py
+│   └── core.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+└── tools/
+    ├── __init__.py
+    ├── create_invoice.py
+    ├── find_events.py
+    ├── goal_registry.py
+    ├── search_flights.py
+    ├── tool_registry.py
+    └── data/
+        └── find_events_data.json
+```
+</details>
+
+## Building Temporal Activities to execute non-deterministic agent code
+
+Now that you have built the agent's goal, the tools it needs to achieve it, you can start building the agent code. 
+In this step, you will create Activities that execute code in your AI agent that can behave non-deterministically, such as making the LLM calls or calling tools..
+As tools can call out to external services, have the possibility to fail, be rate limited, or perform other non-deterministic operations, it's safer to always call them in an Activity.
+When an Activity fails, they're by default automatically retried until it succeeds or is canceled.
+Another added benefit of executing your tool as an Activity is after the Activity completes, the result is saved to an Event History managed by Temporal.
+If your application were to then crash after executing a few tools, it could reconstruct the state of the execution without having to re-execute the tools and use the previous executions results.
+This provides durability to your agent for intermittent issues, which are common in distributed systems.
+
+Before you can proceed to creating the Activities, however, you need to create the custom types that you'll use for Activity communication.
+
+### Creating the `requests` data models
 
 Your agent will require specific types for input and output for both the Activities and the Workflow.
 You will put all request based models in a new file in the models directory named `requests.py`.
@@ -1455,17 +1498,9 @@ class EnvLookupOutput:
 ```
 </details>
 
-Now that you have defined the types responsible for handling the arguments throughout the agent, you can begin implementing the Activities.
+Now that you have your custom types defined for Activity communication, you can implement the Activities.
 
-## Building Temporal Activities to execute non-deterministic agent code
-
-Now that you have built the agent's goal, the tools it needs to achieve it, and the custom types for proper data passing, you can start building the agent code. 
-In this step, you will create Activities that execute code in your AI agent that can behave non-deterministically, such as making the LLM calls or calling tools..
-As tools can call out to external services, have the possibility to fail, be rate limited, or perform other non-deterministic operations, it's safer to always call them in an Activity.
-When an Activity fails, they're by default automatically retried until it succeeds or is canceled.
-Another added benefit of executing your tool as an Activity is after the Activity completes, the result is saved to an Event History managed by Temporal.
-If your application were to then crash after executing a few tools, it could reconstruct the state of the execution without having to re-execute the tools and use the previous executions results.
-This provides durability to your agent for intermittent issues, which are common in distributed systems.
+### Creating the Activities submodule
 
 First, create the directory structure for your Activities and make it a module:
 
@@ -1504,7 +1539,7 @@ Next, you'll create the `AgentActivities` class, which contains activities the a
 
 ### Constructing the `AgentActivities` Class
 
-The `AgentActivities` class will allow the Workflow to plan which tools to use, validate prompts, read in environment variables, and more.
+The `AgentActivities` class enables the Workflow to plan which tools to use, validate prompts, read in environment variables, and more.
 
 To implement it, open `activities/activities.py` and create the class and define the `__init__` method:
 
@@ -1531,7 +1566,7 @@ The `__init__` method reads the LLM configuration from environment variables and
 Before you implement the Activities, implement the following helper functions:
 
 The first method sanitizes the JSON response you get from the LLM and sanitizing it to a proper JSON string.
-The LLM may return a string with extra whitespace, or formatted as markdown, so sanitizing the string is necessary prior to parsing it.
+The LLM may return a string with extra whitespace, or formatted as markdown, so sanitizing the string is necessary before parsing it.
 
 Add the following helper method to the bottom of your `activities.py` file:
 
@@ -1567,7 +1602,6 @@ Add this method to the bottom of your `activities.py` file:
 
 Now that you have the helper methods implemented, you can implement the Activity responsible for making LLM calls.
 
-
 #### Implementing the Activity for making LLM calls
 
 The `agent_toolPlanner` Activity handles all interactions with your chosen LLM.
@@ -1600,8 +1634,7 @@ Add the following code to craft the `messages` list:
         ]
 ```
 
-
-The toolPlanner Activity constructs standard OpenAI-format messages with system context and user input. 
+The `agent_toolPlanner` Activity constructs standard OpenAI-format messages with system context and user input. 
 It automatically includes the current date, which helps the language model provide accurate responses for time-sensitive queries.
 
 Continue the method with the LLM call implementation:
@@ -1632,12 +1665,62 @@ Continue the method with the LLM call implementation:
             raise
 ```
 
-The Activity uses LiteLLM to make the language model call with proper configuration. 
-LiteLLM enables your agent to work with different providers (OpenAI, Anthropic, local models) through a unified interface. 
-The Activity logs all responses for debugging conversation flows and includes robust error handling that catches and logs failures while re-raising exceptions for Temporal to handle retry logic.
+This call is wrapped in a `try/except` statement to handle a potential failure.
+It creates a dictionary containing the arguments for calling the LLM, including the model choice, the messages, the API key, and a custom base URL if set.
+Next it performs the call to the LLM using the `completion` function, passing in the arguments dictionary.
+It then extracts the message you want from the response content, sanitizes the JSON and returns it as properly parsed JSON upon success.
+Upon failure, it will raise an exception.
+
+The complete implementation of `agent_toolPlanner` is as follows:
+
+```python
+    @activity.defn
+    async def agent_toolPlanner(self, input: ToolPromptInput) -> dict:
+        messages = [
+            {
+                "role": "system",
+                "content": input.context_instructions
+                + ". The current date is "
+                + datetime.now().strftime("%B %d, %Y"),
+            },
+            {
+                "role": "user",
+                "content": input.prompt,
+            },
+        ]
+
+        try:
+            completion_kwargs = {
+                "model": self.llm_model,
+                "messages": messages,
+                "api_key": self.llm_key,
+            }
+
+            # Add base_url if configured
+            if self.llm_base_url:
+                completion_kwargs["base_url"] = self.llm_base_url
+
+            response = completion(**completion_kwargs)
+
+            response_content = response.choices[0].message.content
+            activity.logger.info(f"LLM response: {response_content}")
+
+            # Use the new sanitize function
+            response_content = self.sanitize_json_response(response_content)
+
+            return self.parse_json_response(response_content)
+        except Exception as e:
+            activity.logger.error(f"Error in LLM completion: {str(e)}")
+            raise
+```
+
+Now that you have implemented the Activity to call the LLM, you will implement the Activity to validate the user's prompts.
 
 
 #### Implementing the Activity for prompt validation
+
+It is important to not let the user take your agent off on a tangent, sending prompts that are not related to the goal.
+To do this, you must validate the prompt against your agent's goal and context prior to executing the LLM with the user's input.
 
 Next, create the `agent_validatePrompt` Activity to validate any prompt sent to the LLM in the context of the conversation history and agent goal.
 
@@ -1672,7 +1755,7 @@ Next, add the code following code to iterate over the tools specified in the age
 ```
 
 By doing this, you are creating a string the LLM can use as context to validate against.
-This context helps the LLM understand what capabilities are available to the agent, and whether or not the prompt that was sent makes sense.
+This context helps the LLM understand what capabilities are available to the agent, and whether or not the prompt the user sent makes sense.
 
 Continue the validation method by adding conversation context:
 
@@ -1714,7 +1797,7 @@ Next, add the following prompt for the LLM to use to validate the prompt:
             """
 ```
 
-Finally, craft a `ToolPromptInput` object and pass that to `agent_toolPlanner` to execute:
+Finally, instantiate a `ToolPromptInput` object and pass that to `agent_toolPlanner` to execute:
 
 ```python
         # Call the LLM with the validation prompt
@@ -1730,10 +1813,82 @@ Finally, craft a `ToolPromptInput` object and pass that to `agent_toolPlanner` t
         )
 ```
 
-Calling an Activity within another Activity will invoke that Activity, which you will see in the Event History later.
+The complete implementation of `agent_validatePrompt` is as follows:
+
+```python
+@activity.defn
+    async def agent_validatePrompt(
+        self, validation_input: ValidationInput
+    ) -> ValidationResult:
+        """
+        Validates the prompt in the context of the conversation history and agent goal.
+        Returns a ValidationResult indicating if the prompt makes sense given the context.
+        """
+        # Create simple context string describing tools and goals
+        tools_description = []
+        for tool in validation_input.agent_goal.tools:
+            tool_str = f"Tool: {tool.name}\n"
+            tool_str += f"Description: {tool.description}\n"
+            tool_str += "Arguments: " + ", ".join(
+                [f"{arg.name} ({arg.type})" for arg in tool.arguments]
+            )
+            tools_description.append(tool_str)
+        tools_str = "\n".join(tools_description)
+
+        # Convert conversation history to string
+        history_str = json.dumps(validation_input.conversation_history, indent=2)
+
+        # Create context instructions
+        context_instructions = f"""The agent goal and tools are as follows:
+            Description: {validation_input.agent_goal.description}
+            Available Tools:
+            {tools_str}
+            The conversation history to date is:
+            {history_str}"""
+
+        # Create validation prompt
+        validation_prompt = f"""The user's prompt is: "{validation_input.prompt}"
+            Please validate if this prompt makes sense given the agent goal and conversation history.
+            If the prompt makes sense toward the goal then validationResult should be true.
+            If the prompt is wildly nonsensical or makes no sense toward the goal and current conversation history then validationResult should be false.
+            If the response is low content such as "yes" or "that's right" then the user is probably responding to a previous prompt.  
+             Therefore examine it in the context of the conversation history to determine if it makes sense and return true if it makes sense.
+            Return ONLY a JSON object with the following structure:
+                "validationResult": true/false,
+                "validationFailedReason": "If validationResult is false, provide a clear explanation to the user in the response field 
+                about why their request doesn't make sense in the context and what information they should provide instead.
+                validationFailedReason should contain JSON in the format
+                {{
+                    "next": "question",
+                    "response": "[your reason here and a response to get the user back on track with the agent goal]"
+                }}
+                If validationResult is true (the prompt makes sense), return an empty dict as its value {{}}"
+            """
+
+        # Call the LLM with the validation prompt
+        prompt_input = ToolPromptInput(
+            prompt=validation_prompt, context_instructions=context_instructions
+        )
+
+        result = await self.agent_toolPlanner(prompt_input)
+
+        return ValidationResult(
+            validationResult=result.get("validationResult", False),
+            validationFailedReason=result.get("validationFailedReason", {}),
+        )
+```
+
+
+Calling an Activity within another Activity won't invoke that Activity, but call the method like a typical Python method.
 The Activity then returns a `ValidationResult` for the agent to interpret and continue with its execution.
 
 #### Implementing the Activity for retrieving environment variables
+
+The final Activity within the `AgentActivities` class is the `get_wf_env_vars` Activity.
+This Activity reads certain environment variables that need to be known within the Workflow.
+Since reading from the file system is a potentially non-deterministic operation, this must happen within an Activity.
+
+Add the following code within the `AgentActivities` class to implement the Activity:
 
 ```python
     @activity.defn
@@ -1755,9 +1910,19 @@ The Activity then returns a `ValidationResult` for the agent to interpret and co
         return output
 ```
 
+This Activity reads the environment variables and ensures that `show_confirm_value` is set, returning your custom `EnvLookupOutput` type.
+While this type may only contain one value at the moment, having it designed with this custom type allows you to expand this method later if necessary.
+
+You have implemented all Activities within the `AgentActivities` class, but there is still one Activity left to implement, the Activity for executing the tools.
+
 ### Implementing dynamic tool execution
 
 The final Activity enables runtime execution of any tool from your registry. 
+To enable this, you must use [Dynamic Activities](https://docs.temporal.io/develop/python/message-passing#set-a-dynamic-activity), which are necessary when you request execution of an Activity with an unknown [Activity Type](https://docs.temporal.io/activity-definition#activity-type).
+Since your tools are loaded in dynamically, this is a perfect example of when to use Temporal's Dynamic Activities.
+
+This Activity will **not** be implemented as a method within the class, but rather a function within the same `activities.py` file.
+
 Add this function outside the class definition:
 
 ```python
@@ -1782,42 +1947,937 @@ async def dynamic_tool_activity(args: Sequence[RawValue]) -> dict:
 ```
 
 This dynamic Activity uses Temporal's runtime information to determine which tool to execute. 
-It retrieves the tool name from the Activity type, loads arguments from the payload, and dispatches to the appropriate handler function. 
-The Activity handles both synchronous and asynchronous tool functions.
+It retrieves the tool name from the Activity type and loads arguments from the payload.
+It then inspects the handler to determine if the implementation of the tool is an asynchronous Python function. If it is, it `await`s its execution, otherwise directly invokes the function.
+This means the Activity handles both synchronous and asynchronous tool functions.
 
-### Creating the activities package
+<details>
 
-Create an empty `activities/__init__.py` file to make the directory a Python package:
+<summary>
+The <code>activities/activities.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
 
-```command
-touch activities/__init__.py
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[activities/activities.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/activities/activities.py)
+
+
+```python
+import inspect
+import json
+import os
+from datetime import datetime
+from typing import Sequence
+
+from dotenv import load_dotenv
+from litellm import completion
+from temporalio import activity
+from temporalio.common import RawValue
+
+from models.requests import (
+    EnvLookupInput,
+    EnvLookupOutput,
+    ToolPromptInput,
+    ValidationInput,
+    ValidationResult,
+)
+
+load_dotenv(override=True)
+
+
+class AgentActivities:
+    def __init__(self):
+        """Initialize LLM client using LiteLLM."""
+        self.llm_model = os.environ.get("LLM_MODEL", "openai/gpt-4")
+        self.llm_key = os.environ.get("LLM_KEY")
+        self.llm_base_url = os.environ.get("LLM_BASE_URL")
+        activity.logger.info(
+            f"Initializing AgentActivities with LLM model: {self.llm_model}"
+        )
+        if self.llm_base_url:
+            activity.logger.info(f"Using custom base URL: {self.llm_base_url}")
+
+    @activity.defn
+    async def agent_toolPlanner(self, input: ToolPromptInput) -> dict:
+        messages = [
+            {
+                "role": "system",
+                "content": input.context_instructions
+                + ". The current date is "
+                + datetime.now().strftime("%B %d, %Y"),
+            },
+            {
+                "role": "user",
+                "content": input.prompt,
+            },
+        ]
+
+        try:
+            completion_kwargs = {
+                "model": self.llm_model,
+                "messages": messages,
+                "api_key": self.llm_key,
+            }
+
+            # Add base_url if configured
+            if self.llm_base_url:
+                completion_kwargs["base_url"] = self.llm_base_url
+
+            response = completion(**completion_kwargs)
+
+            response_content = response.choices[0].message.content
+            activity.logger.info(f"LLM response: {response_content}")
+
+            # Use the new sanitize function
+            response_content = self.sanitize_json_response(response_content)
+
+            return self.parse_json_response(response_content)
+        except Exception as e:
+            activity.logger.error(f"Error in LLM completion: {str(e)}")
+            raise
+
+    @activity.defn
+    async def agent_validatePrompt(
+        self, validation_input: ValidationInput
+    ) -> ValidationResult:
+        """
+        Validates the prompt in the context of the conversation history and agent goal.
+        Returns a ValidationResult indicating if the prompt makes sense given the context.
+        """
+        # Create simple context string describing tools and goals
+        tools_description = []
+        for tool in validation_input.agent_goal.tools:
+            tool_str = f"Tool: {tool.name}\n"
+            tool_str += f"Description: {tool.description}\n"
+            tool_str += "Arguments: " + ", ".join(
+                [f"{arg.name} ({arg.type})" for arg in tool.arguments]
+            )
+            tools_description.append(tool_str)
+        tools_str = "\n".join(tools_description)
+
+        # Convert conversation history to string
+        history_str = json.dumps(validation_input.conversation_history, indent=2)
+
+        # Create context instructions
+        context_instructions = f"""The agent goal and tools are as follows:
+            Description: {validation_input.agent_goal.description}
+            Available Tools:
+            {tools_str}
+            The conversation history to date is:
+            {history_str}"""
+
+        # Create validation prompt
+        validation_prompt = f"""The user's prompt is: "{validation_input.prompt}"
+            Please validate if this prompt makes sense given the agent goal and conversation history.
+            If the prompt makes sense toward the goal then validationResult should be true.
+            If the prompt is wildly nonsensical or makes no sense toward the goal and current conversation history then validationResult should be false.
+            If the response is low content such as "yes" or "that's right" then the user is probably responding to a previous prompt.  
+             Therefore examine it in the context of the conversation history to determine if it makes sense and return true if it makes sense.
+            Return ONLY a JSON object with the following structure:
+                "validationResult": true/false,
+                "validationFailedReason": "If validationResult is false, provide a clear explanation to the user in the response field 
+                about why their request doesn't make sense in the context and what information they should provide instead.
+                validationFailedReason should contain JSON in the format
+                {{
+                    "next": "question",
+                    "response": "[your reason here and a response to get the user back on track with the agent goal]"
+                }}
+                If validationResult is true (the prompt makes sense), return an empty dict as its value {{}}"
+            """
+
+        # Call the LLM with the validation prompt
+        prompt_input = ToolPromptInput(
+            prompt=validation_prompt, context_instructions=context_instructions
+        )
+
+        result = await self.agent_toolPlanner(prompt_input)
+
+        return ValidationResult(
+            validationResult=result.get("validationResult", False),
+            validationFailedReason=result.get("validationFailedReason", {}),
+        )
+
+    @activity.defn
+    async def get_wf_env_vars(self, input: EnvLookupInput) -> EnvLookupOutput:
+        """gets env vars for workflow as an activity result so it's deterministic
+        handles default/None
+        """
+        output: EnvLookupOutput = EnvLookupOutput(
+            show_confirm=input.show_confirm_default
+        )
+        show_confirm_value = os.getenv(input.show_confirm_env_var_name)
+        if show_confirm_value is None:
+            output.show_confirm = input.show_confirm_default
+        elif show_confirm_value is not None and show_confirm_value.lower() == "false":
+            output.show_confirm = False
+        else:
+            output.show_confirm = True
+
+        return output
+
+    def sanitize_json_response(self, response_content: str) -> str:
+        """
+        Sanitizes the response content to ensure it's valid JSON.
+        """
+        # Remove any markdown code block markers
+        response_content = response_content.replace("```json", "").replace("```", "")
+
+        # Remove any leading/trailing whitespace
+        response_content = response_content.strip()
+
+        return response_content
+
+    def parse_json_response(self, response_content: str) -> dict:
+        """
+        Parses the JSON response content and returns it as a dictionary.
+        """
+        try:
+            data = json.loads(response_content)
+            return data
+        except json.JSONDecodeError as e:
+            activity.logger.error(f"Invalid JSON: {e}")
+            raise
+
+
+@activity.defn(dynamic=True)
+async def dynamic_tool_activity(args: Sequence[RawValue]) -> dict:
+    from tools.tool_registry import get_handler
+
+    tool_name = activity.info().activity_type  # e.g. "FindEvents"
+    tool_args = activity.payload_converter().from_payload(args[0].payload, dict)
+    activity.logger.info(f"Running dynamic tool '{tool_name}' with args: {tool_args}")
+
+    # Delegate to the relevant function
+    handler = get_handler(tool_name)
+    if inspect.iscoroutinefunction(handler):
+        result = await handler(tool_args)
+    else:
+        result = handler(tool_args)
+
+    # Optionally log or augment the result
+    activity.logger.info(f"Tool '{tool_name}' result: {result}")
+    return result
+```
+</details>
+
+
+The Activities you implemented handle LLM communication, user input validation, environment configuration, and dynamic tool execution. 
+
+<details>
+
+At this point, your file and directory structure should resemble this:
+
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── activities/
+|   ├── __init__.py
+|   └── activities.py
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+└── tools/
+    ├── __init__.py
+    ├── create_invoice.py
+    ├── find_events.py
+    ├── goal_registry.py
+    ├── search_flights.py
+    ├── tool_registry.py
+    └── data/
+        └── find_events_data.json
+```
+</details>
+
+In the next step, you will create a submodule that stores and renders the main prompts the agent uses to communicate with the LLM. 
+
+## Developing the necessary prompts
+
+Your agent communicates with an LLM to determine what steps it should take and which tool it should use.
+However, LLM output is non-determinstic, so how do you ensure that you receive data that you can rely on so your agent can interpret it and continue execution?
+To do this, you need to carefully craft a prompt explicitly stating what the LLM should do and what format it should return.
+These prompts can often be complex, and since your agent dynamically loads tools, will also need to be dynamically generated.
+In this section, you will implement the code to generate these prompts
+
+### Creating the submodule
+
+First, create a new directory named `prompts`:
+
+```bash
+mkdir prompts
 ```
 
-This Activities implementation provides the durability layer that makes your AI agent resilient to failures. 
-The Activities handle language model communication, user input validation, environment configuration, and dynamic tool execution with automatic retry and recovery capabilities.
+Then create the `__init__.py` file in the `prompts` director to make it a submodule:
 
-In the next step, you will create the Temporal Workflow that orchestrates these Activities into a complete agent conversation loop.
+```bash
+touch __init__.py
+```
 
-## Step 5 — Creating agent Workflow orchestration
+Next, you'll craft your prompt templates that the LLM will use.
 
-In this step, you will create the Temporal Workflow that orchestrates your AI agent's conversation loop. 
-This Workflow handles user interactions, validates prompts, manages tool execution, and maintains conversation state with durability guarantees.
+### Crafting the prompts templates
 
-### Understanding the conversation orchestration challenge
+The prompts templates you create will vary in the amount of customization they allow.
+For templates with minimal customization, for example, templates that only require a few variable subsitutions, Python's string formatting syntax will suffice.
+However, if your template requiries iteration, conditional logic, or variable interpolation, you should use a more advanced templating system, such as `Jinja2`.
 
-AI agents need to manage complex conversation flows that involve multiple turns of user interaction, tool execution, and state management. 
-The challenge is maintaining conversation coherence across user sessions while handling failures, retries, and long-running interactions.
+#### Defining the primary context prompt
 
-Your agent must coordinate several concurrent concerns: validating user input against conversation context, determining when to execute tools, managing user confirmations for tool execution, and maintaining conversation history that persists across system failures. 
-A traditional application would lose conversation state during failures, but Temporal Workflows provide durable execution that preserves conversation context through any system interruption.
+The primary context that the LLM uses to determine the next action requires multiple steps, conditionals, and loops to implement, so you will implement it using `Jinja2`.
 
-### Creating the workflows directory
+Create the file `prompts/prompts.py` and add the import for `Jinja2`:
 
-Create the directory structure for your Workflow implementations:
+```python
+from jinja2 import Template
+```
+
+Next, add the first part of the primary prompt, which you'll name `GENAI_PROMPT`:
+
+```python
+GENAI_PROMPT = Template(
+    """
+You are an AI agent that helps fill required arguments for the tools described below. 
+You must respond with valid JSON ONLY, using the schema provided in the instructions.
+
+=== Conversation History ===
+This is the ongoing history to determine which tool and arguments to gather:
+*BEGIN CONVERSATION HISTORY*
+{{ conversation_history_json }}
+*END CONVERSATION HISTORY*
+REMINDER: You can use the conversation history to infer arguments for the tools.
+
+{% if agent_goal.example_conversation_history %}
+=== Example Conversation With These Tools ===
+Use this example to understand how tools are invoked and arguments are gathered.
+BEGIN EXAMPLE
+{{ agent_goal.example_conversation_history }}
+END EXAMPLE
+
+{% endif %}
+"""
+```
+
+This section of the prompt sets the primary role for the LLM, provides the current conversation history for the LLM to analyze, and if an example conversation was provide, provides that as an example for the LLM to use as well.
+
+Continue adding this prompt by adding the following lines:
+
+```python
+"""
+=== Tools Definitions ===
+There are {{ agent_goal.tools|length }} available tools:
+{{ agent_goal.tools|map(attribute='name')|join(', ') }}
+Goal: {{ agent_goal.description }}
+Gather the necessary information for each tool in the sequence described above.
+Only ask for arguments listed below. Do not add extra arguments.
+
+{% for tool in agent_goal.tools %}
+Tool name: {{ tool.name }}
+  Description: {{ tool.description }}
+  Required args:
+{% for arg in tool.arguments %}
+    - {{ arg.name }} ({{ arg.type }}): {{ arg.description }}
+{% endfor %}
+
+{% endfor %}
+When all required args for a tool are known, you can propose next='confirm' to run it.
+"""
+```
+
+The segment of the prompt definitions section lists the agent's goal and the available tools with their descriptions and argument specifications. 
+This provides the LLM with information about what the agent is attempting to accomplish, and its capabilities and constraints.
+
+Next, it's vital that the LLM provides its response in a consistent way that your agent can parse.
+Add the following instructions for output formatting and guardrails:
+
+```python
+"""
+=== Instructions for JSON Generation ===
+Your JSON format must be:
+{
+  "response": "<plain text>",
+  "next": "<question|confirm|pick-new-goal|done>",
+  "tool": "<tool_name or null>",
+  "args": {
+    "<arg1>": "<value1 or null>",
+    "<arg2>": "<value2 or null>",
+    ...
+  }
+}
+1) If any required argument is missing, set next='question' and ask the user.
+2) If all required arguments are known, set next='confirm' and specify the tool.
+   The user will confirm before the tool is run.
+3) {{ toolchain_complete_guidance }}
+4) response should be short and user-friendly.
+
+Guardrails (always remember!)
+1) If any required argument is missing, set next='question' and ask the user.
+1) ALWAYS ask a question in your response if next='question'.
+2) ALWAYS set next='confirm' if you have arguments
+ And respond with "let's proceed with <tool> (and any other useful info)" 
+ DON'T set next='confirm' if you have a question to ask.
+EXAMPLE: If you have a question to ask, set next='question' and ask the user.
+3) You can carry over arguments from one tool to another.
+ EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
+4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
+EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
+"""
+```
+
+This segment provides strict rules on the exact format the LLM should respond with, as well as guardrails to ensure that fields are set properly.
+The guardrails section is particularly important as it provides detailed behavioral constraints that enable consistent responses. 
+These rules prevent issues such as asking questions while proposing tool execution or forgetting to use the conversation history for argument inference.
+
+Finally, complete the template with a validation prompt:
+
+```python
+"""
+{% if raw_json is not none %}
+
+=== Validation Task ===
+Validate and correct the following JSON if needed:
+{{ raw_json_str }}
+
+Check syntax, 'tool' validity, 'args' completeness, and set 'next' appropriately. Return ONLY corrected JSON.
+{% endif %}
+
+{% if raw_json is not none %}
+Begin by validating the provided JSON if necessary.
+{% else %}
+Begin by producing a valid JSON response for the next tool or question.
+{% endif %}
+""".strip()
+)
+```
+
+The validation section enables the template to handle both correct and incorrectly JSON formatted strings.
+If the JSON is improperly formatted, the LLM is prompted to correct it before continuing with its other tasks.
+
+All together, the template should look as such:
+
+```python
+GENAI_PROMPT = Template(
+    """
+You are an AI agent that helps fill required arguments for the tools described below. 
+You must respond with valid JSON ONLY, using the schema provided in the instructions.
+
+=== Conversation History ===
+This is the ongoing history to determine which tool and arguments to gather:
+*BEGIN CONVERSATION HISTORY*
+{{ conversation_history_json }}
+*END CONVERSATION HISTORY*
+REMINDER: You can use the conversation history to infer arguments for the tools.
+
+{% if agent_goal.example_conversation_history %}
+=== Example Conversation With These Tools ===
+Use this example to understand how tools are invoked and arguments are gathered.
+BEGIN EXAMPLE
+{{ agent_goal.example_conversation_history }}
+END EXAMPLE
+
+{% endif %}
+=== Tools Definitions ===
+There are {{ agent_goal.tools|length }} available tools:
+{{ agent_goal.tools|map(attribute='name')|join(', ') }}
+Goal: {{ agent_goal.description }}
+Gather the necessary information for each tool in the sequence described above.
+Only ask for arguments listed below. Do not add extra arguments.
+
+{% for tool in agent_goal.tools %}
+Tool name: {{ tool.name }}
+  Description: {{ tool.description }}
+  Required args:
+{% for arg in tool.arguments %}
+    - {{ arg.name }} ({{ arg.type }}): {{ arg.description }}
+{% endfor %}
+
+{% endfor %}
+When all required args for a tool are known, you can propose next='confirm' to run it.
+
+=== Instructions for JSON Generation ===
+Your JSON format must be:
+{
+  "response": "<plain text>",
+  "next": "<question|confirm|done>",
+  "tool": "<tool_name or null>",
+  "args": {
+    "<arg1>": "<value1 or null>",
+    "<arg2>": "<value2 or null>",
+    ...
+  }
+}
+1) If any required argument is missing, set next='question' and ask the user.
+2) If all required arguments are known, set next='confirm' and specify the tool.
+   The user will confirm before the tool is run.
+3) {{ toolchain_complete_guidance }}
+4) response should be short and user-friendly.
+
+Guardrails (always remember!)
+1) If any required argument is missing, set next='question' and ask the user.
+1) ALWAYS ask a question in your response if next='question'.
+2) ALWAYS set next='confirm' if you have arguments
+ And respond with "let's proceed with <tool> (and any other useful info)" 
+ DON'T set next='confirm' if you have a question to ask.
+EXAMPLE: If you have a question to ask, set next='question' and ask the user.
+3) You can carry over arguments from one tool to another.
+ EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
+4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
+EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
+
+{% if raw_json is not none %}
+
+=== Validation Task ===
+Validate and correct the following JSON if needed:
+{{ raw_json_str }}
+
+Check syntax, 'tool' validity, 'args' completeness, and set 'next' appropriately. Return ONLY corrected JSON.
+{% endif %}
+
+{% if raw_json is not none %}
+Begin by validating the provided JSON if necessary.
+{% else %}
+Begin by producing a valid JSON response for the next tool or question.
+{% endif %}
+""".strip()
+)
+```
+
+Next, you'll create the prompt that will determine the next steps for your agent to take.
+
+#### Defining the tool completion prompt
+
+The `TOOL_COMPLETION_PROMPT` instructs the LLM to analyze the successful tool results and determine the appropriate next steps. 
+This prompt only requires minimal substituion, so a Python string formatting will suffice.
+
+Add the following constant to your `prompts/prompts.py` file:
+
+```python
+TOOL_COMPLETION_PROMPT = """### The '{current_tool}' tool completed successfully 
+with {dynamic_result}. 
+INSTRUCTIONS: Parse this tool result as plain text, and use the system prompt 
+containing the list of tools in sequence and the conversation history (and 
+previous tool_results) to figure out next steps, if any. 
+You will need to use the tool_results to auto-fill arguments for subsequent 
+tools and also to figure out if all tools have been run. 
+{{"next": "<question|confirm|pick-new-goal|done>", "tool": "<tool_name or null>", "args": {{"<arg1>": "<value1 or null>", "<arg2>": "<value2 or null>"}}, "response": "<plain text (can include \\n line breaks)>"}}
+ONLY return those json keys (next, tool, args, response), nothing else. 
+Next should be "question" if the tool is not the last one in the sequence. 
+Next should be "done" if the user is asking to be done with the chat."""
+```
+
+This template handles successful tool completion scenarios, instructing the LLM to use the results of the execution when determining the next step.
+It also gives explicit instructions on exactly how to respond, which keys should be present, and the format of the output.
+
+Next, you'll implement the prompt for handling missing user arguments.
+
+#### Defining the missing arguments prompt
+
+If the user doesn't provide enough information to the agent, the agent needs to detect this and set the next action to prompt the user for the missing arguments.
+This prompt only has a few variable substitutions, so a Python string formatting will suffice.
+
+Add the missing arguments template to your `prompts/prompts.py` file:
+
+```python
+MISSING_ARGS_PROMPT = """### INSTRUCTIONS set next='question', combine 
+this response response='{response}' and following missing arguments for tool 
+{current_tool}: {missing_args}. Only provide a valid JSON response without any 
+comments or metadata."""
+```
+
+This template provides the response, sets the next key to `question` to instruct the agent to prompt the user for more information, and specifies which tool is missing which argument.
+
+#### Defining the toolchain complete prompt
+
+Finally, define the prompt that details what the LLM should do if no more tools are needed to complete the agent's goal.
+
+```python
+TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT = "If no more tools are needed (user_confirmed_tool_run has been run for all), set next='done' and tool=''."
+```
+
+<details>
+
+<summary>
+The <code>prompts/prompts.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[prompts/prompts](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/prompts/prompts.py)
+
+```python
+from jinja2 import Template
+
+# Define the Jinja2 template
+GENAI_PROMPT = Template(
+    """
+You are an AI agent that helps fill required arguments for the tools described below. 
+You must respond with valid JSON ONLY, using the schema provided in the instructions.
+
+=== Conversation History ===
+This is the ongoing history to determine which tool and arguments to gather:
+*BEGIN CONVERSATION HISTORY*
+{{ conversation_history_json }}
+*END CONVERSATION HISTORY*
+REMINDER: You can use the conversation history to infer arguments for the tools.
+
+{% if agent_goal.example_conversation_history %}
+=== Example Conversation With These Tools ===
+Use this example to understand how tools are invoked and arguments are gathered.
+BEGIN EXAMPLE
+{{ agent_goal.example_conversation_history }}
+END EXAMPLE
+
+{% endif %}
+=== Tools Definitions ===
+There are {{ agent_goal.tools|length }} available tools:
+{{ agent_goal.tools|map(attribute='name')|join(', ') }}
+Goal: {{ agent_goal.description }}
+Gather the necessary information for each tool in the sequence described above.
+Only ask for arguments listed below. Do not add extra arguments.
+
+{% for tool in agent_goal.tools %}
+Tool name: {{ tool.name }}
+  Description: {{ tool.description }}
+  Required args:
+{% for arg in tool.arguments %}
+    - {{ arg.name }} ({{ arg.type }}): {{ arg.description }}
+{% endfor %}
+
+{% endfor %}
+When all required args for a tool are known, you can propose next='confirm' to run it.
+
+=== Instructions for JSON Generation ===
+Your JSON format must be:
+{
+  "response": "<plain text>",
+  "next": "<question|confirm|done>",
+  "tool": "<tool_name or null>",
+  "args": {
+    "<arg1>": "<value1 or null>",
+    "<arg2>": "<value2 or null>",
+    ...
+  }
+}
+1) If any required argument is missing, set next='question' and ask the user.
+2) If all required arguments are known, set next='confirm' and specify the tool.
+   The user will confirm before the tool is run.
+3) {{ toolchain_complete_guidance }}
+4) response should be short and user-friendly.
+
+Guardrails (always remember!)
+1) If any required argument is missing, set next='question' and ask the user.
+1) ALWAYS ask a question in your response if next='question'.
+2) ALWAYS set next='confirm' if you have arguments
+ And respond with "let's proceed with <tool> (and any other useful info)" 
+ DON'T set next='confirm' if you have a question to ask.
+EXAMPLE: If you have a question to ask, set next='question' and ask the user.
+3) You can carry over arguments from one tool to another.
+ EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
+4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
+EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
+
+{% if raw_json is not none %}
+
+=== Validation Task ===
+Validate and correct the following JSON if needed:
+{{ raw_json_str }}
+
+Check syntax, 'tool' validity, 'args' completeness, and set 'next' appropriately. Return ONLY corrected JSON.
+{% endif %}
+
+{% if raw_json is not none %}
+Begin by validating the provided JSON if necessary.
+{% else %}
+Begin by producing a valid JSON response for the next tool or question.
+{% endif %}
+""".strip()
+)
+
+TOOL_COMPLETION_PROMPT = """### The '{current_tool}' tool completed successfully 
+with {dynamic_result}. 
+INSTRUCTIONS: Parse this tool result as plain text, and use the system prompt 
+containing the list of tools in sequence and the conversation history (and 
+previous tool_results) to figure out next steps, if any. 
+You will need to use the tool_results to auto-fill arguments for subsequent 
+tools and also to figure out if all tools have been run. 
+{{"next": "<question|confirm|done>", "tool": "<tool_name or null>", "args": {{"<arg1>": "<value1 or null>", "<arg2>": "<value2 or null>"}}, "response": "<plain text (can include \\n line breaks)>"}}
+ONLY return those json keys (next, tool, args, response), nothing else. 
+Next should be "question" if the tool is not the last one in the sequence. 
+Next should be "done" if the user is asking to be done with the chat."""
+
+
+MISSING_ARGS_PROMPT = """### INSTRUCTIONS set next='question', combine 
+this response response='{response}' and following missing arguments for tool 
+{current_tool}: {missing_args}. Only provide a valid JSON response without any 
+comments or metadata."""
+
+TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT = "If no more tools are needed (user_confirmed_tool_run has been run for all), set next='done' and tool=''."
+```
+</details>
+
+Next, you'll build the functions that use these prompt templates to generate the actual prompts.
+
+### Building the prompt generation functions
+
+Now that you have the prompt templates built, you need to implement functions the agent can call to render them.
+
+First, create `prompts/agent_prompt_generators.py` and add the following imports:
+
+```python
+import json
+from typing import Optional
+
+from models.core import AgentGoal
+from models.requests import ConversationHistory, ToolData
+from prompts.prompts import (
+    GENAI_PROMPT,
+    MISSING_ARGS_PROMPT,
+    TOOL_COMPLETION_PROMPT,
+    TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT,
+)
+
+```
+
+Next, create the function to render the `GENAI_PROPMT`:
+
+```python
+def generate_genai_prompt(
+    agent_goal: AgentGoal,
+    conversation_history: ConversationHistory,
+    raw_json: Optional[ToolData] = None,
+) -> str:
+    """
+    Generates a concise prompt for producing or validating JSON instructions
+    with the provided tools and conversation history.
+    """
+
+    # Prepare template variables
+    template_vars = {
+        "agent_goal": agent_goal,
+        "conversation_history_json": json.dumps(conversation_history, indent=2),
+        "toolchain_complete_guidance": generate_toolchain_complete_guidance(),
+        "raw_json": raw_json,
+        "raw_json_str": (
+            json.dumps(raw_json, indent=2) if raw_json is not None else None
+        ),
+    }
+
+    return GENAI_PROMPT.render(**template_vars)
+```
+
+This function creates the `template_vars` dictionary, assigns the parameters to the appropriate template variables, and then renders the `Jinja2` template, passing in the dictionary as `kwargs` to the `render` function.
+
+
+Next, add the tool completion prompt generator:
+
+```python
+def generate_tool_completion_prompt(current_tool: str, dynamic_result: dict) -> str:
+    """
+    Generates a prompt for handling tool completion and determining next steps.
+
+    Args:
+        current_tool: The name of the tool that just completed
+        dynamic_result: The result data from the tool execution
+
+    Returns:
+        str: A formatted prompt string for the agent to process the tool completion
+    """
+    return TOOL_COMPLETION_PROMPT.format(
+        current_tool=current_tool, dynamic_result=dynamic_result
+    )
+```
+
+This function takes in the current tool, along with the dynamic result system prompt and returns the formatted `TOOL_COMPLETION_PROMPT` using the `.format` function.
+
+Finally, add the prompt for handling missing arguments:
+
+```python
+def generate_missing_args_prompt(
+    current_tool: str, tool_data: dict, missing_args: list[str]
+) -> str:
+    """
+    Generates a prompt for handling missing arguments for a tool.
+
+    Args:
+        current_tool: The name of the tool that needs arguments
+        tool_data: The current tool data containing the response
+        missing_args: List of argument names that are missing
+
+    Returns:
+        str: A formatted prompt string for requesting missing arguments
+    """
+    return MISSING_ARGS_PROMPT.format(
+        response=tool_data.get("response"),
+        current_tool=current_tool,
+        missing_args=missing_args,
+    )
+```
+
+This function gets the response from the current tool, and the arguments missing, then returns a the formatted `MISSING_ARGS_PROMPT`.
+
+<details>
+
+<summary>
+The <code>prompts/agent_prompt_generators.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+<br />
+Hover your cursor over the code block to reveal the copy-code option.
+<br />
+<br />
+
+[prompts/agent_prompt_generators.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/prompts/agent_prompt_generators.py)
+
+```python
+import json
+from typing import Optional
+
+from models.core import AgentGoal
+from models.requests import ConversationHistory, ToolData
+from prompts.prompts import (
+    GENAI_PROMPT,
+    MISSING_ARGS_PROMPT,
+    TOOL_COMPLETION_PROMPT,
+    TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT,
+)
+
+
+def generate_genai_prompt(
+    agent_goal: AgentGoal,
+    conversation_history: ConversationHistory,
+    raw_json: Optional[ToolData] = None,
+) -> str:
+    """
+    Generates a concise prompt for producing or validating JSON instructions
+    with the provided tools and conversation history.
+    """
+
+    # Prepare template variables
+    template_vars = {
+        "agent_goal": agent_goal,
+        "conversation_history_json": json.dumps(conversation_history, indent=2),
+        "toolchain_complete_guidance": TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT,
+        "raw_json": raw_json,
+        "raw_json_str": (
+            json.dumps(raw_json, indent=2) if raw_json is not None else None
+        ),
+    }
+
+    return GENAI_PROMPT.render(**template_vars)
+
+
+def generate_tool_completion_prompt(current_tool: str, dynamic_result: dict) -> str:
+    """
+    Generates a prompt for handling tool completion and determining next steps.
+
+    Args:
+        current_tool: The name of the tool that just completed
+        dynamic_result: The result data from the tool execution
+
+    Returns:
+        str: A formatted prompt string for the agent to process the tool completion
+    """
+    return TOOL_COMPLETION_PROMPT.format(
+        current_tool=current_tool, dynamic_result=dynamic_result
+    )
+
+
+def generate_missing_args_prompt(
+    current_tool: str, tool_data: dict, missing_args: list[str]
+) -> str:
+    """
+    Generates a prompt for handling missing arguments for a tool.
+
+    Args:
+        current_tool: The name of the tool that needs arguments
+        tool_data: The current tool data containing the response
+        missing_args: List of argument names that are missing
+
+    Returns:
+        str: A formatted prompt string for requesting missing arguments
+    """
+    return MISSING_ARGS_PROMPT.format(
+        response=tool_data.get("response"),
+        current_tool=current_tool,
+        missing_args=missing_args,
+    )
+```
+</details>
+
+Now that you have the prompt rendering submodule implemented, you can implement the main agent Workflow.
+
+<details>
+
+Verify your directory structure and files look and are named appropriately according to the following diagram before continuing:
+
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── activities/
+|   ├── __init__.py
+|   └── activities.py
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── prompts/
+│   ├── __init__.py
+│   ├── agent_prompt_generators.py
+│   └── prompts.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+└── tools/
+    ├── __init__.py
+    ├── create_invoice.py
+    ├── find_events.py
+    ├── goal_registry.py
+    ├── search_flights.py
+    ├── tool_registry.py
+    └── data/
+        └── find_events_data.json
+```
+</details>
+
+## Implementing the agent Workflow
+Agents need to manage conversations that involve multiple turns including user interaction, tool execution, and state management. 
+The challenge is maintaining coherence across these sessions while handling failures, retries, and long-running interactions.
+Your agent must coordinate several concurrent concerns such as validating user input against conversation context, determining when to execute tools, managing user input for tool execution, and maintaining conversation history that persists in the event of system failures. 
+Traditional application would lose conversation state during failures, but Temporal Workflows provide durable execution that preserves context through any system interruption.
+
+In this step, you will create the Temporal Workflow that orchestrates your agent's conversation loop. 
+This Workflow handles user interactions, validates prompts, manages tool execution, and maintains conversation state, all while providing durability to the agent.
+
+
+### Creating the workflows submodule
+
+First, create the directory structure for your Workflow implementations:
 
 ```command
 mkdir workflows
 ```
+
+### 
 
 ### Building the core conversation state management
 
@@ -2403,310 +3463,51 @@ Create an empty `workflows/__init__.py` file to make the directory a Python pack
 touch workflows/__init__.py
 ```
 
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── activities/
+|   ├── __init__.py
+|   └── activities.py
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── prompts/
+│   ├── __init__.py
+│   ├── agent_prompt_generators.py
+│   └── prompts.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+├── tools/
+│   ├── __init__.py
+│   ├── create_invoice.py
+│   ├── find_events.py
+│   ├── goal_registry.py
+│   ├── search_flights.py
+│   ├── tool_registry.py
+│   └── data/
+|       └── find_events_data.json
+└── workflows/
+    ├── __init__.py
+    ├── agent_goal_workflow.py
+    └── workflow_helpers.py
+```
 
 This Workflow orchestration system demonstrates key patterns for building durable AI agent conversations: event-driven processing with Signals and Queries, validation-first user interaction, confirmation-based tool execution, and continuation patterns for long-running sessions. 
 The system maintains conversation coherence across failures while providing responsive real-time interaction capabilities.
 
 In the next step, you will create the prompt engineering system that generates context-aware instructions for language model interactions.
 
-## Step 6 — Developing prompt engineering system
 
-In this step, you will create the prompt engineering system that generates context-aware instructions for language model interactions. 
-This system transforms conversation state, tool definitions, and agent goals into precise prompts that guide language models to make intelligent decisions about next steps.
 
-### Understanding the prompt engineering challenge
-
-Language models require carefully crafted instructions to understand complex agent workflows and make appropriate decisions about tool usage. 
-The challenge is generating prompts that provide sufficient context while maintaining clarity and ensuring consistent JSON-formatted responses.
-
-Your agent needs prompts for different scenarios: initial tool planning based on user requests, handling tool completion results, requesting missing arguments, and managing conversation flow transitions. 
-Each prompt type must provide the language model with complete situational awareness while constraining responses to expected formats.
-
-### Creating the prompts directory
-
-Create the directory structure for your prompt engineering system:
-
-```command
-mkdir prompts
-```
-
-### Building the core prompt templates
-
-The prompt engineering system uses Jinja2 templates to generate dynamic, context-aware instructions that adapt to conversation state and agent capabilities.
-
-Open your text editor and create `prompts/prompts.py` with the main template definitions:
-
-```python
-from jinja2 import Template
-
-# Define the Jinja2 template
-GENAI_PROMPT = Template(
-    """
-You are an AI agent that helps fill required arguments for the tools described below. 
-You must respond with valid JSON ONLY, using the schema provided in the instructions.
-
-=== Conversation History ===
-This is the ongoing history to determine which tool and arguments to gather:
-*BEGIN CONVERSATION HISTORY*
-{{ conversation_history_json }}
-*END CONVERSATION HISTORY*
-REMINDER: You can use the conversation history to infer arguments for the tools.
-
-{% if agent_goal.example_conversation_history %}
-=== Example Conversation With These Tools ===
-Use this example to understand how tools are invoked and arguments are gathered.
-BEGIN EXAMPLE
-{{ agent_goal.example_conversation_history }}
-END EXAMPLE
-
-{% endif %}
-""".strip()
-)
-```
-
-This template opening establishes the language model's role and provides conversation context. 
-The conditional example section demonstrates proper tool usage patterns when available, helping the language model understand expected interaction flows.
-
-Continue the template with tool definitions:
-
-```python
-=== Tools Definitions ===
-There are {{ agent_goal.tools|length }} available tools:
-{{ agent_goal.tools|map(attribute='name')|join(', ') }}
-Goal: {{ agent_goal.description }}
-Gather the necessary information for each tool in the sequence described above.
-Only ask for arguments listed below. Do not add extra arguments.
-
-{% for tool in agent_goal.tools %}
-Tool name: {{ tool.name }}
-  Description: {{ tool.description }}
-  Required args:
-{% for arg in tool.arguments %}
-    - {{ arg.name }} ({{ arg.type }}): {{ arg.description }}
-{% endfor %}
-
-{% endfor %}
-When all required args for a tool are known, you can propose next='confirm' to run it.
-```
-
-The tool definitions section dynamically lists available tools with their descriptions and argument specifications. 
-This provides the language model with complete information about agent capabilities and constraints on argument collection.
-
-Add the JSON schema and behavioral instructions:
-
-```python
-=== Instructions for JSON Generation ===
-Your JSON format must be:
-{
-  "response": "<plain text>",
-  "next": "<question|confirm|pick-new-goal|done>",
-  "tool": "<tool_name or null>",
-  "args": {
-    "<arg1>": "<value1 or null>",
-    "<arg2>": "<value2 or null>",
-    ...
-  }
-}
-1) If any required argument is missing, set next='question' and ask the user.
-2) If all required arguments are known, set next='confirm' and specify the tool.
-   The user will confirm before the tool is run.
-3) {{ toolchain_complete_guidance }}
-4) response should be short and user-friendly.
-
-Guardrails (always remember!)
-1) If any required argument is missing, set next='question' and ask the user.
-1) ALWAYS ask a question in your response if next='question'.
-2) ALWAYS set next='confirm' if you have arguments
- And respond with "let's proceed with <tool> (and any other useful info)" 
- DON'T set next='confirm' if you have a question to ask.
-EXAMPLE: If you have a question to ask, set next='question' and ask the user.
-3) You can carry over arguments from one tool to another.
- EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
-4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
-EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
-```
-
-The guardrails section provides detailed behavioral constraints that ensure consistent language model responses. 
-These rules prevent common issues like asking questions while proposing tool execution or forgetting to utilize conversation history for argument inference.
-
-Complete the template with validation capabilities:
-
-```python
-{% if raw_json is not none %}
-
-=== Validation Task ===
-Validate and correct the following JSON if needed:
-{{ raw_json_str }}
-
-Check syntax, 'tool' validity, 'args' completeness, and set 'next' appropriately. Return ONLY corrected JSON.
-{% endif %}
-
-{% if raw_json is not none %}
-Begin by validating the provided JSON if necessary.
-{% else %}
-Begin by producing a valid JSON response for the next tool or question.
-{% endif %}
-```
-
-The validation section enables the same template to handle both fresh prompt generation and correction of malformed responses, providing a unified interface for language model interactions.
-
-### Creating specialized prompt templates
-
-Different conversation scenarios require specialized prompts with focused instructions and formatting constraints.
-
-Continue the file with the tool completion template:
-
-```python
-TOOL_COMPLETION_PROMPT = """### The '{current_tool}' tool completed successfully 
-with {dynamic_result}. 
-INSTRUCTIONS: Parse this tool result as plain text, and use the system prompt 
-containing the list of tools in sequence and the conversation history (and 
-previous tool_results) to figure out next steps, if any. 
-You will need to use the tool_results to auto-fill arguments for subsequent 
-tools and also to figure out if all tools have been run. 
-{{"next": "<question|confirm|pick-new-goal|done>", "tool": "<tool_name or null>", "args": {{"<arg1>": "<value1 or null>", "<arg2>": "<value2 or null>"}}, "response": "<plain text (can include \\n line breaks)>"}}
-ONLY return those json keys (next, tool, args, response), nothing else. 
-Next should be "question" if the tool is not the last one in the sequence. 
-Next should be "done" if the user is asking to be done with the chat."""
-```
-
-This template handles tool completion scenarios, instructing the language model to analyze tool results and determine appropriate next steps. 
-It emphasizes using tool results to auto-fill subsequent tool arguments, enabling efficient workflow progression.
-
-Add the missing arguments template:
-
-```python
-MISSING_ARGS_PROMPT = """### INSTRUCTIONS set next='question', combine 
-this response response='{response}' and following missing arguments for tool 
-{current_tool}: {missing_args}. Only provide a valid JSON response without any 
-comments or metadata."""
-```
-
-The missing arguments template provides focused instructions for requesting required information from users. 
-It ensures the language model maintains context while clearly asking for specific missing parameters.
-
-### Building the prompt generation functions
-
-The prompt generation system provides programmatic interfaces that combine templates with conversation state to produce context-aware instructions.
-
-Create `prompts/agent_prompt_generators.py` with the generation functions:
-
-```python
-import json
-from typing import Optional
-
-from models.core import AgentGoal
-from models.requests import ConversationHistory, ToolData
-from prompts.prompts import GENAI_PROMPT, MISSING_ARGS_PROMPT, TOOL_COMPLETION_PROMPT
-
-
-def generate_genai_prompt(
-    agent_goal: AgentGoal,
-    conversation_history: ConversationHistory,
-    raw_json: Optional[ToolData] = None,
-) -> str:
-    """
-    Generates a concise prompt for producing or validating JSON instructions
-    with the provided tools and conversation history.
-    """
-
-    # Prepare template variables
-    template_vars = {
-        "agent_goal": agent_goal,
-        "conversation_history_json": json.dumps(conversation_history, indent=2),
-        "toolchain_complete_guidance": generate_toolchain_complete_guidance(),
-        "raw_json": raw_json,
-        "raw_json_str": (
-            json.dumps(raw_json, indent=2) if raw_json is not None else None
-        ),
-    }
-
-    return GENAI_PROMPT.render(**template_vars)
-```
-
-This function demonstrates the template variable preparation pattern that transforms agent state into language model instructions. 
-It serializes conversation history to JSON format and includes optional validation data for error correction scenarios.
-
-Add the tool completion prompt generator:
-
-```python
-def generate_tool_completion_prompt(current_tool: str, dynamic_result: dict) -> str:
-    """
-    Generates a prompt for handling tool completion and determining next steps.
-
-    Args:
-        current_tool: The name of the tool that just completed
-        dynamic_result: The result data from the tool execution
-
-    Returns:
-        str: A formatted prompt string for the agent to process the tool completion
-    """
-    return TOOL_COMPLETION_PROMPT.format(
-        current_tool=current_tool, dynamic_result=dynamic_result
-    )
-```
-
-This generator creates prompts that help the language model process tool execution results and determine workflow continuation. 
-It provides both the tool name and complete result data for informed decision-making.
-
-Add the missing arguments prompt generator:
-
-```python
-def generate_missing_args_prompt(
-    current_tool: str, tool_data: dict, missing_args: list[str]
-) -> str:
-    """
-    Generates a prompt for handling missing arguments for a tool.
-
-    Args:
-        current_tool: The name of the tool that needs arguments
-        tool_data: The current tool data containing the response
-        missing_args: List of argument names that are missing
-
-    Returns:
-        str: A formatted prompt string for requesting missing arguments
-    """
-    return MISSING_ARGS_PROMPT.format(
-        response=tool_data.get("response"),
-        current_tool=current_tool,
-        missing_args=missing_args,
-    )
-```
-
-This generator creates focused prompts for collecting missing tool arguments. 
-It maintains conversation context while clearly identifying which specific arguments are required.
-
-Complete the file with the workflow completion guidance:
-
-```python
-def generate_toolchain_complete_guidance() -> str:
-    """
-    Generates a prompt for guiding the LLM to handle the end of the toolchain.
-
-    Args:
-        None
-
-    Returns:
-        str: A prompt string prompting the LLM to prompt for a new goal, or be done
-    """
-    return "If no more tools are needed (user_confirmed_tool_run has been run for all), set next='done' and tool=''."
-```
-
-This guidance function provides instructions for recognizing when agent workflows are complete, ensuring the language model properly terminates conversations when all tools have been executed.
-
-### Creating the prompts package
-
-Create an empty `prompts/__init__.py` file to make the directory a Python package:
-
-```command
-touch prompts/__init__.py
-```
-
-
-This prompt engineering system demonstrates key patterns for building reliable AI agent interactions: template-driven prompt generation, context stratification, constraint specification, and state serialization. 
-The system provides language models with comprehensive situational awareness while ensuring predictable, structured responses that drive consistent agent behavior.
-
-In the next step, you will create the FastAPI backend that provides HTTP endpoints for interacting with your Temporal Workflows.
 
 ## Step 7 — Building FastAPI backend
 

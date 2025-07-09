@@ -18,3 +18,11 @@ agentic
 uncomment
 agent
 LLM
+dataclass
+Deque
+pyproject
+RAPIDAPI
+fastapi
+uvicorn
+litellm
+venv
