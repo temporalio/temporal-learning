@@ -60,7 +60,6 @@ what took place during execution.
 
 Before starting this tutorial:
 
-<!-- TODO: Ensure that this content is available -->
 - [Set up a local development environment for Temporal Applications written
   in the Ruby programming language](/getting_started/ruby/dev_environment/)
 - Ensure you have Git installed to clone the project

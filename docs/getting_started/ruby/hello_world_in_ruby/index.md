@@ -201,7 +201,7 @@ end
 
 This Activity follows the same pattern as the `GetIPActivity` Activity. It's a method that calls a remote service. This time, the service returns JSON data rather than text.
 
-While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details.
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/develop/ruby/core-application#develop-activity) section of the Temporal documentation for more details.
 
 You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
 
