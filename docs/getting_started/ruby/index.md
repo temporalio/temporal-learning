@@ -19,7 +19,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 ---
 
-## [Run your first Temporal application with the Ruby SDK](/getting_started/ruby/dev_environment/)
+## [Run your first Temporal application with the Ruby SDK](/getting_started/ruby/first_program_in_ruby/index.md)
 
 **Estimated time**: ⏱️ ~10 minutes
 
