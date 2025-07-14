@@ -1,6 +1,6 @@
 ---
 title: "Build Invincible Apps with Durable Execution - Python"
-sidebar_position: 3
+sidebar_position: 4
 sidebar_label: "Python"
 draft: false
 tags: [meetups, Python]

@@ -1,6 +1,6 @@
 ---
 title: "Build Invincible Apps with Durable Execution - Java"
-sidebar_position: 3
+sidebar_position: 2
 sidebar_label: "Java"
 draft: false
 tags: [meetups, Java]
