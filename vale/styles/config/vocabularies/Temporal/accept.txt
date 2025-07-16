@@ -2,8 +2,7 @@ Temporal's
 APIs
 Temporal Application
 application
-ensure
-Ensure
+[eE]nsure
 extract
 sample
 samples
@@ -26,3 +25,4 @@ fastapi
 uvicorn
 litellm
 venv
+boolean
