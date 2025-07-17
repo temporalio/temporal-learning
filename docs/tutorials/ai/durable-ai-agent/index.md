@@ -49,6 +49,7 @@ Before starting this tutorial, ensure that you have the following on your local 
 * [Python 3.9 or higher](https://www.python.org/downloads/) installed. 
 Verify your installation by running `python3 --version` in your terminal.
 * The [`uv` package and project manager installed](https://docs.astral.sh/uv/getting-started/installation/). `uv` is a modern, fast Python package manager that will handle virtual environments and dependencies. 
+* The command line tool [curl](https://curl.se/) installed for downloading certain files.
 * [Node.js 18 or higher installed](https://nodejs.org/en/download).
 You can verify your installation with `node --version` and `npm --version`.
 * An [OpenAI API key](https://platform.openai.com/api-keys) saved securely where you can access it.
@@ -98,11 +99,11 @@ In this step, you will set up your project structure, install the necessary Pyth
 First, create your project using `uv`:
 
 ```command
-uv init temporal-ai-agent
+uv init temporal-ai-agent --python ">=3.9"
 
 ```
 
-Next, change directories into your newly created projcect:
+Next, change directories into your newly created project:
 
 ```command
 cd temporal-ai-agent
@@ -151,7 +152,59 @@ This installs all the necessary packages:
 - `temporalio` - The Temporal Python SDK
 - `requests` - HTTP library for API calls
 
-Create a `.env` file to store your configuration:
+Finally, add the following lines to the end of your `pyproject.toml` file:
+
+```ini
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Tell hatchling what to include
+[tool.hatch.build.targets.wheel]
+packages = ["activities", "api", "models", "prompts", "shared", "tools", "workflows"]
+```
+
+This configures `uv` as to which packages to include and enable for execution.
+You will create these packages later in the tutorial.
+
+<details>
+
+<summary>
+The <code>pyproject.toml</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
+
+[pyproject.toml](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/pyproject.tom)
+
+```ini
+[project]
+name = "temporal-ai-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "fastapi>=0.115.12",
+    "jinja2>=3.1.6",
+    "litellm>=1.72.2",
+    "stripe>=12.2.0",
+    "temporalio>=1.12.0",
+    "uvicorn>=0.34.3",
+    "requests>=2.32.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Tell hatchling what to include
+[tool.hatch.build.targets.wheel]
+packages = ["activities", "api", "models", "prompts", "shared", "tools", "workflows"]
+
+```
+</details>
+
+Next, create a `.env` file to store your configuration:
 
 ```command
 touch .env
@@ -159,7 +212,7 @@ touch .env
 
 Next, copy the following configuration to your `.env` file.
 
-```bash
+```ini
 # LLM Configuration
 LLM_MODEL=openai/gpt-4o
 LLM_KEY=YOUR_OPEN_AI_KEY
@@ -593,9 +646,6 @@ The result will contain an `invoiceURL`, as well as the status of the invoice an
 ```
 
 By following that invoice link in a browser, Stripe will present you with a sample invoice in your sandbox environment. 
-
-
-
 
 <details>
 
@@ -1224,7 +1274,7 @@ Hover your cursor over the code block to reveal the copy-code option.
 <br />
 <br />
 
-[models/core.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/goal_registry.py)
+[tools/goal_registry.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/goal_registry.py)
 
 ```python
 import tools.tool_registry as tool_registry
@@ -4380,7 +4430,7 @@ Hover your cursor over the code block to reveal the copy-code option.
 <br />
 <br />
 
-[workflows/workflows/agent_goal_workflow.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/workflows/workflows/agent_goal_workflow.py)
+[workflows/agent_goal_workflow.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/workflows/workflows/agent_goal_workflow.py)
 
 ```python
 from collections import deque
@@ -4933,7 +4983,7 @@ Next, open another terminal and run your Worker:
 uv run worker/worker.py
 ```
 
-Your worker should start, and the output should be:
+Your Worker should start, and the output should be:
 
 ```output
 Worker will use LLM model: openai/gpt-4o
@@ -4951,31 +5001,74 @@ It is waiting for Workflows and Activity tasks to execute.
 As long as your Worker is running successfully, that is enough for now.
 Kill the worker and Temporal service with `CTRL-C`.
 
+<details>
+
+<summary>
+Before moving on to the next section, verify your files and directory structure is correct.
+</summary>
+
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── activities/
+|   ├── __init__.py
+|   └── activities.py
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── prompts/
+│   ├── __init__.py
+│   ├── agent_prompt_generators.py
+│   └── prompts.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+├── tools/
+│   ├── __init__.py
+│   ├── create_invoice.py
+│   ├── find_events.py
+│   ├── goal_registry.py
+│   ├── search_flights.py
+│   ├── tool_registry.py
+│   └── data/
+|       └── find_events_data.json
+├── worker/
+│   └── worker.py
+└── workflows/
+    ├── __init__.py
+    ├── agent_goal_workflow.py
+    └── workflow_helpers.py
+```
+
+</details>
+
 Next, you will implement a REST API that will serve as the backend service for invoking your agent.
 
 ## Building a REST API for interacting with your agent
 
 Now that you have your agent implemented, you need a way for client applications to interact with it. 
-Temporal provides client libraries, but having a singular API to manage invoking a Workflow 
-
+Temporal provides client libraries, but having an API to manage invoking a Workflow, sending Signals and Queries, and managing various Workflow Executions is a typical pattern for managing Temporal Workflows.
 
 In this step, you will create a backend API that will serve as the interface for interacting with your agent. 
 You'll use the [FastAPI](https://fastapi.tiangolo.com/) framework to build this.
 FastAPI is a great choice to pair with Temporal, as it's an async Python backend that supports type hints.
 
-### Creating the API directory structure
+### Setting up the FastAPI application
 
-Create the directory structure for your FastAPI application:
+First, create the directory structure for your FastAPI application:
 
 ```command
 mkdir api
 ```
 
-### Creating the FastAPI application foundation
-
-The API application requires proper lifecycle management to establish Temporal connections during startup and handle graceful shutdown.
-
-Create `api/main.py` with the application foundation:
+Next, create the API file at `api/main.py` and include the following imports:
 
 ```python
 import asyncio
@@ -4994,7 +5087,15 @@ from models.requests import AgentGoalWorkflowParams, CombinedInput, Conversation
 from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
 from tools.goal_registry import goal_event_flight_invoice
 from workflows.agent_goal_workflow import AgentGoalWorkflow
+```
 
+This imports various packages from the standard library, third party libraries including FastAPI and Temporal, and a few of your custom libraries.
+It imported the `AgentGoalWorkflow` so it can invoke it, the `goal_event_flight_invoice` for specification of the goal, the `get_temporal_client` function and `TEMPORAL_TASK_QUEUE` constant for communicating with the Temporal service, and a few of your custom types for proper communication with the Workflow.
+
+
+Next, add the code to configure and instantiate the FastAPI object:
+
+```python
 temporal_client: Optional[Client] = None
 
 
@@ -5014,10 +5115,12 @@ load_dotenv()
 AGENT_GOAL = goal_event_flight_invoice
 ```
 
-The lifespan context manager ensures the Temporal client is available throughout the application lifecycle. 
-This pattern provides clean initialization and cleanup of external resources.
+This creates a Temporal client, then uses the `lifespan` function to call the `get_temporal_client` function.
+The `lifespan` function, paired with the `@asynccontextmanager` decorator defines a context manager that defines startup and shutdown behavior for your FastAPI app.
+Next, it creates the FastAPI app, passing in the `lifespan` as a parameter.
+Finally, you load in the environment variables and specify the `AGENT_GOAL` to `goal_event_flight_invoice`.
 
-Add CORS configuration for web frontend integration:
+Next, add the appropriate middleware for handling CORS and define the root handler for your app:
 
 ```python
 app.add_middleware(
@@ -5034,13 +5137,213 @@ def root() -> Dict[str, str]:
     return {"message": "Temporal AI Agent!"}
 ```
 
-The CORS middleware enables web browsers to interact with your API from different origins, essential for frontend-backend communication during development.
+The CORS settings are set up to allow for access from an origin 
+Any request to the root of your application will return JSON with a single key and a message.
 
-### Implementing conversation state access
+Before moving on, test your FastAPI app by running the following commands:
 
-The API needs to provide real-time access to conversation history while handling various workflow states and error conditions gracefully.
+In one terminal, start your Temporal development server:
 
-Add the conversation history endpoint:
+```command
+temporal server start-dev
+```
+
+This starts a local Temporal service running on port 7233 with the web UI running on port 8233.
+The output of this command should resemble (The exact version numbers may not match):
+
+```output
+CLI 1.1.1 (Server 1.25.1, UI 2.31.2)
+
+Server:  localhost:7233
+UI:      http://localhost:8233
+Metrics: http://localhost:53697/metrics
+```
+
+In another terminal, start the API using `uv` from the root of your project:
+
+```command
+uv run uvicorn api.main:app --reload
+```
+
+This uses `uvicorn`, an ASGI server to run the FastAPI app and auto reload the app if any changes are detected.
+
+The output of this command should resemble:
+
+```output
+INFO:     Will watch for changes in these directories: ['/Users/ziggy/temporal-ai-agent']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [31826] using StatReload
+INFO:     Started server process [31828]
+INFO:     Waiting for application startup.
+Address: localhost:7233, Namespace default
+(If unset, then will try to connect to local server)
+INFO:     Application startup complete.
+```
+
+Next, test your application is working by sending a request to it:
+
+```command
+curl localhost:8000
+```
+
+Your response should be:
+
+```output
+{"message":"Temporal AI Agent!"}
+```
+
+Now that you have the base FastAPI application configured with a Temporal client, you will implement the functions to interact with your agent Workflow.
+
+### Implementing agent Workflow endpoints
+
+Your API only needs a few endpoints to communicate with the agent.
+You will implement the functionality to send Signals, get the conversation history, and start the Workflow.
+
+#### Validating the Temporal client
+
+First, you will implement a helper function to verify the Temporal client is setup that every function will use.
+
+Add the following function to your `main.py` file:
+
+```python
+def _ensure_temporal_client() -> Client:
+    """Ensure temporal client is initialized and return it.
+
+    Returns:
+        TemporalClient: The initialized temporal client.
+
+    Raises:
+        HTTPException: If client is not initialized.
+    """
+    if temporal_client is None:
+        raise HTTPException(status_code=500, detail="Temporal client not initialized")
+    return temporal_client
+```
+
+This function ensures the global Temporal client is not `None`.
+If it isn't, it returns the client.
+If it is `None`, it will raise an exception.
+This is a type safe way of validating the client before every function call.
+
+#### Starting the agent Workflow
+
+Next, you'll define an endpoint that a client will use to start the agent Workflow.
+This endpoint is a POST endpoint, and doesn't take any parameters.
+
+Add the endpoint to your `api.py` file:
+
+```python
+@app.post("/start-workflow")
+async def start_workflow() -> Dict[str, str]:
+    """Start the AgentGoalWorkflow"""
+    temporal_client = _ensure_temporal_client()
+
+    # Create combined input
+    combined_input = CombinedInput(
+        tool_params=AgentGoalWorkflowParams(
+            None, deque([f"### {AGENT_GOAL.starter_prompt}"])
+        ),
+        agent_goal=AGENT_GOAL,
+    )
+
+    workflow_id = "agent-workflow"
+
+    # Start the workflow with the starter prompt from the goal
+    await temporal_client.start_workflow(
+        AgentGoalWorkflow.run,
+        combined_input,
+        id=workflow_id,
+        task_queue=TEMPORAL_TASK_QUEUE,
+    )
+
+    return {
+        "message": f"Workflow started with goal's starter prompt: {AGENT_GOAL.starter_prompt}."
+    }
+```
+
+The code verifies the Temporal client, then creates a `CombinedInput` type containing an `AgentGoalWorkflowParams` object and the `AGENT_GOAL`.
+The `AgentGoalWorkflowParams` object assigns `None` to its first attribute, which represents the conversation history.
+This is fine, as there is currently no conversation history.
+The second attribute is the first prompt the agent will execute.
+You then specify the `workflow_id` that will identify the execution, in this case it is hard coded to `agent-workflow`.
+Finally, you start the Workflow asynchronously using `temporal.client.start_workflow`, specifying the Workflow method `AgentGoalWorkflow.run`, the parameter `combined_input`, `workflow_id`, and `task_queue`.
+
+The function then returns with a message stating that the Workflow has started.
+
+#### Sending a user prompt to the Workflow
+
+Now you'll implement sending the user's prompt to the Workflow.
+The user will interact with the chatbot interface, sending messages to the agent.
+The chatbot sends these as Signals to the `user_prompt` Signal handler you defined in your Workflow.
+
+Add the following code to send the user's prompt to the Workflow:
+
+```python
+@app.post("/send-prompt")
+async def send_prompt(prompt: str) -> Dict[str, str]:
+    """Sends the user prompt to the Workflow"""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("user_prompt", prompt)
+
+    return {"message": f"Prompt '{prompt}' sent to workflow {workflow_id}."}
+```
+
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+
+#### Sending a confirmation to the Workflow
+
+If you have the `SHOW_CONFIRM` option set in your `.env` file, then the user must confirm the tool before it is executed.
+This choice is sent to the workflow via a Signal.
+You already implemented the Signal handler in the Workflow, now you will implement sending the Signal.
+
+Add the following code to send the `confirm` Signal:
+
+```python
+@app.post("/confirm")
+async def send_confirm() -> Dict[str, str]:
+    """Sends a 'confirm' signal to the workflow."""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("confirm")
+    return {"message": "Confirm signal sent."}
+```
+
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+
+
+#### Ending the chat
+
+Finally, the user can choose to end the chat at any time by saying something along the lines of "end conversation."
+You also implemented this Signal handler in your Workflow, so now you'll implement the sending of the Signal.
+
+Add the following code:
+
+```python
+@app.post("/end-chat")
+async def end_chat() -> Dict[str, str]:
+    """Sends a 'end_chat' signal to the workflow."""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("end_chat")
+    return {"message": "End chat signal sent."}
+```
+
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+
+#### Retrieving the conversation history 
+
+The last API endpoint you must implement retrieves the conversation history.
+The UI uses this to populate the interface for the user to read.
+This API will perform a Query and retrieve the information from the running Workflow Execution.
+
+Add the following code to implement the endpoint:
 
 ```python
 @app.get("/get-conversation-history")
@@ -5075,14 +5378,7 @@ async def get_conversation_history() -> ConversationHistory:
                 status_code=404,
                 detail="Temporal query timed out (worker may be unavailable).",
             )
-```
 
-This endpoint demonstrates robust query handling with workflow state validation and timeout protection. 
-It checks for failed workflow states and provides appropriate error responses when workflows are unavailable.
-
-Complete the conversation history handler with error management:
-
-```python
     except TemporalError as e:
         error_message = str(e)
         print(f"Temporal error: {error_message}")
@@ -5103,129 +5399,69 @@ Complete the conversation history handler with error management:
             )
 ```
 
-The error handling system provides specific responses for different failure modes: worker unavailability, missing workflows, and general temporal errors. 
-This helps frontend applications provide appropriate user feedback.
+This function identifies the Workflow by its Workflow ID, then checks the Workflow Execution's status, making sure it isn't in a failed state.
+It then performs the Query, setting a timeout of five seconds, handling various errors as they may occur.
+If the Workflow Execution isn't found however, the endpoint will actually kick it off.
 
-### Building workflow communication endpoints
+<details>
 
-The API provides endpoints for sending user messages and controlling workflow execution through Temporal Signals.
+<summary>
+The <code>api/main.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+</summary>
 
-Add the message sending endpoint:
-
-```python
-@app.post("/send-prompt")
-async def send_prompt(prompt: str) -> Dict[str, str]:
-
-    temporal_client = _ensure_temporal_client()
-
-    # Create combined input with goal from environment
-    combined_input = CombinedInput(
-        tool_params=AgentGoalWorkflowParams(None, None),
-        agent_goal=AGENT_GOAL,
-        # change to get from workflow query
-    )
-
-    workflow_id = "agent-workflow"
-
-    # Start (or signal) the workflow
-    await temporal_client.start_workflow(
-        AgentGoalWorkflow.run,
-        combined_input,
-        id=workflow_id,
-        task_queue=TEMPORAL_TASK_QUEUE,
-        start_signal="user_prompt",
-        start_signal_args=[prompt],
-    )
-
-    return {"message": f"Prompt '{prompt}' sent to workflow {workflow_id}."}
-```
-
-This endpoint demonstrates the start-or-signal pattern that either creates a new workflow or sends a signal to an existing one. 
-This approach ensures robust message delivery regardless of workflow state.
-
-Add the confirmation endpoint:
+[api/main.py](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/api/main.py)
 
 ```python
-@app.post("/confirm")
-async def send_confirm() -> Dict[str, str]:
-    """Sends a 'confirm' signal to the workflow."""
-    temporal_client = _ensure_temporal_client()
+import asyncio
+from collections import deque
+from contextlib import asynccontextmanager
+from typing import Dict, Optional
 
-    workflow_id = "agent-workflow"
-    handle = temporal_client.get_workflow_handle(workflow_id)
-    await handle.signal("confirm")
-    return {"message": "Confirm signal sent."}
-```
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from temporalio.api.enums.v1 import WorkflowExecutionStatus
+from temporalio.client import Client
+from temporalio.exceptions import TemporalError
 
-The confirmation endpoint enables users to approve tool executions, providing control over agent actions. 
-This signal-based approach allows real-time interaction with running workflows.
+from models.requests import AgentGoalWorkflowParams, CombinedInput, ConversationHistory
+from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
+from tools.goal_registry import goal_event_flight_invoice
+from workflows.agent_goal_workflow import AgentGoalWorkflow
 
-### Implementing workflow lifecycle management
+temporal_client: Optional[Client] = None
 
-The API includes endpoints for managing workflow lifecycle operations including termination and initialization.
 
-Add the chat termination endpoint:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global temporal_client
+    # Create the Temporal client
+    temporal_client = await get_temporal_client()
+    yield
 
-```python
-@app.post("/end-chat")
-async def end_chat() -> Dict[str, str]:
-    """Sends a 'end_chat' signal to the workflow."""
-    workflow_id = "agent-workflow"
 
-    temporal_client = _ensure_temporal_client()
+app = FastAPI(lifespan=lifespan)
 
-    try:
-        handle = temporal_client.get_workflow_handle(workflow_id)
-        await handle.signal("end_chat")
-        return {"message": "End chat signal sent."}
-    except TemporalError as e:
-        print(e)
-        # Workflow not found; return an empty response
-        return {}
-```
+# Load environment variables
+load_dotenv()
 
-The end chat endpoint gracefully terminates conversations by signaling workflows to complete their processing and return final results.
+AGENT_GOAL = goal_event_flight_invoice
 
-Add the workflow initialization endpoint:
 
-```python
-@app.post("/start-workflow")
-async def start_workflow() -> Dict[str, str]:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    temporal_client = _ensure_temporal_client()
 
-    # Create combined input
-    combined_input = CombinedInput(
-        tool_params=AgentGoalWorkflowParams(None, None),
-        agent_goal=AGENT_GOAL,
-    )
+@app.get("/")
+def root() -> Dict[str, str]:
+    return {"message": "Temporal AI Agent!"}
 
-    workflow_id = "agent-workflow"
 
-    # Start the workflow with the starter prompt from the goal
-    await temporal_client.start_workflow(
-        AgentGoalWorkflow.run,
-        combined_input,
-        id=workflow_id,
-        task_queue=TEMPORAL_TASK_QUEUE,
-        start_signal="user_prompt",
-        start_signal_args=["### " + AGENT_GOAL.starter_prompt],
-    )
-
-    return {
-        "message": f"Workflow started with goal's starter prompt: {AGENT_GOAL.starter_prompt}."
-    }
-```
-
-The workflow initialization endpoint creates fresh conversation sessions with the agent's starter prompt, providing a clean entry point for new interactions.
-
-### Adding utility functions and client validation
-
-The API includes utility functions that ensure robust operation and proper error handling across all endpoints.
-
-Complete the file with the client validation utility:
-
-```python
 def _ensure_temporal_client() -> Client:
     """Ensure temporal client is initialized and return it.
 
@@ -5238,38 +5474,194 @@ def _ensure_temporal_client() -> Client:
     if temporal_client is None:
         raise HTTPException(status_code=500, detail="Temporal client not initialized")
     return temporal_client
+
+
+@app.post("/start-workflow")
+async def start_workflow() -> Dict[str, str]:
+    """Start the AgentGoalWorkflow"""
+    temporal_client = _ensure_temporal_client()
+
+    # Create combined input
+    combined_input = CombinedInput(
+        tool_params=AgentGoalWorkflowParams(
+            None, deque([f"### {AGENT_GOAL.starter_prompt}"])
+        ),
+        agent_goal=AGENT_GOAL,
+    )
+
+    workflow_id = "agent-workflow"
+
+    # Start the workflow with the starter prompt from the goal
+    await temporal_client.start_workflow(
+        AgentGoalWorkflow.run,
+        combined_input,
+        id=workflow_id,
+        task_queue=TEMPORAL_TASK_QUEUE,
+    )
+
+    return {
+        "message": f"Workflow started with goal's starter prompt: {AGENT_GOAL.starter_prompt}."
+    }
+
+
+@app.post("/send-prompt")
+async def send_prompt(prompt: str) -> Dict[str, str]:
+    """Sends the user prompt to the Workflow"""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("user_prompt", prompt)
+
+    return {"message": f"Prompt '{prompt}' sent to workflow {workflow_id}."}
+
+
+@app.post("/confirm")
+async def send_confirm() -> Dict[str, str]:
+    """Sends a 'confirm' signal to the workflow."""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("confirm")
+    return {"message": "Confirm signal sent."}
+
+
+@app.post("/end-chat")
+async def end_chat() -> Dict[str, str]:
+    """Sends a 'end_chat' signal to the workflow."""
+    temporal_client = _ensure_temporal_client()
+
+    workflow_id = "agent-workflow"
+    handle = temporal_client.get_workflow_handle(workflow_id)
+    await handle.signal("end_chat")
+    return {"message": "End chat signal sent."}
+
+
+@app.get("/get-conversation-history")
+async def get_conversation_history() -> ConversationHistory:
+    """Calls the workflow's 'get_conversation_history' query."""
+
+    temporal_client = _ensure_temporal_client()
+
+    try:
+        handle = temporal_client.get_workflow_handle("agent-workflow")
+
+        failed_states = [
+            WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_TERMINATED,
+            WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_CANCELED,
+            WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_FAILED,
+        ]
+
+        description = await handle.describe()
+        if description.status in failed_states:
+            print("Workflow is in a failed state. Returning empty history.")
+            return []
+
+        # Set a timeout for the query
+        try:
+            conversation_history = await asyncio.wait_for(
+                handle.query("get_conversation_history"),
+                timeout=5,  # Timeout after 5 seconds
+            )
+            return conversation_history
+        except asyncio.TimeoutError:
+            raise HTTPException(
+                status_code=404,
+                detail="Temporal query timed out (worker may be unavailable).",
+            )
+
+    except TemporalError as e:
+        error_message = str(e)
+        print(f"Temporal error: {error_message}")
+
+        # If worker is down or no poller is available, return a 404
+        if "no poller seen for task queue recently" in error_message:
+            raise HTTPException(
+                status_code=404, detail="Workflow worker unavailable or not found."
+            )
+
+        if "workflow not found" in error_message:
+            await start_workflow()
+            return []
+        else:
+            # For other Temporal errors, return a 500
+            raise HTTPException(
+                status_code=500, detail="Internal server error while querying workflow."
+            )
+```
+</details>
+
+You just implemented an API allowing client programs to interact with your agent.
+
+<details>
+
+<summary>
+Before moving on to the next section, verify your files and directory structure is correct.
+</summary>
+
+```
+temporal-ai-agent/
+├── .env.example
+├── .gitignore
+├── .python-version
+├── README.md
+├── pyproject.toml
+├── uv.lock
+├── activities/
+|   ├── __init__.py
+|   └── activities.py
+├── api/
+│   └── main.py
+├── models/
+│   ├── __init__.py
+│   ├── core.py
+│   └── requests.py
+├── prompts/
+│   ├── __init__.py
+│   ├── agent_prompt_generators.py
+│   └── prompts.py
+├── scripts/
+│   ├── create_invoice_test.py
+│   ├── find_events_test.py
+│   └── search_flights_test.py
+├── tools/
+│   ├── __init__.py
+│   ├── create_invoice.py
+│   ├── find_events.py
+│   ├── goal_registry.py
+│   ├── search_flights.py
+│   ├── tool_registry.py
+│   └── data/
+|       └── find_events_data.json
+├── worker/
+│   └── worker.py
+└── workflows/
+    ├── __init__.py
+    ├── agent_goal_workflow.py
+    └── workflow_helpers.py
 ```
 
-This utility function provides centralized client validation that ensures all endpoints have access to properly initialized Temporal connections.
+</details>
 
-### Creating package initialization
 
-Create empty `__init__.py` files to make your directories Python packages:
+In the next step, you will test your agent using a chatbot web interface.
+
+## Testing your agent with a Chatbot UI
+
+Now that you implemented a mechanism of communication for your agent, it's time to test it.
+
+To do so, download a pre-built React base web UI:
 
 ```command
-touch api/__init__.py
-touch shared/__init__.py
+curl -o frontend.zip https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/frontend.zip
 ```
 
-
-**Key Endpoints:**
-- `GET /get-conversation-history` - Real-time conversation state access
-- `POST /send-prompt` - Send user messages to workflows  
-- `POST /confirm` - Approve tool executions
-- `POST /end-chat` - Terminate conversations
-- `POST /start-workflow` - Initialize new agent sessions
-
-This FastAPI backend demonstrates key patterns for building production-ready API-Workflow integrations: robust error handling, flexible authentication, real-time communication through Signals and Queries, and proper resource lifecycle management. 
-The system provides a clean HTTP interface that abstracts Temporal's complexity while maintaining full access to workflow capabilities.
-
-In the next step, you will create the React frontend that provides a user-friendly web interface for interacting with your AI agent system.
-
-## Step 8 — Testing with a  React frontend
-
-In this step, you will test the React frontend that provides a user-friendly web interface for interacting with your AI agent system. 
+Once downloaded, extract the files from 
+In this step, you will test the React frontend that provides a  web interface for interacting with your AI agent system. 
 This frontend handles real-time conversation display, user input processing, and tool confirmation workflows while maintaining responsive performance through optimized polling and state management.
 
-## Step 9 — Integration and testing
+## Integration and testing
 
 In this step, you will integrate all components of your AI agent system and verify that everything works together seamlessly. 
 This includes running the complete stack locally, testing conversation flows, and understanding how Temporal provides observability and debugging capabilities.
@@ -5294,132 +5686,6 @@ temporal server start-dev
 
 The development server includes a web UI at `http://localhost:8233` that provides workflow visibility, execution history, and debugging capabilities. Keep this terminal open as the server needs to run continuously.
 
-### Creating and running the Temporal worker
-
-The worker process executes your workflows and activities, providing the computational resources for your AI agent system.
-
-Open your text editor and create `worker/worker.py` with the complete worker implementation:
-
-```python
-import asyncio
-import concurrent.futures
-import logging
-import os
-
-from dotenv import load_dotenv
-from temporalio.worker import Worker
-
-from activities.activities import AgentActivities, dynamic_tool_activity
-from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
-from workflows.agent_goal_workflow import AgentGoalWorkflow
-
-
-async def main():
-    # Load environment variables
-    load_dotenv(override=True)
-
-    # Print LLM configuration info
-    llm_model = os.environ.get("LLM_MODEL", "openai/gpt-4")
-    print(f"Worker will use LLM model: {llm_model}")
-
-    # Create the client
-    client = await get_temporal_client()
-
-    # Initialize the activities class
-    activities = AgentActivities()
-    print(f"AgentActivities initialized with LLM model: {llm_model}")
-
-    print("Worker ready to process tasks!")
-    logging.basicConfig(level=logging.WARN)
-```
-
-The worker initialization loads environment configuration and establishes connection to the Temporal server. 
-It prints diagnostic information to help verify proper setup.
-
-Complete the worker with execution configuration:
-
-```python
-    # Run the worker
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as activity_executor:
-        worker = Worker(
-            client,
-            task_queue=TEMPORAL_TASK_QUEUE,
-            workflows=[AgentGoalWorkflow],
-            activities=[
-                activities.agent_validatePrompt,
-                activities.agent_toolPlanner,
-                activities.get_wf_env_vars,
-                dynamic_tool_activity,
-            ],
-            activity_executor=activity_executor,
-        )
-
-        print(f"Starting worker, connecting to task queue: {TEMPORAL_TASK_QUEUE}")
-        print("Ready to begin processing...")
-        await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-The worker configuration specifies which workflows and activities it can execute. 
-The thread pool executor enables concurrent activity execution for better performance.
-
-Start the worker in a new terminal:
-
-```command
-uv run python worker/worker.py
-```
-
-You should see output confirming the worker is connected and ready to process tasks:
-
-```
-Worker will use LLM model: openai/gpt-4
-AgentActivities initialized with LLM model: openai/gpt-4
-Worker ready to process tasks!
-Starting worker, connecting to task queue: agent-task-queue
-Ready to begin processing...
-```
-
-### Starting the FastAPI backend
-
-The API backend provides HTTP endpoints for the frontend to interact with Temporal workflows.
-
-In a new terminal, start the FastAPI server:
-
-```command
-uv run uvicorn api.main:app --reload
-```
-
-The API server will start on port 8000 with automatic reloading enabled for development. You should see:
-
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process
-Address: localhost:7233, Namespace default
-```
-
-### Starting the React frontend
-
-The frontend provides the user interface for interacting with your AI agent.
-
-In a new terminal, navigate to the frontend directory and start the development server:
-
-```command
-cd frontend
-npm install  # Install dependencies if not done yet
-npm run dev
-```
-
-The Vite development server will start on port 5173:
-
-```
-VITE v6.3.5  ready in 150 ms
-
-➜  Local:   http://localhost:5173/
-➜  Network: use --host to expose
-```
 
 ### Testing the complete system
 
@@ -5534,88 +5800,6 @@ Restart the worker and observe how Temporal automatically retries failed activit
 
 **Test frontend resilience** by stopping and restarting the API backend. The frontend continues polling and automatically reconnects when the backend returns.
 
-### Running comprehensive tests
-
-Create a test script to verify all tools work correctly. Create `scripts/test_integration.py`:
-
-```python
-import asyncio
-from tools.find_events import find_events
-from tools.search_flights import search_flights
-from tools.create_invoice import create_invoice
-
-async def test_all_tools():
-    print("Testing Event Search...")
-    events_result = find_events({"city": "New York", "month": "December"})
-    print(f"Found {len(events_result['events'])} events")
-    
-    print("\nTesting Flight Search...")
-    flights_result = search_flights({
-        "origin": "Los Angeles",
-        "destination": "New York",
-        "dateDepart": "2024-12-15",
-        "dateReturn": "2024-12-20"
-    })
-    print(f"Found {len(flights_result['results'])} flights")
-    
-    print("\nTesting Invoice Creation...")
-    invoice_result = create_invoice({
-        "amount": 500.00,
-        "tripDetails": "Flight from LAX to NYC",
-        "email": "test@example.com"
-    })
-    print(f"Invoice status: {invoice_result['invoiceStatus']}")
-    
-    print("\nAll tools tested successfully!")
-
-if __name__ == "__main__":
-    asyncio.run(test_all_tools())
-```
-
-Run the integration test:
-
-```command
-uv run python scripts/test_integration.py
-```
-
-### Performance monitoring and optimization
-
-Monitor your system's performance characteristics during testing:
-
-**Language model latency**: Activities typically complete in 1-3 seconds depending on model and prompt complexity. The Temporal UI shows exact durations for each activity execution.
-
-**Polling efficiency**: The 600ms polling interval provides responsive updates without overwhelming the backend. Monitor browser network tab to verify reasonable request rates.
-
-**Worker resource usage**: The worker's thread pool handles concurrent activities efficiently. Monitor process memory and CPU usage during active conversations.
-
-**Workflow history size**: Long conversations accumulate history. The workflow implements continuation patterns to handle conversations exceeding 250 messages.
-
-
-### Bringing it all together
-
-Your complete AI agent system demonstrates sophisticated distributed system patterns:
-
-**Component Architecture:**
-- Temporal server providing durable orchestration
-- Python worker executing workflows and activities
-- FastAPI backend bridging HTTP and Temporal
-- React frontend with real-time updates
-
-**Reliability Features:**
-- Automatic retry for transient failures
-- Durable conversation state across restarts
-- Graceful degradation with clear error messages
-- Complete observability through Temporal UI
-
-**Development Experience:**
-- Hot reloading for frontend and API changes
-- Comprehensive logging for debugging
-- Integration test suite for verification
-- Clear separation of concerns
-
-This integrated system provides a production-ready foundation for building sophisticated AI agents. The combination of Temporal's durability guarantees, proper error handling, and comprehensive observability ensures your agent can handle real-world usage patterns reliably.
-
-In the final step, you will learn deployment considerations and next steps for extending your AI agent system.
 
 ## Conclusion
 
