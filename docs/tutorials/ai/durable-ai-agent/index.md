@@ -4816,6 +4816,16 @@ It then returns a configured Temporal client, ready to communicate with the Temp
 
 ### Configuring the Worker
 
+Now that you have a reusable way of creating a Temporal client, you can now use that to configure your Temporal Worker.
+
+Start by creating the `worker` directory:
+
+```bash
+mkdir worker
+```
+
+Then, create the file `worker.py` in the `worker` directory and add the following import statements:
+
 ```python
 import asyncio
 import concurrent.futures
@@ -4829,6 +4839,11 @@ from activities.activities import AgentActivities, dynamic_tool_activity
 from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
 from workflows.agent_goal_workflow import AgentGoalWorkflow
 ```
+
+These import statements include libraries from the standard library, third party packages such as `dotenv` and the `temporalio.worker` library, as well as a few of the libraries you implemented.
+A Worker must register the Workflows and Activities it intends to execute, so it must import them, as well as the function for creating the Temporal client.
+
+Next, create the `main` method and add the code responsible for initializing a few variables, including creating the Temporal client and creating an instance of your `AgentActivities` class.
 
 ```python
 async def main():
@@ -4850,6 +4865,12 @@ async def main():
     logging.basicConfig(level=logging.WARN)
 ```
 
+This code loads the in the environment variables from your `.env` file.
+It uses the `LLM_MODEL` environment variable to print which model the agent will call, defaulting to OpenAI's GPT-4 if none is set.
+It then creates a Temporal client, and an instance of your `AgentActivities` class before setting the log level to `WARN`.
+
+Finally, add the code to configure and start your Worker:
+
 ```python
     # Run the worker
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as activity_executor:
@@ -4870,29 +4891,77 @@ async def main():
         print("Ready to begin processing...")
         await worker.run()
 
-
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+The code creates a `ThreadPoolExecutor` for the Worker to use as the `activity_executor`.
+Since an agent's tools can be either `async` or not, you must use one of the synchronous safe methods for Activity execution.
+You can read more about this in [the Python SDK documentation](https://docs.temporal.io/develop/python/python-sdk-sync-vs-async).
+
+
+Next, the Worker object is created, passing in the `client`, the `task_queue`, the `activity_executor`, and then registering the individual Workflows and Activities the Worker can execute.
+The Worker is then started with `await worker.run()`, which creates a long running process that will poll the Temporal service, executing Workflow and Activities when they are requested.
+
+Finally, the standard `if __name__ == "__main__"` calls the main function when you run `worker.py`, starting the Worker.
+
+Now that you have implemented your Worker, verify that it runs.
+
 ### Testing the Worker
+
+Before starting the Worker, you need to start a Temporal service. 
+To start the local development server, open a terminal and run the following command:
+
+```bash
+temporal server start-dev
+```
+
+This starts a local Temporal service running on port 7233 with the web UI running on port 8233.
+The output of this command should resemble (The exact version numbers may not match):
+
+```output
+CLI 1.1.1 (Server 1.25.1, UI 2.31.2)
+
+Server:  localhost:7233
+UI:      http://localhost:8233
+Metrics: http://localhost:53697/metrics
+```
+
+Next, open another terminal and run your Worker:
 
 ```bash
 uv run worker/worker.py
 ```
 
-## Building a FastAPI backend
+Your worker should start, and the output should be:
 
-In this step, you will create the FastAPI backend that provides HTTP endpoints for interacting with your Temporal Workflows. 
-This API serves as the bridge between web interfaces and your durable agent system, handling workflow management, real-time communication, and conversation state access.
+```output
+Worker will use LLM model: openai/gpt-4o
+Address: localhost:7233, Namespace default
+(If unset, then will try to connect to local server)
+AgentActivities initialized with LLM model: openai/gpt-4o
+Worker ready to process tasks!
+Starting worker, connecting to task queue: agent-task-queue
+Ready to begin processing...
+```
 
-### Understanding the API integration challenge
+The command will not exit, but sit there.
+This is expected.
+It is waiting for Workflows and Activity tasks to execute.
+As long as your Worker is running successfully, that is enough for now.
+Kill the worker and Temporal service with `CTRL-C`.
 
-Web applications require HTTP-based interfaces to interact with backend systems, but Temporal Workflows operate through specialized clients that communicate via gRPC protocols. 
-The challenge is creating a clean REST API that abstracts Temporal's complexity while providing responsive, real-time access to agent conversations.
+Next, you will implement a REST API that will serve as the backend service for invoking your agent.
 
-Your API needs to handle multiple concurrent conversations, manage workflow lifecycle operations, provide real-time conversation updates, and gracefully handle various failure scenarios including workflow unavailability and network timeouts. 
-The system must also support both development and production deployment patterns.
+## Building a REST API for interacting with your agent
+
+Now that you have your agent implemented, you need a way for client applications to interact with it. 
+Temporal provides client libraries, but having a singular API to manage invoking a Workflow 
+
+
+In this step, you will create a backend API that will serve as the interface for interacting with your agent. 
+You'll use the [FastAPI](https://fastapi.tiangolo.com/) framework to build this.
+FastAPI is a great choice to pair with Temporal, as it's an async Python backend that supports type hints.
 
 ### Creating the API directory structure
 
@@ -4900,84 +4969,7 @@ Create the directory structure for your FastAPI application:
 
 ```command
 mkdir api
-mkdir shared
 ```
-
-### Building Temporal client configuration
-
-The first challenge is establishing reliable connections to Temporal servers that work across different deployment environments from local development to cloud production.
-
-Open your text editor and create `shared/config.py` with the Temporal connection system:
-
-```python
-import os
-
-from dotenv import load_dotenv
-from temporalio.client import Client
-from temporalio.service import TLSConfig
-
-load_dotenv(override=True)
-
-# Temporal connection settings
-TEMPORAL_ADDRESS = os.getenv("TEMPORAL_ADDRESS", "localhost:7233")
-TEMPORAL_NAMESPACE = os.getenv("TEMPORAL_NAMESPACE", "default")
-TEMPORAL_TASK_QUEUE = os.getenv("TEMPORAL_TASK_QUEUE", "agent-task-queue")
-
-# Authentication settings
-TEMPORAL_TLS_CERT = os.getenv("TEMPORAL_TLS_CERT", "")
-TEMPORAL_TLS_KEY = os.getenv("TEMPORAL_TLS_KEY", "")
-TEMPORAL_API_KEY = os.getenv("TEMPORAL_API_KEY", "")
-```
-
-This configuration system loads Temporal connection parameters from environment variables with sensible defaults for local development. 
-It supports multiple authentication methods for different deployment scenarios.
-
-Add the client creation function:
-
-```python
-async def get_temporal_client() -> Client:
-    """
-    Creates a Temporal client based on environment configuration.
-    Supports local server, mTLS, and API key authentication methods.
-    """
-    # Default to no TLS for local development
-    tls_config = False
-    print(f"Address: {TEMPORAL_ADDRESS}, Namespace {TEMPORAL_NAMESPACE}")
-    print("(If unset, then will try to connect to local server)")
-
-    # Configure mTLS if certificate and key are provided
-    if TEMPORAL_TLS_CERT and TEMPORAL_TLS_KEY:
-        print(f"TLS cert: {TEMPORAL_TLS_CERT}")
-        print(f"TLS key: {TEMPORAL_TLS_KEY}")
-        with open(TEMPORAL_TLS_CERT, "rb") as f:
-            client_cert = f.read()
-        with open(TEMPORAL_TLS_KEY, "rb") as f:
-            client_private_key = f.read()
-        tls_config = TLSConfig(
-            client_cert=client_cert,
-            client_private_key=client_private_key,
-        )
-
-    # Use API key authentication if provided
-    if TEMPORAL_API_KEY:
-        print(f"API key: {TEMPORAL_API_KEY}")
-        return await Client.connect(
-            TEMPORAL_ADDRESS,
-            namespace=TEMPORAL_NAMESPACE,
-            api_key=TEMPORAL_API_KEY,
-            tls=True,  # Always use TLS with API key
-        )
-
-    # Use mTLS or local connection
-    return await Client.connect(
-        TEMPORAL_ADDRESS,
-        namespace=TEMPORAL_NAMESPACE,
-        tls=tls_config,
-    )
-```
-
-This client factory demonstrates a flexible authentication pattern that automatically detects available credentials and chooses the appropriate connection method. 
-It supports local development servers, mutual TLS for private clouds, and API key authentication for Temporal Cloud.
 
 ### Creating the FastAPI application foundation
 
