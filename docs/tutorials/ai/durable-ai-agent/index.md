@@ -5658,6 +5658,9 @@ curl -o frontend.zip https://raw.githubusercontent.com/temporal-community/tutori
 ```
 
 Once downloaded, extract the files from 
+
+## IGNORE EVERYTHING BELOW THIS POINT - IT'S AI GENERATED EXPERIMENTAL
+
 In this step, you will test the React frontend that provides a  web interface for interacting with your AI agent system. 
 This frontend handles real-time conversation display, user input processing, and tool confirmation workflows while maintaining responsive performance through optimized polling and state management.
 
@@ -5691,9 +5694,9 @@ The development server includes a web UI at `http://localhost:8233` that provide
 
 With all components running, open your web browser to `http://localhost:5173` to interact with your AI agent system.
 
-The initial interface shows an empty conversation area. The system automatically initializes when you first access it, creating a new workflow instance. You'll see the agent's greeting message appear:
+The initial interface shows an empty conversation area. The system automatically initializes when you first access it, creating a new Workflow instance. You'll see the agent's greeting message appear:
 
-```
+```text
 Agent: Welcome! I'm here to help you plan a trip to an event in North America. 
 I can find events happening in major cities, search for flights to get you there, 
 and create an invoice for your trip. What city would you like to explore for events, 
@@ -5702,13 +5705,13 @@ and what month are you interested in?
 
 Test the conversation flow by responding with a city and month:
 
-```
+```text
 You: I'd like to see events in San Francisco in March
 ```
 
 The agent will process your request and search for events:
 
-```
+```text
 Agent: I'll search for events in San Francisco in March. I'll also check one month 
 before and after to give you more options.
 
@@ -5840,20 +5843,6 @@ Your AI agent system provides a foundation for many enhancements:
 **Deploy to production**: Use Temporal Cloud or self-hosted Temporal clusters for production deployment, implementing proper authentication, monitoring, and scaling strategies.
 
 **Optimize language model usage**: Implement caching strategies, prompt compression techniques, and model selection logic to balance cost and performance.
-
-### Production considerations
-
-When deploying your AI agent system to production, consider:
-
-**Security**: Implement proper authentication for the API layer, encrypt sensitive data in workflow state, and follow security best practices for handling user data and API credentials.
-
-**Scalability**: Temporal workflows scale horizontally by adding more workers. Monitor workflow and activity execution times to identify bottlenecks and optimize resource allocation.
-
-**Cost management**: Language model API calls can be expensive. Implement token counting, set up usage alerts, and consider using smaller models for validation tasks.
-
-**Error handling**: Enhance error messages for better user experience, implement circuit breakers for external services, and set up comprehensive monitoring and alerting.
-
-**Compliance**: Ensure your agent system meets relevant compliance requirements for data handling, user consent, and audit trails, leveraging Temporal's built-in event history for audit purposes.
 
 ### Resources for continued learning
 
