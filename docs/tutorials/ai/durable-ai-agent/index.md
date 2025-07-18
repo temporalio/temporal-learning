@@ -5647,87 +5647,218 @@ temporal-ai-agent/
 
 In the next step, you will test your agent using a chatbot web interface.
 
-## Testing your agent with a Chatbot UI
+## Running you agent 
 
 Now that you implemented a mechanism of communication for your agent, it's time to test it.
+You will now download a React frontend that implements a chatbot UI to interact with your agent.
+The UI will open in a terminal window and prompt the user with a message stating their purpose and instructing the user what to do next.
+Throughout the conversation, the user will interact with the agent, responding to questions from the agent as the agent tries to accomplish its goal.
 
-To do so, download a pre-built React base web UI:
+### Adding a Chatbot Web UI
+
+To get started, download the pre-built React based web UI:
 
 ```command
 curl -o frontend.zip https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/frontend.zip
 ```
 
-Once downloaded, extract the files from 
+Once downloaded, extract the files from the zip to your root directory.
+You can do this with your OS's tool, or with a command line tool like `unzip`:
 
-## IGNORE EVERYTHING BELOW THIS POINT - IT'S AI GENERATED EXPERIMENTAL
+```command
+unzip frontend.zip
+```
 
-In this step, you will test the React frontend that provides a  web interface for interacting with your AI agent system. 
-This frontend handles real-time conversation display, user input processing, and tool confirmation workflows while maintaining responsive performance through optimized polling and state management.
+Next, change directories into the `frontend` directory that was just extracted and install the packages to run the UI:
 
-## Integration and testing
+```command
+cd frontend
+npm install
+```
 
-In this step, you will integrate all components of your AI agent system and verify that everything works together seamlessly. 
-This includes running the complete stack locally, testing conversation flows, and understanding how Temporal provides observability and debugging capabilities.
+Once the packages are finished installing, the web UI is ready to interact with your API.
 
-### Understanding the integration challenge
+### Starting Your Agent
 
-Building a distributed AI agent system requires coordinating multiple components - Temporal server, worker processes, API backend, and React frontend - that must communicate reliably across different protocols and execution contexts. 
-The challenge is ensuring all components are properly configured, can discover each other, and handle various failure scenarios gracefully.
-
-Your integrated system needs to manage asynchronous workflows, maintain conversation state across components, handle tool executions with proper confirmation flows, provide real-time updates to the frontend, and enable debugging when issues arise. 
-Temporal's architecture provides built-in solutions for many of these challenges through its durable execution model.
-
-### Starting the Temporal development server
+You now have assembled all the pieces to run the agent to completion.
+Running the agent requires a minimum of **four** different terminals, however this will only have one Worker process running.
+You can either open multiple terminals, or use a terminal multiplexer like `screen` or `tmux`.
+If you have the capabilities of running more than one Worker, it is recommended that you do so.
 
 The first requirement is running a local Temporal server that coordinates workflow execution and provides durability guarantees.
 
-Start the development server:
+In the first terminal, start the development server:
 
 ```command
 temporal server start-dev
 ```
 
-The development server includes a web UI at `http://localhost:8233` that provides workflow visibility, execution history, and debugging capabilities. Keep this terminal open as the server needs to run continuously.
+This starts a local Temporal service running on port 7233 with the web UI running on port 8233.
+The output of this command should resemble (The exact version numbers may not match):
+
+```output
+CLI 1.1.1 (Server 1.25.1, UI 2.31.2)
+
+Server:  localhost:7233
+UI:      http://localhost:8233
+Metrics: http://localhost:53697/metrics
+```
+
+In the second terminal, start your Worker:
+
+```bash
+uv run worker/worker.py
+```
+
+You should see the following output output:
+
+```output
+Worker will use LLM model: openai/gpt-4o
+Address: localhost:7233, Namespace default
+(If unset, then will try to connect to local server)
+AgentActivities initialized with LLM model: openai/gpt-4o
+Worker ready to process tasks!
+Starting worker, connecting to task queue: agent-task-queue
+Ready to begin processing...
+```
+
+If you are able, running a second Worker in another terminal is recommended using the steps above.
+
+Next, open another terminal and run the FastAPI application:
+
+```command
+uv run uvicorn api.main:app --reload
+```
+
+This uses `uvicorn`, an ASGI server to run the FastAPI app and auto reload the app if any changes are detected.
+
+The output of this command should resemble:
+
+```output
+INFO:     Will watch for changes in these directories: ['/Users/ziggy/temporal-ai-agent']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [31826] using StatReload
+INFO:     Started server process [31828]
+INFO:     Waiting for application startup.
+Address: localhost:7233, Namespace default
+(If unset, then will try to connect to local server)
+INFO:     Application startup complete.
+```
+
+Finally, open the last new terminal, change directories into the `frontend` directory and start the web UI:
+
+```command
+cd frontend
+npx vite
+```
+
+You will see output to your terminal, and then your web browser will open to `localhost:5173` with your agent running.
+
+:::note
+
+When first starting the web UI, you may see a red error banner appear upon startup with a message about timeouts.
+This is expected, as the UI begins polling immediately before the Workflow may begin.
+This will go away within a few seconds once the Workflow Execution has started and the first message from the agent appears.
+
+:::
+
+Finally, open a new browser tab and navigate to `localhost:8233`.
+This will display the Temporal Web UI.
+You should see a running Workflow Execution there with the Workflow ID **agent-workflow**.
+Click on the link to open it so you can watch the Workflow progress as you run test your agent.
 
 
 ### Testing the complete system
 
-With all components running, open your web browser to `http://localhost:5173` to interact with your AI agent system.
+With all components running, you can now test the agent Workflow.
 
-The initial interface shows an empty conversation area. The system automatically initializes when you first access it, creating a new Workflow instance. You'll see the agent's greeting message appear:
+Navigate back to `localhost:5173`.
+You should see a message _similar_ to the following.
+Remember, the agent's responses are powered by an LLM, so the responses are non-deterministic, meaning they are likely to be slightly different every time.
 
 ```text
-Agent: Welcome! I'm here to help you plan a trip to an event in North America. 
-I can find events happening in major cities, search for flights to get you there, 
-and create an invoice for your trip. What city would you like to explore for events, 
-and what month are you interested in?
+Agent: Welcome! I'm here to help you plan your travel to an exciting event. First, we need to find an event you'd like to attend in a major North American city. Could you please tell me which city and month you're interested in?
 ```
 
-Test the conversation flow by responding with a city and month:
+Test the conversation by responding with a city you'd like to travel to and the month you want to travel:
 
 ```text
 You: I'd like to see events in San Francisco in March
 ```
 
-The agent will process your request and search for events:
+The agent will process receive your prompt and use the LLM to determine the next step:
 
 ```text
-Agent: I'll search for events in San Francisco in March. I'll also check one month 
-before and after to give you more options.
-
-[Tool execution occurs here]
-
-Agent: I found several great events in San Francisco around March! Here are the options:
-
-1. **Game Developers Conference** (March 17-21, 2025) - The world's largest 
-   professional game industry event
-2. **SF Beer Week** (February 7-16, 2025) - Ten days of beer events throughout 
-   the Bay Area  
-3. **Cherry Blossom Festival** (April 12-20, 2025) - Celebrating Japanese 
-   culture and the blooming cherry blossoms
-
-Would you like to search for flights to any of these events?
+Agent:
+Let's proceed with finding events in San Francisco for March.
 ```
+
+It will determine that it should use the `FindEvents` tool and search for events.
+
+:::note
+
+If you have the `SHOW_CONFIRM` environment variable set to `True`, the UI will prompt you to confirm execution of this tool and all future tool executions.
+By default this is enabled, so you will need to confirm the execution.
+
+:::
+
+Once you have confirmed the tool execution, the agent executes the tool and provides events for you to choose from:
+
+```text
+Agent: Here are some exciting events in San Francisco:
+1. Lunar New Year Festival & Parade: Traditional celebration featuring parades, dragon dances, cultural performances, and food from February 8 to February 22, 2026.
+2. San Francisco International Film Festival: Showcasing international cinema, documentaries, and shorts from April 17 to May 1, 2026.
+Would you like to search for flights to San Francisco for any of these events? If yes, please provide your departure city.
+```
+
+You can then respond with which event you'd like to attend:
+
+```text
+You: I would like to attend the San Francisco International Film Festival
+```
+
+However, you forgot to provide the departure city here, which the agent recognized and then prompted you for again.
+
+```text
+Agent: Great choice! To search for flights to the San Francisco International Film Festival, which runs from April 17 to May 1, 2026, could you please provide your departure city?
+```
+
+Thinking about lunch, you accidentally input your lunch order into the chatbot:
+
+```text
+I would like to order two double cheeseburgers.
+```
+
+The agent's guardrails recognize this isn't valid for its goal, so it informs you and prompts you to enter your departure city.
+
+```text
+Agent: Ordering double cheeseburgers doesn't align with our current goal of planning travel for an event. Could you please provide your departure city so we can search for flights to San Francisco International Film Festival?
+```
+
+You then provide it with your departure city:
+
+```text
+You: I'm sorry. I'd like to depart from Austin, TX
+```
+
+The agent now has the information it needs, and can move on to the next step.
+This is evident because after the prompt, you are asked to confirm execution for the `SearchFlights` tool:
+
+```text
+Agent: Thanks for providing your departure city! Let's proceed with searching for flights from Austin, TX (AUS) to San Francisco (SFO) around the dates of April 17 to May 1, 2026.
+```
+
+The agent then executes the tool, searching for flights to your destination. 
+
+:::note
+
+If you have supplied a RAPIDAPI key, this will make a call to a microservice to check for real flight data.
+If the API returns multiple times with an error or no flights, this is the external API being unreliable and returning sporadic error messages.
+To alleviate this, use the mocked fucntion instead.
+
+:::
+
+Once the agent has found
 
 ### Understanding the system flow
 
