@@ -1,5 +1,6 @@
 ---
 title: "Build Invincible Apps with Durable Execution"
+hide_title: true
 sidebar_position: 1
 public: false
 draft: false
