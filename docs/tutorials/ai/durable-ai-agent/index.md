@@ -289,21 +289,6 @@ It can be blank for now, so create it with the following command:
 touch __init__.py
 ```
 
-Finally, you need to update your `pyproject.toml` so it knows how to access the modules at build time.
-Add the following configuration to the bottom of the file:
-
-```toml
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-# Tell hatchling what to include
-[tool.hatch.build.targets.wheel]
-packages = ["tools"]
-```
-
-Just a heads up, you will be adding more packages to the `packages` option throughout this tutorial.
-
 Now that you have setup the structure for your tools package, you'll acquire and test the tools needed to have the agent succeed with its goal.
 
 ### Acquiring the `find_events` tool
