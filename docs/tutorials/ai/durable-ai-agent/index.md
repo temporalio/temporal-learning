@@ -5647,7 +5647,7 @@ temporal-ai-agent/
 
 In the next step, you will test your agent using a chatbot web interface.
 
-## Running you agent 
+## Running your agent 
 
 Now that you implemented a mechanism of communication for your agent, it's time to test it.
 You will now download a React frontend that implements a chatbot UI to interact with your agent.
@@ -5777,7 +5777,7 @@ You should see a message _similar_ to the following.
 Remember, the agent's responses are powered by an LLM, so the responses are non-deterministic, meaning they are likely to be slightly different every time.
 
 ```text
-Agent: Welcome! I'm here to help you plan your travel to an exciting event. First, we need to find an event you'd like to attend in a major North American city. Could you please tell me which city and month you're interested in?
+Agent: Welcome! I'm here to help you plan your travel to events in North America. I can assist you in finding events, booking flights, and generating invoices for your trip. To get started, please tell me which city and month you're interested in traveling to?
 ```
 
 Test the conversation by responding with a city you'd like to travel to and the month you want to travel:
@@ -5789,8 +5789,7 @@ You: I'd like to see events in San Francisco in March
 The agent will process receive your prompt and use the LLM to determine the next step:
 
 ```text
-Agent:
-Let's proceed with finding events in San Francisco for March.
+Agent: Let's proceed with finding events in San Francisco in March.
 ```
 
 It will determine that it should use the `FindEvents` tool and search for events.
@@ -5805,10 +5804,10 @@ By default this is enabled, so you will need to confirm the execution.
 Once you have confirmed the tool execution, the agent executes the tool and provides events for you to choose from:
 
 ```text
-Agent: Here are some exciting events in San Francisco:
-1. Lunar New Year Festival & Parade: Traditional celebration featuring parades, dragon dances, cultural performances, and food from February 8 to February 22, 2026.
-2. San Francisco International Film Festival: Showcasing international cinema, documentaries, and shorts from April 17 to May 1, 2026.
-Would you like to search for flights to San Francisco for any of these events? If yes, please provide your departure city.
+Agent: I found a couple of events in San Francisco:
+1. Lunar New Year Festival & Parade from February 8 to February 22, 2026
+2. San Francisco International Film Festival from April 17 to May 1, 2026
+Would you like to search for flights to attend any of these events? If so, please provide your departure city.
 ```
 
 You can then respond with which event you'd like to attend:
@@ -5820,7 +5819,7 @@ You: I would like to attend the San Francisco International Film Festival
 However, you forgot to provide the departure city here, which the agent recognized and then prompted you for again.
 
 ```text
-Agent: Great choice! To search for flights to the San Francisco International Film Festival, which runs from April 17 to May 1, 2026, could you please provide your departure city?
+Agent: Great choice! The San Francisco International Film Festival is from April 17 to May 1, 2026. Please provide your departure city so I can search for flights.
 ```
 
 Thinking about lunch, you accidentally input your lunch order into the chatbot:
@@ -5832,7 +5831,7 @@ I would like to order two double cheeseburgers.
 The agent's guardrails recognize this isn't valid for its goal, so it informs you and prompts you to enter your departure city.
 
 ```text
-Agent: Ordering double cheeseburgers doesn't align with our current goal of planning travel for an event. Could you please provide your departure city so we can search for flights to San Francisco International Film Festival?
+Agent: Your request to order two double cheeseburgers doesn't align with our current goal. We're working on organizing a trip for you to attend the San Francisco International Film Festival. To proceed, please let me know your departure city so I can search for flights for your trip.
 ```
 
 You then provide it with your departure city:
@@ -5842,13 +5841,28 @@ You: I'm sorry. I'd like to depart from Austin, TX
 ```
 
 The agent now has the information it needs, and can move on to the next step.
-This is evident because after the prompt, you are asked to confirm execution for the `SearchFlights` tool:
+However, it may decide to confirm with you again to ensure that's what you meant.
 
 ```text
-Agent: Thanks for providing your departure city! Let's proceed with searching for flights from Austin, TX (AUS) to San Francisco (SFO) around the dates of April 17 to May 1, 2026.
+Agent: Thanks! You're departing from Austin, TX. Would you like to proceed with searching for flights from Austin to San Francisco for the San Francisco International Film Festival?
 ```
 
-The agent then executes the tool, searching for flights to your destination. 
+To which you should either confirm or deny. In this instance, confirm:
+
+```text
+You: Yes
+```
+
+This extra confirmation step may not always happen.
+It depends if the LLM decides to verify.
+
+However, it is now satisified and is ready to execute the next tool. This is evident because after this response, you are asked to confirm execution for the `SearchFlights` tool:
+
+```text
+Agent: Let's proceed with searching for flights from Austin, TX (AUS) to San Francisco (SFO) around the dates of April 17 to May 1, 2026.
+```
+
+After you conirm the tool usage, the agent then executes the tool, searching for flights to your destination. 
 
 :::note
 
@@ -5858,96 +5872,189 @@ To alleviate this, use the mocked fucntion instead.
 
 :::
 
-Once the agent has found
+Once the agent finds flight options, it will present them to you, allowing you to select a flight if there are multiple.
+It will prompt you if you would like to create an invoice for the flight:
 
-### Understanding the system flow
-
-The integration demonstrates several key patterns of your AI agent system working together.
-
-**Workflow initialization**: When the frontend first loads, it attempts to fetch conversation history. Finding none, the API automatically starts a new workflow with the agent's starter prompt.
-
-**Message flow**: User messages travel from the React frontend through the FastAPI backend to the Temporal workflow via signals. The workflow processes messages, executes activities for LLM calls, and updates conversation state.
-
-**Tool execution**: When the agent determines a tool should be run, it executes the tool as a Temporal activity with automatic retry on failure. Tool results are incorporated into the conversation history.
-
-**State synchronization**: The frontend polls the backend every 600ms for conversation updates. The backend queries the workflow for current conversation state, providing near real-time updates.
-
-**Error handling**: Network failures, workflow errors, and other issues are handled gracefully with appropriate user feedback and recovery mechanisms.
-
-### Testing tool confirmation flows
-
-If you have `SHOW_CONFIRM=True` in your environment configuration, test the confirmation flow:
-
-```
-You: Yes, let's look for flights from Los Angeles to San Francisco for the 
-Game Developers Conference
+```text
+Agent: 
+I found the cheapest flight with Southwest Airlines for $149.75. Would you like to create an invoice for this flight?
 ```
 
-The agent will prepare the flight search and request confirmation:
+To which you confirm:
 
-```
-Agent: I'll search for flights from Los Angeles to San Francisco for the 
-Game Developers Conference (March 17-21, 2025). Let me find return flights 
-departing around March 16 and returning around March 22.
-
-[Confirmation button appears in the UI]
+```text
+You: Yes
 ```
 
-Click the confirmation button to approve the tool execution. The system will execute the flight search and display results.
+And the agent will proceed with creating an invoice, prompting the user to allow the execution of the `CreateInvoice` tool:
 
-### Monitoring with Temporal Web UI
-
-Open the Temporal Web UI at `http://localhost:8233` to observe your running workflows.
-
-Navigate to the Workflows page to see your agent workflow. Click on the workflow ID to view:
-
-- **Execution history**: Complete timeline of all workflow events
-- **Pending activities**: Currently executing activities with retry status
-- **Query results**: Current conversation state and tool data
-- **Stack trace**: Workflow code execution position
-- **Input/Output**: Full workflow input parameters and results
-
-The event history shows detailed information about each activity execution, including:
-- LLM prompt validation calls
-- Tool planning activities  
-- Dynamic tool executions
-- Signal receipts for user messages
-
-This visibility helps debug issues and understand system behavior.
-
-### Testing error scenarios
-
-Understanding how the system handles errors is crucial for production readiness.
-
-**Test language model failures** by temporarily setting an invalid API key:
-
-```bash
-export LLM_KEY="invalid-key"
+```text
+Agent: Let's proceed with creating an invoice for the Southwest Airlines flight.
 ```
 
-Restart the worker and observe how Temporal automatically retries failed activities with exponential backoff.
+The agent then creates the invoice, the goal is complete, and the chat is over.
 
-**Test network failures** by stopping the worker while a conversation is active. Send a message through the frontend and observe:
-- Frontend shows "Error fetching conversation. Retrying..."
-- Workflow execution pauses at the pending activity
-- When worker restarts, execution resumes exactly where it left off
+```text
+Agent: Invoice generated successfully! You can view and pay your invoice at: https://pay.example.com/invoice/12345. Your reference number is INV-12345. If you need further assistance, feel free to ask.
+```
 
-**Test frontend resilience** by stopping and restarting the API backend. The frontend continues polling and automatically reconnects when the backend returns.
+:::note
 
+If you set a `STRIPE_API_KEY` environment variable in your `.env` file, the tool will use the Stripe API to create an invoice in your Stripe environment.
+Otherwise, it will create a psudeo link.
+
+:::
+
+Now that the chat is over, the Worklow Execution is over.
+You can start another chat session by clicking the **Start New Chat** button in the web UI, which will start a new Workflow Execution.
+
+Next, you'll examine the Event History of your most recent chat session.
+
+## Tracing the Workflow Execution in the Web UI
+
+One of the features of Temporal is the observability that you gain via the Temporal Web UI.
+This is made possible since every event is stored, along with the inputs and output of Workflows, Activities, and other Temporal operations. 
+
+Open the Temporal Web UI at `http://localhost:8233` and navigate to your most recent run.
+
+_Your UI may not look exactly like the screenshots below due to differing UI versions, varying output from LLMs, and different user inputs.
+This is fine, the core concepts are still applicable._
+
+Navigate to the Workflows page to see your past agent Workflow Executions. 
+This is also the default landing page.
+
+![Screenshot of the Temporal Web UI Workflow Executions list page with your current Workflow Executions](images/workflow-executions.png)
+
+You will see all of your completed and currently running chat sessions here. 
+Click on the **Workflow ID** link **agent-workflow** of the most recently completed execution to see the details about that specific execution.
+
+At the top, you'll see the summary for the Workflow Execution.
+This contains information such as the duration of the execution, when it started, when it ended, what Task Queue it used, the size of the history, and the Workflow Type.
+All of this information an also be pieced together throughout the **Event History**, the **Summary** section provides an easier way to find it.
+
+![Screenshot of the summary section of the Temporal Web UI for the most recent Workflow Execution](images/summary.png)
+
+Next is the **Input** and **Result** section.
+Here you can see the initial input to the Workflow, and the final result that the agent returned in JSON format.
+
+![Screenshot of the input and output section of the Temporal Web UI for the most recent Workflow Execution's input and outputs](images/workflow-input-results.png)
+
+Below that is the **Event History** timeline.
+This is a time based representation of every event that occurred during the execution of the Workflow.
+
+![Screenshot of the timeline section of the Temporal Web UI for the most recent Workflow Execution](images/timeline.png)
+
+Each individual event in this timeline is expandable.
+You can click on it and view the details for the event.
+For example, if you click on a purple **Signal** icon, you can see the Signal name, the identity of the Worker that processed it, and the input. 
+
+![Screenshot of the timeline section of the Temporal Web UI, with a signal portion expanded so the data can be viewed](images/timeline-signal-expanded.png)
+
+Other events will contain other information.
+Activities will contain information regarding the timeouts, retry policies, and input and results.
+
+Finally, you have the list version of the **Event History**.
+Everything that is recorded above is derived from this history. 
+You can click into each individual event and see all the information about a single event.
+Certain events, such as Activities, that typically come in a group, will be automatically paired for easy viewing as shown below.
+
+![Screenshot of the the Event History list section in the Temporal Web UI with an Actvitiy expanded so the results can be seen](images/expanded-activity.png)
+
+You can also use this UI live.
+During a running Workflow Execution, you can watch live updates as you interact with your chatbot, and see the events come in to the timeline and list views.
+If you'd like, run another session of your chatbot and have the web UI open in a separate browser tab on another window so you can witness this.
+
+Next, you'll explore a few testing scenarios for demonstrating how Temporal adds durability to your agent.
+
+## (Optional) Witnessing the Durablity of the Agent
+
+Building your agent with Temporal adds durability to your agent.
+This means that your agent can withstand failures that traditional applications wouldn't be able too, such as internet outages or process crashes.
+Perform the following scenarios to witness the durability Temporal provides.
+
+The following scenario is a simulation of one engineer's _very_ bad day at work.
+Follow along and see how Temporal mitigated potentially outage level issues.
+
+### Part 1: Terminating the Worker
+
+*Scenario*: Your agent is deployed to production.
+You have a chat session running, and a Worker is processing your Workflow.
+Suddenly, the virtual machine hosting your Worker is rebooted for updates.
+The Worker is forcefully terminated and progress appears lost.
+What happens?
+
+*Simulating this scenario*:
+
+1. Ensure your Temporal development server, Worker (be sure you only have one running), API, and web UI are running.
+2. Start a new chat session.
+3. Before typing anything in the chat, kill the Worker using `CTRL-C`.
+4. Type a city and month in the chat, and press **Send**.
+5. You will see the UI stall, and not make progress. You may also see an error message appear at the top saying **Error fetching history**.
+6. Return to the Worker terminal and restart the Worker.
+7. Return to the web UI and watch for progress. Eventually message should send and the agent Workflow progresses like nothing happend.
+8. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
+
+*What happend?*: When the Worker came back online, it registered with the Task Queue and began listening for tasks it could execute.
+When the original Worker timed out, not returning a response for the task it was supposed to execute, the new Worker accepted it.
+The new Worker then rebuilt the state of the original Workflow Execution, up to the point of failure, and continued execution as if nothing happened.
+This new Worker could have been on another virtual machine within the Worker fleet, or the original Worker when the virtual machine finished its upgrade.
+This ensured that the state was not lost and the Workflow continued to progress.
+
+### Part 2: Turning off the Internet
+
+*Scenario*: After the upgrade finished, somewhere, miles away, Danny the data center intern trips over a improperly managed power cable and the network switch to the rack where you Worker is hosted goes down.
+While he scrambles to plug it back end, your Worker is intermittently without network access.
+What happens?
+
+*Simulating this scenario*:
+
+1. Either continue from the previous session, or start with a new chat window and don't send a chat yet.
+2. Turn off your Wifi/Unplug your network adapater to simulate this failure.
+3. Respond to the prompt the agent posed to you. The agent will validate this using the LLM, which it won't be able to access.
+4. Go to the Temporal Web UI at `localhost:8233` and find the failing Activity. You will see it attempting to retry the call to the LLM. 
+5. Turn the internet back on.
+6. Eventually, the LLM call will succeed, with no intervention of the developer.
+7. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
+
+*What happend?*: Temporal Activities are retried automatically upon failure.
+Intermittent failures such as network outages are often fixed via retries.
+Each Activity has a default Retry Policy that retries, then backs off increasingly to a maximum duration.
+Once the network comes back online, at the next retry interval the LLM call will execute and succeed.
+
+### Part 3: Swapping out LLMs
+
+*Scenario*: Now that the switch is back online, the developer can breath easy.
+Unfortunatley they get paged that their OpenAI credits are depleted, there are angry customers trying to use the chatbot, and the only person with a corporate card to replenish the credits is on PTO.
+You have an Anthopic account with some Claude credits you can swap in quickly.
+
+:::note
+
+This scenario requires an Anthropic account with a Claude API token.
+
+:::
+
+*Simulating this scenario*:
+
+1. Either continue from the previous session, or start with a new chat window. Send a few chats to make progress in the Workflow, but not complete it.
+2. Open the `.env` file and modify the following variables:
+    - `LLM_MODEL`: `anthropic/claude-sonnet-4-20250514
+    - `LLM_KEY`: Your LLM Key
+3. Restart the Worker.
+4. Respond to the next propmt in the chat.
+5. The agent will respond as if nothing happend, continuing the conversation.
+
+*What happend?*: Since the agent is durable and preserves state, the conversation history was preserved when the Worker was terminated.
+The state of the Workflow was reconstructed to the point where the Worker was terminated, and the conversation history was sent to Claude as context when executing the next prompt.
+The agent continues executing as if nothing happened.
+
+These are just some of the failure scenarios the agent can survive.
 
 ## Conclusion
 
-In this tutorial, you built a complete AI agent system using Temporal Workflows, demonstrating how durable execution enables reliable, production-ready agentic AI applications. Your agent can maintain multi-turn conversations, execute tools with user confirmation, and recover gracefully from failures.
-
-### What you accomplished
-
-Throughout this tutorial, you created:
-
-- **A durable conversation orchestrator** using Temporal Workflows that maintains state across failures and provides exactly-once execution guarantees
-- **Intelligent tool execution** with Activities that wrap external APIs, language model calls, and business logic with automatic retry and timeout handling
-- **Sophisticated prompt engineering** that guides language models through complex multi-step workflows while maintaining conversation coherence
-- **A responsive web interface** with React and real-time updates that provides intuitive interaction patterns for AI agent conversations
-- **Production-ready error handling** at every layer, from network failures to invalid user input, with appropriate recovery mechanisms
+In this tutorial, you built a durable AI agent that handles multi-turn conversations, executes tools to achieve a goal, and recovers from failures.
+You implemented the agent using Temporal primitives, including Workflows, Activities, Signals, Queries, Workers, and Task Queues.
+You created a REST API to enable client integration with your agent.
+You tested your agent with a chatbot interface, and witnessed the agent survive various failure scenarios.
 
 ### Key architectural patterns
 
@@ -5955,39 +6062,26 @@ Your implementation demonstrates several important patterns for building AI agen
 
 **Durability through orchestration**: Temporal Workflows provide automatic state persistence, ensuring conversations survive process crashes, network failures, and infrastructure issues. This durability is essential for AI agents that manage long-running, stateful interactions.
 
-**Separation of concerns**: The architecture cleanly separates orchestration logic (Workflows), external interactions (Activities), tool implementations (Python functions), and user interface (React), making the system maintainable and extensible.
+**Separation of concerns**: The architecture cleanly separates orchestration logic (Workflows), external interactions (Activities), tool implementations (Python functions), and user interface (API), making the system maintainable and extensible.
 
-**Observability by design**: Every execution step is automatically recorded in Temporal's event history, providing complete visibility into agent behavior, decision-making, and failure patterns without additional instrumentation.
+**Observability by design**: Every execution step is recorded in the Event History, providing visibility into the agent's execution without the need for extra tools.
 
-**Flexible tool integration**: The dynamic activity pattern enables adding new tools without modifying the core workflow logic, supporting evolving agent capabilities as requirements change.
-
-### Next steps
-
-Your AI agent system provides a foundation for many enhancements:
-
-**Add more sophisticated tools**: Integrate with real APIs for weather data, calendar systems, payment processing, or domain-specific services your agent needs to access.
-
-**Implement multi-agent patterns**: Create specialized agents for different domains and orchestrate their collaboration through parent workflows that coordinate multiple agent instances.
-
-**Enhance conversation memory**: Add vector databases for semantic search over past conversations, enabling agents to reference previous interactions and learn from history.
-
-**Deploy to production**: Use Temporal Cloud or self-hosted Temporal clusters for production deployment, implementing proper authentication, monitoring, and scaling strategies.
-
-**Optimize language model usage**: Implement caching strategies, prompt compression techniques, and model selection logic to balance cost and performance.
+**Extensibility**: The tool and goal registry pattern enables adding defining new tools and goals without modifying the core Workflow logic.
 
 ### Resources for continued learning
 
-To deepen your understanding of Temporal and agentic AI:
+To continue your learning on Temporal and its use for AI, check out the following resources
 
-- Explore the [Temporal documentation](https://docs.temporal.io) for advanced workflow patterns and best practices
-- Review the [LiteLLM documentation](https://docs.litellm.ai) for integrating additional language models
-- Study [agentic AI patterns](https://www.anthropic.com/research/building-effective-agents) for more sophisticated agent architectures
-- Join the [Temporal community](https://temporal.io/slack) for support and to share your experiences
+- Download and run a more feature-rich [version of this agent](https://github.com/temporal-community/temporal-ai-agent/), which is what inspired this tutorial.
+- Learn more about [Temporal AI Use Cases](https://temporal.io/solutions/ai)
+- Explore the [Temporal documentation](https://docs.temporal.io) for more Temporal features and best practices.
+- Take a [Temporal Course](https://learn.temporal.io/courses/) and dive deeper into Temporal topics.
+- Ask a question in the [Temporal community](https://temporal.io/slack) in the #topic-ai channel.
 
 ### Final thoughts
 
-You've successfully built a sophisticated AI agent system that combines the power of large language models with the reliability of durable execution. This foundation enables you to create AI agents that can handle complex, multi-step workflows while maintaining the robustness required for production applications.
+The foundation you built in this tutorial enables you to build agents to solve nearly any goal.
+If you're up to it, try writing your own goal and tools and have the agent execute them.
+Temporal's Durable Execution brings reliability and observability to long-running, distributed systems, which is exactly what AI agents are.
 
-The combination of Temporal's orchestration capabilities with modern AI technologies opens new possibilities for building intelligent, reliable, and observable agent systems. As you extend and deploy your agent, remember that the patterns you've learned - durability, separation of concerns, proper error handling, and comprehensive observability - will serve you well in building any distributed system.
-
-Continue experimenting, building, and sharing your experiences with the community. The future of AI agents is being written by developers like you who understand how to combine powerful AI capabilities with robust engineering practices.
+Check back later for the next installment in this tutorial series, where you will continue to add functionallity to your agent.
