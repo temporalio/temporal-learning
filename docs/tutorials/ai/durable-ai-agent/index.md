@@ -5674,7 +5674,7 @@ Once the packages are finished installing, the web UI is ready to interact with 
 You now have assembled all the pieces to run the agent to completion.
 Running the agent requires a minimum of **four** different terminals, however there will only be one Worker process running.
 You can either open multiple terminals, or use a terminal multiplexer like `screen` or `tmux`.
-If you have the capabilities of running more than one Worker, it is recommended that you do so.
+This tutorial can function with a single Worker. However, as with all real-world Temporal deployments, it is always better to run multiple Workers for scaling and redundancy."
 
 The first requirement is running a local Temporal server that coordinates workflow execution and provides durability guarantees.
 
