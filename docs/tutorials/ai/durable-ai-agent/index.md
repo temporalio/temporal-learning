@@ -1193,7 +1193,7 @@ goal_event_flight_invoice = AgentGoal(
     # ...
 ```
 
-Next, pass in the tools that the agent is allowed to use to accomplish its goal to the `tools` parameter.
+Next, pass in the `ToolDefnition`s that the agent is allowed to use to accomplish its goal to the `tools` parameter.
 Add the following code as the next parameter:
 
 ```python
