@@ -48,11 +48,11 @@ One convention is to give certificates a common name that matches the namespace.
 - Connect Temporal clients to Temporal Cloud (e.g. Worker processes)
 - Automation (e.g. Temporal Cloud [Operations API](https://docs.temporal.io/ops), [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider), [Temporal CLI](https://docs.temporal.io/cli/setup-cli))
 
-By default, it is recommended for teams to use API keys and [service accounts](https://docs.temporal.io/cloud/service-accounts) for both operations because API keys are easier to manage and rotate for most teams. In addition, you can control account-level and namespace-level roles for service accounts. 
+    By default, it is recommended for teams to use API keys and [service accounts](https://docs.temporal.io/cloud/service-accounts) for both operations because API keys are easier to manage and rotate for most teams. In addition, you can control account-level and namespace-level roles for service accounts. 
 
-If your organization requires mutual authentication and stronger cryptographic guarantees, then it is encouraged for your teams to use mTLS certificates to authenticate Temporal clients to Temporal Cloud and use API keys for automation (because Temporal Cloud [Operations API](https://docs.temporal.io/ops) and [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider) only supports API key for authentication)
+    If your organization requires mutual authentication and stronger cryptographic guarantees, then it is encouraged for your teams to use mTLS certificates to authenticate Temporal clients to Temporal Cloud and use API keys for automation (because Temporal Cloud [Operations API](https://docs.temporal.io/ops) and [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider) only supports API key for authentication)
 
 2. **Use Certificate Filters to restrict access when using shared CAs (e.g., `dev` vs `prod`)**:
 Certificate Filters are an additional way of validating using the client certificate presented during client authenticationGive certificates a common name that matches the namespace. This is not a requirement. 
 
-If you do this when using the same CA for dev and prod environments, then you can leverage Certificate Filters to prevent access to production. 
+ If you do this when using the same CA for dev and prod environments, then you can leverage Certificate Filters to prevent access to production. 
