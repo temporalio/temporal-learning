@@ -15,11 +15,11 @@ image: /img/temporal-logo-twitter-card.png
 ## Introduction
 
 An AI agent uses large language models (LLMs) to plan and execute steps towards a goal.
-While attempting to reach its goal, the agents can perform actions such as searching for information, interacting with external services, and even calling other agents. 
+While attempting to reach its goal, the agent can perform actions such as searching for information, interacting with external services, and even calling other agents. 
 However, building reliable AI agents presents various challenges. 
-Network failures, long running workflows, observability challenges, and more make building AI agents a textbook distributed systems problem.
+Network failures, long-running workflows, observability challenges, and more make building AI agents a textbook distributed systems problem.
 
-Temporal orchestrates long running workflows, automatically handles failure cases from network outages to server crashes, provides robust insights into your running applications, and more.
+Temporal orchestrates long-running workflows, automatically handles failure cases from network outages to server crashes, provides insights into your running applications, and more.
 These features provide the resiliency and durability necessary to build reliable agents that users can rely on.
 
 In this tutorial you'll build an AI agent using Temporal that searches for events in a given city, helps you book a plane ticket, and creates an invoice for the trip. 
@@ -27,15 +27,15 @@ The user will interact with this application through a chatbot interface, commun
 Throughout this tutorial you will implement the following components:
 
 * Various **tools** the agent will use to search for events, find flights, and generate invoices.
-* **An agent goal** that will specify what overall task the agent is trying to achieve and what tools it is allowed to use.
-* A **Temporal Workflows** that will orchestrate multi-turn conversations and ensure durability across failures
+* An **agent goal** that will specify what overall task the agent is trying to achieve and what tools it is allowed to use.
+* **Temporal Workflows** that will orchestrate multi-turn conversations and ensure durability across failures
 * **Temporal Activities** that execute tools and language model calls with automatic retry logic
-* **A FastAPI backend** that connects the web interface to your Temporal Workflows
-* **A web-based chat interface** that allow users to interact with the agent
+* A **FastAPI backend** that connects the web interface to your Temporal Workflows
+* A **web-based chat interface** that allows users to interact with the agent
 
 By the end of this tutorial, you will have a modular, durable AI agent that you can extend to run any goal using any set of tools.
-Your agent will be able to recover from failure, whether it's' a hardware failure, a tool failure, or an LLM failure.
-And you'll understand how to use Temporal to build reliable AI applications that maintain state and provide consistent user experiences.
+Your agent will be able to recover from failure, whether it's a hardware failure, a tool failure, or an LLM failure.
+And you'll be able to use Temporal to build reliable AI applications that maintain state and provide consistent user experiences.
 
 You can find the code for this tutorial on GitHub in the [tutorial-temporal-ai-agent](https://github.com/temporal-community/tutorial-temporal-ai-agent) repository.
 
@@ -53,14 +53,13 @@ Verify your installation by running `python3 --version` in your terminal.
 * [Node.js 18 or higher installed](https://nodejs.org/en/download).
 You can verify your installation with `node --version` and `npm --version`.
 * An [OpenAI API key](https://platform.openai.com/api-keys) saved securely where you can access it.
-You may need to create an [OpenAI](https://platform.openai.com/) first.
+You may need to create an [OpenAI](https://platform.openai.com/) account first.
 You will use this key to configure the LLM integration.
 
 :::note
 
 OpenAI API Keys require purchasing credits to use.
-The amount needed for this tutorial is minimal.
-You can succeed with this tutorial with minimal credits, in our experience < $1 will suffice.
+You can succeed with this tutorial with minimal credits; in our experience, less than $1 will suffice.
 
 :::
 
@@ -68,7 +67,7 @@ You can succeed with this tutorial with minimal credits, in our experience < $1 
 
 ### Optional
 
-You can opt to use real API services for your tools, or use provided mock functions that will also be provided. 
+You can opt to use real API services for your tools, or use provided mock functions. 
 
 * A free [RapidAPI Sky Scrapper API Key](https://rapidapi.com/apiheya/api/sky-scrapper) saved securely where you can access it. You will use this to search for flights.
 * A free [Stripe Account](https://stripe.com/lp/start-now) with a configured [sandbox](https://docs.stripe.com/sandboxes). You will use this to generate fake invoices for the flights that are being booked.
@@ -81,7 +80,7 @@ Additionally, this tutorial assumes you have basic familiarity with:
 
 * Temporal fundamentals such as [Workflows](https://docs.temporal.io/develop/python/core-application#develop-workflows), [Activities](https://docs.temporal.io/develop/python/core-application#develop-activities), [Workers](https://docs.temporal.io/develop/python/core-application#run-a-dev-worker), [Signals](https://docs.temporal.io/develop/python/message-passing#signals), and [Queries](https://docs.temporal.io/develop/python/message-passing#queries)
 * Python fundamentals such as functions, classes, async/await syntax, and virtual environments
-* Command line interface and running commands in terminal or command prompt  
+* Command line interface and running commands in a terminal or command prompt  
 * REST API concepts including HTTP requests and JSON responses
 * How to set and use environment variables in your operating system
 
@@ -123,7 +122,7 @@ temporal-ai-agent/
 
 It automatically runs a `git init` command for you, provides you with the default `.gitignore` for Python, creates a `.python-version` file that has the project's default Python version, a README.md, a Hello World `main.py` program, and a `pyproject.toml` file for managing the projects packages and environment.
 
-You won't need the `main.py`, so delete it:
+You won't need the `main.py` file, so delete it:
 
 ```command
 rm main.py
@@ -148,7 +147,7 @@ This installs all the necessary packages:
 - `fastapi` and `uvicorn` - Web framework and server for the API backend
 - `jinja2` - Template engine
 - `litellm` - Unified interface for different language model providers
-- `stripe` - Payment processing library for invoice generation demo
+- `stripe` - Payment processing library for the invoice generation demo
 - `temporalio` - The Temporal Python SDK
 - `requests` - HTTP library for API calls
 
@@ -217,7 +216,7 @@ Next, copy the following configuration to your `.env` file.
 LLM_MODEL=openai/gpt-4o
 LLM_KEY=YOUR_OPEN_AI_KEY
 
-# Set if the user should click a confirm button in the UI to allow the tol
+# Set if the user should click a Confirm button in the UI to allow the tool
 # to execute
 SHOW_CONFIRM=True
 
@@ -249,8 +248,9 @@ This will allow you to see what the agent is doing step by step.
 These are the only two mandatory variables to set.
 This tutorial provides both an ability to create pseudo tools that perform simulations, or tools that use external APIs to achieve their goals.
 If you plan on using the [RapidAPI SkyScraper API](#optional) to look up flight data or the [Stripe API](#optional) to generate an invoice, you can uncomment these lines and provide the API keys here.
-Additionally, if you plan on connecting to Temporal Cloud, you will need to update `TEMPORAL_ADDRESS` and `TEMPORAL_NAMESPACE` parameters to connect to your Temporal Cloud instance.
-You will also need to uncomment and the `TEMPORAL_TLS` or `TEMPORAL_API_KEY` variables, depending on which authentication method you are using.
+
+Additionally, if you plan on connecting to Temporal Cloud, you will need to update the `TEMPORAL_ADDRESS` and `TEMPORAL_NAMESPACE` parameters to connect to your Temporal Cloud instance.
+You will also need to uncomment and set the `TEMPORAL_TLS` or `TEMPORAL_API_KEY` variables, depending on which authentication method you are using.
 
 :::note
 
@@ -259,37 +259,44 @@ This tutorial will use OpenAI's gpt-4o, but you are welcome to use whichever LLM
 
 :::
 
-At this point, your configured your developer environment to include a Python project managed by `uv` with all required dependencies to build a Temporal powered agentic AI, and all necessary environment variables. 
+At this point, you have configured your developer environment to include a Python project managed by `uv` with all required dependencies to build a Temporal powered agentic AI, and all necessary environment variables. 
 
 Now that you have set up your developer environment, you will build the tools that your agent will use to perform the various tasks it needs to accomplish its goal.
 
 ## Constructing the agent toolkit
 
 In this step, you will acquire the tools that will be available to your agent.
-Agents are aware of the tools they have available to them while attempting to achieve its goal.
-The agent will evaluate which tools are available and execute a tool if it provides the functionality the agent believes will provide it the result it needs to progress in its task. 
+Agents are aware of the tools they have available to them while attempting to achieve their goal.
+The agent will evaluate which tools are available and execute a tool if the agent believes it will provide the result the agent needs to progress in its task. 
 
 These tools can take various forms, but in this tutorial they're implemented as a series of independent Python scripts that provide data in a specific format that the agent can process. 
-There are three tools, a `find_events` tool, a `search_flights` tool, and a `create_invoice` tool that the LLM will decide when it is appropriate to use as it interacts with the user who is trying to find an event and book a flight to attend it.
+There are three tools: a `find_events` tool, a `search_flights` tool, and a `create_invoice` tool.
+The LLM will decide when to use each tool as it interacts with the user who is trying to find an event and book a flight to attend it.
 You could implement these tools yourself, or you could download a tool and provide it to an agent.
 For this tutorial, you will download the tools directly from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent).
 
 ### Setting up the `tools` package
 
-To get started, first create the directory for your tools modules and change directories into it:
+To get started, first create the directory for your tools modules:
 
 ```command
 mkdir tools
 ```
 
-However, for this to be an importable tools package, you will need to add a `__init__.py` to the tools package.
+Then change directories into it:
+
+```command
+cd tools
+```
+
+However, for this to be an importable tools package, you will need to add a `__init__.py` file.
 It can be blank for now, so create it with the following command:
 
 ```command
 touch __init__.py
 ```
 
-Now that you have setup the structure for your tools package, you'll acquire and test the tools needed to have the agent succeed with its goal.
+Now that you have set up the structure for your tools package, you'll acquire and test the tools needed to have the agent succeed with its goal.
 
 ### Acquiring the `find_events` tool
 
@@ -335,19 +342,19 @@ There is logic within the `find_events` tool that automatically adjusts the date
 
 :::
 
-Next, change directories back up one directory to the `tools` directory by running the following command:
+Next, change directories back up one directory to the `tools` directory:
 
 ```command
 cd ..
 ```
 
-Now that you have the data, you will download the `find_events` tool using the command:
+Now that you have the data, download the `find_events` tool using the command:
 
 ```command
 curl -o find_events_data.json https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/find_events.py
 ```
 
-Open the file and explore the logic, you should never download a file from the internet and just trust it.
+Open the file and explore the logic; you should never download a file from the internet and just trust it.
 
 Try to answer the following questions about the codebase:
 * Where in the code does it determine the adjacent months?
@@ -414,13 +421,13 @@ You should see the following output:
 }
 ```
 
-Now that you have the `find_events` tool functioning, it's time to do the same for the `search_flighs` tool.
+Now that you have the `find_events` tool functioning, it's time to do the same for the `search_flights` tool.
 
 ### Acquiring the `search_flights` tool
 
-The search flights tool searches roundtrip flights to a destination.
+The `search_flights` tool searches roundtrip flights to a destination.
 The tool takes the origin, destination, arrival date, and departure date as arguments and returns flight data containing details such as carrier, price, and flight code for the flights.
-The LLM will use this tool to flights to the location once the user has selected the dates they wish to travel to their destination.
+The LLM will use this tool to find flights to the location once the user has selected the dates they wish to travel.
 This tool can either use the [RapidAPI SkyScraper API](#optional) if you have an API key configured in your `.env` file, or it will generate mock data if it's unable to detect the API key.
 
 First, get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
@@ -431,7 +438,7 @@ curl -o find_events_data.json https://raw.githubusercontent.com/temporal-communi
 
 Next, familiarize yourself with the tool by reviewing the code.
 Try to answer the following questions about the code:
-* What is the purpose of the `search_flights` function? (It's not as straight forward of an answer as it may appear)
+* What is the purpose of the `search_flights` function? (It's not as straightforward of an answer as it may appear)
 * How many REST API calls does is it take to call complete the real flight API search?
 
 Once you have finished reviewing the code, you will test it.
@@ -494,7 +501,7 @@ If you aren't planning on using the Sky Scrapper API, you can skip this next ste
 
 #### Testing the Sky Scrapper powered `search_flights` tool
 
-Testing the API powered version of the tool is similar to testing the mocked version.
+Testing the API-powered version of the tool is similar to testing the mocked version.
 
 First, if you haven't uncommented the `RAPID_API` lines in your `.env` file and added your API key, do this before running the test.
 You will also need to uncomment the `RAPIDAPI_HOST_FLIGHTS` environment variable as this is the endpoint the tool will be accessing.
@@ -504,8 +511,8 @@ RAPIDAPI_KEY=YOUR_RAPID_API_KEY
 RAPIDAPI_HOST_FLIGHTS=sky-scrapper.p.rapidapi.com
 ```
 
-Next, review the code in `scripts/search_flights_test.py` and make sure that `dateDepart` and `dateReturn` dates are both in the future.
-At this point we have no way of determining if the dates are in the past, and the API will return an error if you try to search for flights in the past. 
+Next, review the code in `scripts/search_flights_test.py` and make sure that the `dateDepart` and `dateReturn` dates are both in the future.
+At this point you have no way of determining if the dates are in the past, and the API will return an error if you try to search for flights in the past. 
 
 Once you've reviewed the code, run the test using the following command:
 
@@ -513,7 +520,7 @@ Once you've reviewed the code, run the test using the following command:
 uv run scripts/search_flight_test.py
 ```
 
-Depending if you've changed the dates or cities, you may see different results, but the format should be similar to this:
+If you've changed the dates or cities, you may see different results, but the format should be similar to this:
 
 ```output
 Searching for: ORD
@@ -545,7 +552,7 @@ Now that you have finished testing the `search_flights` tool, you can add the fi
 ### Acquiring the `create_invoice` tool
 
 The final tool is the `create_invoice` tool.
-The tool takes the customer's email and trip information such as the cost of the flight, the description of the event, the number of days until the invoice is due, and generate a sample invoice for that user showing the details of the flight and the cost.
+The tool takes the customer's email and trip information such as the cost of the flight, the description of the event, the number of days until the invoice is due, and generates a sample invoice for that user showing the details of the flight and the cost.
 The LLM will use this tool to invoice the customer once the customer has confirmed their travel plans.
 This tool can either use the [Stripe API](#optional) if you have an API key configured in your `.env` file, or it will generate a mock invoice if it is unable to detect an API key.
 
@@ -601,7 +608,7 @@ The output should be:
 
 If you aren't planning on using the Stripe API, you can skip this next step and continue if you'd like.
 
-#### Testing the Stripe powered `create_invoice` tool
+#### Testing the Stripe-powered `create_invoice` tool
 
 Testing the Stripe powered version of the tool is nearly identical to testing the mocked version of the tool.
 
@@ -613,7 +620,7 @@ STRIPE_API_KEY=YOUR_STRIPE_API_KEY
 
 :::warning
 
-Make sure you have setup your stripe account as a [sandbox](https://docs.stripe.com/sandboxes) and are using an API key from there.
+Make sure you have set up your Stripe account as a [sandbox](https://docs.stripe.com/sandboxes) and are using an API key from there.
 Otherwise the invoices will be real.
 
 :::
@@ -635,7 +642,7 @@ By following that invoice link in a browser, Stripe will present you with a samp
 <details>
 
 <summary>
-Before you move on, verify you created all the necessary files in the correct structure.
+Before you move on, verify that you have created all the necessary files in the correct structure.
 </summary>
 
 So far you've implemented and tested the agents tools.
@@ -671,7 +678,7 @@ Next, you'll make the tools available to the agent to use.
 
 Now that you have the tools necessary to complete the agent's goal, you need to implement a way to inform the agent that these tools are available.
 To do this, you'll create a tool registry. 
-The tool registry will contain a definition of each tool, along with information such as the tools name, description, and what arguments the tool accepts. 
+The tool registry will contain a definition of each tool, along with information such as the tool's name, description, and what arguments it accepts. 
 
 However, before you create the registry, you should define the tool definition and tool argument as models that can be shared across your codebase.
 
@@ -735,7 +742,7 @@ Agents use LLMs to determine what action to take and then execute a tool from th
 However, you have to make those tools available to the agent.
 Now that you have structure for defining your tools, you should create a registry that your agent reads to load the available tools.
 
-Navigate back to the `tools` directory and create the file `tools/tool_registry.py` file.
+Navigate back to the `tools` directory and create the file `tools/tool_registry.py`.
 In this file you will define all of your tools using the models you defined in the previous step.
 
 First, add the following import to the file to import the models:
@@ -761,7 +768,7 @@ This defines your tool using the `ToolDefinition` model you defined, gives it a 
 Next you need to add the arguments to this instantiation.
 The arguments in the `ToolDefinition` model were defined as a `List[ToolArgument]`, so you may have multiple arguments within your list.
 
-To complete the definition, add the following code to your `find_events_tool` instantiation within the `find_events_tool` instantiation to add the arguments:
+To complete the definition, add the following code to your `find_events_tool` instantiation to add the arguments:
 
 ```python
     arguments=[
@@ -778,7 +785,7 @@ To complete the definition, add the following code to your `find_events_tool` in
     ]
 ```
 
-The `find_events` tool requires two arguments, and it also provides a string description so the LLM would know how to prompt the user if an argument is missing.
+The `find_events` tool requires two arguments, the city and month in which to search, and it also provides a string description so the LLM would know how to prompt the user if an argument is missing.
 
 Bringing it all together, the complete `ToolDefinition` would be:
 
@@ -806,7 +813,7 @@ find_events_tool = ToolDefinition(
 
 Now that you have the first tool defined in your registry, implement the remaining tool definitions. 
 
-Add the following code to register the `search_flights` tool:
+Add the following code to register the `search_flights` tool. The structure is similar to the `find_events` tool, except that `search_flights` requires more arguments, to search for the origin, destination, departure date, return date, and confirmation status.
 
 ```python
 search_flights_tool = ToolDefinition(
@@ -844,7 +851,7 @@ search_flights_tool = ToolDefinition(
 )
 ```
 
-And then add the following code to register the `create_invoice` tool:
+And then add the following code to register the `create_invoice` tool. This tool requires three arguments: the amount to be paid, the details of the trip, and a user confirmation.
 
 ```python
 create_invoice_tool = ToolDefinition(
@@ -870,13 +877,12 @@ create_invoice_tool = ToolDefinition(
 )
 ```
 
-
 You now have a tool registry your agent imports to inform it of what tools it has available to execute.
 Finally, you need to create a mapping between the tool registered in `tool_registry.py` with the actual functions the Activity will invoke during Workflow execution.
 
 ### Mapping the registry to the functions
 
-Your code will use the registry to identify which tool it should use, but it still needs to translate the string `name` of the tool to the function definition the code will execute.
+Your agent will use the registry to identify which tool it should use, but it still needs to translate the string `name` of the tool to the function definition the code will execute.
 You will modify the code in `tool_registry` to add this functionality.
 
 First, add the following imports with the other imports in `tool_registry.py`:
@@ -929,7 +935,7 @@ This is necessary for building a robust, capable agent.
 <details>
 
 <summary>
-The <code>tools/tool_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>tools/tool_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 [tools/tool_registry](https://github.com/temporal-community/tutorial-temporal-ai-agent/blob/main/tools/tool_registry.py)
@@ -1051,11 +1057,11 @@ def get_handler(tool_name: str) -> Callable[..., Any]:
 <details>
 
 <summary>
-Before moving on to the next section, verify your files and directory structure is correct.
+Before moving on to the next section, verify that your file and directory structure is correct.
 </summary>
 
 You just implemented a model for defining your tools in a way that your agent could discover and use them.
-Verify your directory structure and file names are correct according to the following diagram before continuing:
+Verify that your directory structure and file names are correct according to the following diagram before continuing:
 
 ```
 temporal-ai-agent/
@@ -1083,7 +1089,7 @@ temporal-ai-agent/
 ```
 </details>
 
-In the next step, you will define the use the tool definitions you just created to define the agent's goal. 
+In the next step, you will use the tool definitions you just created to define the agent's goal. 
 
 ## Designating the agent's goal
 
@@ -1116,7 +1122,7 @@ This `dataclass` defines your `AgentGoal` as a combination of a few attributes:
 <details>
 
 <summary>
-The <code>models/core.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>models/core.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -1184,7 +1190,7 @@ goal_event_flight_invoice = AgentGoal(
 ```
 
 Next, pass in the tools that the agent is allowed to use to accomplish its goal to the `tools` parameter.
-Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+Add the following code as the next parameter:
 
 ```python
     # ...
@@ -1197,7 +1203,7 @@ Add it as the next parameter when creating the `goal_event_flight_invoice` objec
 ```
 
 The following parameter defines a detailed description of what the goal is and the ideal path for the agent to take to achieve its goal.
-Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+Add the following code to the file:
 
 ```python
     # ...
@@ -1209,7 +1215,7 @@ Add it as the next parameter when creating the `goal_event_flight_invoice` objec
 ```
 
 The next parameter provides a starter prompt for the agent, detailing how it should begin its interaction with every user.
-Add it as the next parameter when creating the `goal_event_flight_invoice` object.
+Add the following code to the file:
 
 ```python
     # ...
@@ -1220,7 +1226,7 @@ Add it as the next parameter when creating the `goal_event_flight_invoice` objec
 Finally, draft an example conversation of a successful interaction with your agent to pass in.
 LLMs perform better when they have an example of expected output, so providing this aids the LLM in its goal.
 Since this is a `str` type, but the conversation is long, you will define each statement as a line in a list and then use `"\n ".join()` to create a string from your conversation.
-Add the conversation as the final parameter when creating the `goal_event_flight_invoice` object.
+Add the conversation as the final parameter.
 
 ```python
     # ...
@@ -1251,7 +1257,7 @@ Add the conversation as the final parameter when creating the `goal_event_flight
 <details>
 
 <summary>
-The <code>tools/goal_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>tools/goal_registry.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -1339,12 +1345,13 @@ temporal-ai-agent/
 
 ## Building Temporal Activities to execute non-deterministic agent code
 
-Now that you have built the agent's goal, the tools it needs to achieve it, you can start building the agent code. 
-In this step, you will create Activities that execute code in your AI agent that can behave non-deterministically, such as making the LLM calls or calling tools..
-As tools can call out to external services, have the possibility to fail, be rate limited, or perform other non-deterministic operations, it's safer to always call them in an Activity.
-When an Activity fails, they're by default automatically retried until it succeeds or is canceled.
-Another added benefit of executing your tool as an Activity is after the Activity completes, the result is saved to an Event History managed by Temporal.
-If your application were to then crash after executing a few tools, it could reconstruct the state of the execution without having to re-execute the tools and use the previous executions results.
+Now that you have built the agent's goal, and the tools it needs to achieve it, you can start building the agent code. 
+In this step, you will create Activities that execute code in your AI agent that can behave non-deterministically, such as making the LLM calls or calling tools.
+Because tools can call out to external services, have the possibility to fail, be rate limited, or perform other non-deterministic operations, it's safer to always call them in an Activity.
+When an Activity fails, it's automatically retried by default until it succeeds or is canceled.
+
+Another added benefit of executing your tool as an Activity is that after the Activity completes, the result is saved to an Event History managed by Temporal.
+If your application were to then crash after executing a few tools, it could reconstruct the state of the execution and use the previous execution's results, without having to re-execute the tools.
 This provides durability to your agent for intermittent issues, which are common in distributed systems.
 
 Before you can proceed to creating the Activities, however, you need to create the custom types that you'll use for Activity communication.
@@ -1352,7 +1359,7 @@ Before you can proceed to creating the Activities, however, you need to create t
 ### Creating the `requests` data models
 
 Your agent will require specific types for input and output for both the Activities and the Workflow.
-You will put all request based models in a new file in the models directory named `requests.py`.
+You will put all request-based models in a new file in the models directory named `requests.py`.
 
 First, open `models/requests.py` and add the following import statements:
 
@@ -1459,14 +1466,14 @@ class ToolData(TypedDict, total=False):
     force_confirm: bool
 ```
 
-`ToolData` contains the `NextStep` that the agent shoudl take, along with the tool that should be used, the arguments for the tool, the response from the LLM, and a force_confirm boolean.
+`ToolData` contains the `NextStep` that the agent shoudl take, along with the tool that should be used, the arguments for the tool, the response from the LLM, and a `force_confirm` boolean.
 You may notice this type is different from the previous types, as it is a subclass of `TypedDict` and not a `dataclass`.
-This is done to handle converting the type to JSON for use in the API later, which `dataclass`es don't support conversion of nested custom types to JSON.
+This is done to handle converting the type to JSON for use in the API later, because `dataclass`es don't support conversion of nested custom types to JSON.
 
 <details>
 
 <summary>
-The <code>models/requests.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>models/requests.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -1553,7 +1560,7 @@ mkdir activities
 touch activities/__init__.py
 ```
 
-Next, create the file `activities/activities.py` and add the necessary import statements and a statement to load the environment variables:
+Next, create the file `activities/activities.py` and add the necessary `import` statements and a statement to load the environment variables:
 
 ```python
 import inspect
@@ -1602,7 +1609,7 @@ class AgentActivities:
 ```
 
 Temporal Activities can be implemented as either a function or a class and method.
-As the agent requires a persistent object for communication, in this to the LLM, it's good practice to use a class and set the parameters as part of the initialization of the Activity, so to not waste resources re-initializing the object for every LLM call.
+As the agent requires a persistent object for communication, in this case, communicating to the LLM, it's good practice to use a class and set the parameters as part of the initialization of the Activity, so to not waste resources re-initializing the object for every LLM call.
 The `__init__` method reads the LLM configuration from environment variables and assigns the values to instance variables.
 
 #### Implementing various helper methods
@@ -1659,7 +1666,7 @@ Add the method header with the appropriate decorator to your `activities.py` fil
 ```
 
 Next, create the `messages` list, which contains various dictionaries to the specification of the LLM for prompting.
-This format is specifically OpenAIs format, which you can use for any LLM since you are using `LiteLLM` to as your LLM abstraction library.
+This format is specifically OpenAI's format, which you can use for any LLM, because you are using `LiteLLM` to as your LLM abstraction library.
 
 Add the following code to craft the `messages` list:
 
@@ -1923,7 +1930,7 @@ The complete implementation of `agent_validatePrompt` is as follows:
 ```
 
 
-Calling an Activity within another Activity won't invoke that Activity, but call the method like a typical Python method.
+Calling an Activity within another Activity won't invoke that Activity, but will call the method like a typical Python method.
 The Activity then returns a `ValidationResult` for the agent to interpret and continue with its execution.
 
 #### Implementing the Activity for retrieving environment variables
@@ -1992,13 +1999,13 @@ async def dynamic_tool_activity(args: Sequence[RawValue]) -> dict:
 
 This dynamic Activity uses Temporal's runtime information to determine which tool to execute. 
 It retrieves the tool name from the Activity type and loads arguments from the payload.
-It then inspects the handler to determine if the implementation of the tool is an asynchronous Python function. If it is, it `await`s its execution, otherwise directly invokes the function.
+It then inspects the handler to determine if the implementation of the tool is an asynchronous Python function. If it is, it `await`s its execution, otherwise it directly invokes the function.
 This means the Activity handles both synchronous and asynchronous tool functions.
 
 <details>
 
 <summary>
-The <code>activities/activities.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>activities/activities.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -2255,7 +2262,7 @@ Your agent communicates with an LLM to determine what steps it should take and w
 However, LLM output is non-determinstic, so how do you ensure that you receive data that you can rely on so your agent can interpret it and continue execution?
 To do this, you need to carefully craft a prompt explicitly stating what the LLM should do and what format it should return.
 These prompts can often be complex, and since your agent dynamically loads tools, will also need to be dynamically generated.
-In this section, you will implement the code to generate these prompts
+In this section, you will implement the code to generate these prompts.
 
 ### Creating the submodule
 
@@ -2315,7 +2322,7 @@ END EXAMPLE
 """
 ```
 
-This section of the prompt sets the primary role for the LLM, provides the current conversation history for the LLM to analyze, and if an example conversation was provide, provides that as an example for the LLM to use as well.
+This section of the prompt sets the primary role for the LLM, provides the current conversation history for the LLM to analyze, and if an example conversation was provided, provides that as an example for the LLM to use as well.
 
 Continue adding this prompt by adding the following lines:
 
@@ -2369,14 +2376,14 @@ Your JSON format must be:
 
 Guardrails (always remember!)
 1) If any required argument is missing, set next='question' and ask the user.
-1) ALWAYS ask a question in your response if next='question'.
-2) ALWAYS set next='confirm' if you have arguments
+2) ALWAYS ask a question in your response if next='question'.
+3) ALWAYS set next='confirm' if you have arguments
  And respond with "let's proceed with <tool> (and any other useful info)" 
  DON'T set next='confirm' if you have a question to ask.
 EXAMPLE: If you have a question to ask, set next='question' and ask the user.
-3) You can carry over arguments from one tool to another.
+4) You can carry over arguments from one tool to another.
  EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
-4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
+5) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
 EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
 """
 ```
@@ -2471,14 +2478,14 @@ Your JSON format must be:
 
 Guardrails (always remember!)
 1) If any required argument is missing, set next='question' and ask the user.
-1) ALWAYS ask a question in your response if next='question'.
-2) ALWAYS set next='confirm' if you have arguments
+2) ALWAYS ask a question in your response if next='question'.
+3) ALWAYS set next='confirm' if you have arguments
  And respond with "let's proceed with <tool> (and any other useful info)" 
  DON'T set next='confirm' if you have a question to ask.
 EXAMPLE: If you have a question to ask, set next='question' and ask the user.
-3) You can carry over arguments from one tool to another.
+4) You can carry over arguments from one tool to another.
  EXAMPLE: If you asked for an account ID, then use the conversation history to infer that argument going forward.
-4) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
+5) If ListAgents in the conversation history is force_confirm='False', you MUST check if the current tool contains userConfirmation. If it does, please ask the user to confirm details with the user. userConfirmation overrides force_confirm='False'.
 EXAMPLE: (force_confirm='False' AND userConfirmation exists on tool) Would you like me to <run tool> with the following details: <details>?
 
 {% if raw_json is not none %}
@@ -2554,7 +2561,7 @@ TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT = "If no more tools are needed (user_confirme
 <details>
 
 <summary>
-The <code>prompts/prompts.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>prompts/prompts.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -2778,7 +2785,7 @@ This function gets the response from the current tool, and the arguments missing
 <details>
 
 <summary>
-The <code>prompts/agent_prompt_generators.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>prompts/agent_prompt_generators.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -2912,7 +2919,7 @@ Now that you have the prompt rendering submodule implemented, you can implement 
 Agents need to manage conversations that involve multiple turns including user interaction, tool execution, and state management. 
 The challenge is maintaining coherence across these sessions while handling failures, retries, and long-running interactions.
 Your agent must coordinate several concurrent concerns such as validating user input against conversation context, determining when to execute tools, managing user input for tool execution, and maintaining conversation history that persists in the event of system failures. 
-Traditional application would lose conversation state during failures, but Temporal Workflows provide durable execution that preserves context through any system interruption.
+A traditional application would lose conversation state during failures, but Temporal Workflows provide durable execution that preserves context through any system interruption.
 
 In this step, you will create the Temporal Workflow that orchestrates your agent's conversation loop. 
 This Workflow handles user interactions, validates prompts, manages tool execution, and maintains conversation state, all while providing durability to the agent.
@@ -2957,9 +2964,9 @@ with workflow.unsafe.imports_passed_through():
     )
 ```
 
-Like previous import statements, this section includes libraries from the Python standard library and Temporal libraries. 
+Like previous `import` statements, this section includes libraries from the Python standard library and Temporal libraries. 
 However, there are also libraries being imported with the `with workflow.unsafe.imports_passed_through()` statement.
-This statement is necessary when importing third party libraries, including ones you implement, into a Workflow (or in this case, imported into a file that will be imported by the Workflow).
+This statement is necessary when importing third-party libraries, including ones you implement, into a Workflow (or in this case, imported into a file that will be imported by the Workflow).
 This is done for performance and determinism safety reasons, which you can read more about [in the Temporal documentation](https://docs.temporal.io/develop/python/python-sdk-sandbox#passthrough-modules).
 
 Next, declare the following timeout constants:
@@ -3051,7 +3058,7 @@ Add the remaining code to check for any missing arguments:
     return False
 ```
 
-The missing arguments determined, and if any are missing the `generate_missing_args_prompt` is invoked and the result is added to the `prompt_queue` for the agent to execute on its next turn and the function returns `True`.
+The tool arguments are checked, and if any are missing, the `generate_missing_args_prompt` is invoked and the result is added to the `prompt_queue` for the agent to execute on its next turn. The function then returns `True`.
 Otherwise, no arguments were missing and the function returns `False`.
 
 #### Defining the history formatting function
@@ -3145,7 +3152,7 @@ Next, add the function implementation:
 ```
 
 The function first checks if the conversation history's length is greater than or equal to the maximum number of turns specified.
-If this evaluates to true, the function proceeds with its `Continue-As-New` process.
+If this evaluates to `true`, the function proceeds with its `Continue-As-New` process.
 First it calls `prompt_summary_with_history` to create a summary and prompt context using the current history.
 It then uses this output to create an input type, `ToolPromptInput`, based off of this summary for the agent to process.
 Next it calls the `agent_toolPlanner` Activity with this input to invoke the LLM with this summarized context.
@@ -3171,7 +3178,7 @@ LLM prompts start with `###`, so any prompt that doesn't begin with that charact
 <details>
 
 <summary>
-The <code>workflows/workflow_helpers.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>workflows/workflow_helpers.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -3405,7 +3412,7 @@ This method is decorated with the `@workflow.run` decorator.
 Your Workflow method will contain the primary business logic for your agent.
 
 
-Declare the method header for you agent's Workflow method:
+Declare the method header for your agent's Workflow method:
 
 ```python
     @workflow.run
@@ -3543,7 +3550,7 @@ Tasks will be added throughout the lifecycle, which will drive execution forward
 Finally, you set the waiting for confirmation variable to false and the current tool to None.
 These variables will change as the agent processes the various tasks to complete its goal.
 
-Now that you defined the class and instantiated the control variables, you can build the core agent loop.
+Now that you've defined the class and instantiated the control variables, you can build the core agent loop.
 
 ### Implementing the core agent loop
 
@@ -3591,7 +3598,7 @@ Continue by adding the following code to execute the tool:
 
 Before the agent executes a tool, the agent confirms that the tool meets the requirements for execution and that the current tool is not `None`.
 If both of these checks evaluate to `True`, the agent executes the tool.
-Once the tool has completed execute, it `continue`s the loop, meaning it skips all further execution and returns to the top of the loop, ready to begin another iteration.
+Once the tool has completed execution, it `continue`s the loop, meaning it skips all further execution and returns to the top of the loop, ready to begin another iteration.
 
 #### Adding in a few more helper methods
 
@@ -3639,7 +3646,7 @@ Add this method within your class but outside of the `run` method, underneath an
         self.waiting_for_confirm = False
 ```
 
-This method resets the `self.confirmed` variable, makes a copy the tool data to then modify, and adds a message to the conversation history with this modified tool data.
+This method resets the `self.confirmed` variable, makes a copy of the tool data to then modify, and adds a message to the conversation history with this modified tool data.
 It then uses the `handle_tool_execution` function to invoke the tool as an Activity.
 Once the Activity has completed, it returns the `waiting_for_confirm` variable.
 On a successful execution, the `self.waiting_for_confirm` instance variable is set to `False`, resetting it and preparing the agent for its next turn in the conversation.
@@ -3874,9 +3881,9 @@ It's important to recall that within `agent_validatePrompt`, regardless of succe
 This provides a reason why the validation failed, if necessary.
 
 
-#### Generating a context aware prompt
+#### Generating a context-aware prompt
 
-Upon successful validation, the Workflow invokes another Activity to generate a context aware prompt for the LLM to use.
+Upon successful validation, the Workflow invokes another Activity to generate a context-aware prompt for the LLM to use.
 
 Continue by adding the call to the `generate_genai_prompt` function you implemented in the `prompts` submodule to your code:
 
@@ -3928,7 +3935,7 @@ Add the following code call the `agent_toolPlanner` Activity and process the res
 ```
 
 Before the agent executes the Activity, it creates a variable using your type `ToolPromptInput` that contains the prompt and context.
-It then invokes the `agent_toolPlanner` Activity, passing the in this variable.
+It then invokes the `agent_toolPlanner` Activity, passing in this variable.
 The Activity makes a call to the LLM with the prompt to determine what tool the agent should use to proceed with the next step of its goal, and returns the response as a `dict`.
 If the `SHOW_CONFIRM` environment variable was set to `True`, then the `force_confirm` key is also set to `True`.
 Next, the `self.tool_data` instance variable is updated with the data returned from the Activity execution.
@@ -3974,8 +3981,8 @@ Add the following code to implement the path for these options:
                     return str(self.conversation_history)
 ```
 
-If `next_step` is set to `confirm`, then the user confirmed their choice and the LLM has chose to continue executing.
-If both `confirm` and `current_tool` has something assigned to it, the agent checks for missing arguments using the `handle_missing_args` function.
+If `next_step` is set to `confirm`, then the user confirmed their choice and the LLM has chosen to continue executing.
+If both `confirm` and `current_tool` have something assigned to them, the agent checks for missing arguments using the `handle_missing_args` function.
 Remember that if the `handle_missing_args` function determines an argument is missing, it adds a new prompt to the `prompt_queue` so the agent asks the user on the next turn.
 If an argument is missing, the prompt is added and the agent `continue`s, leading to the user being asked for the missing argument.
 If no argument is missing, then `self.waiting_for_confirm` is set to `True`, which indicates that the agent is ready to execute the tool.
@@ -4286,7 +4293,7 @@ class AgentGoalWorkflow:
 ```
 </details>
 
-Finally, you are going to implement a method for external Temporal Clients to send and retrieve information to and from the Workflow Execution while it's' running.
+Finally, you are going to implement a method for external Temporal Clients to send and retrieve information to and from the Workflow Execution while it's running.
 
 ### Communicating with the Workflow
 
@@ -4325,9 +4332,9 @@ Add the Signal handler to your code:
 ```
 
 A Signal handler is an `async` method that is decorated with the `@workflow.signal` decorator.
-When the Signal is received it's logged, and then the agent checks to see if the chat has ended.
-If it has, the Signal is dropped as no more processing work should proceed. 
-This is important, as it handles the edge case of the small amount of time between when the agent finishs, but prior to the Workflow Execution closing.
+When the Signal is received, it is logged, and then the agent checks to see if the chat has ended.
+If it has, the Signal is dropped as no more processing work should take place. 
+This is important, as it handles the edge case of the small amount of time between when the agent finishes, but prior to the Workflow Execution closing.
 Then the prompt is added to the end of the `prompt_queue` for the agent to eventually process.
 
 #### Confirming the users request
@@ -4371,11 +4378,11 @@ Temporal provides this capability with `Queries`.
 
 #### Retrieving the conversating history
 
-Implementing a Query is similar to implementing a Signal.
+Implementing a Query is similar to implementing a Signal:
 You define a method and decorate it.
 However, the method can't be `async`, and the decorator is `@workflow.query`.
 
-Add the following Query to retrieve the conversation history to the bottom of your file:
+Add the following Query to the bottome of your file, to retrieve the conversation history:
 
 ```python
     @workflow.query
@@ -4407,7 +4414,7 @@ Your Workflow now has the necessary Signals and Queries for a client API to prop
 <details>
 
 <summary>
-The <code>workflows/agent_goal_workflow.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here
+The <code>workflows/agent_goal_workflow.py</code> is complete and will need no more revisions. You can review the complete file and copy the code here.
 </summary>
 
 <br />
@@ -4775,7 +4782,7 @@ mkdir shared
 touch __init__.py
 ```
 
-Next, create the file `config.py` within the `shared` directory and add the following import statements:
+Next, create the file `config.py` within the `shared` directory and add the following `import` statements:
 
 ```python
 import os
@@ -4851,7 +4858,7 @@ It then returns a configured Temporal client, ready to communicate with the Temp
 
 ### Configuring the Worker
 
-Now that you have a reusable way of creating a Temporal client, you can now use that to configure your Temporal Worker.
+Now that you have a reusable way of creating a Temporal client, you can use that to configure your Temporal Worker.
 
 Start by creating the `worker` directory:
 
@@ -4859,7 +4866,7 @@ Start by creating the `worker` directory:
 mkdir worker
 ```
 
-Then, create the file `worker.py` in the `worker` directory and add the following import statements:
+Then, create the file `worker.py` in the `worker` directory and add the following `import` statements:
 
 ```python
 import asyncio
@@ -4875,7 +4882,7 @@ from shared.config import TEMPORAL_TASK_QUEUE, get_temporal_client
 from workflows.agent_goal_workflow import AgentGoalWorkflow
 ```
 
-These import statements include libraries from the standard library, third party packages such as `dotenv` and the `temporalio.worker` library, as well as a few of the libraries you implemented.
+These `import` statements include libraries from the standard library, third-party packages such as `dotenv` and the `temporalio.worker` library, as well as a few of the libraries you implemented.
 A Worker must register the Workflows and Activities it intends to execute, so it must import them, as well as the function for creating the Temporal client.
 
 Next, create the `main` method and add the code responsible for initializing a few variables, including creating the Temporal client and creating an instance of your `AgentActivities` class.
@@ -4936,7 +4943,7 @@ You can read more about this in [the Python SDK documentation](https://docs.temp
 
 
 Next, the Worker object is created, passing in the `client`, the `task_queue`, the `activity_executor`, and then registering the individual Workflows and Activities the Worker can execute.
-The Worker is then started with `await worker.run()`, which creates a long running process that will poll the Temporal service, executing Workflow and Activities when they are requested.
+The Worker is then started with `await worker.run()`, which creates a long-running process that will poll the Temporal service, executing Workflow and Activities when they are requested.
 
 Finally, the standard `if __name__ == "__main__"` calls the main function when you run `worker.py`, starting the Worker.
 
@@ -4980,16 +4987,15 @@ Starting worker, connecting to task queue: agent-task-queue
 Ready to begin processing...
 ```
 
-The command will not exit, but sit there.
-This is expected.
+The command will not exit, but will persist; this is expected.
 It is waiting for Workflows and Activity tasks to execute.
-As long as your Worker is running successfully, that is enough for now.
-Kill the worker and Temporal service with `CTRL-C`.
+If your Worker is running successfully, that's as much as you can test for the moment.
+Kill both the worker and Temporal service by pressing `CTRL-C` in each terminal.
 
 <details>
 
 <summary>
-Before moving on to the next section, verify your files and directory structure is correct.
+Before moving on to the next section, verify that your files and directory structure are correct.
 </summary>
 
 ```
@@ -5053,7 +5059,7 @@ First, create the directory structure for your FastAPI application:
 mkdir api
 ```
 
-Next, create the API file at `api/main.py` and include the following imports:
+Next, create the API file at `api/main.py` and include the following `import` statements:
 
 ```python
 import asyncio
@@ -5074,8 +5080,8 @@ from tools.goal_registry import goal_event_flight_invoice
 from workflows.agent_goal_workflow import AgentGoalWorkflow
 ```
 
-This imports various packages from the standard library, third party libraries including FastAPI and Temporal, and a few of your custom libraries.
-It imported the `AgentGoalWorkflow` so it can invoke it, the `goal_event_flight_invoice` for specification of the goal, the `get_temporal_client` function and `TEMPORAL_TASK_QUEUE` constant for communicating with the Temporal service, and a few of your custom types for proper communication with the Workflow.
+This imports various packages from the standard library, third-party libraries including FastAPI and Temporal, and a few of your custom libraries.
+The API imported the `AgentGoalWorkflow` so it can invoke it, the `goal_event_flight_invoice` for specification of the goal, the `get_temporal_client` function and `TEMPORAL_TASK_QUEUE` constant for communicating with the Temporal service, and a few of your custom types for proper communication with the Workflow.
 
 
 Next, add the code to configure and instantiate the FastAPI object:
@@ -5186,7 +5192,7 @@ You will implement the functionality to send Signals, get the conversation histo
 
 #### Validating the Temporal client
 
-First, you will implement a helper function to verify the Temporal client is setup that every function will use.
+Every function will use the same Temporal client. First, you will implement a helper function to verify the client is set up correctly.
 
 Add the following function to your `main.py` file:
 
@@ -5206,9 +5212,9 @@ def _ensure_temporal_client() -> Client:
 ```
 
 This function ensures the global Temporal client is not `None`.
-If it isn't, it returns the client.
+If it isn't, the function returns the client.
 If it is `None`, it will raise an exception.
-This is a type safe way of validating the client before every function call.
+This is a type-safe way of validating the client before every function call.
 
 #### Starting the agent Workflow
 
@@ -5276,7 +5282,7 @@ async def send_prompt(prompt: str) -> Dict[str, str]:
     return {"message": f"Prompt '{prompt}' sent to workflow {workflow_id}."}
 ```
 
-This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to that Workflow Execution.
 
 #### Sending a confirmation to the Workflow
 
@@ -5298,7 +5304,7 @@ async def send_confirm() -> Dict[str, str]:
     return {"message": "Confirm signal sent."}
 ```
 
-This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to that Workflow Execution.
 
 
 #### Ending the chat
@@ -5320,7 +5326,7 @@ async def end_chat() -> Dict[str, str]:
     return {"message": "End chat signal sent."}
 ```
 
-This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to said Workflow Execution.
+This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to that Workflow Execution.
 
 #### Retrieving the conversation history 
 
@@ -5634,7 +5640,7 @@ In the next step, you will test your agent using a chatbot web interface.
 
 ## Running your agent 
 
-Now that you implemented a mechanism of communication for your agent, it's time to test it.
+Now that you have implemented a mechanism of communication for your agent, it's time to test it.
 You will now download a React frontend that implements a chatbot UI to interact with your agent.
 The UI will open in a terminal window and prompt the user with a message stating their purpose and instructing the user what to do next.
 Throughout the conversation, the user will interact with the agent, responding to questions from the agent as the agent tries to accomplish its goal.
@@ -5666,7 +5672,7 @@ Once the packages are finished installing, the web UI is ready to interact with 
 ### Starting Your Agent
 
 You now have assembled all the pieces to run the agent to completion.
-Running the agent requires a minimum of **four** different terminals, however this will only have one Worker process running.
+Running the agent requires a minimum of **four** different terminals, however there will only be one Worker process running.
 You can either open multiple terminals, or use a terminal multiplexer like `screen` or `tmux`.
 If you have the capabilities of running more than one Worker, it is recommended that you do so.
 
@@ -5715,7 +5721,7 @@ Next, open another terminal and run the FastAPI application:
 uv run uvicorn api.main:app --reload
 ```
 
-This uses `uvicorn`, an ASGI server to run the FastAPI app and auto reload the app if any changes are detected.
+This uses `uvicorn`, an ASGI server to run the FastAPI app and auto-reload the app if any changes are detected.
 
 The output of this command should resemble:
 
@@ -5903,7 +5909,7 @@ This is made possible since every event is stored, along with the inputs and out
 Open the Temporal Web UI at `http://localhost:8233` and navigate to your most recent run.
 
 _Your UI may not look exactly like the screenshots below due to differing UI versions, varying output from LLMs, and different user inputs.
-This is fine, the core concepts are still applicable._
+This is fine; the core concepts are still applicable._
 
 Navigate to the Workflows page to see your past agent Workflow Executions. 
 This is also the default landing page.
@@ -5925,7 +5931,7 @@ Here you can see the initial input to the Workflow, and the final result that th
 ![Screenshot of the input and output section of the Temporal Web UI for the most recent Workflow Execution's input and outputs](images/workflow-input-results.png)
 
 Below that is the **Event History** timeline.
-This is a time based representation of every event that occurred during the execution of the Workflow.
+This is a time-based representation of every event that occurred during the execution of the Workflow.
 
 ![Screenshot of the timeline section of the Temporal Web UI for the most recent Workflow Execution](images/timeline.png)
 
@@ -5954,7 +5960,7 @@ Next, you'll explore a few testing scenarios for demonstrating how Temporal adds
 ## (Optional) Witnessing the Durablity of the Agent
 
 Building your agent with Temporal adds durability to your agent.
-This means that your agent can withstand failures that traditional applications wouldn't be able too, such as internet outages or process crashes.
+This means that your agent can withstand failures that traditional applications wouldn't be able to, such as internet outages or process crashes.
 Perform the following scenarios to witness the durability Temporal provides.
 
 The following scenario is a simulation of one engineer's _very_ bad day at work.
@@ -5976,7 +5982,7 @@ What happens?
 4. Type a city and month in the chat, and press **Send**.
 5. You will see the UI stall, and not make progress. You may also see an error message appear at the top saying **Error fetching history**.
 6. Return to the Worker terminal and restart the Worker.
-7. Return to the web UI and watch for progress. Eventually message should send and the agent Workflow progresses like nothing happend.
+7. Return to the web UI and watch for progress. Eventually the message should send and the agent Workflow progresses like nothing happend.
 8. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
 
 *What happend?*: When the Worker came back online, it registered with the Task Queue and began listening for tasks it could execute.
@@ -5987,18 +5993,18 @@ This ensured that the state was not lost and the Workflow continued to progress.
 
 ### Part 2: Turning off the Internet
 
-*Scenario*: After the upgrade finished, somewhere, miles away, Danny the data center intern trips over a improperly managed power cable and the network switch to the rack where you Worker is hosted goes down.
+*Scenario*: After the upgrade finished, somewhere, miles away, Danny the data center intern trips over a improperly managed power cable and the network switch to the rack where your Worker is hosted goes down.
 While he scrambles to plug it back end, your Worker is intermittently without network access.
 What happens?
 
 *Simulating this scenario*:
 
-1. Either continue from the previous session, or start with a new chat window and don't send a chat yet.
+1. Either continue from the previous session, or start with a new chat window and don't send a message yet.
 2. Turn off your Wifi/Unplug your network adapater to simulate this failure.
 3. Respond to the prompt the agent posed to you. The agent will validate this using the LLM, which it won't be able to access.
 4. Go to the Temporal Web UI at `localhost:8233` and find the failing Activity. You will see it attempting to retry the call to the LLM. 
 5. Turn the internet back on.
-6. Eventually, the LLM call will succeed, with no intervention of the developer.
+6. Eventually, the LLM call will succeed, with no intervention from the developer.
 7. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
 
 *What happend?*: Temporal Activities are retried automatically upon failure.
@@ -6008,7 +6014,7 @@ Once the network comes back online, at the next retry interval the LLM call will
 
 ### Part 3: Swapping out LLMs
 
-*Scenario*: Now that the switch is back online, the developer can breath easy.
+*Scenario*: Now that the switch is back online, the developere can breath easy.
 Unfortunatley they get paged that their OpenAI credits are depleted, there are angry customers trying to use the chatbot, and the only person with a corporate card to replenish the credits is on PTO.
 You have an Anthopic account with some Claude credits you can swap in quickly.
 
@@ -6020,7 +6026,7 @@ This scenario requires an Anthropic account with a Claude API token.
 
 *Simulating this scenario*:
 
-1. Either continue from the previous session, or start with a new chat window. Send a few chats to make progress in the Workflow, but not complete it.
+1. Either continue from the previous session, or start with a new chat window. Send a few chats to make progress in the Workflow, but do not complete it.
 2. Open the `.env` file and modify the following variables:
     - `LLM_MODEL`: `anthropic/claude-sonnet-4-20250514
     - `LLM_KEY`: Your LLM Key
