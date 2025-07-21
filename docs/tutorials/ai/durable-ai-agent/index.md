@@ -1176,7 +1176,7 @@ Now that you have the type available to define the goal, you will implement the 
 
 Similar to implementing the `tool_registry`, next you will implement a `goal_registry` to define your agent's goal and make it available to the Workflow. 
 You will do this by creating an instance of your `AgentGoal` type for every goal you wish to implement.
-For this tutorial you will only implement a single goal, but you may want to use this framework going forward to create your own agent goals at a later date.
+For this tutorial you will only implement a single goal, named `goal_event_flight_invoice`, but you may want to use this framework going forward to create your own agent goals at a later date.
 
 To implement your agent's goal, create the file `models/goal_registry.py` and add the following imports to the file:
 
