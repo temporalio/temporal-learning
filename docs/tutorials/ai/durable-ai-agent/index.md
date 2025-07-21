@@ -2417,7 +2417,7 @@ Begin by producing a valid JSON response for the next tool or question.
 The validation section enables the template to handle both correct and incorrectly JSON formatted strings.
 If the JSON is improperly formatted, the LLM is prompted to correct it before continuing with its other tasks.
 
-All together, the template should look as such:
+All together, the template should look like this:
 
 ```python
 GENAI_PROMPT = Template(
