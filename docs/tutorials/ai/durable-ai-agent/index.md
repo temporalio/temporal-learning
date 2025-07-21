@@ -63,7 +63,6 @@ You can succeed with this tutorial with minimal credits; in our experience, less
 
 :::
 
-* Text editor or IDE of your choice to write code.
 
 ### Optional
 
@@ -115,6 +114,7 @@ Running this command creates the following default Python package structure for 
 temporal-ai-agent/
 ├── .gitignore
 ├── .python-version
+├── main.py
 ├── README.md
 ├── pyproject.toml
 └── uv.lock
