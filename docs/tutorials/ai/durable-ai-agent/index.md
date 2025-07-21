@@ -1363,6 +1363,8 @@ If your application were to then crash after executing a few tools, it could rec
 This provides durability to your agent for intermittent issues, which are common in distributed systems.
 
 Before you can proceed to creating the Activities, however, you need to create the custom types that you'll use for Activity communication.
+Recall that Workflow and Activity best practices recommend only passing a single `dataclass` parameter.
+This helps with the evolution of parameters as well as ensuring type safety.
 
 ### Creating the `requests` data models
 
