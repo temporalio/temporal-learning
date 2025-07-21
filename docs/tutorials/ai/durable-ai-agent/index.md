@@ -1241,7 +1241,7 @@ Add the conversation as the final parameter.
         [
             "user: I'd like to travel to an event",
             "agent: Sure! Let's start by finding an event you'd like to attend. I know about events in North American cities. Could you tell me which city and month you're interested in?",
-            "user: sydney in may please",
+            "user: nyc in may please",
             "agent: Great! Let's find an events in New York City in May.",
             "user_confirmed_tool_run: <user clicks confirm on FindEvents tool>",
             "tool_result: { 'event_name': 'Frieze New York City', 'event_date': '2023-05-01' }",
@@ -1395,7 +1395,7 @@ They are used in the following context of the agent:
 
 * `Message` - A nested dictionary that represents one turn of a conversation between the LLM and the user
 * `ConversationHistory` - A dictionary containing an `str` key and a `List` of `Messages` that keeps track of the conversation between the LLM and the user
-* `NextStep` - A `Literal` containing four options, picked by the agent to decide the next action to take and interpreted by the Workflow
+* `NextStep` - A `Literal` containing three options, picked by the agent to decide the next action to take and interpreted by the Workflow
 * `CurrentTool` - An `str` representation of the current tool the agent is using
 
 Next, add the following `dataclass`es for handling the primary agent parameters:
@@ -3615,7 +3615,7 @@ Once the tool has completed execution, it `continue`s the loop, meaning it skips
 Next, implement three helper method that the tool execution code block called, but had not yet implemented.
 
 The first checks if the tool is ready for execution.
-Add this method within your class but outside of the `run` method, underneath any other previously defined methods.
+Leave the `run` and append this new method to your class:
 
 ```python
     # define if we're ready for tool execution
@@ -3631,7 +3631,7 @@ If this evaluates to `True`, the tool is ready for execution and the method retu
 
 
 The second method executes the tool.
-Add this method within your class but outside of the `run` method, underneath any other previously defined methods.
+Leave the `run` and append this new method to your class:
 
 ```python
     # execute the tool - set self.waiting_for_confirm to False if we're not waiting for confirm anymore
