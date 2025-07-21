@@ -79,7 +79,7 @@ Additionally, this tutorial assumes you have basic familiarity with:
 #### Programming Concepts
 
 * Temporal fundamentals such as [Workflows](https://docs.temporal.io/develop/python/core-application#develop-workflows), [Activities](https://docs.temporal.io/develop/python/core-application#develop-activities), [Workers](https://docs.temporal.io/develop/python/core-application#run-a-dev-worker), [Signals](https://docs.temporal.io/develop/python/message-passing#signals), and [Queries](https://docs.temporal.io/develop/python/message-passing#queries)
-* Python fundamentals such as functions, classes, async/await syntax, and virtual environments
+* Python fundamentals such as functions, classes, [async/await syntax](https://docs.python.org/3/library/asyncio.html), and virtual environments
 * Command line interface and running commands in a terminal or command prompt  
 * REST API concepts including HTTP requests and JSON responses
 * How to set and use environment variables in your operating system
@@ -813,7 +813,10 @@ find_events_tool = ToolDefinition(
 
 Now that you have the first tool defined in your registry, implement the remaining tool definitions. 
 
-Add the following code to register the `search_flights` tool. The structure is similar to the `find_events` tool, except that `search_flights` requires more arguments, to search for the origin, destination, departure date, return date, and confirmation status.
+Add the following code to register the `search_flights` tool. 
+The structure is similar to the `find_events` tool, except that `search_flights` requires more arguments, to search for the origin, destination, departure date, return date, and confirmation status.
+These arguments are a direct mapping of the required parameters to the RAPIDAPI REST API.
+When creating a tool that maps to an API, be sure to include that APIs required parameters as `ToolArgument`s.
 
 ```python
 search_flights_tool = ToolDefinition(
@@ -851,7 +854,8 @@ search_flights_tool = ToolDefinition(
 )
 ```
 
-And then add the following code to register the `create_invoice` tool. This tool requires three arguments: the amount to be paid, the details of the trip, and a user confirmation.
+And then add the following code to register the `create_invoice` tool. 
+This tool requires three arguments: the amount to be paid, the details of the trip, and a user confirmation.
 
 ```python
 create_invoice_tool = ToolDefinition(
