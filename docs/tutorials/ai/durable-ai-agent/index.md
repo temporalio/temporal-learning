@@ -2705,7 +2705,7 @@ from prompts.prompts import (
 
 ```
 
-Next, create the function to render the `GENAI_PROPMT`:
+Next, create the function to render the `GENAI_PROMPT`:
 
 ```python
 def generate_genai_prompt(
