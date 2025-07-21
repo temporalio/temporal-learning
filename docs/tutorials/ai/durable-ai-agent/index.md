@@ -1676,8 +1676,8 @@ Add the method header with the appropriate decorator to your `activities.py` fil
     async def agent_toolPlanner(self, input: ToolPromptInput) -> dict:
 ```
 
-Next, create the `messages` list, which contains various dictionaries to the specification of the LLM for prompting.
-This format is specifically OpenAI's format, which you can use for any LLM, because you are using `LiteLLM` to as your LLM abstraction library.
+Next, create the `messages` list, which contains various dictionaries with the data necessary to perform an LLM prompt.
+This format is specifically OpenAI's format, which you can use for any LLM, because you are using `LiteLLM` to as your [LLM abstraction library](https://docs.litellm.ai/docs/anthropic_unified#litellm-python-sdk).
 
 Add the following code to craft the `messages` list:
 
