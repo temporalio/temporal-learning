@@ -101,12 +101,6 @@ uv init temporal-ai-agent --python ">=3.9"
 
 ```
 
-Next, change directories into your newly created project:
-
-```command
-cd temporal-ai-agent
-```
-
 `uv` is a modern Python project and packaging tool that sets up a project structure for  you.
 Running this command creates the following default Python package structure for you:
 
@@ -121,6 +115,12 @@ temporal-ai-agent/
 ```
 
 It automatically runs a `git init` command for you, provides you with the default `.gitignore` for Python, creates a `.python-version` file that has the project's default Python version, a README.md, a Hello World `main.py` program, and a `pyproject.toml` file for managing the projects packages and environment.
+
+Next, change directories into your newly created project:
+
+```command
+cd temporal-ai-agent
+```
 
 You won't need the `main.py` file, so delete it:
 
@@ -541,8 +541,7 @@ Searching for: DFW
 }
 ```
 
-:::warning
-
+:::info
 If the API gives you cryptic error messages such as **Something went wrong** or returns an incomplete response, you can try running it a few times and see if you get a different response.
 
 :::
@@ -5780,7 +5779,9 @@ You should see a message _similar_ to the following.
 Remember, the agent's responses are powered by an LLM, so the responses are non-deterministic, meaning they are likely to be slightly different every time.
 
 ```text
-Agent: Welcome! I'm here to help you plan your travel to events in North America. I can assist you in finding events, booking flights, and generating invoices for your trip. To get started, please tell me which city and month you're interested in traveling to?
+Agent: Welcome! I'm here to help you plan your travel to events in North America. 
+I can assist you in finding events, booking flights, and generating invoices for your trip. 
+To get started, please tell me which city and month you're interested in traveling to?
 ```
 
 Test the conversation by responding with a city you'd like to travel to and the month you want to travel:
@@ -5822,7 +5823,8 @@ You: I would like to attend the San Francisco International Film Festival
 However, you forgot to provide the departure city here, which the agent recognized and then prompted you for again.
 
 ```text
-Agent: Great choice! The San Francisco International Film Festival is from April 17 to May 1, 2026. Please provide your departure city so I can search for flights.
+Agent: Great choice! The San Francisco International Film Festival is from April 17 to May 1, 2026. 
+Please provide your departure city so I can search for flights.
 ```
 
 Thinking about lunch, you accidentally input your lunch order into the chatbot:
@@ -5834,7 +5836,9 @@ I would like to order two double cheeseburgers.
 The agent's guardrails recognize this isn't valid for its goal, so it informs you and prompts you to enter your departure city.
 
 ```text
-Agent: Your request to order two double cheeseburgers doesn't align with our current goal. We're working on organizing a trip for you to attend the San Francisco International Film Festival. To proceed, please let me know your departure city so I can search for flights for your trip.
+Agent: Your request to order two double cheeseburgers doesn't align with our current goal. 
+We're working on organizing a trip for you to attend the San Francisco International Film Festival. 
+To proceed, please let me know your departure city so I can search for flights for your trip.
 ```
 
 You then provide it with your departure city:
@@ -5847,7 +5851,8 @@ The agent now has the information it needs, and can move on to the next step.
 However, it may decide to confirm with you again to ensure that's what you meant.
 
 ```text
-Agent: Thanks! You're departing from Austin, TX. Would you like to proceed with searching for flights from Austin to San Francisco for the San Francisco International Film Festival?
+Agent: Thanks! You're departing from Austin, TX. 
+Would you like to proceed with searching for flights from Austin to San Francisco for the San Francisco International Film Festival?
 ```
 
 To which you should either confirm or deny. In this instance, confirm:
@@ -5880,7 +5885,8 @@ It will prompt you if you would like to create an invoice for the flight:
 
 ```text
 Agent: 
-I found the cheapest flight with Southwest Airlines for $149.75. Would you like to create an invoice for this flight?
+I found the cheapest flight with Southwest Airlines for $149.75. 
+Would you like to create an invoice for this flight?
 ```
 
 To which you confirm:
@@ -5898,7 +5904,9 @@ Agent: Let's proceed with creating an invoice for the Southwest Airlines flight.
 The agent then creates the invoice, the goal is complete, and the chat is over.
 
 ```text
-Agent: Invoice generated successfully! You can view and pay your invoice at: https://pay.example.com/invoice/12345. Your reference number is INV-12345. If you need further assistance, feel free to ask.
+Agent: Invoice generated successfully! 
+You can view and pay your invoice at: https://pay.example.com/invoice/12345. 
+Your reference number is INV-12345. If you need further assistance, feel free to ask.
 ```
 
 :::note
