@@ -1464,6 +1464,7 @@ class EnvLookupOutput:
 ```
 
 Since reading from the filesystem is a non-deterministic operation, this action must be done from an Activity, so it is best practice to define types to handle this in case you ever need to add more environment variables.
+Your environment variables will contain things such as your API keys, agent configurations, timeouts, and other settings.
 
 Finally, add the class that will contain the next step the agent should take and the data the tool needs to execute:
 
