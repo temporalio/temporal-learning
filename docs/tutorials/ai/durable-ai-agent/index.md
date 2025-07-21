@@ -620,7 +620,7 @@ STRIPE_API_KEY=YOUR_STRIPE_API_KEY
 
 :::warning
 
-Make sure you have set up your Stripe account as a [sandbox](https://docs.stripe.com/sandboxes) and are using an API key from there.
+Make sure you have set up your Stripe account as a [sandbox](https://docs.stripe.com/sandboxes) and are using an API key from there. If it is your first time setting up a Stripe account and you haven't added any billing information, this will be the default.
 Otherwise the invoices will be real.
 
 :::
