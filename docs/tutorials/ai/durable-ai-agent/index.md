@@ -1219,7 +1219,11 @@ Add the following code to the file:
 ```
 
 The next parameter provides a starter prompt for the agent, detailing how it should begin its interaction with every user.
-Add the following code to the file:
+A starter prompt is the first prompt an agent sees, and gives the initial set of instructions.
+Think of this an initialization function for the conversation.
+A common format is to provide a greeting, explain your purpose, and prompt the user for information the agent needs to succeed.
+
+Add the following code to define your prompt:
 
 ```python
     # ...
