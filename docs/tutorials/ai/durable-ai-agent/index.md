@@ -4784,7 +4784,8 @@ Workflows, Activities, Signal and Query handling, and all Temporal operations ar
 
 A Worker uses a Temporal client to communicate with the Temporal service to coordinate execution.
 A Temporal client is also used to request execution of Temporal Workflows.
-Since this application will require multiple Temporal clients, you will implement a `shared` submodule that others can call to create a Temporal client. 
+Since this application will require multiple Temporal clients, you will implement a `shared` submodule that others can call to create a Temporal client.
+This reduces the need for duplicate code and protentially incorrectly setting the Task Queue. 
 
 First, create the `shared` directory and a blank `__init__.py` file to create the submodule:
 
