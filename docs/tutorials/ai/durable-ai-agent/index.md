@@ -6002,10 +6002,10 @@ What happens?
 4. Type a city and month in the chat, and press **Send**.
 5. You will see the UI stall, and not make progress. You may also see an error message appear at the top saying **Error fetching history**.
 6. Return to the Worker terminal and restart the Worker.
-7. Return to the web UI and watch for progress. Eventually the message should send and the agent Workflow progresses like nothing happend.
+7. Return to the web UI and watch for progress. Eventually the message should send and the agent Workflow progresses like nothing happened.
 8. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
 
-*What happend?*: When the Worker came back online, it registered with the Task Queue and began listening for tasks it could execute.
+*What happened?*: When the Worker came back online, it registered with the Task Queue and began listening for tasks it could execute.
 When the original Worker timed out, not returning a response for the task it was supposed to execute, the new Worker accepted it.
 The new Worker then rebuilt the state of the original Workflow Execution, up to the point of failure, and continued execution as if nothing happened.
 This new Worker could have been on another virtual machine within the Worker fleet, or the original Worker when the virtual machine finished its upgrade.
@@ -6027,16 +6027,16 @@ What happens?
 6. Eventually, the LLM call will succeed, with no intervention from the developer.
 7. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
 
-*What happend?*: Temporal Activities are retried automatically upon failure.
+*What happened?*: Temporal Activities are retried automatically upon failure.
 Intermittent failures such as network outages are often fixed via retries.
 Each Activity has a default Retry Policy that retries, then backs off increasingly to a maximum duration.
 Once the network comes back online, at the next retry interval the LLM call will execute and succeed.
 
 ### Part 3: Swapping out LLMs
 
-*Scenario*: Now that the switch is back online, the developere can breath easy.
-Unfortunatley they get paged that their OpenAI credits are depleted, there are angry customers trying to use the chatbot, and the only person with a corporate card to replenish the credits is on PTO.
-You have an Anthopic account with some Claude credits you can swap in quickly.
+*Scenario*: Now that the switch is back online, the developer can breath easy.
+Unfortunately they get paged that their OpenAI credits are depleted, there are angry customers trying to use the chatbot, and the only person with a corporate card to replenish the credits is on PTO.
+You have an Anthropic account with some Claude credits you can swap in quickly.
 
 :::note
 
@@ -6048,13 +6048,13 @@ This scenario requires an Anthropic account with a Claude API token.
 
 1. Either continue from the previous session, or start with a new chat window. Send a few chats to make progress in the Workflow, but do not complete it.
 2. Open the `.env` file and modify the following variables:
-    - `LLM_MODEL`: `anthropic/claude-sonnet-4-20250514
+    - `LLM_MODEL`: `anthropic/claude-sonnet-4-20250514`
     - `LLM_KEY`: Your LLM Key
 3. Restart the Worker.
-4. Respond to the next propmt in the chat.
-5. The agent will respond as if nothing happend, continuing the conversation.
+4. Respond to the next prompt in the chat.
+5. The agent will respond as if nothing happened, continuing the conversation.
 
-*What happend?*: Since the agent is durable and preserves state, the conversation history was preserved when the Worker was terminated.
+*What happened?*: Since the agent is durable and preserves state, the conversation history was preserved when the Worker was terminated.
 The state of the Workflow was reconstructed to the point where the Worker was terminated, and the conversation history was sent to Claude as context when executing the next prompt.
 The agent continues executing as if nothing happened.
 
@@ -6095,4 +6095,4 @@ The foundation you built in this tutorial enables you to build agents to solve n
 If you're up to it, try writing your own goal and tools and have the agent execute them.
 Temporal's Durable Execution brings reliability and observability to long-running, distributed systems, which is exactly what AI agents are.
 
-Check back later for the next installment in this tutorial series, where you will continue to add functionallity to your agent.
+Check back later for the next installment in this tutorial series, where you will continue to add functionality to your agent.
