@@ -26,3 +26,5 @@ uvicorn
 litellm
 venv
 boolean
+[cC]hatbot
+Anthropic
