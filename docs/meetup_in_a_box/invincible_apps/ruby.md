@@ -33,8 +33,8 @@ You don't need to be a Temporal expert to give this presentation, but it is reco
 
 ### Resources
 
-<a className="button button--primary" href="https://docs.google.com/document/d/1dW88dalaGwqlteZ-szqSJQFGiuChssi_VrPGaQNT2B4/edit?tab=t.0#heading=h.dyh12wrinvv3">Instructions</a>&nbsp;
-<a className="button button--primary" href="https://docs.google.com/presentation/d/15_84OrerpIzYct1svCdWhozoGyeAenSCI6e_tVXNj6Q/edit?slide=id.g314e73fab69_0_0#slide=id.g314e73fab69_0_0">Slides</a>&nbsp;
+<a className="button button--primary" href="https://docs.google.com/document/d/19cp2Vq376qE26KkUA7IqkDpov3gSCNHeCuPXw__lnuc/edit?tab=t.0#heading=h.dyh12wrinvv3">Instructions</a>&nbsp;
+<a className="button button--primary" href="https://docs.google.com/presentation/d/1UZt6EPZBwIBOOJ3cY1JlmD9T7_novfRuUZZkS-MHL0Y/edit?slide=id.g314e73fab69_0_0#slide=id.g314e73fab69_0_0">Slides</a>&nbsp;
 <a className="button button--primary" href="https://github.com/temporal-community/miab-build-invincible-apps-ruby">Sample Code</a>
 
 <br/><br/>
