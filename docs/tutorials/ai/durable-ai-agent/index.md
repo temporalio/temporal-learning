@@ -1101,7 +1101,7 @@ It achieves this goal by executing tools, analyzing the results, and using an LL
 In this tutorial you will define the goal as a combination of several fields, including a description, a starter prompt, an example conversation history, and the list of tools the agent can use to achieve its goal.
 Now that you've defined the `ToolDefinition` that will be available for your agent, you can define the `AgentGoal` type and create your agent's goal.
 
-### Definining the `AgentGoal` type
+### Defining the `AgentGoal` type
 
 To define the `AgentGoal` type, open `models/core.py` and add the following code:
 
@@ -1476,7 +1476,7 @@ class ToolData(TypedDict, total=False):
     force_confirm: bool
 ```
 
-`ToolData` contains the `NextStep` that the agent shoudl take, along with the tool that should be used, the arguments for the tool, the response from the LLM, and a `force_confirm` boolean.
+`ToolData` contains the `NextStep` that the agent should take, along with the tool that should be used, the arguments for the tool, the response from the LLM, and a `force_confirm` boolean.
 You may notice this type is different from the previous types, as it is a subclass of `TypedDict` and not a `dataclass`.
 This is done to handle converting the type to JSON for use in the API later, because `dataclass`es don't support conversion of nested custom types to JSON.
 
@@ -2293,8 +2293,8 @@ Next, you'll craft your prompt templates that the LLM will use.
 ### Crafting the prompts templates
 
 The prompts templates you create will vary in the amount of customization they allow.
-For templates with minimal customization, for example, templates that only require a few variable subsitutions, Python's string formatting syntax will suffice.
-However, if your template requiries iteration, conditional logic, or variable interpolation, you should use a more advanced templating system, such as `Jinja2`.
+For templates with minimal customization, for example, templates that only require a few variable substitutions, Python's string formatting syntax will suffice.
+However, if your template requires iteration, conditional logic, or variable interpolation, you should use a more advanced templating system, such as `Jinja2`.
 
 #### Defining the primary context prompt
 
@@ -2521,7 +2521,7 @@ Next, you'll create the prompt that will determine the next steps for your agent
 #### Defining the tool completion prompt
 
 The `TOOL_COMPLETION_PROMPT` instructs the LLM to analyze the successful tool results and determine the appropriate next steps. 
-This prompt only requires minimal substituion, so a Python string formatting will suffice.
+This prompt only requires minimal substitution, so a Python string formatting will suffice.
 
 Add the following constant to your `prompts/prompts.py` file:
 
@@ -2990,7 +2990,7 @@ LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT = timedelta(minutes=30)
 
 These timeout constants set sensible limits for tool execution and LLM calls, ensuring the calls have enough time to respond, but that the Workflow detects a failure within a reasonable amount of time.
 
-#### Defining the tool execution Activitity invocation function
+#### Defining the tool execution Activity invocation function
 
 The first function you'll implement is the `handle_tool_execution` function.
 Add the method header to the file:
@@ -3885,7 +3885,7 @@ However, if the prompt is from a user, it is validated.
 The agent creates a `ValidationInput` variable containing the prompt, the conversation history, and the agent's goal.
 The agent then executes the `agent_validatePrompt` Activity, passing the `ValidationInput` variable as input.
 If the validation passes, the Workflow proceeds execution.
-However, if the validation fails, the agent logs the error, adds it to conversation history and, resets to the beginning using `continue`, where it will inform the user of the error and await a reponse.
+However, if the validation fails, the agent logs the error, adds it to conversation history and, resets to the beginning using `continue`, where it will inform the user of the error and await a response.
 
 It's important to recall that within `agent_validatePrompt`, regardless of success the Activity calls the `agent_toolPlanner` method.
 This provides a reason why the validation failed, if necessary.
@@ -4386,13 +4386,13 @@ Sending information to a Workflow may not be the only action you want to do.
 You may also want to retrieve some information during its execution.
 Temporal provides this capability with `Queries`.
 
-#### Retrieving the conversating history
+#### Retrieving the conversing history
 
 Implementing a Query is similar to implementing a Signal:
 You define a method and decorate it.
 However, the method can't be `async`, and the decorator is `@workflow.query`.
 
-Add the following Query to the bottome of your file, to retrieve the conversation history:
+Add the following Query to the bottom of your file, to retrieve the conversation history:
 
 ```python
     @workflow.query
@@ -4784,7 +4784,7 @@ Workflows, Activities, Signal and Query handling, and all Temporal operations ar
 A Worker uses a Temporal client to communicate with the Temporal service to coordinate execution.
 A Temporal client is also used to request execution of Temporal Workflows.
 Since this application will require multiple Temporal clients, you will implement a `shared` submodule that others can call to create a Temporal client.
-This reduces the need for duplicate code and protentially incorrectly setting the Task Queue. 
+This reduces the need for duplicate code and potentially incorrectly setting the Task Queue. 
 
 First, create the `shared` directory and a blank `__init__.py` file to create the submodule:
 
@@ -5864,19 +5864,19 @@ You: Yes
 This extra confirmation step may not always happen.
 It depends if the LLM decides to verify.
 
-However, it is now satisified and is ready to execute the next tool. This is evident because after this response, you are asked to confirm execution for the `SearchFlights` tool:
+However, it is now satisfied and is ready to execute the next tool. This is evident because after this response, you are asked to confirm execution for the `SearchFlights` tool:
 
 ```text
 Agent: Let's proceed with searching for flights from Austin, TX (AUS) to San Francisco (SFO) around the dates of April 17 to May 1, 2026.
 ```
 
-After you conirm the tool usage, the agent then executes the tool, searching for flights to your destination. 
+After you confirm the tool usage, the agent then executes the tool, searching for flights to your destination. 
 
 :::note
 
 If you have supplied a RAPIDAPI key, this will make a call to a microservice to check for real flight data.
 If the API returns multiple times with an error or no flights, this is the external API being unreliable and returning sporadic error messages.
-To alleviate this, use the mocked fucntion instead.
+To alleviate this, use the mocked function instead.
 
 :::
 
@@ -5912,11 +5912,11 @@ Your reference number is INV-12345. If you need further assistance, feel free to
 :::note
 
 If you set a `STRIPE_API_KEY` environment variable in your `.env` file, the tool will use the Stripe API to create an invoice in your Stripe environment.
-Otherwise, it will create a psudeo link.
+Otherwise, it will create a pseudo link.
 
 :::
 
-Now that the chat is over, the Worklow Execution is over.
+Now that the chat is over, the Workflow Execution is over.
 You can start another chat session by clicking the **Start New Chat** button in the web UI, which will start a new Workflow Execution.
 
 Next, you'll examine the Event History of your most recent chat session.
@@ -5969,7 +5969,7 @@ Everything that is recorded above is derived from this history.
 You can click into each individual event and see all the information about a single event.
 Certain events, such as Activities, that typically come in a group, will be automatically paired for easy viewing as shown below.
 
-![Screenshot of the the Event History list section in the Temporal Web UI with an Actvitiy expanded so the results can be seen](images/expanded-activity.png)
+![Screenshot of the the Event History list section in the Temporal Web UI with an Activity expanded so the results can be seen](images/expanded-activity.png)
 
 You can also use this UI live.
 During a running Workflow Execution, you can watch live updates as you interact with your chatbot, and see the events come in to the timeline and list views.
@@ -5977,7 +5977,7 @@ If you'd like, run another session of your chatbot and have the web UI open in a
 
 Next, you'll explore a few testing scenarios for demonstrating how Temporal adds durability to your agent.
 
-## (Optional) Witnessing the Durablity of the Agent
+## (Optional) Witnessing the Durability of the Agent
 
 Building your agent with Temporal adds durability to your agent.
 This means that your agent can withstand failures that traditional applications wouldn't be able to, such as internet outages or process crashes.
@@ -6020,7 +6020,7 @@ What happens?
 *Simulating this scenario*:
 
 1. Either continue from the previous session, or start with a new chat window and don't send a message yet.
-2. Turn off your Wifi/Unplug your network adapater to simulate this failure.
+2. Turn off your Wifi/Unplug your network adapter to simulate this failure.
 3. Respond to the prompt the agent posed to you. The agent will validate this using the LLM, which it won't be able to access.
 4. Go to the Temporal Web UI at `localhost:8233` and find the failing Activity. You will see it attempting to retry the call to the LLM. 
 5. Turn the internet back on.
