@@ -351,7 +351,7 @@ cd ..
 Now that you have the data, download the `find_events` tool using the command:
 
 ```command
-curl -o find_events_data.json https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/find_events.py
+curl -o find_events.py https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/find_events.py
 ```
 
 Open the file and explore the logic; you should never download a file from the internet and just trust it.
@@ -433,7 +433,7 @@ This tool can either use the [RapidAPI SkyScraper API](#optional) if you have an
 First, get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
 
 ```command
-curl -o find_events_data.json https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/search_flights.py
+curl -o search_flights.py https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/search_flights.py
 ```
 
 Next, familiarize yourself with the tool by reviewing the code.
@@ -558,7 +558,7 @@ This tool can either use the [Stripe API](#optional) if you have an API key conf
 First, get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
 
 ```command
-curl -o find_events_data.json https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/create_invoice.py
+curl -o create_invoice.py https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/create_invoice.py
 ```
 
 Next, familiarize yourself with the tool by reviewing the code.
@@ -5293,7 +5293,7 @@ async def send_prompt(prompt: str) -> Dict[str, str]:
     return {"message": f"Prompt '{prompt}' sent to workflow {workflow_id}."}
 ```
 
-This code identifies the Workflow Execution by its `workflow_id`, and sends the Signals sent to the API to that Workflow Execution.
+This code identifies the Workflow Execution by its `workflow_id`, and sends the user's prompts sent to the API as Signals to that Workflow Execution.
 
 #### Sending a confirmation to the Workflow
 
@@ -6022,7 +6022,7 @@ What happens?
 1. Either continue from the previous session, or start with a new chat window and don't send a message yet.
 2. Turn off your Wifi/Unplug your network adapter to simulate this failure.
 3. Respond to the prompt the agent posed to you. The agent will validate this using the LLM, which it won't be able to access.
-4. Go to the Temporal Web UI at `localhost:8233` and find the failing Activity. You will see it attempting to retry the call to the LLM. 
+4. Go to your Temporal Web UI at `localhost:8233` and find the failing Activity. You will see it attempting to retry the call to the LLM. 
 5. Turn the internet back on.
 6. Eventually, the LLM call will succeed, with no intervention from the developer.
 7. If you are prompted to confirm the tool execution, do so. Then leave the UI up for the next scenario.
