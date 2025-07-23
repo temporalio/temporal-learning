@@ -5967,7 +5967,7 @@ Activities will contain information regarding the timeouts, retry policies, and 
 Finally, you have the list version of the **Event History**.
 Everything that is recorded above is derived from this history. 
 You can click into each individual event and see all the information about a single event.
-Certain events, such as Activities, that typically come in a group, will be automatically paired for easy viewing as shown below.
+Certain events, such as Activities, that typically come in a group, will be automatically paired for concise viewing as shown below.
 
 ![Screenshot of the the Event History list section in the Temporal Web UI with an Activity expanded so the results can be seen](images/expanded-activity.png)
 
@@ -6034,7 +6034,7 @@ Once the network comes back online, at the next retry interval the LLM call will
 
 ### Part 3: Swapping out LLMs
 
-*Scenario*: Now that the switch is back online, the developer can breath easy.
+*Scenario*: Now that the switch is back online, the developer can breath a sigh of relief.
 Unfortunately they get paged that their OpenAI credits are depleted, there are angry customers trying to use the chatbot, and the only person with a corporate card to replenish the credits is on PTO.
 You have an Anthropic account with some Claude credits you can swap in quickly.
 
