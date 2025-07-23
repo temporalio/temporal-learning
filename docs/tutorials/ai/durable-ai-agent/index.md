@@ -430,7 +430,13 @@ The tool takes the origin, destination, arrival date, and departure date as argu
 The LLM will use this tool to find flights to the location once the user has selected the dates they wish to travel.
 This tool can either use the [RapidAPI SkyScraper API](#optional) if you have an API key configured in your `.env` file, or it will generate mock data if it's unable to detect the API key.
 
-First, get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
+First, change directories into the `tools` directory:
+
+```command
+cd tools
+```
+
+Then get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
 
 ```command
 curl -o search_flights.py https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/search_flights.py
@@ -471,9 +477,10 @@ However, since this tool can operate in either a mock mode or live API mode, the
 Let's start by testing it without the RapidAPI key. 
 If you have that set in your `.env` file, comment it out for now, or skip this step.
 
-Run the test using the following command:
+Change directories back to the root of the project and run the test using the following command:
 
 ```command
+cd ..
 uv run scripts/search_flight_test.py
 ```
 
@@ -514,7 +521,14 @@ RAPIDAPI_HOST_FLIGHTS=sky-scrapper.p.rapidapi.com
 Next, review the code in `scripts/search_flights_test.py` and make sure that the `dateDepart` and `dateReturn` dates are both in the future.
 At this point you have no way of determining if the dates are in the past, and the API will return an error if you try to search for flights in the past. 
 
-Once you've reviewed the code, run the test using the following command:
+Once you've reviewed the code, make sure you are at the root directory of the project.
+If are still in the `scripts` directory, run the following command:
+
+```command
+cd ..
+```
+
+Then run the test using the following command:
 
 ```command
 uv run scripts/search_flight_test.py
@@ -555,7 +569,13 @@ The tool takes the customer's email and trip information such as the cost of the
 The LLM will use this tool to invoice the customer once the customer has confirmed their travel plans.
 This tool can either use the [Stripe API](#optional) if you have an API key configured in your `.env` file, or it will generate a mock invoice if it is unable to detect an API key.
 
-First, get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
+First, change directories into the `tools` directory again:
+
+```command
+cd tools
+```
+
+Then get the tool by running the following command to download it from the [companion GitHub repository](https://github.com/temporal-community/tutorial-temporal-ai-agent):
 
 ```command
 curl -o create_invoice.py https://raw.githubusercontent.com/temporal-community/tutorial-temporal-ai-agent/main/tools/create_invoice.py
@@ -592,9 +612,10 @@ However, since this tool can operate in either a mock mode or live API mode, the
 Start by testing it without the Stripe key. 
 If you have it set in your `.env` file, comment it out for now, or skip this step.
 
-Run the test using the following command:
+Change directories back to the root project directory and run the test using the following command:
 
 ```command
+cd ..
 uv run scripts/search_flight_test.py
 ```
 
@@ -624,7 +645,14 @@ Otherwise the invoices will be real.
 
 :::
 
-Next, run the test using the following command the same way you would the mocked version:
+Make sure you aren't in the `scripts` directory any more.
+If you are, run the following command to get back to the root directory of the project:
+
+```command
+cd ..
+```
+
+Then run the test using the following command the same way you would the mocked version:
 
 ```command
 uv run scripts/search_flight_test.py
