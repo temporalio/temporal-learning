@@ -9,7 +9,7 @@ image: /img/temporal-logo-twitter-card.png
 
 import Link from '@docusaurus/Link';
 
-# Best Practices Guides
+# Best Practice Guides
 
 ## Purpose
 
