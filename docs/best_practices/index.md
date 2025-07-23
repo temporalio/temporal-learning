@@ -13,27 +13,24 @@ import Link from '@docusaurus/Link';
 
 ## Purpose
 
-This section outlines the foundational principles and standards for creating customer-facing learning experiences using Temporal. It exists to provide a **validated, opinionated framework**—especially valuable if you do not have an enablement plan in place. If you do have a plan, use this guidance to evaluate and refine it.
+This section outlines foundational principles and best practices for using Temporal Cloud. It exists to provide a **validated, opinionated** framework that helps teams that either do not have an enablement plan for or want to evaluate and refine their use of Temporal. 
 
-This is not a collection of optional tips. It is structured guidance that reflects what has worked for customers and what enables successful self-serve education.
-
-## Why This Exists
+## Why did we create this?
 
 Without a clear strategy, learning content often becomes fragmented, inconsistent, or misaligned with user needs. This guidance prevents that by offering:
 - A starting point that’s been tested and validated
 - A common structure for teams working on enablement
 - Confidence that what you’re building aligns with Temporal’s standards
 
-## What This Is
-This is a **prescriptive set of best practices** for building and maintaining learning resources at Temporal. Use it to drive decisions, justify approaches, and ensure alignment across teams and contributors.
+## Who is this for?
 
-## Who This Is For
 This section is intended for:
 - Anyone building tutorials, courses, onboarding paths, or documentation for customers
 - Internal teams responsible for product education and enablement
 - Partners or vendors creating Temporal-related learning materials
 
-## How to Use This
+## How to start using this? 
+
 - **Starting from scratch?** Follow this guidance as your default.
 - **Already have a plan?** Use this to challenge assumptions and improve structure.
 - **Need to justify your approach?** Point to this document as Temporal’s baseline strategy.
