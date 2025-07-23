@@ -14,9 +14,6 @@ import Link from '@docusaurus/Link';
 Do you want to present about Temporal to your local community, but don't have the time to create an entire presentation?
 The Temporal Meetup in a Box program can help you.
 
-
-# Meetup in a Box
-
 Meetup in a Box provides support for Temporal community members to speak about Temporal within their local communities, whether that be at their jobs, local meetups, or even conferences.
 We provide complete presentations on various topics that anyone is allowed to download, modify, and present.
 Each presentation comes with a slide deck, a sample application to demo, and detailed instructions detailing how to deliver the presentation.
