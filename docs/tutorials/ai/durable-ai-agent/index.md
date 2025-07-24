@@ -4,7 +4,7 @@ sidebar_position: 3
 keywords: [ai, durable, agentic, tools, chatbot]
 tags: [AI, Series]
 last_update:
-  date: 2025-07-17
+  date: 2025-07-24
   author: Mason Egger
 title: How To Build a Durable AI Agent with Temporal and Python
 description: Build a durable AI agent from scratch using the Temporal Python SDK
