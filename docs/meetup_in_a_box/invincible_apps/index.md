@@ -1,5 +1,6 @@
 ---
 title: "Build Invincible Apps with Durable Execution"
+hide_title: true
 sidebar_position: 1
 public: false
 draft: false
@@ -30,9 +31,10 @@ Along the way, you'll demonstrate various failure scenarios, and how Temporal ha
 ### Select the programming language you wish to present in
 
 <Link className="button button--primary" to="go">Go</Link>&nbsp;
-<Link className="button button--primary" to="dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="java">Java</Link>&nbsp;
+<Link className="button button--primary" to="dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="python">Python</Link>&nbsp;
+<Link className="button button--primary" to="ruby">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="typescript">TypeScript</Link>&nbsp;
 
 _Ruby port coming soon!_
