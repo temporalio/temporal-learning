@@ -616,7 +616,7 @@ Change directories back to the root project directory and run the test using the
 
 ```command
 cd ..
-uv run scripts/search_flight_test.py
+uv run scripts/create_invoice_test.py
 ```
 
 The output should be:
@@ -655,13 +655,13 @@ cd ..
 Then run the test using the following command the same way you would the mocked version:
 
 ```command
-uv run scripts/search_flight_test.py
+uv run scripts/create_invoice_test.py
 ```
 
 The result will contain an `invoiceURL`, as well as the status of the invoice and a reference.
 
 ```output
-{'invoiceStatus': 'open', 'invoiceURL': 'https://invoice.stripe.com/i/acct_1RMFbIQej3CO0i8K/test_YWNjdF8xUk1GYklRZWozQ08waThLLF9TWVJpYWZ2WXREVXZrcDJqMGhIM0hSdkVEa2hVYmM0LDE0MTI2NjEwNg0200VaZpBdSc?s=ap', 'reference': 'FEUS4MXS-0001'}
+{'invoiceStatus': 'open', 'invoiceURL': 'https://invoice.stripe.com/i/acct_1RMFbIQej3CO0i8K/test_YWNjdF8xUk1GYklRZWozQ08wThLLF9TVJpYWZ2WXREVXZrcDJqMGhIM0hSdkVEa2hVYmM0LDE0MTI2NjEwNg0200VaZpBdSc?s=ap', 'reference': 'FEUS4MXS-0001'}
 ```
 
 By following that invoice link in a browser, Stripe will present you with a sample invoice in your sandbox environment. 
@@ -677,7 +677,7 @@ Verify your directory structure and files look and are named appropriately accor
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -1096,7 +1096,7 @@ Verify that your directory structure and file names are correct according to the
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -1205,7 +1205,7 @@ Similar to implementing the `tool_registry`, next you will implement a `goal_reg
 You will do this by creating an instance of your `AgentGoal` type for every goal you wish to implement.
 For this tutorial you will only implement a single goal, named `goal_event_flight_invoice`, but you may want to use this framework going forward to create your own agent goals at a later date.
 
-To implement your agent's goal, create the file `models/goal_registry.py` and add the following imports to the file:
+To implement your agent's goal, create the file `tools/goal_registry.py` and add the following imports to the file:
 
 ```python
 import tools.tool_registry as tool_registry
@@ -1353,7 +1353,7 @@ Before moving on to the next section, verify your files and directory structure 
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -2017,7 +2017,7 @@ Add this function outside the class definition:
 ```python
 @activity.defn(dynamic=True)
 async def dynamic_tool_activity(args: Sequence[RawValue]) -> dict:
-    from tools import get_handler
+    from tools.tool_registry import get_handler
 
     tool_name = activity.info().activity_type  # e.g. "FindEvents"
     tool_args = activity.payload_converter().from_payload(args[0].payload, dict)
@@ -2263,7 +2263,7 @@ Before moving on to the next section, verify your files and directory structure 
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -2313,7 +2313,7 @@ mkdir prompts
 Then create the `__init__.py` file in the `prompts` director to make it a submodule:
 
 ```bash
-touch __init__.py
+touch prompts/__init__.py
 ```
 
 Next, you'll craft your prompt templates that the LLM will use.
@@ -2760,7 +2760,7 @@ def generate_genai_prompt(
     template_vars = {
         "agent_goal": agent_goal,
         "conversation_history_json": json.dumps(conversation_history, indent=2),
-        "toolchain_complete_guidance": generate_toolchain_complete_guidance(),
+        "toolchain_complete_guidance": TOOLCHAIN_COMPLETE_GUIDANCE_PROMPT,
         "raw_json": raw_json,
         "raw_json_str": (
             json.dumps(raw_json, indent=2) if raw_json is not None else None
@@ -2917,7 +2917,7 @@ Before moving on to the next section, verify your files and directory structure 
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -2974,7 +2974,7 @@ mkdir workflows
 Next, create an empty `__init__.py` file in the directory to enable it as a submodule:
 
 ```command
-touch __init__.py
+touch workflows/__init__.py
 ```
 
 Now that your `workflows` directory is a submodule, you will create a few helper functions for your Workflow.
@@ -3379,8 +3379,15 @@ from typing import Any, Deque, Dict, Optional, Union
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
-from models.core import AgentGoal, ConversationHistory, CurrentTool
-from models.requests import EnvLookupInput, EnvLookupOutput, ToolData, ValidationInput
+from models.core import AgentGoal
+from models.requests import (
+    ConversationHistory,
+    CurrentTool,
+    EnvLookupInput,
+    EnvLookupOutput,
+    ToolData,
+    ValidationInput,
+)
 from workflows import workflow_helpers as helpers
 from workflows.workflow_helpers import (
     LLM_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT,
@@ -3571,7 +3578,7 @@ class AgentGoalWorkflow:
 ```
 </details>
 
-Next, add the final lines of code to finish instantiating the instance and local variables:
+Next, add the final lines of code to finish instantiating the instance and local variables within the `run` method:
 
 ```python
         if params and params.prompt_queue:
@@ -3670,7 +3677,7 @@ Leave the `run` and append this new method to your class:
         )
         self.confirmed = False
         confirmed_tool_data = self.tool_data.copy()
-        confirmed_tool_data["next"] = "user_confirmed_tool_run"
+        confirmed_tool_data["next"] = "confirm"
         self.add_message("user_confirmed_tool_run", confirmed_tool_data)
 
         # execute the tool by key as defined in tools/__init__.py
@@ -3776,7 +3783,6 @@ class AgentGoalWorkflow:
         if params and params.prompt_queue:
             self.prompt_queue.extend(params.prompt_queue)
 
-        waiting_for_confirm: bool = False
         current_tool: Optional[CurrentTool] = None
 
         while True:
@@ -3826,7 +3832,7 @@ class AgentGoalWorkflow:
         )
         self.confirmed = False
         confirmed_tool_data = self.tool_data.copy()
-        confirmed_tool_data["next"] = "user_confirmed_tool_run"
+        confirmed_tool_data["next"] = "confirm"
         self.add_message("user_confirmed_tool_run", confirmed_tool_data)
 
         # execute the tool by key as defined in tools/__init__.py
@@ -3875,7 +3881,7 @@ Continue by adding the prompt processing logic within the core agent loop:
                 )
 
                 # Validate user-provided prompts
-                if self.is_user_prompt(prompt):
+                if helpers.is_user_prompt(prompt):
                     self.add_message("user", prompt)
 
                     # Validate the prompt before proceeding
@@ -3999,7 +4005,7 @@ Add the following code to implement the path for these options:
                     ):
                         continue
 
-                    waiting_for_confirm = True
+                    self.waiting_for_confirm = True
 
                     # We have needed arguments, if we want to force the user to confirm, set that up
                     if self.show_tool_args_confirmation:
@@ -4289,7 +4295,7 @@ class AgentGoalWorkflow:
         )
         self.confirmed = False
         confirmed_tool_data = self.tool_data.copy()
-        confirmed_tool_data["next"] = "user_confirmed_tool_run"
+        confirmed_tool_data["next"] = "confirm"
         self.add_message("user_confirmed_tool_run", confirmed_tool_data)
 
         # execute the tool by key as defined in tools/__init__.py
@@ -4682,7 +4688,7 @@ class AgentGoalWorkflow:
         )
         self.confirmed = False
         confirmed_tool_data = self.tool_data.copy()
-        confirmed_tool_data["next"] = "user_confirmed_tool_run"
+        confirmed_tool_data["next"] = "confirm"
         self.add_message("user_confirmed_tool_run", confirmed_tool_data)
 
         # execute the tool by key as defined in tools/__init__.py
@@ -4762,7 +4768,7 @@ Before moving on to the next section, verify your files and directory structure 
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -4818,7 +4824,7 @@ First, create the `shared` directory and a blank `__init__.py` file to create th
 
 ```bash
 mkdir shared
-touch __init__.py
+touch shared/__init__.py
 ```
 
 Next, create the file `config.py` within the `shared` directory and add the following `import` statements:
@@ -5039,7 +5045,7 @@ Before moving on to the next section, verify that your files and directory struc
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
@@ -5102,7 +5108,7 @@ Next, create the API file at `api/main.py` and include the following `import` st
 
 ```python
 import asyncio
-import os
+from collections import deque
 from contextlib import asynccontextmanager
 from typing import Dict, Optional
 
@@ -5632,7 +5638,7 @@ Before moving on to the next section, verify your files and directory structure 
 
 ```
 temporal-ai-agent/
-├── .env.example
+├── .env
 ├── .gitignore
 ├── .python-version
 ├── README.md
