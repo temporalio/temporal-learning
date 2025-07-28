@@ -17,7 +17,7 @@ This section outlines foundational principles and best practices for using Tempo
 
 ## Why did we create this?
 
-WWithout clearly defined Temporal standards, organizations often struggle with inconsistent workflow implementations, fragmented best practices, and misaligned development approaches. This documentation framework helps developers establish robust Temporal standards by providing:
+Without clearly defined Temporal standards, organizations often struggle with inconsistent workflow implementations, fragmented best practices, and misaligned development approaches. This documentation framework helps developers establish robust Temporal standards by providing:
 
 - **Proven foundation principles** that have been validated across diverse use cases
 - **Standardized implementation patterns** for teams to adopt consistently across projects
