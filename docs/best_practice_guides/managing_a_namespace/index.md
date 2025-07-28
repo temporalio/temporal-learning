@@ -38,9 +38,9 @@ While your cloud infrastructure might be limited to a single region, Temporal Cl
 
 ## Best Practices:
 
-1. **Use lowercase and hyphens for namespace names**: Temporal Cloud treats namespace names as case-insensitive. To maintain consistency and avoid potential issues, use lowercase letters and hyphen (-) as separators. Example: `payment-checkout-prd`
+#### 1. Use lowercase and hyphens for namespace names: Temporal Cloud treats namespace names as case-insensitive. To maintain consistency and avoid potential issues, use lowercase letters and hyphen (-) as separators. Example: `payment-checkout-prd`
 
-2. **Use domain, service, and environment to name namespaces**
+#### 2. Use domain, service, and environment to name namespaces
 Use the following pattern to name Temporal namespaces: `<use-case>-<domain>-<region>-<environment>`
     
   The following rules ensure that the namespace name doesn’t exceed [39 characters](https://docs.temporal.io/cloud/namespaces#temporal-cloud-namespace-name):
@@ -62,7 +62,7 @@ Use the following pattern to name Temporal namespaces: `<use-case>-<domain>-<reg
 
   Note: [A Temporal Cloud account can have up to 100 namespaces](https://docs.temporal.io/cloud/limits#namespaces) (soft limit).
 
-3. **When selecting a region for your namespace, choose one that aligns with your application's latency, compliance, and data residency requirements (use https://status.temporal.io/ to identify the right region for you).**
+#### 3. When selecting a region for your namespace, choose one that aligns with your application's latency, compliance, and data residency requirements (use https://status.temporal.io/ to identify the right region for you).
 
   Check out some more best practices for configuring namespaces in [our documentation](https://docs.temporal.io/cloud/namespaces#general-guidance). 
 
@@ -78,9 +78,9 @@ We recommend you use a custom [Authorizer](https://docs.temporal.io/self-hosted-
 
 ### Best practices: 
 
-1. **Enable deletion protection for `prd` namespaces**: [Prevent accidental deletion](https://docs.temporal.io/cloud/namespaces#delete-protection) of production namespaces.
+#### 1. Enable deletion protection for `prd` namespaces: [Prevent accidental deletion](https://docs.temporal.io/cloud/namespaces#delete-protection) of production namespaces.
 
-2. **Enable multi-region replication for business critical use cases**: For many organizations, ensuring high availability (HA) is required because of strict uptime requirements, compliance, and regulatory needs. 
+#### 2. Enable multi-region replication for business critical use cases: For many organizations, ensuring high availability (HA) is required because of strict uptime requirements, compliance, and regulatory needs. 
 
   For these critical use cases, enable High Availability features for specific namespaces for a [99.99% contractual SLA](https://docs.temporal.io/cloud/high-availability#high-availability-features). When choosing between [same-region and multi-region replication](https://docs.temporal.io/cloud/high-availability/how-it-works#deployment-options), favor multi-region replication to optimize reliability over proximity.
 
@@ -88,7 +88,7 @@ We recommend you use a custom [Authorizer](https://docs.temporal.io/self-hosted-
 
   Note: [enabling HA features for namespaces will 2x the consumption cost](https://docs.temporal.io/cloud/pricing#high-availability-features).
 
-3. **Use Terraform to manage namespaces**:
+#### 3. Use Terraform to manage namespaces:
 Use [Temporal Cloud Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider) to manage Temporal Cloud namespaces. This allows us to maintain documentation that outlines the purpose of each namespace and their owners. In addition, Terraform enables us to prevent infrastructure drift (e.g. someone accidentally deletes a namespace). 
 
   Use `prevent_destroy = true` to prevent Terraform from destroying the namespace. 

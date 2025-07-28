@@ -44,7 +44,7 @@ In the case that you are using multiple certificates signed by the same CA, and 
 One convention is to give certificates a common name that matches the namespace. If you do this when using the same CA for dev and prod, then you can leverage Certificate Filters to prevent access to production environments. This is described in detail under the [authorization section](https://docs.temporal.io/cloud/certificates#control-authorization) of the documentation. 
 
 ## Best practices: 
-1. **Establish clear guidelines on authentication methods**: Teams should standardize on either [mTLS certificates](https://docs.temporal.io/cloud/certificates) or [API keys](https://docs.temporal.io/cloud/api-keys) for the following operations:
+#### 1. Establish clear guidelines on authentication methods: Teams should standardize on either [mTLS certificates](https://docs.temporal.io/cloud/certificates) or [API keys](https://docs.temporal.io/cloud/api-keys) for the following operations:
 - Connect Temporal clients to Temporal Cloud (e.g. Worker processes)
 - Automation (e.g. Temporal Cloud [Operations API](https://docs.temporal.io/ops), [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider), [Temporal CLI](https://docs.temporal.io/cli/setup-cli))
 
@@ -52,7 +52,7 @@ One convention is to give certificates a common name that matches the namespace.
 
     If your organization requires mutual authentication and stronger cryptographic guarantees, then it is encouraged for your teams to use mTLS certificates to authenticate Temporal clients to Temporal Cloud and use API keys for automation (because Temporal Cloud [Operations API](https://docs.temporal.io/ops) and [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider) only supports API key for authentication)
 
-2. **Use Certificate Filters to restrict access when using shared CAs (e.g., `dev` vs `prod`)**:
+#### 2. Use Certificate Filters to restrict access when using shared CAs (e.g., `dev` vs `prod`):
 
   Certificate Filters are an additional way of validating using the client certificate presented during client authenticationGive certificates a common name that matches the namespace. This is not a requirement.   
 
