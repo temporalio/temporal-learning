@@ -1,5 +1,5 @@
 ---
-title: "Building a Namespace"
+title: "Managing a Namespace"
 sidebar_position: 1
 public: false
 draft: false
@@ -8,7 +8,7 @@ keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Best Practices
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2025-07-18
+  date: 2025-07-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -16,7 +16,7 @@ import Link from '@docusaurus/Link';
 
 ## What is a Namespace?
 
-A [namespace](https://docs.temporal.io/namespaces) is a unit of isolation within the Temporal platform. It ensures that Workflow Executions, Task Queues, and resources are logically separated, preventing any conflicts and enabling safe multi-tenant usage. 
+A [namespace](https://docs.temporal.io/namespaces) is a unit of isolation within the Temporal platform. It ensures that workflow executions, task queues, and resources are logically separated, preventing any conflicts and enabling safe multi-tenant usage.
 
 Namespaces are created on the Temporal Service, and one namespace will not impact another on the same Temporal Service. However, a single namespace can be multi-tenant, and they act solely as a logical separation. 
 
@@ -25,18 +25,19 @@ If you are running Temporal on your own, you might be familiar with services wit
 ## How to Register a Namespace
 
 [Registering a Namespace](https://docs.temporal.io/namespaces#registration) creates the Namespace on the Temporal Service. You’re also required to set the retention period when creating the namespace. 
-	
-On Temporal Cloud, use the Temporal Cloud UI or `tcld` commands to create and manage Namespaces. If no other Namespace is specified, the Temporal Service uses the Namespace "default" for all Temporal SDKs and the Temporal CLI. 
 
-Temporal Cloud enforces limits on Namespace count and workflow execution size. You are allowed up to **10 Namespaces** by default. Exceeding this limit requires a support ticket. 
+On Temporal Cloud, use the Temporal Cloud UI or `tcld` commands to create and manage Namespaces. If no other Namespace is specified, the Temporal Service uses the Namespace `default` for all Temporal SDKs and the Temporal CLI. 
 
-When it comes to naming namespaces for your team, we recommend grouping them by factors such as teams, products or lines of business. You’ll also likely want to distinguish between dev and prod environments in the naming convention. 
+Temporal Cloud enforces limits on Namespace count and workflow execution size. You are allowed up to **10 Namespaces by default**. Exceeding this limit requires a support ticket. 
+
+When it comes to naming namespaces for your team, we recommend grouping them by factors such as teams, products or lines of business. You’ll also likely want to distinguish between dev and prod environments in the naming convention.
 
 Each namespace in Temporal Cloud runs in a specific region, which determines where your workflows and data are hosted. Temporal Cloud currently runs on AWS and GCP, with support for other clouds planned for the future. 
 
 While your cloud infrastructure might be limited to a single region, Temporal Cloud supports multiple regions, and you’ll have access to a full list of available regions during namespace creation. To view the current list of supported regions and their operational status, visit: https://status.temporal.io
 
 ## Best Practices:
+
 1. **Use lowercase and hyphens for namespace names**: Temporal Cloud treats namespace names as case-insensitive. To maintain consistency and avoid potential issues, use lowercase letters and hyphen (-) as separators. Example: `payment-checkout-prd`
 
 2. **Use domain, service, and environment to name namespaces**
@@ -96,9 +97,9 @@ Use [Temporal Cloud Terraform provider](https://docs.temporal.io/production-depl
 
 ## Setting
 
-Temporal Cloud provides a few configurable parameters associated with a Namespace, client, or service that determines how Temporal behaves for that scope. You can configure many of these settings when creating or editing a Namespace via the UI or CLI (`tcld`)
+Temporal Cloud provides a few configurable parameters associated with a Namespace, client, or service that determines how Temporal behaves for that scope. You can configure many of these settings when creating or editing a Namespace via the UI or CLI (`tcld`).
 
-You must also set Namespaces in your SDK Client to isolate your Workflow Executions to the Namespace. If you do not set a Namespace, all Workflow Executions started using the Client will be associated with the "default" Namespace. This means, you must have a default Namespace called "default" registered with your Temporal Service. 
+You must also set Namespaces in your SDK Client to isolate your Workflow Executions to the Namespace. If you do not set a Namespace, all Workflow Executions started using the Client will be associated with the `default` Namespace. This means, you must have a default Namespace called `default` registered with your Temporal Service.
 
 Here are some of the typical namespace settings you’re able to configure:
 
