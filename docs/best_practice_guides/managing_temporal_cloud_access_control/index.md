@@ -1,14 +1,14 @@
 ---
-title: "Certificate Management"
+title: "Managing Temporal Cloud Access Control"
 sidebar_position: 2
 public: false
 draft: false
-tags: [Best Practices, certificate management]
-keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Best Practice, certificate management]
+tags: [Best Practices, temporal cloud]
+keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Best Practice, temporal cloud]
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2025-07-18
+  date: 2025-07-28
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -18,7 +18,7 @@ Temporal Cloud supports two secure authentication methods for Workers:
 - **mTLS Certificates**
 - **API Keys** (configured via the UI when creating a namespace)
 
-Both options help secure communication between Workers and Temporal Cloud. Choosing the right method and managing it properly is key to maintaining security and minimizing downtime. 
+Both options help secure communication between workers and Temporal Cloud. Choosing the right method and managing it properly is key to maintaining security and minimizing downtime. 
 
 The high-level end-to-end rotation process is:
 
@@ -35,7 +35,7 @@ This approach ensures near-zero-downtime rotation and prevents authentication fa
 
 For mutual TLS (mTLS) implementations, using Let's Encrypt is not recommended, as it is designed primarily for public-facing services and lacks support for internal certificate requirements. 
 
-While we are not making a specific product recommendation, there are several valid options for managing certificates. Many organizations choose vendor solutions such as AWS Private CA, Setigo, Microsoft Certification Authority, or DigiCert for their robust integration and lifecycle features. Alternatively, self-signed certificates are a valid and commonly used approach, even in production environments. If you choose to self-sign, tools like OpenSSL, Certstrap, and CFSSL will help generate and manage certificates effectively.
+While we are not making a specific product recommendation, there are several valid options for managing certificates. Many organizations choose vendor solutions such as AWS Private CA, Setigo, Microsoft Certification Authority, or DigiCert for their robust integration and lifecycle features. Alternatively, self-signed certificates are a valid and commonly used approach, even in production environments. If you choose to self-sign, tools like OpenSSL, Certstrap, and CFSSL will help generate and manage certificates effectively. 
 
 Select the option that aligns best with your infrastructure, security requirements, and operational needs.
 
@@ -53,6 +53,8 @@ One convention is to give certificates a common name that matches the namespace.
     If your organization requires mutual authentication and stronger cryptographic guarantees, then it is encouraged for your teams to use mTLS certificates to authenticate Temporal clients to Temporal Cloud and use API keys for automation (because Temporal Cloud [Operations API](https://docs.temporal.io/ops) and [Terraform provider](https://docs.temporal.io/production-deployment/cloud/terraform-provider) only supports API key for authentication)
 
 2. **Use Certificate Filters to restrict access when using shared CAs (e.g., `dev` vs `prod`)**:
-Certificate Filters are an additional way of validating using the client certificate presented during client authenticationGive certificates a common name that matches the namespace. This is not a requirement. 
 
- If you do this when using the same CA for dev and prod environments, then you can leverage Certificate Filters to prevent access to production. 
+  Certificate Filters are an additional way of validating using the client certificate presented during client authenticationGive certificates a common name that matches the namespace. This is not a requirement.   
+
+  If you do this when using the same CA for dev and prod environments, then you can leverage Certificate Filters to prevent access to production. 
+
