@@ -40,4 +40,4 @@ This section is intended for:
 - **Need to justify your approach?** Point to this document as Temporal’s baseline strategy.
 
 <Link className="button button--primary" to="managing_a_namespace/">Managing a Namespace</Link>&nbsp;
-<Link className="button button--primary" to="managing_temporal_cloud_access_control">Certificate Managing Temporal Cloud Access Control</Link>&nbsp;
+<Link className="button button--primary" to="managing_temporal_cloud_access_control">Managing Temporal Cloud Access Control</Link>&nbsp;
