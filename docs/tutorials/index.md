@@ -1,5 +1,5 @@
 ---
-title: "Project-based tutorials"
+title: "Project-Based Tutorials"
 hide_title: true
 sidebar_position: 4
 hide_table_of_contents: true

@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal and Ruby"
+title: "Get Started with Temporal and Ruby"
 sidebar_position: 4
 sidebar_label: Ruby
 hide_table_of_contents: false
