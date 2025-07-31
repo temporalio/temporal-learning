@@ -735,7 +735,7 @@ Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start 
 
 :::
 
-In `Workflow.cs`, you can see that a **`StartToCloseTimeout`** is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
+In `Workflow.cs`, you can see that a **`StartToCloseTimeout`** is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 3 times:
 
 
 <!--SNIPSTART money-transfer-project-template-dotnet-workflow-->
