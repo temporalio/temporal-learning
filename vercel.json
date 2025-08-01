@@ -45,6 +45,46 @@
       "source": "/tutorials/typescript/chatbot/",
       "destination": "/tutorials/typescript/build-choose-your-own-adventure-bot/",
       "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/",
+      "destination": "https://temporal.io/community/meetup-in-a-box",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/",
+      "destination": "https://temporal.io/community/meetup-in-a-box",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/go/",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#go",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/java/",
+      "destination": "https://temporal.io/community/meetup-in-a-box#java",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/dotnet/",
+      "destination": "https://temporal.io/community/meetup-in-a-box#dotnet",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/python/",
+      "destination": "https://temporal.io/community/meetup-in-a-box#python",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/ruby/",
+      "destination": "https://temporal.io/community/meetup-in-a-box#ruby",
+      "permanent": true
+    },
+    {
+      "source": "/meetup_in_a_box/invincible_apps/typescript",
+      "destination": "https://temporal.io/community/meetup-in-a-box#typescript",
+      "permanent": true
     }
   ]
 }
