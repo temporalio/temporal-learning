@@ -53,7 +53,7 @@
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/",
-      "destination": "https://temporal.io/community/meetup-in-a-box",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps",
       "permanent": true
     },
     {
@@ -63,27 +63,27 @@
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/java/",
-      "destination": "https://temporal.io/community/meetup-in-a-box#java",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#java",
       "permanent": true
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/dotnet/",
-      "destination": "https://temporal.io/community/meetup-in-a-box#dotnet",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#dotnet",
       "permanent": true
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/python/",
-      "destination": "https://temporal.io/community/meetup-in-a-box#python",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#python",
       "permanent": true
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/ruby/",
-      "destination": "https://temporal.io/community/meetup-in-a-box#ruby",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#ruby",
       "permanent": true
     },
     {
       "source": "/meetup_in_a_box/invincible_apps/typescript",
-      "destination": "https://temporal.io/community/meetup-in-a-box#typescript",
+      "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#typescript",
       "permanent": true
     }
   ]
