@@ -481,7 +481,7 @@ Change directories back to the root of the project and run the test using the fo
 
 ```command
 cd ..
-uv run scripts/search_flight_test.py
+uv run scripts/search_flights_test.py
 ```
 
 Your output will vary, as the mock data function randomly generates results.
@@ -531,7 +531,7 @@ cd ..
 Then run the test using the following command:
 
 ```command
-uv run scripts/search_flight_test.py
+uv run scripts/search_flights_test.py
 ```
 
 If you've changed the dates or cities, you may see different results, but the format should be similar to this:
