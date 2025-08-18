@@ -26,7 +26,7 @@ import Link from '@docusaurus/Link';
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/debugging-our-code">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/observing-retries">
           Next Step
         </Link>
       </div>
