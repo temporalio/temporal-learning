@@ -1,7 +1,7 @@
 ---
 title: "Get Started with Temporal"
 hide_title: true
-sidebar_position: 2
+sidebar_position: 3
 hide_table_of_contents: true
 pagination_prev: null
 pagination_next: courses/index

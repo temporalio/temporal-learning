@@ -1,7 +1,7 @@
 ---
 title: "Courses"
 hide_title: true
-sidebar_position: 3
+sidebar_position: 4
 hide_table_of_contents: true
 custom_edit_url: null
 pagination_prev: getting_started/index

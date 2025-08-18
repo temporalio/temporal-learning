@@ -1,7 +1,7 @@
 ---
 title: "Community Programs"
 hide_title: true
-sidebar_position: 10
+sidebar_position: 9
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
