@@ -14,7 +14,7 @@ tags:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 :::note Tutorial information
 
@@ -59,7 +59,7 @@ Before starting this tutorial:
 
 To get started with the Temporal Go SDK, you'll create a new Go project and initialize it as a module, just like any other Go program you're creating. Then you'll add the Temporal SDK package to your project.
 
-In a terminal, create a new project directory called `hello-world-temporal`:
+In a terminal, create a new project directory called `temporal-ip-geolocation`:
 
 ```command
 mkdir temporal-ip-geolocation
@@ -831,8 +831,6 @@ You can recover from failures by letting Temporal handle them for you instead of
 In this tutorial you built your first Temporal Application. You used the Temporal Go SDK to build a resilient application that recovered from failure. You wrote tests to verify that it works and reviewed the Event History for a working execution. You also tested your Workflow without an internet connection to understand how Temporal recovers from failures like network outages.
 
 Take this application one step further and add a new Activity that gets the current weather for the location you found.
-
-Then [get your application working on Temporal Cloud](https://learn.temporal.io/getting_started/typescript/run_workers_with_cloud_typescript/).
 
 ### Review
 

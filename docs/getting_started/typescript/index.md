@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and TypeScript"
-sidebar_position: 3
+title: "Get Started with Temporal and TypeScript"
+sidebar_position: 6
 sidebar_label: TypeScript
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 Take your first steps into building apps with Temporal and TypeScript by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 

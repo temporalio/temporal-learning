@@ -63,6 +63,7 @@ const config = {
       //   },
       // },
     },
+    image: "/img/open-graph-shiny.png",
     prism: {
       theme: require("prism-react-renderer/themes/nightOwlLight"),
       darkTheme: require("prism-react-renderer/themes/dracula"),

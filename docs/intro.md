@@ -11,13 +11,7 @@ custom_edit_url: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-<head>
-  <title>Learn Temporal - Courses, Tutorials, and Examples</title>
-</head>
-
-<h1>
-  <img src="/img/banners/learntemporal.png" title="Learn Temporal" alt="Learn Temporal" />
-</h1>
+<img className="banner" src="/img/banners/learntemporal.png" alt="Learn Temporal" />
 
 import Intro from '@site/src/components/Intro'
 

@@ -12,7 +12,7 @@ last_update:
   date: 2024-06-28
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 ### Introduction
 

@@ -13,8 +13,7 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal .NET SDK](/img/banners/replay2025.png)
-
+<img className="banner" src="/img/banners/replay2025.png" alt="Replay 2025" />
 
 ## Summary
 

@@ -10,7 +10,7 @@ description: Implement a subscription application using Temporal's Workflows, Ac
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal TypeScript SDK](/img/sdk_banners/banner_typescript.png)
+<img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
 ## Introduction
 

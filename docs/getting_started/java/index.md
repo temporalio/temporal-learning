@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and Java"
-sidebar_position: 1
+title: "Get Started with Temporal and Java"
+sidebar_position: 3
 sidebar_label: Java
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 Take your first steps into building apps with Temporal and Java by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
