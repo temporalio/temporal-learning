@@ -34,11 +34,6 @@ import Link from '@docusaurus/Link';
       </Link>
     </div>
   </div>
-  
-  
-  <div className="step-indicator">
-    1 / 9
-  </div>
 </div>
 
 <style jsx>{`
