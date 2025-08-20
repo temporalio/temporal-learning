@@ -29,7 +29,7 @@ import Link from '@docusaurus/Link';
       <Link to="/see_temporal_in_action/Python/the-challenge" className="sdk-button python" title="Python">
         <img src="/img/sdk-icons/sdk-python.svg" alt="Python" />
       </Link>
-      <Link to="/see_temporal_in_action/Typescript/the-challenge" className="sdk-button typescript" title="TypeScript">
+      <Link to="/see_temporal_in_action/Typescript/why-temporal" className="sdk-button typescript" title="TypeScript">
         <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
       </Link>
     </div>

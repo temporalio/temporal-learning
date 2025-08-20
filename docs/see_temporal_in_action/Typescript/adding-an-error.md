@@ -1,7 +1,7 @@
 ---
 title: "Let's Throw an Error"
 hide_title: true
-sidebar_position: 7
+sidebar_position: 8
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -35,7 +35,13 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Activity Code</span>
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/activities.ts" 
+             className="demo-title-link" 
+             target="_blank" 
+             rel="noopener noreferrer">
+            <span className="demo-title">Activity Code</span>
+            <img src="/img/icons/github.png" alt="GitHub" className="github-icon" />
+          </a>
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<void> {
@@ -52,7 +58,7 @@ export async function depositMoney(amount: number): Promise<void> {
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">7 / 10</div>
+    <div className="step-indicator">8 / 11</div>
   </div>
 </div>
 
@@ -66,28 +72,7 @@ export async function depositMoney(amount: number): Promise<void> {
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -214,6 +199,31 @@ export async function depositMoney(amount: number): Promise<void> {
     color: rgba(255, 255, 255, 0.8);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
+  }
+  
+  .demo-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover .github-icon {
+    opacity: 1;
   }
   
   .code-preview {
