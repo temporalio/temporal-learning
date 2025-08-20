@@ -95,6 +95,27 @@ Use [Temporal Cloud Terraform provider](https://docs.temporal.io/production-depl
 
   Reference: https://github.com/kawofong/temporal-terraform 
 
+## Tagging
+
+[Tags](https://docs.temporal.io/cloud/namespaces#tag-a-namespace) are key-value metadata pairs that can be attached to Namespaces in Temporal Cloud to help operators organize, track, and manage Namespaces more easily.
+
+### Tag Structure and Limits
+- Each Namespace can have a maximum of 10 tags
+- Each key must be unique for a given Namespace (e.g., a Namespace cannot have both `team:foo` and `team:bar` tags)
+- Keys and values must be 1-63 characters in length
+- Allowed characters: lowercase letters (a-z), numbers (0-9), periods (.), underscores (_), and hyphens (-)
+- Tags are not a secure storage mechanism and should not store PII or PHI
+- Tags will not change the behavior of the tagged resource
+- There is a soft limit of 1000 unique tag keys per account
+
+We also recommend tagging your Namespaces based on the following criteria: 
+- Environment
+- Latency sensitivity
+- Business criticality: regulatory, user-facing
+- Data sensitivity
+- Team or Project
+- Division
+
 ## Setting
 
 Temporal Cloud provides a few configurable parameters associated with a Namespace, client, or service that determines how Temporal behaves for that scope. You can configure many of these settings when creating or editing a Namespace via the UI or CLI (`tcld`).
