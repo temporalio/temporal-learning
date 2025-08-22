@@ -25,7 +25,7 @@ import Link from '@docusaurus/Link';
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/adding-an-error">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/java/adding-an-error">
           Next Step
         </Link>
       </div>
@@ -34,7 +34,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/workflows.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/java/src/main/java/reimbursementworkflow/ReimbursementWorkflowImpl.java" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -43,22 +43,30 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-java">{`import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from './activities';
-const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
- retry: {
-   initialInterval: '2s', // duration before the first retry
-   backoffCoefficient: 2, // multiplier used for subsequent retries
-   maximumInterval: '1m', // maximum duration between retries
-   maximumAttempts: 100, // maximum number of retry attempts
- },
- startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
-});
-export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
-  await withdrawMoney(amount);
-  await depositMoney(amount);
-  return \`reimbursement to \${userId} successfully complete\`;
-}`}</code></pre>
+          <pre><code className="language-java">{`import io.temporal.activity.ActivityOptions;
+import io.temporal.common.RetryOptions;
+import io.temporal.workflow.Workflow;
+import java.time.Duration;\n
+public class ReimbursementWorkflowImpl implements ReimbursementWorkflow {
+    private final ReimbursementActivities activities = Workflow.newActivityStub(
+      ReimbursementActivities.class,
+      ActivityOptions.newBuilder()
+        .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
+        .setRetryOptions(RetryOptions.newBuilder()
+          .setInitialInterval(Duration.ofSeconds(2)) //duration before the first retry
+          .setBackoffCoefficient(2.0) //multiplier used for subsequent retries
+          .setMaximumInterval(Duration.ofMinutes(1)) //maximum duration between retries
+          .setMaximumAttempts(100) //maximum number of retry attempts before giving up
+          .build())
+        .build()
+    );\n
+    @Override
+    public String processReimbursement(String userId, double amount) {
+      activities.withdrawMoney(amount);
+      activities.depositMoney(amount);
+      return "Reimbursement of $" + amount + " for user " + userId + " processed successfully";
+    }
+  }`}</code></pre>
         </div>
       </div>
     </div>
@@ -249,10 +257,32 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -260,7 +290,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     color: inherit;
   }
   
-
+  /* Java Syntax Highlighting */
   .language-java .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -307,7 +337,6 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -329,18 +358,18 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -376,5 +405,4 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>

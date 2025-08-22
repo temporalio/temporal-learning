@@ -17,19 +17,19 @@ import Link from '@docusaurus/Link';
   
   <div className="sdk-selector">
     <div className="sdk-grid">
-      <Link to="/see_temporal_in_action/Go/the-challenge" className="sdk-button go" title="Go">
+      <Link to="/see_temporal_in_action/Go/why-temporal" className="sdk-button go" title="Go">
         <img src="/img/sdk-icons/sdk-go.svg" alt="Go" />
       </Link>
-      <Link to="/see_temporal_in_action/DotNet/the-challenge" className="sdk-button dotnet" title=".NET">
+      <Link to="/see_temporal_in_action/DotNet/why-temporal" className="sdk-button dotnet" title=".NET">
         <img src="/img/sdk-icons/sdk-dotnet.svg" alt=".NET" />
       </Link>
-      <Link to="/see_temporal_in_action/Java/the-challenge" className="sdk-button java" title="Java">
+      <Link to="/see_temporal_in_action/Java/why-temporal" className="sdk-button java" title="Java">
         <img src="/img/sdk-icons/sdk-java.svg" alt="Java" />
       </Link>
-      <Link to="/see_temporal_in_action/Python/the-challenge" className="sdk-button python" title="Python">
+      <Link to="/see_temporal_in_action/Python/why-temporal" className="sdk-button python" title="Python">
         <img src="/img/sdk-icons/sdk-python.svg" alt="Python" />
       </Link>
-        <Link to="/see_temporal_in_action/Ruby/the-challenge" className="sdk-button ruby" title="Ruby">
+        <Link to="/see_temporal_in_action/Ruby/why-temporal" className="sdk-button ruby" title="Ruby">
         <img src="/img/sdk-icons/sdk-ruby.svg" alt="Ruby" />
       </Link>
       <Link to="/see_temporal_in_action/Typescript/why-temporal" className="sdk-button typescript" title="TypeScript">

@@ -19,8 +19,8 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Observing Retries</h1>
         <div className="content-text">
-          <p>Let’s run the code now and see what happens on the Web UI. You can see how to do this by following the <Link href="https://docs.temporal.io/develop/ruby/set-up-your-local-ruby" target="_blank" rel="noopener noreferrer" className="quickstart-link">Quickstart guide</Link>.</p>
-          <p>As you can see, the <strong>withdrawMoney</strong> Activity is retrying over and over until it succeeds or hits our configured 100 attempts.</p>
+          <p>Let’s run the code now and see what happens on the Web UI. You can see how to do this by following the <Link href="https://docs.temporal.io/develop/ruby/set-up-local-ruby" target="_blank" rel="noopener noreferrer" className="quickstart-link">Quickstart guide</Link>.</p>
+          <p>As you can see, the <strong>WithdrawMoney</strong> Activity is retrying over and over until it succeeds or hits our configured 100 attempts.</p>
         </div>
       </div>
       

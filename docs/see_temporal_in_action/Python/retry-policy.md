@@ -43,7 +43,11 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-python">{`@workflow.defn
+          <pre><code className="language-python">{`from datetime import timedelta
+from temporalio import workflow
+from temporalio.common import RetryPolicy
+from activities import withdraw_money, deposit_money\n
+@workflow.defn
 class ReimbursementWorkflow:
     @workflow.run
     async def run(self, user_id: str, amount: float) -> str:
@@ -52,19 +56,19 @@ class ReimbursementWorkflow:
             backoff_coefficient=2.0, # multiplier used for subsequent retries
             maximum_interval=timedelta(minutes=1), # maximum duration between retries
             maximum_attempts=100, # maximum number of retry attempts before giving up
-        )        
+        )\n        
         await workflow.execute_activity(
             withdraw_money,
             amount,
             start_to_close_timeout=timedelta(seconds=5), # maximum time allowed for a single attempt of an Activity to execute
             retry_policy=retry_policy,
-        )       
+        )\n       
         await workflow.execute_activity(
             deposit_money,
             amount,
             start_to_close_timeout=timedelta(seconds=5),
             retry_policy=retry_policy,
-        )      
+        )\n      
         return f"reimbursement to {user_id} successfully complete"`}</code></pre>
         </div>
       </div>
@@ -256,10 +260,32 @@ class ReimbursementWorkflow:
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -267,6 +293,7 @@ class ReimbursementWorkflow:
     color: inherit;
   }
   
+  /* Python Syntax Highlighting */
   .language-python .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -313,7 +340,6 @@ class ReimbursementWorkflow:
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -335,18 +361,18 @@ class ReimbursementWorkflow:
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -382,5 +408,4 @@ class ReimbursementWorkflow:
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>

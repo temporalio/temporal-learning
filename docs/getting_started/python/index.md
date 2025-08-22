@@ -1,6 +1,6 @@
 ---
 title: "Get Started with Temporal and Python"
-sidebar_position: 5
+sidebar_position: 4
 sidebar_label: Python
 hide_table_of_contents: false
 pagination_prev: null

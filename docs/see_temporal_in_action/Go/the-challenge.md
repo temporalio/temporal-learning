@@ -21,14 +21,14 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>The Challenge</h1>
         <div className="content-text">
-          <p>Let's start out with a common money transfer problem. Let's say that you need to write a basic reimbursement function that:</p>
+          <p>Let's start out with a common money transfer problem. Let's say that you need to write some code that handles basic reimbursement. It should do the following:</p>
           <ul>
-            <li>Withdraws a set amount from the company bank</li>
-            <li>Deposits that amount into the employee bank</li>
-            <li>Lets the user know that the reimbursement was successfully completed</li>
+            <li>Withdraw a set amount from the company bank</li>
+            <li>Deposit that amount into the employee bank</li>
+            <li>Let the user know that the reimbursement was successfully completed</li>
           </ul>
           <p>But with distributed systems, a lot of failures can occur. For example, what if the withdrawal succeeds but the network crashes before the deposit? Not only would the service go down, but you could also lose the code’s state. If you try to rerun it, you might end up with two withdrawals but only one deposit.</p>
-          <p><strong>Let's change this function into a durable Workflow.</strong></p>
+          <p><strong>Let's change this code into a durable Workflow.</strong></p>
         </div>
       </div>
       
@@ -42,7 +42,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Basic Reimbursement Function</span>
+          <span className="demo-title">Basic Reimbursement Code</span>
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-go">{`func reimbursementWorkflow(userId string, amount float64) (string, error) {
@@ -215,10 +215,32 @@ import Link from '@docusaurus/Link';
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -226,6 +248,7 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
+  /* Go Syntax Highlighting */
   .language-go .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -272,7 +295,6 @@ import Link from '@docusaurus/Link';
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -294,18 +316,18 @@ import Link from '@docusaurus/Link';
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -341,6 +363,5 @@ import Link from '@docusaurus/Link';
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>
 

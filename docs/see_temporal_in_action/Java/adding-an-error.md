@@ -1,5 +1,5 @@
 ---
-title: "Let's Throw an Error"
+title: "Let's Throw an Exception"
 hide_title: true
 sidebar_position: 8
 hide_table_of_contents: true
@@ -20,13 +20,13 @@ import Link from '@docusaurus/Link';
         <h1>Let's Throw an Error!</h1>
         <div className="content-text">
           <p>Now let's see Temporal in action!</p>
-          <p>We’ll now look at how Temporal retries your code. We’ll intentionally throw an error in the <strong>withdrawMoney</strong> Activity code.</p>
-          <p>In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
+          <p>We’ll now look at how Temporal retries your code. We’ll intentionally throw an exception in the <strong>withdrawMoney</strong> Activity code.</p>
+          <p>In our case, this is just an exception we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
         </div>
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/observing-retries">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/java/observing-retries">
           Next Step
         </Link>
       </div>
@@ -35,7 +35,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/activities.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/java/src/main/java/reimbursementworkflow/ReimbursementActivitiesImpl.java" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -44,14 +44,18 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-java">{`export async function withdrawMoney(amount: number): Promise<boolean> {
-  throw new Error(\'Bank service temporarily unavailable\');
-  console.log(\`Successfully withdrawn $\${amount}\`);
-  return true;
-}
-export async function depositMoney(amount: number): Promise<boolean> {
-  console.log(\`Successfully deposited $\${amount}\`);
-  return true;
+          <pre className="codeblock"><code className="language-java">{`public class ReimbursementActivitiesImpl implements ReimbursementActivities {
+    @Override
+    public boolean withdrawMoney(double amount) {
+        // throw new RuntimeException("Bank service temporarily unavailable");
+        System.out.println("Successfully withdrawn $" + amount);
+        return true;
+    }\n
+    @Override
+    public boolean depositMoney(double amount) {
+        System.out.println("Successfully desposited $" + amount);
+        return true;
+    }
 }`
 }</code></pre>
         </div>
@@ -244,10 +248,32 @@ export async function depositMoney(amount: number): Promise<boolean> {
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -255,7 +281,7 @@ export async function depositMoney(amount: number): Promise<boolean> {
     color: inherit;
   }
   
-
+  /* Java Syntax Highlighting */
   .language-java .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -302,7 +328,6 @@ export async function depositMoney(amount: number): Promise<boolean> {
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -324,18 +349,18 @@ export async function depositMoney(amount: number): Promise<boolean> {
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -371,6 +396,5 @@ export async function depositMoney(amount: number): Promise<boolean> {
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>
 

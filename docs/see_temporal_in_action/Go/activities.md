@@ -51,13 +51,13 @@ import Link from '@docusaurus/Link';
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-go">{`func WithdrawMoney(ctx context.Context, amount float64) (bool, error) {
-	// return false, fmt.Errorf("Bank Service temporarily unavailable")
-	fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
-	return true, nil
-}
+    // return false, fmt.Errorf("Bank Service temporarily unavailable")
+    fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
+    return true, nil
+}\n
 func DepositMoney(ctx context.Context, amount float64) (bool, error) {
-	fmt.Printf("Successfully deposited \$%.2f\\n", amount)
-	return true, nil
+    fmt.Printf("Successfully deposited \$%.2f\\n", amount)
+    return true, nil
 }`}</code></pre>
         </div>
         <div className="code-detail-link">
@@ -271,10 +271,32 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -398,6 +420,5 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>
 

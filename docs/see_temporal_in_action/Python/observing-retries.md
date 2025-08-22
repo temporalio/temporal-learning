@@ -20,7 +20,7 @@ import Link from '@docusaurus/Link';
         <h1>Observing Retries</h1>
         <div className="content-text">
           <p>Let’s run the code now and see what happens on the Web UI. You can see how to do this by following the <Link href="https://docs.temporal.io/develop/python/set-up-your-local-python" target="_blank" rel="noopener noreferrer" className="quickstart-link">Quickstart guide</Link>.</p>
-          <p>As you can see, the <strong>withdrawMoney</strong> Activity is retrying over and over until it succeeds or hits our configured 100 attempts.</p>
+          <p>As you can see, the <strong>withdraw_money</strong> Activity is retrying over and over until it succeeds or hits our configured 100 attempts.</p>
         </div>
       </div>
       

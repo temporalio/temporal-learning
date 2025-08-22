@@ -45,7 +45,7 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-dotnet">{`export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
+          <pre><code className="language-dotnet">{`export async  reimbursementWorkflow(userId: string, amount: number): Promise<string> {
   await withdrawMoney(amount);
   await depositMoney(amount);
   return \`reimbursement to \${userId} successfully complete\`;
@@ -240,10 +240,32 @@ import Link from '@docusaurus/Link';
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -251,7 +273,7 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
-
+  /* Csharp Syntax Highlighting */
   .language-dotnet .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -298,7 +320,6 @@ import Link from '@docusaurus/Link';
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -320,18 +341,18 @@ import Link from '@docusaurus/Link';
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -367,5 +388,4 @@ import Link from '@docusaurus/Link';
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>

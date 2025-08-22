@@ -25,7 +25,7 @@ import Link from '@docusaurus/Link';
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/getting_started/typescript">
+        <Link className="button button--primary next-step" to="/getting_started/java">
           End of tour. Get started building.
         </Link>
       </div>

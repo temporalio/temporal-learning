@@ -1,5 +1,5 @@
 ---
-title: "Let's Throw an Error"
+title: "Let's Return an Error"
 hide_title: true
 sidebar_position: 8
 hide_table_of_contents: true
@@ -17,11 +17,11 @@ import Link from '@docusaurus/Link';
   <div className="content-area">
     <div className="left-panel">
       <div className="tour-header">
-        <h1>Let's Throw an Error!</h1>
+        <h1>Let's Return an Error!</h1>
         <div className="content-text">
           <p>Now let's see Temporal in action!</p>
-          <p>We’ll now look at how Temporal retries your code. We’ll intentionally throw an error in the <strong>withdrawMoney</strong> Activity code.</p>
-          <p>In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
+          <p>We’ll now look at how Temporal retries your code. We’ll intentionally return an error in the <strong>WithdrawMoney</strong> Activity code.</p>
+          <p>In our case, this is just an error we are intentionally returning, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
         </div>
       </div>
       
@@ -45,13 +45,13 @@ import Link from '@docusaurus/Link';
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-go">{`func WithdrawMoney(ctx context.Context, amount float64) (bool, error) {
-	return false, fmt.Errorf("Bank Service temporarily unavailable")
-	fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
-	return true, nil
-}
+    return false, fmt.Errorf("Bank Service temporarily unavailable")
+    fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
+    return true, nil
+}\n
 func DepositMoney(ctx context.Context, amount float64) (bool, error) {
-	fmt.Printf("Successfully deposited \$%.2f\\n", amount)
-	return true, nil
+    fmt.Printf("Successfully deposited \$%.2f\\n", amount)
+    return true, nil
 }`}</code></pre>
         </div>
       </div>
@@ -243,10 +243,32 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
@@ -254,6 +276,7 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
     color: inherit;
   }
   
+  /* Go Syntax Highlighting */
   .language-go .token.keyword {
     color: #c792ea;
     font-weight: 500;
@@ -300,7 +323,6 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -322,18 +344,18 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -369,6 +391,5 @@ func DepositMoney(ctx context.Context, amount float64) (bool, error) {
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>
 

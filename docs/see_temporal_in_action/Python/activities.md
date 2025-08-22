@@ -50,11 +50,13 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-python">{`@activity.defn
+          <pre className="codeblock"><code className="language-python">{`from temporalio import activity\n
+@activity.defn
 async def withdraw_money(amount: float) -> bool:
     # raise Exception('Bank service temporarily unavailable')
     print(f"Successfully withdrawn \${amount}")
     return True
+    
 @activity.defn
 async def deposit_money(amount: float) -> bool:
     print(f"Successfully deposited \${amount}")
@@ -271,17 +273,38 @@ async def deposit_money(amount: float) -> bool:
     line-height: 1.6;
     color: #e2e8f0;
     background: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
+
+  /* Always show scrollbar for code blocks */
+  .code-preview pre::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .code-preview pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+  }
+
+  .code-preview pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+  }
+
   
   .code-preview code {
     background: none;
     padding: 0;
     color: inherit;
   }
-  
   /* Python Syntax Highlighting */
   .language-python .token.keyword {
     color: #c792ea;
@@ -329,7 +352,6 @@ async def deposit_money(amount: float) -> bool:
     align-items: center;
     gap: 1rem;
   }
-  
   .step-nav-button {
     width: 40px;
     height: 40px;
@@ -351,18 +373,18 @@ async def deposit_money(amount: float) -> bool:
     color: white;
     text-decoration: none;
   }
-  
   .step-nav-button.disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
   .step-indicator {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     font-family: 'Courier New', monospace;
     font-weight: 500;
   }
+
+
   
   @media (max-width: 1024px) {
     .content-area {
@@ -398,6 +420,5 @@ async def deposit_money(amount: float) -> bool:
       padding: 1rem;
       margin-top: 2rem;
     }
-  }
 `}</style>
 
