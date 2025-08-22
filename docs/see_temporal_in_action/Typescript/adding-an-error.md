@@ -44,12 +44,14 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<void> {
+          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<boolean> {
   throw new Error(\'Bank service temporarily unavailable\');
   console.log(\`Successfully withdrawn $\${amount}\`);
+  return true;
 }
-export async function depositMoney(amount: number): Promise<void> {
+export async function depositMoney(amount: number): Promise<boolean> {
   console.log(\`Successfully deposited $\${amount}\`);
+  return true;
 }`
 }</code></pre>
         </div>
@@ -58,7 +60,7 @@ export async function depositMoney(amount: number): Promise<void> {
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">8 / 11</div>
+    <div className="step-indicator">6 / 9</div>
   </div>
 </div>
 
@@ -253,7 +255,7 @@ export async function depositMoney(amount: number): Promise<void> {
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

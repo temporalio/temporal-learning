@@ -1,7 +1,7 @@
 ---
 title: "Debugging our Code"
 hide_title: true
-sidebar_position: 9
+sidebar_position: 10
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+    <img src="/img/sdk-icons/sdk-go.svg" alt="Go" />
   </div>
   
   <div className="content-area">
@@ -19,14 +19,14 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Debugging our Code</h1>
         <div className="content-text">
-          <p>Let’s go ahead and fix the error in our Activity code by removing the thrown error or commenting it out and re-starting the Worker to register the code change.</p>
+          <p>Let’s go ahead and fix the error in our Activity code by removing the thrown error or commenting it out and re-running our code to register the code change.</p>
           <p>In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again.</p>
           <p>By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.</p>
         </div>
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/observing-workflow-completion">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/go/observing-workflow-completion">
           Next Step
         </Link>
       </div>
@@ -35,24 +35,31 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Activity Code</span>
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/go/activity.go" 
+             className="demo-title-link" 
+             target="_blank" 
+             rel="noopener noreferrer">
+            <span className="demo-title">Activity Code</span>
+            <img src="/img/icons/github.png" alt="GitHub" className="github-icon" />
+          </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<void> {
-  // throw new Error(\'Bank service temporarily unavailable\');
-  console.log(\`Successfully withdrawn $\${amount}\`);
+          <pre className="codeblock"><code className="language-go">{`func WithdrawMoney(ctx context.Context, amount float64) (bool, error) {
+	// return false, fmt.Errorf("Bank Service temporarily unavailable")
+	fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
+	return true, nil
 }
-export async function depositMoney(amount: number): Promise<void> {
-  console.log(\`Successfully deposited $\${amount}\`);
-}`
-}</code></pre>
+func DepositMoney(ctx context.Context, amount float64) (bool, error) {
+	fmt.Printf("Successfully deposited \$%.2f\\n", amount)
+	return true, nil
+}`}</code></pre>
         </div>
       </div>
     </div>
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">9 / 10</div>
+    <div className="step-indicator">8 / 9</div>
   </div>
 </div>
 
@@ -66,28 +73,7 @@ export async function depositMoney(amount: number): Promise<void> {
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -216,6 +202,31 @@ export async function depositMoney(amount: number): Promise<void> {
     font-weight: 500;
   }
   
+  .demo-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover .github-icon {
+    opacity: 1;
+  }
+  
   .code-preview {
     padding: pre;
   }
@@ -243,42 +254,41 @@ export async function depositMoney(amount: number): Promise<void> {
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
-  .language-typescript .token.keyword {
+  .language-go .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-typescript .token.function {
+  .language-go .token.function {
     color: #82aaff;
   }
   
-  .language-typescript .token.string {
+  .language-go .token.string {
     color: #c3e88d;
   }
   
-  .language-typescript .token.comment {
+  .language-go .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-typescript .token.operator {
+  .language-go .token.operator {
     color: #89ddff;
   }
   
-  .language-typescript .token.punctuation {
+  .language-go .token.punctuation {
     color: #89ddff;
   }
   
-  .language-typescript .token.property {
+  .language-go .token.property {
     color: #f07178;
   }
   
-  .language-typescript .token.number {
+  .language-go .token.number {
     color: #f78c6c;
   }
   
-  .language-typescript .token.parameter {
+  .language-go .token.parameter {
     color: #ffcb6b;
   }
   

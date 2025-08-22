@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Workflows"
 hide_title: true
-sidebar_position: 3
+sidebar_position: 4
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+    <img src="/img/sdk-icons/sdk-go.svg" alt="Go" />
   </div>
   
   <div className="content-area">
@@ -27,7 +27,7 @@ import Link from '@docusaurus/Link';
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/worker">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/go/retry-policy">
           Next Step
         </Link>
       </div>
@@ -36,13 +36,21 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Workflow Code</span>
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/go/workflow.go" 
+             className="demo-title-link" 
+             target="_blank" 
+             rel="noopener noreferrer">
+            <span className="demo-title">Workflow Code</span>
+            <img src="/img/icons/github.png" alt="GitHub" className="github-icon" />
+          </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-typescript">{`export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
-  await withdrawMoney(amount);
-  await depositMoney(amount);
-  return \`reimbursement to \${userId} successfully complete\`;
+          <pre><code className="language-go">{`func ReimbursementWorkflow(ctx workflow.Context, userId string, amount float64) (string, error) {
+	var withdrawSuccess bool
+	err := workflow.ExecuteActivity(ctx, WithdrawMoney, amount).Get(ctx, &withdrawSuccess)
+	var depositSuccess bool
+	err = workflow.ExecuteActivity(ctx, DepositMoney, amount).Get(ctx, &depositSuccess)
+	return fmt.Sprintf("reimbursement to %s successfully complete", userId), nil
 }`}</code></pre>
         </div>
       </div>
@@ -50,7 +58,7 @@ import Link from '@docusaurus/Link';
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">3 / 10</div>
+    <div className="step-indicator">4 / 9</div>
   </div>
 </div>
 
@@ -64,28 +72,7 @@ import Link from '@docusaurus/Link';
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -214,8 +201,33 @@ import Link from '@docusaurus/Link';
     font-weight: 500;
   }
   
+  .demo-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover .github-icon {
+    opacity: 1;
+  }
+  
   .code-preview {
-    padding: pre;
+    padding: 0;
   }
 
   .codeblock {
@@ -241,42 +253,41 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
-  .language-typescript .token.keyword {
+  .language-go .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-typescript .token.function {
+  .language-go .token.function {
     color: #82aaff;
   }
   
-  .language-typescript .token.string {
+  .language-go .token.string {
     color: #c3e88d;
   }
   
-  .language-typescript .token.comment {
+  .language-go .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-typescript .token.operator {
+  .language-go .token.operator {
     color: #89ddff;
   }
   
-  .language-typescript .token.punctuation {
+  .language-go .token.punctuation {
     color: #89ddff;
   }
   
-  .language-typescript .token.property {
+  .language-go .token.property {
     color: #f07178;
   }
   
-  .language-typescript .token.number {
+  .language-go .token.number {
     color: #f78c6c;
   }
   
-  .language-typescript .token.parameter {
+  .language-go .token.parameter {
     color: #ffcb6b;
   }
   

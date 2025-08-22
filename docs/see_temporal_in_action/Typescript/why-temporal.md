@@ -44,7 +44,7 @@ import Link from '@docusaurus/Link';
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">1 / 11</div>
+    <div className="step-indicator">1 / 9</div>
   </div>
 </div>
 

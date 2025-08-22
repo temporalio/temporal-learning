@@ -1,7 +1,7 @@
 ---
 title: "Observing Retries"
 hide_title: true
-sidebar_position: 8
+sidebar_position: 9
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+    <img src="/img/sdk-icons/sdk-python.svg" alt="Python" />
   </div>
   
   <div className="content-area">
@@ -19,13 +19,13 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Observing Retries</h1>
         <div className="content-text">
-          <p>Let’s run the code now and see what happens on the Web UI. We'll do so by running the Worker so that it executes tasks and starting the Workflow Execution in the Client. You can see how to do this by following the <Link href="https://docs.temporal.io/develop/typescript/set-up-your-local-typescript" target="_blank" rel="noopener noreferrer" className="quickstart-link">Quickstart guide</Link>.</p>
+          <p>Let’s run the code now and see what happens on the Web UI. You can see how to do this by following the <Link href="https://docs.temporal.io/develop/python/set-up-your-local-python" target="_blank" rel="noopener noreferrer" className="quickstart-link">Quickstart guide</Link>.</p>
           <p>As you can see, the <strong>withdrawMoney</strong> Activity is retrying over and over until it succeeds or hits our configured 100 attempts.</p>
         </div>
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/debugging-our-code">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/python/debugging-our-code">
           Next Step
         </Link>
       </div>
@@ -37,14 +37,39 @@ import Link from '@docusaurus/Link';
           <span className="demo-title">Temporal Web UI - Demonstrating Retries</span>
         </div>
         <div className="image-preview">
-          <img src="/see_temporal_in_action/Typescript/images/error-workflow-ts.png" alt="Activity Retries in Temporal Web UI" />
+          <img 
+            src="/see_temporal_in_action/Typescript/images/retries-gif.gif" 
+            alt="Activity Retries in Temporal Web UI"
+            onClick={(e) => {
+              const img = e.target;
+              const w = window.open('', '_blank');
+              w.document.write(`
+                <html>
+                  <head>
+                    <title>Activity Retries in Temporal Web UI</title>
+                    <style>
+                      body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #000; }
+                      img { max-width: 100%; max-height: 100vh; }
+                    </style>
+                  </head>
+                  <body>
+                    <img src="${img.src}" alt="${img.alt}" />
+                  </body>
+                </html>
+              `);
+            }}
+            style={{cursor: 'pointer'}}
+          />
+        </div>
+        <div className="image-detail-link">
+          Click gif to enlarge
         </div>
       </div>
     </div>
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">8 / 10</div>
+    <div className="step-indicator">7 / 9</div>
   </div>
 </div>
 
@@ -58,28 +83,7 @@ import Link from '@docusaurus/Link';
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -219,44 +223,70 @@ import Link from '@docusaurus/Link';
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
-  /* TypeScript Syntax Highlighting */
-  .language-typescript .token.keyword {
+  .image-preview a:hover img {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .image-detail-link {
+    padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-align: left;
+  }
+  
+  .quickstart-link {
+    color: #8b5cf6;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+  }
+  
+  .quickstart-link:hover {
+    color: #7c3aed;
+    opacity: 0.9;
+  }
+  
+  .language-python .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-typescript .token.function {
+  .language-python .token.function {
     color: #82aaff;
   }
   
-  .language-typescript .token.string {
+  .language-python .token.string {
     color: #c3e88d;
   }
   
-  .language-typescript .token.comment {
+  .language-python .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-typescript .token.operator {
+  .language-python .token.operator {
     color: #89ddff;
   }
   
-  .language-typescript .token.punctuation {
+  .language-python .token.punctuation {
     color: #89ddff;
   }
   
-  .language-typescript .token.property {
+  .language-python .token.property {
     color: #f07178;
   }
   
-  .language-typescript .token.number {
+  .language-python .token.number {
     color: #f78c6c;
   }
   
-  .language-typescript .token.parameter {
+  .language-python .token.parameter {
     color: #ffcb6b;
   }
   
@@ -338,7 +368,7 @@ import Link from '@docusaurus/Link';
       margin-top: 2rem;
     }
 
-    .quickstart-link { color: white; text-decoration: underline; }
   }
 `}</style>
+
 

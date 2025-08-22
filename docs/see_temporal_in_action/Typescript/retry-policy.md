@@ -20,7 +20,7 @@ import Link from '@docusaurus/Link';
         <h1>Adding a Retry Policy</h1>
         <div className="content-text">
           <p>Let’s go ahead and add a retry policy and timeout to our Workflow code. Remember, your Activity contains code that is prone to failure. By default, Temporal automatically retries failed Activities until it either succeeds or is canceled. You can also override the default retry policies like in the code sample.</p>
-          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap—and each attempt can run for at most 5 seconds.</p>
+          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap — and each attempt can run for at most 5 seconds.</p>
         </div>
       </div>
       
@@ -47,10 +47,10 @@ import Link from '@docusaurus/Link';
 import type * as activities from './activities';
 const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
  retry: {
-   initialInterval: '2s', //duration before the first retry
-   backoffCoefficient: 2, //multiplier used for subsequent retries
-   maximumInterval: '1m', //maximum duration between retries
-   maximumAttempts: 100, //maximum number of retry attempts before giving up
+   initialInterval: '2s', // duration before the first retry
+   backoffCoefficient: 2, // multiplier used for subsequent retries
+   maximumInterval: '1m', // maximum duration between retries
+   maximumAttempts: 100, // maximum number of retry attempts
  },
  startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
 });
@@ -65,7 +65,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">7 / 11</div>
+    <div className="step-indicator">5 / 9</div>
   </div>
 </div>
 
@@ -260,7 +260,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

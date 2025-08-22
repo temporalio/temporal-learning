@@ -1,7 +1,7 @@
 ---
 title: "Adding a Retry Policy"
 hide_title: true
-sidebar_position: 6
+sidebar_position: 7
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+    <img src="/img/sdk-icons/sdk-ruby.svg" alt="Ruby" />
   </div>
   
   <div className="content-area">
@@ -20,12 +20,12 @@ import Link from '@docusaurus/Link';
         <h1>Adding a Retry Policy</h1>
         <div className="content-text">
           <p>Let’s go ahead and add a retry policy and timeout to our Workflow code. Remember, your Activity contains code that is prone to failure. By default, Temporal automatically retries failed Activities until it either succeeds or is canceled. You can also override the default retry policies like in the code sample.</p>
-          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap—and each attempt can run for at most 5 seconds.</p>
+          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap — and each attempt can run for at most 5 seconds.</p>
         </div>
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/adding-an-error">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/ruby/adding-an-error">
           Next Step
         </Link>
       </div>
@@ -34,34 +34,52 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Workflow Code</span>
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/ruby/lib/workflows.rb" 
+             className="demo-title-link" 
+             target="_blank" 
+             rel="noopener noreferrer">
+            <span className="demo-title">Workflow Code</span>
+            <img src="/img/icons/github.png" alt="GitHub" className="github-icon" />
+          </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-typescript">{`import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from './activities';
-const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
- retry: {
-   initialInterval: '2s', //duration before the first retry
-   backoffCoefficient: 2, //multiplier used for subsequent retries
-   maximumInterval: '1m', //maximum duration between retries
-   maximumAttempts: 100, //maximum number of retry attempts before giving up
- },
- startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
-});
-export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
-  await withdrawMoney(amount);
-  await depositMoney(amount);
-  return \`reimbursement to \${userId} successfully complete\`;
-}`}</code></pre>
+          <pre><code className="language-ruby">{`class ReimbursementWorkflow < Temporalio::Workflow::Definition
+  def execute(user_id, amount)
+    Temporalio::Workflow.execute_activity(
+      WithdrawMoneyActivity,
+      amount,
+      start_to_close_timeout: 5,      # maximum time allowed for a single attempt of an Activity to execute
+      retry_policy: Temporalio::RetryPolicy.new(
+        initial_interval: 2,          # duration before the first retry
+        backoff_coefficient: 2,       # multiplier used for subsequent retries
+        max_interval: 60,             # maximum duration between retries
+        max_attempts: 100             # maximum number of retry attempts before giving up
+      )
+    )  
+    Temporalio::Workflow.execute_activity(
+      DepositMoneyActivity,
+      amount,
+      start_to_close_timeout: 5,
+      retry_policy: Temporalio::RetryPolicy.new(
+        initial_interval: 2,
+        backoff_coefficient: 2,
+        max_interval: 60,
+        max_attempts: 100
+      )
+    )    
+    "reimbursement to #{user_id} successfully complete"
+  end
+end`}</code></pre>
         </div>
       </div>
     </div>
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">6 / 10</div>
+    <div className="step-indicator">5 / 9</div>
   </div>
 </div>
+
 
 <style jsx>{`
   .temporal-tour-container {
@@ -73,28 +91,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -223,8 +220,52 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     font-weight: 500;
   }
   
+  .demo-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover .github-icon {
+    opacity: 1;
+  }
+  
   .code-preview {
     padding: pre;
+  }
+  
+  .code-detail-link {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-align: left;
+  }
+  
+  .code-detail-link a {
+    color: #8b5cf6;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  
+  .code-detail-link a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
   }
 
   .codeblock {
@@ -232,7 +273,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
   }
   
   .code-preview pre {
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
     margin: 0;
     font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
     font-size: 0.9rem;
@@ -250,42 +291,41 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
-  .language-typescript .token.keyword {
+  .language-ruby .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-typescript .token.function {
+  .language-ruby .token.function {
     color: #82aaff;
   }
   
-  .language-typescript .token.string {
+  .language-ruby .token.string {
     color: #c3e88d;
   }
   
-  .language-typescript .token.comment {
+  .language-ruby .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-typescript .token.operator {
+  .language-ruby .token.operator {
     color: #89ddff;
   }
   
-  .language-typescript .token.punctuation {
+  .language-ruby .token.punctuation {
     color: #89ddff;
   }
   
-  .language-typescript .token.property {
+  .language-ruby .token.property {
     color: #f07178;
   }
   
-  .language-typescript .token.number {
+  .language-ruby .token.number {
     color: #f78c6c;
   }
   
-  .language-typescript .token.parameter {
+  .language-ruby .token.parameter {
     color: #ffcb6b;
   }
   

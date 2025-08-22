@@ -1,7 +1,7 @@
 ---
 title: "The Challenge"
 hide_title: true
-sidebar_position: 1
+sidebar_position: 2
 hide_table_of_contents: true
 pagination_prev: null
 pagination_next: null
@@ -13,7 +13,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+    <img src="/img/sdk-icons/sdk-java.svg" alt="Java" />
   </div>
   
   <div className="content-area">
@@ -21,7 +21,7 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>The Challenge</h1>
         <div className="content-text">
-          <p>Let's start out with a basic reimbursement function that:</p>
+          <p>Let's start out with a common money transfer problem. Let's say that you need to write a basic reimbursement function that:</p>
           <ul>
             <li>Withdraws a set amount from the company bank</li>
             <li>Deposits that amount into the employee bank</li>
@@ -45,7 +45,7 @@ import Link from '@docusaurus/Link';
           <span className="demo-title">Basic Reimbursement Function</span>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-typescript">{`export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
+          <pre className="codeblock"><code className="language-java">{`export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
   // Insert code that withdraws money from company bank
   // Insert code that deposits money into employee bank
   return \`reimbursement to \${userId} successfully complete\`;
@@ -56,7 +56,7 @@ import Link from '@docusaurus/Link';
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">1 / 10</div>
+    <div className="step-indicator">2 / 9</div>
   </div>
 </div>
 
@@ -70,28 +70,7 @@ import Link from '@docusaurus/Link';
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -247,42 +226,42 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
-  .language-typescript .token.keyword {
+
+  .language-java .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-typescript .token.function {
+  .language-java .token.function {
     color: #82aaff;
   }
   
-  .language-typescript .token.string {
+  .language-java .token.string {
     color: #c3e88d;
   }
   
-  .language-typescript .token.comment {
+  .language-java .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-typescript .token.operator {
+  .language-java .token.operator {
     color: #89ddff;
   }
   
-  .language-typescript .token.punctuation {
+  .language-java .token.punctuation {
     color: #89ddff;
   }
   
-  .language-typescript .token.property {
+  .language-java .token.property {
     color: #f07178;
   }
   
-  .language-typescript .token.number {
+  .language-java .token.number {
     color: #f78c6c;
   }
   
-  .language-typescript .token.parameter {
+  .language-java .token.parameter {
     color: #ffcb6b;
   }
   

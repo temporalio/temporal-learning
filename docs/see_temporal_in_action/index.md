@@ -29,6 +29,9 @@ import Link from '@docusaurus/Link';
       <Link to="/see_temporal_in_action/Python/the-challenge" className="sdk-button python" title="Python">
         <img src="/img/sdk-icons/sdk-python.svg" alt="Python" />
       </Link>
+        <Link to="/see_temporal_in_action/Ruby/the-challenge" className="sdk-button ruby" title="Ruby">
+        <img src="/img/sdk-icons/sdk-ruby.svg" alt="Ruby" />
+      </Link>
       <Link to="/see_temporal_in_action/Typescript/why-temporal" className="sdk-button typescript" title="TypeScript">
         <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
       </Link>
@@ -49,35 +52,6 @@ import Link from '@docusaurus/Link';
     overflow: hidden;
   }
   
-  .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-  }
   
   .temporal-tour-container > * {
     position: relative;

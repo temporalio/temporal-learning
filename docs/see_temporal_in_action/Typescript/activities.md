@@ -19,7 +19,7 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Introduction to Activities</h1>
         <div className="content-text">
-          <p>An Activity is a normal function that executes a single, well-defined action (either short or long running), which handles external operations that can fail. Here are some examples:</p>
+          <p>An Activity is a normal function that executes a single, well-defined action (either short or long running), which handles operations that can fail. Here are some examples:</p>
           <ul>
             <li>Sending e-mails</li>
             <li>API calls</li>
@@ -50,12 +50,14 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<void> {
-  // This would usually contain code that is prone to failure, like an API call, but it is a print statement here for simplicity.
+          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<boolean> {
+  /* This would usually contain code that is prone to failure, like an API call, but it is a print statement here for simplicity. */
   console.log(\`Successfully withdrawn $\${amount}\`);
+  return true;
 }
-export async function depositMoney(amount: number): Promise<void> {
+export async function depositMoney(amount: number): Promise<boolean> {
   console.log(\`Successfully deposited $\${amount}\`);
+  return true;
 }`
 }</code></pre>
         </div>
@@ -67,7 +69,7 @@ export async function depositMoney(amount: number): Promise<void> {
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">3 / 11</div>
+    <div className="step-indicator">3 / 9</div>
   </div>
 </div>
 
@@ -281,7 +283,7 @@ export async function depositMoney(amount: number): Promise<void> {
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

@@ -19,7 +19,7 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Debugging our Code</h1>
         <div className="content-text">
-          <p>Let’s go ahead and fix the error in our Activity code by removing the thrown error or commenting it out and re-starting the Worker to register the code change.</p>
+          <p>Let’s go ahead and fix the error in our Activity code by removing the thrown error or commenting it out and re-running our code to register the code change.</p>
           <p>In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again.</p>
           <p>By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.</p>
         </div>
@@ -44,12 +44,14 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<void> {
+          <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<boolean> {
   // throw new Error(\'Bank service temporarily unavailable\');
   console.log(\`Successfully withdrawn $\${amount}\`);
+  return true;
 }
-export async function depositMoney(amount: number): Promise<void> {
+export async function depositMoney(amount: number): Promise<boolean> {
   console.log(\`Successfully deposited $\${amount}\`);
+  return true;
 }`
 }</code></pre>
         </div>
@@ -58,7 +60,7 @@ export async function depositMoney(amount: number): Promise<void> {
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">10 / 11</div>
+    <div className="step-indicator">8 / 9</div>
   </div>
 </div>
 
@@ -253,7 +255,7 @@ export async function depositMoney(amount: number): Promise<void> {
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

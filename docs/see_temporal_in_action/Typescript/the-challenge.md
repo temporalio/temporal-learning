@@ -56,7 +56,7 @@ import Link from '@docusaurus/Link';
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">2 / 11</div>
+    <div className="step-indicator">2 / 9</div>
   </div>
 </div>
 
@@ -226,7 +226,7 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

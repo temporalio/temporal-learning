@@ -27,7 +27,7 @@ import Link from '@docusaurus/Link';
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/worker">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/retry-policy">
           Next Step
         </Link>
       </div>
@@ -56,7 +56,7 @@ import Link from '@docusaurus/Link';
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">4 / 11</div>
+    <div className="step-indicator">4 / 9</div>
   </div>
 </div>
 
@@ -251,7 +251,7 @@ import Link from '@docusaurus/Link';
     color: inherit;
   }
   
-  /* TypeScript Syntax Highlighting */
+
   .language-typescript .token.keyword {
     color: #c792ea;
     font-weight: 500;

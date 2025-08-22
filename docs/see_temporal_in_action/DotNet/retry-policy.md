@@ -1,7 +1,7 @@
 ---
 title: "Adding a Retry Policy"
 hide_title: true
-sidebar_position: 6
+sidebar_position: 7
 hide_table_of_contents: true
 pagination_next: null
 image: /img/temporal-logo-twitter-card.png
@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 
 <div className="temporal-tour-container">
   <div className="sdk-logo">
-    <img src="/img/sdk-icons/sdk-dotnet.svg" alt="dotnet" />
+    <img src="/img/sdk-icons/sdk-dotnet.svg" alt="DotNet" />
   </div>
   
   <div className="content-area">
@@ -20,12 +20,12 @@ import Link from '@docusaurus/Link';
         <h1>Adding a Retry Policy</h1>
         <div className="content-text">
           <p>Let’s go ahead and add a retry policy and timeout to our Workflow code. Remember, your Activity contains code that is prone to failure. By default, Temporal automatically retries failed Activities until it either succeeds or is canceled. You can also override the default retry policies like in the code sample.</p>
-          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap—and each attempt can run for at most 5 seconds.</p>
+          <p>With the following configuration, your Activities will retry up to 100 times with an exponential backoff — waiting 2 seconds before the first retry, doubling the delay after each failure up to a 1-minute cap — and each attempt can run for at most 5 seconds.</p>
         </div>
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/adding-an-error">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/adding-an-error">
           Next Step
         </Link>
       </div>
@@ -34,17 +34,23 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <span className="demo-title">Workflow Code</span>
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/workflows.ts" 
+             className="demo-title-link" 
+             target="_blank" 
+             rel="noopener noreferrer">
+            <span className="demo-title">Workflow Code</span>
+            <img src="/img/icons/github.png" alt="GitHub" className="github-icon" />
+          </a>
         </div>
         <div className="code-preview">
           <pre><code className="language-dotnet">{`import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from './activities';
 const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
  retry: {
-   initialInterval: '2s', //duration before the first retry
-   backoffCoefficient: 2, //multiplier used for subsequent retries
-   maximumInterval: '1m', //maximum duration between retries
-   maximumAttempts: 100, //maximum number of retry attempts before giving up
+   initialInterval: '2s', // duration before the first retry
+   backoffCoefficient: 2, // multiplier used for subsequent retries
+   maximumInterval: '1m', // maximum duration between retries
+   maximumAttempts: 100, // maximum number of retry attempts
  },
  startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
 });
@@ -59,7 +65,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
   </div>
   
   <div className="step-navigation">
-    <div className="step-indicator">6 / 10</div>
+    <div className="step-indicator">5 / 9</div>
   </div>
 </div>
 
@@ -73,28 +79,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
   }
   
   .temporal-tour-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20% 10%, white, transparent),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 50% 60%, white, transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 60% 90%, white, transparent);
-    background-size: 
-      200% 200%, 300% 300%, 100% 100%, 150% 150%, 
-      250% 250%, 180% 180%, 220% 220%, 160% 160%, 190% 190%;
-    animation: twinkle 8s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   
   @keyframes twinkle {
@@ -223,6 +208,31 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     font-weight: 500;
   }
   
+  .demo-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .demo-title-link:hover .github-icon {
+    opacity: 1;
+  }
+  
   .code-preview {
     padding: pre;
   }
@@ -250,7 +260,7 @@ export async function reimbursementWorkflow(userId: string, amount: number): Pro
     color: inherit;
   }
   
-  /* dotnet Syntax Highlighting */
+
   .language-dotnet .token.keyword {
     color: #c792ea;
     font-weight: 500;
