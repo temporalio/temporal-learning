@@ -20,9 +20,6 @@ import Link from '@docusaurus/Link';
       <Link to="/see_temporal_in_action/Go/why-temporal" className="sdk-button go" title="Go">
         <img src="/img/sdk-icons/sdk-go.svg" alt="Go" />
       </Link>
-      <Link to="/see_temporal_in_action/DotNet/why-temporal" className="sdk-button dotnet" title=".NET">
-        <img src="/img/sdk-icons/sdk-dotnet.svg" alt=".NET" />
-      </Link>
       <Link to="/see_temporal_in_action/Java/why-temporal" className="sdk-button java" title="Java">
         <img src="/img/sdk-icons/sdk-java.svg" alt="Java" />
       </Link>
@@ -34,6 +31,9 @@ import Link from '@docusaurus/Link';
       </Link>
       <Link to="/see_temporal_in_action/Typescript/why-temporal" className="sdk-button typescript" title="TypeScript">
         <img src="/img/sdk-icons/sdk-typescript.svg" alt="TypeScript" />
+      </Link>
+      <Link to="/see_temporal_in_action/DotNet/why-temporal" className="sdk-button dotnet" title=".NET">
+        <img src="/img/sdk-icons/sdk-dotnet.svg" alt=".NET" />
       </Link>
     </div>
   </div>
