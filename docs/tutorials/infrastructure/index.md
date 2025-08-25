@@ -1,6 +1,6 @@
 ---
 title: "Infrastructure tutorials"
-sidebar_position: 6
+sidebar_position: 2
 keywords: [infrastructure,hosting,tutorial,temporal,workflows]
 description: "Deploy and maintain a Temporal Service with these tutorials"
 image: /img/temporal-logo-twitter-card.png
