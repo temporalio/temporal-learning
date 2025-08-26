@@ -35,7 +35,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/activities.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/Workflow/Activities.cs" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
