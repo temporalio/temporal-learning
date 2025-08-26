@@ -54,11 +54,13 @@ class ReimbursementWorkflow:
     async def run(self, user_id: str, amount: float) -> str:       
         await workflow.execute_activity(
             withdraw_money,
-            amount
+            amount,
+            start_to_close_timeout=timedelta(seconds=5) # maximum time allowed for a single attempt of an Activity to execute
         )\n       
         await workflow.execute_activity(
             deposit_money,
-            amount
+            amount,
+            start_to_close_timeout=timedelta(seconds=5) # maximum time allowed for a single attempt of an Activity to execute
         )\n      
         return f"reimbursement to {user_id} successfully complete"`}</code></pre>
         </div>

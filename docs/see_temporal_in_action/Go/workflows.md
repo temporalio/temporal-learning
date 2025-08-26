@@ -46,14 +46,23 @@ import Link from '@docusaurus/Link';
         </div>
         <div className="code-preview">
           <pre><code className="language-go">{`import (
-  "go.temporal.io/sdk/temporal"
+  "fmt" 
+  "time"\n
   "go.temporal.io/sdk/workflow"
 )\n
 func ReimbursementWorkflow(ctx workflow.Context, userId string, amount float64) (string, error) {
-    var withdrawSuccess bool
-    err := workflow.ExecuteActivity(ctx, WithdrawMoney, amount).Get(ctx, &withdrawSuccess)\n
-    var depositSuccess bool
-    err = workflow.ExecuteActivity(ctx, DepositMoney, amount).Get(ctx, &depositSuccess)\n
+    options := workflow.ActivityOptions{
+	StartToCloseTimeout: time.Second * 5, // maximum time allowed for a single attempt of an Activity to execute
+    }
+    ctx = workflow.WithActivityOptions(ctx, options)\n
+    err := workflow.ExecuteActivity(ctx, WithdrawMoney, amount).Get(ctx, &withdrawSuccess)
+    if err != nil {
+	return "", err
+    }\n
+    err = workflow.ExecuteActivity(ctx, DepositMoney, amount).Get(ctx, &depositSuccess)
+    if err != nil {
+	return "", err
+    }
     return fmt.Sprintf("reimbursement to %s successfully complete", userId), nil
 }`}</code></pre>
         </div>
@@ -280,41 +289,41 @@ func ReimbursementWorkflow(ctx workflow.Context, userId string, amount float64) 
   }
   
   /* Go Syntax Highlighting */
-  .language-go .token.keyword {
+  . .token.keyword {
     color: #c792ea;
     font-weight: 500;
   }
   
-  .language-go .token.function {
+  . .token.function {
     color: #82aaff;
   }
   
-  .language-go .token.string {
+  . .token.string {
     color: #c3e88d;
   }
   
-  .language-go .token.comment {
+  . .token.comment {
     color: #546e7a;
     font-style: italic;
   }
   
-  .language-go .token.operator {
+  . .token.operator {
     color: #89ddff;
   }
   
-  .language-go .token.punctuation {
+  . .token.punctuation {
     color: #89ddff;
   }
   
-  .language-go .token.property {
+  . .token.property {
     color: #f07178;
   }
   
-  .language-go .token.number {
+  . .token.number {
     color: #f78c6c;
   }
   
-  .language-go .token.parameter {
+  . .token.parameter {
     color: #ffcb6b;
   }
   

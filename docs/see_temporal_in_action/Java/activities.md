@@ -27,6 +27,7 @@ import Link from '@docusaurus/Link';
             <li>Network requests</li>
           </ul>
           <p>An Activity involves code that is prone to failure because if it fails (let’s say the API is down), Temporal automatically retries it over and over until it succeeds or until your customized retry or timeout configuration is hit.</p>
+          <p>You implement the Activity interfaces and methods within it.</p>
           <p><strong>Here are two Activities: one for withdrawing money and one for depositing money.</strong></p>
         </div>
       </div>
@@ -73,7 +74,7 @@ public interface ReimbursementActivities {
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-java">{`public class ReimbursementActivitiesImpl implements ReimbursementActivities {
-@Override
+    @Override
     public boolean withdrawMoney(double amount) {
         // throw new RuntimeException("Bank service temporarily unavailable");
         System.out.println("Successfully withdrawn $" + amount);

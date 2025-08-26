@@ -63,12 +63,15 @@ public interface ReimbursementWorkflow {
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-java">{`import io.temporal.workflow.Workflow;\n
+          <pre><code className="language-java">{`import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
+import java.time.Duration;\n
 public class ReimbursementWorkflowImpl implements ReimbursementWorkflow {
     private final ReimbursementActivities activities = Workflow.newActivityStub(
       activityInterface:ReimbursementActivities.class,
-      ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
-      .build()
+      ActivityOptions.newBuilder()
+        .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
+        .build()
     );\n
     @Override
     public String processReimbursement(String userId, double amount) {

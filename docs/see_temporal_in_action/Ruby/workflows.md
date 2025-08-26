@@ -52,10 +52,12 @@ class ReimbursementWorkflow < Temporalio::Workflow::Definition
     Temporalio::Workflow.execute_activity(
       WithdrawMoneyActivity,
       amount,
+      start_to_close_timeout: 5 # maximum time allowed for a single attempt of an Activity to execute
     )\n
     Temporalio::Workflow.execute_activity(
       DepositMoneyActivity,
       amount,
+      start_to_close_timeout: 5 # maximum time allowed for a single attempt of an Activity to execute
     )\n   
     "reimbursement to #{user_id} successfully complete"
   end
