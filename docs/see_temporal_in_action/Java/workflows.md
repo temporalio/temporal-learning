@@ -54,7 +54,7 @@ public interface ReimbursementWorkflow {
 }`}</code></pre>
         </div>
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/java/src/main/java/reimbursementworkflow/ReimbursementWorkflowImpl.javas" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/java/src/main/java/reimbursementworkflow/ReimbursementWorkflowImpl.java" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">

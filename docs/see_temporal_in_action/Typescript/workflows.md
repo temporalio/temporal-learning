@@ -47,8 +47,8 @@ import Link from '@docusaurus/Link';
         <div className="code-preview">
           <pre><code className="language-typescript">{`import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from './activities';\n
-const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
-  startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
+const { withdrawMoney, depositMoney } = proxyActivities<typeof acgittivities>({
+  startToCloseTimeout: '5s', // maximum time allowed for a single attempt of an Activity to execute
 });\n
 export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
   await withdrawMoney(amount);

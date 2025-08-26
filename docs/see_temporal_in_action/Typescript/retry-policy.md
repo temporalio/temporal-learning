@@ -52,7 +52,7 @@ const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
    maximumInterval: '1m', // maximum duration between retries
    maximumAttempts: 100, // maximum number of retry attempts
  },
- startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
+ startToCloseTimeout: '5s', // maximum time allowed for a single attempt of an Activity to execute
 });\n
 export async function reimbursementWorkflow(userId: string, amount: number): Promise<string> {
   await withdrawMoney(amount);
