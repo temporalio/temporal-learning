@@ -1,6 +1,6 @@
 ---
 title: "Get Started with Temporal and Ruby"
-sidebar_position: 4
+sidebar_position: 6
 sidebar_label: Ruby
 hide_table_of_contents: false
 pagination_prev: null

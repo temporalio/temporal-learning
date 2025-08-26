@@ -87,6 +87,12 @@ const config = {
         {to: "/", label: "Home", position: "left", activeBasePath: "none"},
         {to: "/getting_started", label: "Get started", position: "left"},
         { to: "/courses", label: "Courses", position: "left" },
+        {
+          type: 'doc',
+          docId: 'see_temporal_in_action/index',
+          label: "See Temporal in Action", 
+          position: "left"
+        },
         {href: "https://temporal.io/code-exchange", label: "Code Exchange", position: "left"},
         {
           href: "https://docs.temporal.io",

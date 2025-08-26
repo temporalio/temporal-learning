@@ -1,6 +1,6 @@
 ---
 title: "Crafting an Error Handling Strategy with .NET"
-sidebar_position: 3
+sidebar_position: 5
 sidebar_label: "Crafting an Error Handling Strategy with .NET"
 draft: false
 tags: [courses, dotnet]
