@@ -49,23 +49,23 @@ import Link from '@docusaurus/Link';
 [Workflow]
 public class ReimbursementWorkflow
 {
-    [WorkflowRun]
-    public async Task<string> RunAsync(string userId, double amount)
+  [WorkflowRun]
+  public async Task<string> RunAsync(string userId, double amount)
+  {
+    var activityOptions = new ActivityOptions
     {
-        var activityOptions = new ActivityOptions
-        {
-            StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
-        };\n
-        await Workflow.ExecuteActivityAsync(
-            (Activities act) => act.withdrawMoney(amount),
-            activityOptions
-        );\n
-        await Workflow.ExecuteActivityAsync(
-            (Activities act) => act.depositMoney(amount),
-            activityOptions
-        );
-        return $"reimbursement to {userId} successfully complete";
-    }
+      StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
+    };\n
+    await Workflow.ExecuteActivityAsync(
+      (Activities act) => act.withdrawMoney(amount),
+      activityOptions
+    );\n
+      await Workflow.ExecuteActivityAsync(
+        (Activities act) => act.depositMoney(amount),
+        activityOptions
+      );
+    return $"reimbursement to {userId} successfully complete";
+  }
 }`}</code></pre>
         </div>
       </div>

@@ -51,8 +51,8 @@ import Link from '@docusaurus/Link';
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-typescript">{`export async function withdrawMoney(amount: number): Promise<boolean> {
-  // This would usually contain code that is prone to failure, like an API call, 
-  // but it is a print statement here for simplicity.
+  // This would usually contain code that is prone to failure, 
+  // like an API call, but it is a print statement here for simplicity.
   console.log(\`Successfully withdrawn $\${amount}\`);
   return true;
 }\n

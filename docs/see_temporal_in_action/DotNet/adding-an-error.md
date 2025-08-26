@@ -50,15 +50,15 @@ public class Activities
     [Activity]
     public Task<bool> withdrawMoney(double amount)
     {
-        throw new Exception("Bank service temporarily unavailable");
-        Console.WriteLine($"Successfully withdrawn $\${amount}\");
-        return Task.FromResult(true);
+      throw new Exception("Bank service temporarily unavailable");
+      Console.WriteLine($"Successfully withdrawn $\${amount}\");
+      return Task.FromResult(true);
     }\n
     [Activity]
     public Task<bool> depositMoney(double amount)
     {
-        Console.WriteLine($"Successfully deposited $\${amount}\");
-        return Task.FromResult(true);
+      Console.WriteLine($"Successfully deposited $\${amount}\");
+      return Task.FromResult(true);
     }
 }`
 }</code></pre>

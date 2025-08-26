@@ -47,14 +47,14 @@ import Link from '@docusaurus/Link';
           <pre className="codeblock"><code className="language-java">{`public class ReimbursementActivitiesImpl implements ReimbursementActivities {
     @Override
     public boolean withdrawMoney(double amount) {
-        // throw new RuntimeException("Bank service temporarily unavailable");
-        System.out.println("Successfully withdrawn $" + amount);
-        return true;
+      // throw new RuntimeException("Bank service temporarily unavailable");
+      System.out.println("Successfully withdrawn $" + amount);
+      return true;
     }\n
     @Override
     public boolean depositMoney(double amount) {
-        System.out.println("Successfully deposited $" + amount);
-        return true;
+      System.out.println("Successfully deposited $" + amount);
+      return true;
     }
 }`
 }</code></pre>

@@ -53,7 +53,8 @@ import Link from '@docusaurus/Link';
           <pre className="codeblock"><code className="language-ruby">{`require 'temporalio/activity'\n
 class WithdrawMoneyActivity < Temporalio::Activity::Definition
   def execute(amount)
-    # raise StandardError, 'Bank service temporarily unavailable'
+    # This would usually contain code that is prone to failure, 
+    # like an API call, but it is a print statement here for simplicity.
     puts "Successfully withdrawn $#{amount}"
     true
   end

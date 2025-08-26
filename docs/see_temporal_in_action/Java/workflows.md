@@ -49,8 +49,8 @@ import Link from '@docusaurus/Link';
 import io.temporal.workflow.WorkflowMethod;\n
 @WorkflowInterface
 public interface ReimbursementWorkflow {
-    @WorkflowMethod
-    String processReimbursement(String userId, double amount);
+  @WorkflowMethod
+  String processReimbursement(String userId, double amount);
 }`}</code></pre>
         </div>
         <div className="demo-header">
@@ -67,12 +67,12 @@ public interface ReimbursementWorkflow {
 import io.temporal.workflow.Workflow;
 import java.time.Duration;\n
 public class ReimbursementWorkflowImpl implements ReimbursementWorkflow {
-    private final ReimbursementActivities activities = Workflow.newActivityStub(
-      activityInterface:ReimbursementActivities.class,
-      ActivityOptions.newBuilder()
-        .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
-        .build()
-    );\n
+  private final ReimbursementActivities activities = Workflow.newActivityStub(
+    activityInterface:ReimbursementActivities.class,
+    ActivityOptions.newBuilder()
+      .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
+      .build()
+  );\n
     @Override
     public String processReimbursement(String userId, double amount) {
       activities.withdrawMoney(amount);

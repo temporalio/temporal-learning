@@ -47,9 +47,9 @@ import Link from '@docusaurus/Link';
         <div className="code-preview">
           <pre className="codeblock"><code className="language-python">{`class ReimbursementWorkflow:
     async def reimburse(self, user_id: str, amount: float) -> str:
-        # Insert code that withdraws money from company bank
-        # Insert code that deposits money into employee bank
-        return f"reimbursement to {user_id} successfully complete"`}</code></pre>
+      # Insert code that withdraws money from company bank
+      # Insert code that deposits money into employee bank
+      return f"reimbursement to {user_id} successfully complete"`}</code></pre>
         </div>
       </div>
     </div>

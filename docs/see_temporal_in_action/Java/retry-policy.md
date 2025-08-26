@@ -48,17 +48,17 @@ import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;
 import java.time.Duration;\n
 public class ReimbursementWorkflowImpl implements ReimbursementWorkflow {
-    private final ReimbursementActivities activities = Workflow.newActivityStub(
-      ReimbursementActivities.class,
-      ActivityOptions.newBuilder()
-        .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
-        .setRetryOptions(RetryOptions.newBuilder()
-          .setInitialInterval(Duration.ofSeconds(2)) //duration before the first retry
-          .setBackoffCoefficient(2.0) //multiplier used for subsequent retries
-          .setMaximumInterval(Duration.ofMinutes(1)) //maximum duration between retries
-          .setMaximumAttempts(100) //maximum number of retry attempts before giving up
-          .build())
-        .build()
+  private final ReimbursementActivities activities = Workflow.newActivityStub(
+    ReimbursementActivities.class,
+    ActivityOptions.newBuilder()
+      .setStartToCloseTimeout(Duration.ofSeconds(5)) // maximum time allowed for a single attempt of an Activity to execute
+      .setRetryOptions(RetryOptions.newBuilder()
+        .setInitialInterval(Duration.ofSeconds(2)) //duration before the first retry
+        .setBackoffCoefficient(2.0) //multiplier used for subsequent retries
+        .setMaximumInterval(Duration.ofMinutes(1)) //maximum duration between retries
+        .setMaximumAttempts(100) //maximum number of retry attempts before giving up
+        .build())
+      .build()
     );\n
     @Override
     public String processReimbursement(String userId, double amount) {

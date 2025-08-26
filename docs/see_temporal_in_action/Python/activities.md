@@ -53,14 +53,15 @@ import Link from '@docusaurus/Link';
           <pre className="codeblock"><code className="language-python">{`from temporalio import activity\n
 @activity.defn
 async def withdraw_money(amount: float) -> bool:
-    # raise Exception('Bank service temporarily unavailable')
-    print(f"Successfully withdrawn \${amount}")
-    return True
+  # This would usually contain code that is prone to failure, 
+  # like an API call, but it is a print statement here for simplicity.
+  print(f"Successfully withdrawn \${amount}")
+  return True
     
 @activity.defn
 async def deposit_money(amount: float) -> bool:
-    print(f"Successfully deposited \${amount}")
-    return True`}</code></pre>
+  print(f"Successfully deposited \${amount}")
+  return True`}</code></pre>
         </div>
         <div className="code-detail-link">
           See our code in more detail <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/python/README.md" target="_blank" rel="noopener noreferrer">here</a>.

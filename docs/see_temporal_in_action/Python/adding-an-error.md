@@ -47,13 +47,13 @@ import Link from '@docusaurus/Link';
           <pre className="codeblock"><code className="language-python">{`from temporalio import activity\n
 @activity.defn
 async def withdraw_money(amount: float) -> bool:
-    raise Exception('Bank service temporarily unavailable')
-    print(f"Successfully withdrawn \${amount}")
-    return True\n
+  raise Exception('Bank service temporarily unavailable')
+  print(f"Successfully withdrawn \${amount}")
+  return True\n
 @activity.defn
 async def deposit_money(amount: float) -> bool:
-    print(f"Successfully deposited \${amount}")
-    return True`}</code></pre>
+  print(f"Successfully deposited \${amount}")
+  return True`}</code></pre>
         </div>
       </div>
     </div>

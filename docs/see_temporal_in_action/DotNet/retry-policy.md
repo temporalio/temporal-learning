@@ -47,30 +47,30 @@ import Link from '@docusaurus/Link';
 [Workflow]
 public class ReimbursementWorkflow
 {
-    [WorkflowRun]
-    public async Task<string> RunAsync(string userId, double amount)
-    {
-        var activityOptions = new ActivityOptions
-        {
-            StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
-            RetryPolicy = new()
-            {
-                InitialInterval = TimeSpan.FromSeconds(2), // duration before the first retry
-                BackoffCoefficient = 2, // multiplier used for subsequent retries
-                MaximumInterval = TimeSpan.FromMinutes(1), // maximum duration between retries
-                MaximumAttempts = 100 // maximum number of retry attempts before giving up
-            }
-        };\n
-        await Workflow.ExecuteActivityAsync(
-            (Activities act) => act.withdrawMoney(amount),
-            activityOptions
-        );\n
-        await Workflow.ExecuteActivityAsync(
-            (Activities act) => act.depositMoney(amount),
-            activityOptions
-        );
-        return $"reimbursement to {userId} successfully complete";
-    }
+  [WorkflowRun]
+  public async Task<string> RunAsync(string userId, double amount)
+  {
+      var activityOptions = new ActivityOptions
+      {
+          StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
+          RetryPolicy = new()
+          {
+            InitialInterval = TimeSpan.FromSeconds(2), // duration before the first retry
+            BackoffCoefficient = 2, // multiplier used for subsequent retries
+            MaximumInterval = TimeSpan.FromMinutes(1), // maximum duration between retries
+            MaximumAttempts = 100 // maximum number of retry attempts before giving up
+          }
+      };\n
+      await Workflow.ExecuteActivityAsync(
+          (Activities act) => act.withdrawMoney(amount),
+          activityOptions
+      );\n
+      await Workflow.ExecuteActivityAsync(
+          (Activities act) => act.depositMoney(amount),
+          activityOptions
+      );
+      return $"reimbursement to {userId} successfully complete";
+  }
 }`}</code></pre>
         </div>
       </div>

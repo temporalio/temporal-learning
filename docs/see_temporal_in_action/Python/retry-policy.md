@@ -51,25 +51,25 @@ from activities import withdraw_money, deposit_money\n
 class ReimbursementWorkflow:
     @workflow.run
     async def run(self, user_id: str, amount: float) -> str:
-        retry_policy = RetryPolicy(
-            initial_interval=timedelta(seconds=2), # duration before the first retry
-            backoff_coefficient=2.0, # multiplier used for subsequent retries
-            maximum_interval=timedelta(minutes=1), # maximum duration between retries
-            maximum_attempts=100, # maximum number of retry attempts before giving up
-        )\n        
-        await workflow.execute_activity(
-            withdraw_money,
-            amount,
-            start_to_close_timeout=timedelta(seconds=5), # maximum time allowed for a single attempt of an Activity to execute
-            retry_policy=retry_policy,
-        )\n       
-        await workflow.execute_activity(
-            deposit_money,
-            amount,
-            start_to_close_timeout=timedelta(seconds=5),
-            retry_policy=retry_policy,
-        )\n      
-        return f"reimbursement to {user_id} successfully complete"`}</code></pre>
+      retry_policy = RetryPolicy(
+          initial_interval=timedelta(seconds=2), # duration before the first retry
+          backoff_coefficient=2.0, # multiplier used for subsequent retries
+          maximum_interval=timedelta(minutes=1), # maximum duration between retries
+          maximum_attempts=100, # maximum number of retry attempts before giving up
+      )\n        
+      await workflow.execute_activity(
+          withdraw_money,
+          amount,
+          start_to_close_timeout=timedelta(seconds=5), # maximum time allowed for a single attempt of an Activity to execute
+          retry_policy=retry_policy,
+      )\n       
+      await workflow.execute_activity(
+          deposit_money,
+          amount,
+          start_to_close_timeout=timedelta(seconds=5),
+          retry_policy=retry_policy,
+      )\n      
+      return f"reimbursement to {user_id} successfully complete"`}</code></pre>
         </div>
       </div>
     </div>

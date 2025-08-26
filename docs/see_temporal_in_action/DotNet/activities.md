@@ -56,15 +56,16 @@ public class Activities
     [Activity]
     public Task<bool> withdrawMoney(double amount)
     {
-        // throw new Exception("Bank service temporarily unavailable");
-        Console.WriteLine($"Successfully withdrawn $\${amount}\");
-        return Task.FromResult(true);
+      // This would usually contain code that is prone to failure, 
+      // like an API call, but it is a print statement here for simplicity.
+      Console.WriteLine($"Successfully withdrawn $\${amount}\");
+      return Task.FromResult(true);
     }\n
     [Activity]
     public Task<bool> depositMoney(double amount)
     {
-        Console.WriteLine($"Successfully deposited $\${amount}\");
-        return Task.FromResult(true);
+      Console.WriteLine($"Successfully deposited $\${amount}\");
+      return Task.FromResult(true);
     }
 }`
 }</code></pre>

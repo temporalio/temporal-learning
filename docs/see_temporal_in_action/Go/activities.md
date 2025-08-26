@@ -51,7 +51,8 @@ import Link from '@docusaurus/Link';
         </div>
         <div className="code-preview">
           <pre className="codeblock"><code className="language-go">{`func WithdrawMoney(ctx context.Context, amount float64) (bool, error) {
-    // return false, fmt.Errorf("Bank Service temporarily unavailable")
+    // This would usually contain code that is prone to failure, 
+    // like an API call, but it is a print statement here for simplicity.
     fmt.Printf("Successfully withdrawn \$%.2f\\n", amount)
     return true, nil
 }\n
