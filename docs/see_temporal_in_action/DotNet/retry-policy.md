@@ -25,7 +25,7 @@ import Link from '@docusaurus/Link';
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/adding-an-error">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/adding-an-error">
           Next Step
         </Link>
       </div>
@@ -34,7 +34,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/workflows.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/Workflow/ReimbursementWorkflow.cs" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -43,21 +43,34 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-dotnet">{`import { proxyActivities } from '@temporalio/workflow';
-import type * as activities from './activities';
-const { withdrawMoney, depositMoney } = proxyActivities<typeof activities>({
- retry: {
-   initialInterval: '2s', // duration before the first retry
-   backoffCoefficient: 2, // multiplier used for subsequent retries
-   maximumInterval: '1m', // maximum duration between retries
-   maximumAttempts: 100, // maximum number of retry attempts
- },
- startToCloseTimeout: '5s', //maximum time allowed for a single attempt of an Activity to execute
-});
-export async  reimbursementWorkflow(userId: string, amount: number): Promise<string> {
-  await withdrawMoney(amount);
-  await depositMoney(amount);
-  return \`reimbursement to \${userId} successfully complete\`;
+          <pre><code className="language-dotnet">{`using Temporalio.Workflows;\n
+[Workflow]
+public class ReimbursementWorkflow
+{
+    [WorkflowRun]
+    public async Task<string> RunAsync(string userId, double amount)
+    {
+        var activityOptions = new ActivityOptions
+        {
+            StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
+            RetryPolicy = new()
+            {
+                InitialInterval = TimeSpan.FromSeconds(2), // duration before the first retry
+                BackoffCoefficient = 2, // multiplier used for subsequent retries
+                MaximumInterval = TimeSpan.FromMinutes(1), // maximum duration between retries
+                MaximumAttempts = 100 // maximum number of retry attempts before giving up
+            }
+        };\n
+        await Workflow.ExecuteActivityAsync(
+            (Activities act) => act.withdrawMoney(amount),
+            activityOptions
+        );\n
+        await Workflow.ExecuteActivityAsync(
+            (Activities act) => act.depositMoney(amount),
+            activityOptions
+        );
+        return $"reimbursement to {userId} successfully complete";
+    }
 }`}</code></pre>
         </div>
       </div>

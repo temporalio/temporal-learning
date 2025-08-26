@@ -17,7 +17,7 @@ import Link from '@docusaurus/Link';
   <div className="content-area">
     <div className="left-panel">
       <div className="tour-header">
-        <h1>Let's Throw an Error!</h1>
+        <h1>Let's Raise an Error!</h1>
         <div className="content-text">
           <p>Now let's see Temporal in action!</p>
           <p>We’ll now look at how Temporal retries your code. We’ll intentionally raise an error in the <strong>WithdrawMoney</strong> Activity code.</p>

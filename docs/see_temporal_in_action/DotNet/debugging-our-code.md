@@ -19,14 +19,14 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Debugging our Code</h1>
         <div className="content-text">
-          <p>Let’s go ahead and fix the error in our Activity code by removing the thrown error or commenting it out and re-running our code to register the code change.</p>
+          <p>Let’s go ahead and fix the exception in our Activity code by removing the thrown exception or commenting it out and re-running our code to register the code change.</p>
           <p>In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again.</p>
           <p>By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.</p>
         </div>
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/observing-workflow-completion">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/observing-workflow-completion">
           Next Step
         </Link>
       </div>
@@ -35,7 +35,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/activities.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/Workflow/Activities.cs" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -44,14 +44,22 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-dotnet">{`export async  withdrawMoney(amount: number): Promise<boolean> {
-  // throw new Error(\'Bank service temporarily unavailable\');
-  console.log(\`Successfully withdrawn $\${amount}\`);
-  return true;
-}
-export async  depositMoney(amount: number): Promise<boolean> {
-  console.log(\`Successfully deposited $\${amount}\`);
-  return true;
+          <pre className="codeblock"><code className="language-dotnet">{`using Temporalio.Activities;\n
+public class Activities
+{
+    [Activity]
+    public Task<bool> withdrawMoney(double amount)
+    {
+        // throw new Exception("Bank service temporarily unavailable");
+        Console.WriteLine($"Successfully withdrawn $\${amount}\");
+        return Task.FromResult(true);
+    }\n
+    [Activity]
+    public Task<bool> depositMoney(double amount)
+    {
+        Console.WriteLine($"Successfully deposited $\${amount}\");
+        return Task.FromResult(true);
+    }
 }`
 }</code></pre>
         </div>

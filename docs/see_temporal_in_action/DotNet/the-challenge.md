@@ -33,7 +33,7 @@ import Link from '@docusaurus/Link';
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/activities">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/activities">
           Next Step
         </Link>
       </div>

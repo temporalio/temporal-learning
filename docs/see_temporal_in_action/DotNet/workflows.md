@@ -27,7 +27,7 @@ import Link from '@docusaurus/Link';
       </div>
       
     <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/retry-policy">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/retry-policy">
           Next Step
         </Link>
       </div>
@@ -36,7 +36,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/workflows.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/Workflow/ReimbursementWorkflow.cs" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -45,10 +45,27 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre><code className="language-dotnet">{`export async  reimbursementWorkflow(userId: string, amount: number): Promise<string> {
-  await withdrawMoney(amount);
-  await depositMoney(amount);
-  return \`reimbursement to \${userId} successfully complete\`;
+          <pre><code className="language-dotnet">{`using Temporalio.Workflows;\n
+[Workflow]
+public class ReimbursementWorkflow
+{
+    [WorkflowRun]
+    public async Task<string> RunAsync(string userId, double amount)
+    {
+        var activityOptions = new ActivityOptions
+        {
+            StartToCloseTimeout = TimeSpan.FromSeconds(5), // maximum time allowed for a single attempt of an Activity to execute
+        };\n
+        await Workflow.ExecuteActivityAsync(
+            (Activities act) => act.withdrawMoney(amount),
+            activityOptions
+        );\n
+        await Workflow.ExecuteActivityAsync(
+            (Activities act) => act.depositMoney(amount),
+            activityOptions
+        );
+        return $"reimbursement to {userId} successfully complete";
+    }
 }`}</code></pre>
         </div>
       </div>

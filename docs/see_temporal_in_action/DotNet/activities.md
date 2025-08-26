@@ -19,7 +19,7 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Introduction to Activities</h1>
         <div className="content-text">
-          <p>An Activity is a normal method that executes a single, well-defined action (either short or long running), which handles operations that can fail. Here are some examples:</p>
+          <p>An Activity is a method that executes a single, well-defined action (either short or long running), which handles operations that can fail. Here are some examples:</p>
           <ul>
             <li>Sending e-mails</li>
             <li>API calls</li>
@@ -41,7 +41,7 @@ import Link from '@docusaurus/Link';
     <div className="right-panel">
       <div className="demo-area">
         <div className="demo-header">
-          <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/src/activities.ts" 
+          <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/Workflow/Activities.cs" 
              className="demo-title-link" 
              target="_blank" 
              rel="noopener noreferrer">
@@ -50,19 +50,27 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-dotnet">{`export async  withdrawMoney(amount: number): Promise<boolean> {
-  /* This would usually contain code that is prone to failure, like an API call, but it is a print statement here for simplicity. */
-  console.log(\`Successfully withdrawn $\${amount}\`);
-  return true;
-}
-export async  depositMoney(amount: number): Promise<boolean> {
-  console.log(\`Successfully deposited $\${amount}\`);
-  return true;
+          <pre className="codeblock"><code className="language-dotnet">{`using Temporalio.Activities;\n
+public class Activities
+{
+    [Activity]
+    public Task<bool> withdrawMoney(double amount)
+    {
+        // throw new Exception("Bank service temporarily unavailable");
+        Console.WriteLine($"Successfully withdrawn $\${amount}\");
+        return Task.FromResult(true);
+    }\n
+    [Activity]
+    public Task<bool> depositMoney(double amount)
+    {
+        Console.WriteLine($"Successfully deposited $\${amount}\");
+        return Task.FromResult(true);
+    }
 }`
 }</code></pre>
         </div>
         <div className="code-detail-link">
-          See our code in more detail <a href="https://github.com/temporalio/edu-get-started-flow/blob/7e22ba7d3277ba29e66415b9c61d42ac4f322111/typescript/README" target="_blank" rel="noopener noreferrer">here</a>.
+          See our code in more detail <a href="https://github.com/temporalio/edu-get-started-flow/blob/main/dotnet/README.md" target="_blank" rel="noopener noreferrer">here</a>.
         </div>
       </div>
     </div>

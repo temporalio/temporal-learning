@@ -1,5 +1,5 @@
 ---
-title: "Let's Throw an Error"
+title: "Let's Throw an Exception"
 hide_title: true
 sidebar_position: 8
 hide_table_of_contents: true
@@ -17,16 +17,16 @@ import Link from '@docusaurus/Link';
   <div className="content-area">
     <div className="left-panel">
       <div className="tour-header">
-        <h1>Let's Throw an Error!</h1>
+        <h1>Let's Throw an Exception!</h1>
         <div className="content-text">
           <p>Now let's see Temporal in action!</p>
-          <p>We’ll now look at how Temporal retries your code. We’ll intentionally throw an error in the <strong>withdrawMoney</strong> Activity code.</p>
-          <p>In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
+          <p>We’ll now look at how Temporal retries your code. We’ll intentionally throw an exception in the <strong>withdrawMoney</strong> Activity code.</p>
+          <p>In our case, this is just an exception we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more.</p>
         </div>
       </div>
       
       <div className="tour-navigation">
-        <Link className="button button--primary next-step" to="/see_temporal_in_action/typescript/observing-retries">
+        <Link className="button button--primary next-step" to="/see_temporal_in_action/dotnet/observing-retries">
           Next Step
         </Link>
       </div>
@@ -44,14 +44,22 @@ import Link from '@docusaurus/Link';
           </a>
         </div>
         <div className="code-preview">
-          <pre className="codeblock"><code className="language-dotnet">{`export async  withdrawMoney(amount: number): Promise<boolean> {
-  throw new Error(\'Bank service temporarily unavailable\');
-  console.log(\`Successfully withdrawn $\${amount}\`);
-  return true;
-}
-export async  depositMoney(amount: number): Promise<boolean> {
-  console.log(\`Successfully deposited $\${amount}\`);
-  return true;
+          <pre className="codeblock"><code className="language-dotnet">{`using Temporalio.Activities;\n
+public class Activities
+{
+    [Activity]
+    public Task<bool> withdrawMoney(double amount)
+    {
+        throw new Exception("Bank service temporarily unavailable");
+        Console.WriteLine($"Successfully withdrawn $\${amount}\");
+        return Task.FromResult(true);
+    }\n
+    [Activity]
+    public Task<bool> depositMoney(double amount)
+    {
+        Console.WriteLine($"Successfully deposited $\${amount}\");
+        return Task.FromResult(true);
+    }
 }`
 }</code></pre>
         </div>

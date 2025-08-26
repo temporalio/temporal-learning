@@ -53,7 +53,7 @@ import Link from '@docusaurus/Link';
     }\n
     @Override
     public boolean depositMoney(double amount) {
-        System.out.println("Successfully desposited $" + amount);
+        System.out.println("Successfully deposited $" + amount);
         return true;
     }
 }`

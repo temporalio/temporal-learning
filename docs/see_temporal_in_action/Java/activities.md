@@ -19,7 +19,7 @@ import Link from '@docusaurus/Link';
       <div className="tour-header">
         <h1>Introduction to Activities</h1>
         <div className="content-text">
-          <p>An Activity is a normal function that executes a single, well-defined action (either short or long running), which handles operations that can fail. Here are some examples:</p>
+          <p>An Activity is a function that executes a single, well-defined action (either short or long running), which handles operations that can fail. Here are some examples:</p>
           <ul>
             <li>Sending e-mails</li>
             <li>API calls</li>
@@ -81,7 +81,7 @@ public interface ReimbursementActivities {
     }\n
     @Override
     public boolean depositMoney(double amount) {
-        System.out.println("Successfully desposited $" + amount);
+        System.out.println("Successfully deposited $" + amount);
         return true;
     }
 }`

@@ -59,11 +59,9 @@ func ReimbursementWorkflow(ctx workflow.Context, userId string, amount float64) 
             MaximumAttempts: 100,             // maximum number of retry attempts 
         },
     }
-    ctx = workflow.WithActivityOptions(ctx, options)\n
-    var withdrawSuccess bool
-    err := workflow.ExecuteActivity(ctx, WithdrawMoney, amount).Get(ctx, &withdrawSuccess)\n
-    var depositSuccess bool
-    err = workflow.ExecuteActivity(ctx, DepositMoney, amount).Get(ctx, &depositSuccess)\n
+    ctx = workflow.WithActivityOptions(ctx, options)
+    err := workflow.ExecuteActivity(ctx, WithdrawMoney, amount).Get(ctx, &withdrawSuccess)
+    err = workflow.ExecuteActivity(ctx, DepositMoney, amount).Get(ctx, &depositSuccess)
     return fmt.Sprintf("reimbursement to %s successfully complete", userId), nil
 }`}</code></pre>
         </div>
