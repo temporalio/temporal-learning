@@ -41,3 +41,4 @@ This section is intended for:
 
 <Link className="button button--primary" to="managing_a_namespace/">Managing a Namespace</Link>&nbsp;
 <Link className="button button--primary" to="managing_temporal_cloud_access_control">Managing Temporal Cloud Access Control</Link>&nbsp;
+<Link className="button button--primary" to="security_controls_for_temporal_cloud">Security Controls for Temporal Cloud</Link>&nbsp;

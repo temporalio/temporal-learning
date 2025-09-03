@@ -36,7 +36,7 @@ Each Namespace in Temporal Cloud runs in a specific region, which determines whe
 
 While your cloud infrastructure might be limited to a single region, Temporal Cloud supports multiple regions, and you’ll have access to a full list of available regions during Namespace creation. To view the current list of supported regions and their operational status, visit: https://status.temporal.io
 
-## Best Practices:
+### Best Practices:
 
 #### 1. Use lowercase and hyphens for Namespace names: Temporal Cloud treats Namespace names as case-insensitive. To maintain consistency and avoid potential issues, use lowercase letters and hyphen (-) as separators. Example: `payment-checkout-prd`
 
