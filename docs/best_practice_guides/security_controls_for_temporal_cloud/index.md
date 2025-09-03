@@ -81,7 +81,7 @@ Although Temporal Cloud is a SaaS offering, you retain control over its networki
 
 Temporal Cloud supports private connectivity options such as [AWS PrivateLink](https://docs.temporal.io/cloud/connectivity/aws-connectivity) and [Google Cloud Private Service Connect](https://docs.temporal.io/cloud/connectivity/gcp-connectivity). If your infrastructure is in AWS or GCP, configure a PrivateLink/PSC endpoint for Temporal Cloud. This allows your workers and applications to reach Temporal Cloud over a private network path, avoiding traversal of the public internet. Private connectivity reduces the surface for man-in-the-middle attacks and can meet stringent network security policies.
 
-#### w. Separate environments by Namespace
+#### 2. Separate environments by Namespace
 
 Use [Temporal Namespaces](https://learn.temporal.io/best_practice_guides/managing_a_namespace/#2-use-domain-service-and-environment-to-name-namespaces) to isolate workflows for different environments or teams (e.g. development, staging, production). Each Namespace is logically segregated and cannot interact with others by default, providing a security boundary. 
 
