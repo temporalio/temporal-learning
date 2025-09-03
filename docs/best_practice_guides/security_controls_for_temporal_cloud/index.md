@@ -36,7 +36,7 @@ Integrate Temporal Cloud with your organization's identity provider via SAML 2.0
 
 Temporal Cloud provides [preconfigured account-level roles](https://docs.temporal.io/cloud/users) (Account Owner, Finance Admin, Global Admin, Developer, Read-Only) and Namespace-level permissions. Assign users the lowest level of access they need. For example, give developers access only to the Namespaces they work on, and use read-only roles for auditors or reviewers. Regularly review user roles and remove or downgrade accounts that are no longer needed
 
-#### 3. Leverage SCIF or Automated User Provisioning
+#### 3. Leverage SCIM or Automated User Provisioning
 
 When applicable, use [SCIM](https://docs.temporal.io/cloud/scim) or the Temporal Cloud user management API to automate adding and removing user accounts. This ensures timely removal of access when people change roles or leave the organization.
 
