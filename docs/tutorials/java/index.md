@@ -1,6 +1,6 @@
 ---
 title: "Java tutorials"
-sidebar_position: 2
+sidebar_position: 4
 keywords: [Java,tutorial,temporal,workflows]
 description: "Build Temporal applications with these Java tutorials"
 image: /img/temporal-logo-twitter-card.png

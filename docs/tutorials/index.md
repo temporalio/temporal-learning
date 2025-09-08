@@ -1,7 +1,7 @@
 ---
 title: "Project-Based Tutorials"
 hide_title: true
-sidebar_position: 4
+sidebar_position: 5
 hide_table_of_contents: true
 pagination_prev: courses/index
 pagination_next: examples/index

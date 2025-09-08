@@ -1,6 +1,6 @@
 ---
 title: "AI tutorials"
-sidebar_position: 6
+sidebar_position: 1
 keywords: [ai,tutorial,temporal,workflows]
 description: "Build AI tools with Temporal using these tutorials"
 image: /img/temporal-logo-twitter-card.png
