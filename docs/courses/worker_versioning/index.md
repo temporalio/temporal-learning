@@ -28,4 +28,4 @@ In this course, you'll be able to explain the benefits of Worker Versioning, you
 
 Since this course requires a fundamental understanding of Temporal and Versioning, we recommend our "Introducing the Temporal Platform" course as a prerequisite. It's also important to remember that the example code used in this course was designed to support learning a specific aspect of Temporal, not to serve as a ready-to-use template for implementing a production system.
 
- <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:7022">Go to Course</a> 
+ <a className="button button--primary" href="https://temporal.talentlms.com/catalog/info/id:272">Go to Course</a> 
