@@ -125,6 +125,19 @@ In this course, you’ll expand your ability to write dynamic Workflows by inter
 
 -----
 
+## [Worker Versioning](worker_versioning/index.md)
+
+In this course, you will learn an alternative versioning method that does not require you to add additional branches to revise your Workflows. Worker Versioning allows you to tag your Workers and programmatically roll them out in versioned deployments, so that old Workers can run old code paths and new Workers can run new code paths.
+
+**Estimated time**: ⏱️ 1 hour
+
+**Cost**: Free
+
+
+<Link className="button button--primary" to="worker_versioning">Learn more and enroll</Link>
+
+-----
+
 ## [Introduction to Temporal Cloud](intro_to_temporal_cloud/index.md)
 
 In this course, you will learn the role of Temporal Cloud, how to log into and navigate its Web UI, and how to perform tasks that new Temporal Cloud users may do in preparation for using this service.
