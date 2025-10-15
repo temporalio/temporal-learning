@@ -33,6 +33,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/ruby">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 
 -----
