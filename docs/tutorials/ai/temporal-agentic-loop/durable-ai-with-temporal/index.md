@@ -713,7 +713,6 @@ async def main() -> None:
     result = await handle.result()
     print(f"Result: {result}")
 
-
 if __name__ == "__main__":
     asyncio.run(main())
 ```
@@ -752,7 +751,7 @@ Temporal provides a robust [Web UI](https://docs.temporal.io/web-ui) for managin
 
 Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully!
 
-<img src="https://i.postimg.cc/TPXD49Zc/web-ui-example.png" />
+<img src="https://i.postimg.cc/s2vKVPkF/web-ui-example.png" />
 
 See if you can you locate the following items on the Web UI:
 
@@ -936,7 +935,7 @@ Your Web UI will now show:
 2. The `create_pdf_activity` executes and creates the PDF
 3. The entire Workflow shows **Completed** status
 
-<img src="https://i.postimg.cc/Pqf7YmSd/successful-completion.png" />
+<img src="https://i.postimg.cc/Yqr6rfgp/successful-completion.pngg" />
 
 **What just happened?**
 - Your Workflow **preserved all state** through the failure

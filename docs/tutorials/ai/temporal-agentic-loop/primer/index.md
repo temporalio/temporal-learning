@@ -42,7 +42,8 @@ We'll first look at applications that look like a chain workflow.
 
 ### Prerequisites
 
-You need an [Open AI API key](https://platform.openai.com/api-keys) for this tutorial.
+1. You need an [Open AI API key](https://platform.openai.com/api-keys) for this tutorial.
+2. Install [`uv`](https://docs.astral.sh/uv/getting-started/installation/#pypi), a Python package manager, on your machine.
 
 ### Setting Up Your Environment
 
@@ -50,14 +51,9 @@ In this tutorial, you'll create a Research application that makes a call to the 
 
 First, create your project:
 
-1. Install [`uv`](https://docs.astral.sh/uv/), a Python package manager, on your machine:
-```bash
-pip install uv
-```
-
-2. Create your project: `uv init temporal-agentic-loop-tutorial`
-3. Open your `temporal-agentic-loop-tutorial` project.
-4. Install the packages you will need for this tutorial: `uv add python-dotenv litellm`.
+1. Create your project: `uv init temporal-agentic-loop-tutorial`
+2. Open your `temporal-agentic-loop-tutorial` project.
+3. Install the packages you will need for this tutorial: `uv add python-dotenv litellm`.
 
 ### Create an `.env` File
 
