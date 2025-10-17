@@ -264,9 +264,11 @@ class GenerateReportWorkflow:
         # Your orchestration logic will go here
 ```
 
+:::note
 **Why `workflow.unsafe.imports_passed_through()`?**
 
 Temporal requires this special import pattern for Workflows. When a Workflow resumes after a failure or restart, Temporal "replays" it by re-running the Workflow code using saved results from previous Activity executions. This import pattern tells Temporal: "These imports are safe to use during replay."
+:::
 
 #### Step 4: Execute the LLM Activity
 
@@ -759,6 +761,20 @@ See if you can you locate the following items on the Web UI:
 - The inputs and outputs of the called Activities
 - The inputs and outputs of the Workflow Execution
 
+That's it! You're now done adding durability to your research application. Your workflow now has:
+
+**Automatic state persistence** - Every completed Activity (LLM call, PDF generation) is saved to Temporal's event history
+**Crash recovery** - If your application crashes at any point, it resumes from the last completed Activity instead of starting over
+**No duplicate LLM calls** - You'll never pay twice for the same API call, even after failures or restarts
+**Built-in retry logic** - Transient failures (network timeouts, API rate limits) are automatically retried with exponential backoff
+**Complete observability** - Every execution is tracked in the Web UI with full input/output history for debugging
+
+Your simple research application. has been transformed into a production-ready, fault-tolerant application—without adding complex error handling code or state management logic. Temporal handles all of that for you.
+
+## Optional: Experiencing Failure and Recovery
+
+If you'd like to see Temporal's durability guarantees in action and experience how it recovers from failures, continue with this optional exercise.
+
 ## Experiencing Failure and Recovery
 
 Let's practice experiencing failure and recovery firsthand. We'll add a new feature to our workflow: generating an executive summary before creating the PDF.
@@ -770,7 +786,7 @@ This will demonstrate:
 
 ### Step 1: Create a New Activity with an Intentional Error
 
-We'll create a `send_email` Activity that contains an intentional error to simulate a real-world failure. Add this code to `activities.py`:
+We'll create a `send_email` Activity that contains an intentional error to simulate a real-world failure.In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more. Add this code to `activities.py`:
 
 ```python
 from temporalio.exceptions import ApplicationError
@@ -886,6 +902,8 @@ You should see:
 
 **Key insight:** Notice that the expensive `llm_call` Activity isn't being re-executed! Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
 
+In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again. By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.
+
 ### Step 6: Fix the Error
 
 Now let's "fix" our simulated failure by removing the error. In a real scenario, this could be:
@@ -931,6 +949,8 @@ Your Web UI will now show:
 - You can deploy bug fixes without restarting workflows
 - Your users never lose work
 - You never pay twice for the same LLM call
+
+This is the power of Temporal - your critical business processes are guaranteed to complete with no manual recovery, no lost data, and no duplicate operations.
 
 ## What's Next?
 
