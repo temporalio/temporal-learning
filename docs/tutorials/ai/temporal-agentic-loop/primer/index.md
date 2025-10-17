@@ -17,13 +17,13 @@ This tutorial introduces you to the importance of durability in GenAI applicatio
 
 By now, you've probably experienced generative AI firsthand. You've probably used ChatGPT and seen what LLMs can do. They excel at tasks like research, but their real power emerges when we connect them with users and other actions to build more advanced applications that go beyond simple chat interfaces.
 
-In this series, we'll build toward creating AI agents, but let's start with a simple chain:
+This series will guide you step by step toward creating AI agents. To begin, you'll start with a simple chain: using an LLM to generate research, then turning that research into a PDF.
 
 Use an LLM to generate research ➝ then produce a PDF from that research.
 
 ### What are GenAI Applications?
 
-At their core, GenAI applications use an LLM as one component among many. The LLM isn't the application itself. Take ChatGPT as an example - it's an application that wraps an LLM, not an LLM itself. Even this seemingly simple chat interface does much more than just call an LLM:
+At their core, GenAI applications use an LLM as one component among many. The LLM isn't the application itself. Take ChatGPT as an example - it's an application that wraps an LLM, not an LLM itself. Even this seemingly simple chat interface does much more than just call an LLM, it:
 
 - Displays responses to the user
 - Captures user input
@@ -47,7 +47,7 @@ We'll first look at applications that look like a chain workflow.
 
 ### Setting Up Your Environment
 
-In this tutorial, you'll create a Research application that makes a call to the OpenAI API, conducts research on a topic of your choice, and generates a PDF report from that research. Let's start by setting up your environment.
+In this tutorial, you'll create a research application that makes a call to the OpenAI API, conducts research on a topic of your choice, and generates a PDF report from that research. Let's start by setting up your environment.
 
 First, create your project:
 
@@ -64,7 +64,7 @@ LLM_API_KEY=YOUR_API_KEY
 LLM_MODEL=openai/gpt-4o
 ```
 
-By default this tutorial uses OpenAI's GPT-4o. If you want to use a different LLM provider, look up the appropriate model name [in the LiteLLM documentation](https://docs.litellm.ai/docs/providers) and change the `LLM_MODEL` field and provide your API key.
+By default, this tutorial uses OpenAI's GPT-4o. If you want to use a different LLM provider, look up the appropriate model name [in the LiteLLM documentation](https://docs.litellm.ai/docs/providers) and change the `LLM_MODEL` field and provide your API key.
 
 Replace `YOUR_API_KEY` with your actual API key. Make sure you add `.env` in your `.gitignore` so that you don't accidentally commit your API Key.
 
@@ -143,7 +143,7 @@ print(content)
 ```
 
 Now run this file with `uv run app.py`. 
-You should see your output from your LLM in your terminal window!
+You should see your output from your LLM in your terminal window.
 
 ### Making It Interactive
 

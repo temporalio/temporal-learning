@@ -935,7 +935,7 @@ Your Web UI will now show:
 2. The `create_pdf_activity` executes and creates the PDF
 3. The entire Workflow shows **Completed** status
 
-<img src="https://i.postimg.cc/Yqr6rfgp/successful-completion.pngg" />
+<img src="https://i.postimg.cc/Yqr6rfgp/successful-completion.png" />
 
 **What just happened?**
 - Your Workflow **preserved all state** through the failure
