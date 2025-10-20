@@ -1,5 +1,5 @@
 ---
-title: "Temporal and the Agentic Loop"
+title: "Building Durable AI Applications with Temporal"
 sidebar_position: 1
 ---
 
