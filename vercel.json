@@ -90,6 +90,11 @@
       "source": "/best-practices",
       "destination": "https://docs.temporal.io/best-practices",
       "permanent": true
+    },
+    {
+      "source": "/best_practice_guides",
+      "destination": "https://docs.temporal.io/best-practices",
+      "permanent": true
     }
   ]
 }
