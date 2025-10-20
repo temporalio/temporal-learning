@@ -6,18 +6,18 @@ tags: [AI, Series]
 last_update:
   date: 2025-10-15
   author: Temporal Team
-title: "Part 1: Foundations of Durable AI with a Research Application"
+title: "Part 1: Creating a Chain Workflow with a Research Application"
 description: "Learn the fundamentals of building durable GenAI applications with Temporal by creating a research-to-PDF application"
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Part 1: Foundations of Durable AI with a Research Application
+# Part 1: Creating a Chain Workflow with a Research Application
 
 This tutorial introduces you to the importance of durability in GenAI applications. In the next tutorial, you'll learn how to use Temporal to add durability to your applications and handle failures gracefully.
 
 By now, you've probably experienced generative AI firsthand. You've probably used ChatGPT and seen what LLMs can do. They excel at tasks like research, but their real power emerges when we connect them with users and other actions to build more advanced applications that go beyond simple chat interfaces.
 
-This series will guide you step by step toward creating AI agents. To begin, you'll start with a simple chain: using an LLM to generate research, then turning that research into a PDF.
+This series will guide you step by step toward understanding how to create durable applications with AI. To begin, you'll start with a simple chain: using an LLM to generate research, then turning that research into a PDF.
 
 Use an LLM to generate research ➝ then produce a PDF from that research.
 
@@ -51,8 +51,8 @@ In this tutorial, you'll create a research application that makes a call to the 
 
 First, create your project:
 
-1. Create your project: `uv init temporal-agentic-loop-tutorial`
-2. Open your `temporal-agentic-loop-tutorial` project.
+1. Create your project: `uv init durable-ai-temporal-tutorial`
+2. Open your `durable-ai-temporal-tutorial` project.
 3. Install the packages you will need for this tutorial: `uv add python-dotenv litellm`.
 
 ### Create an `.env` File
@@ -70,7 +70,7 @@ Replace `YOUR_API_KEY` with your actual API key. Make sure you add `.env` in you
 
 ## Packaging Inputs and Outputs
 
-Before we create our application, we need to define the data structures that will be passed in.
+Before we create our application, we need to define the data structures that will be passed between different parts of our system. 
 
 Create a file called `models.py` and add the following contents:
 
@@ -80,8 +80,6 @@ from dataclasses import dataclass
 @dataclass
 class LLMCallInput:
     prompt: str
-    llm_api_key: str
-    llm_model: str
 
 @dataclass
 class PDFGenerationInput:
@@ -91,10 +89,13 @@ class PDFGenerationInput:
 @dataclass
 class GenerateReportInput:
     prompt: str
-    llm_api_key: str
-    llm_research_model: str = "openai/gpt-4o"
-    llm_image_model: str = "dall-e-3"
 ```
+
+Let's break down what each data class represents:
+
+- **`LLMCallInput`**: Packages the text prompt that will be sent to the language model. This simple structure will be expanded later as we add more configuration options.
+- **`PDFGenerationInput`**: Contains the text content to be converted into a PDF and the desired filename.
+- **`GenerateReportInput`**: Combines the research prompt
 
 ### Prompting the LLM
 
@@ -124,8 +125,8 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", None)
 
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 ```
@@ -134,7 +135,7 @@ Let's test this with a simple prompt. Add the following code to `app.py`:
 
 ```python
 prompt = "Give me 5 facts about elephants."
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=LLM_API_KEY, llm_model=LLM_MODEL)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
@@ -153,7 +154,7 @@ Remove your hardcoded prompt:
 
 ```python
 prompt = "Give me 5 facts about elephants."
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=LLM_API_KEY, llm_model=LLM_MODEL)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
@@ -167,7 +168,7 @@ And replace it with your interactive research assistant code:
 # Make the API call
 print("Welcome to the Research Report Generator!")
 prompt = input("Enter your research topic or question: ")
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=LLM_API_KEY, llm_model=LLM_MODEL)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
@@ -196,15 +197,15 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", None)
 
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 
 # Make the API call
 print("Welcome to the Research Report Generator!")
 prompt = input("Enter your research topic or question: ")
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=LLM_API_KEY, llm_model=LLM_MODEL)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
@@ -279,7 +280,7 @@ def create_pdf(input: PDFGenerationInput) -> str:
     return input.filename
 ```
 
-Now test the PDF generation. At the end of the file add:
+Now test the PDF generation. At the end of the file, after you extract the text content, add:
 
 ```python
 pdf_filename = create_pdf(PDFGenerationInput(content=content, filename="research_report.pdf"))
@@ -295,6 +296,7 @@ import os
 from dotenv import load_dotenv
 from litellm import completion
 from litellm.types.utils import ModelResponse
+from models import LLMCallInput
 from models import LLMCallInput, PDFGenerationInput
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -308,8 +310,8 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", None)
 
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 
@@ -343,11 +345,13 @@ def create_pdf(input: PDFGenerationInput) -> str:
 # Make the API call
 print("Welcome to the Research Report Generator!")
 prompt = input("Enter your research topic or question: ")
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=LLM_API_KEY, llm_model=LLM_MODEL)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
 content = result.choices[0].message.content
+print(content)
+
 pdf_filename = create_pdf(PDFGenerationInput(content=content, filename="research_report.pdf"))
 ```
 </details>
@@ -454,4 +458,4 @@ Each step can fail. Each step might need different agents. This is a **workflow*
 
 ### What's Next?
 
-This tutorial introduced you to the importance of durability in GenAI applications. In the next tutorial, you'll learn how to use Temporal to add durability to your applications and handle failures gracefully.
+This tutorial introduced you to the importance of durability in GenAI applications. In the [next tutorial](../durable-ai-with-temporal), you'll learn how to use Temporal to add durability to your applications and handle failures gracefully.

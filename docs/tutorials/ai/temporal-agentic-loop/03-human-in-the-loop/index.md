@@ -27,11 +27,11 @@ In this tutorial, we'll solve these problems by adding durable human-in-the-loop
 
 ## Prerequisites
 
-This tutorial is part 3 of an Agentic Loop with Temporal tutorial. Before starting, ensure you have:
+This tutorial is part 3 of a Foundartions of Durable AI with Temporal tutorial. Before starting, ensure you have:
 
-* Completed Part 1: [Foundations of Durable AI with Temporal](../primer) tutorial
+* Completed Part 1: [Understanding the Need for Durability](../primer) tutorial
 * Completed Part 2: [Adding Durability with Temporal](../durable-ai-with-temporal) tutorial
-* [Open AI API key](https://platform.openai.com/api-keys) for this tutorial
+* An [Open AI API key](https://platform.openai.com/api-keys)
 
 ## Why Human Interaction Matters
 
@@ -76,7 +76,7 @@ With Temporal's durable execution, the workflow instance **persists throughout t
 - **Automatic recovery** - System failures don't lose progress; the workflow picks up exactly where it left off
 - **User can walk away** - Close the browser, shut down the laptop, and the workflow continues running on the server
 
-**The key insight:** Instead of managing complex coordination between services, queues, and databases to handle human input, you write straightforward code that waits for human decisions. Temporal handles all the reliability, state management, and recovery automatically.
+**Key insight:** Instead of managing complex coordination between services, queues, and databases to handle human input, you write straightforward code that waits for human decisions. Temporal handles all the reliability, state management, and recovery automatically.
 
 ## Understanding Temporal Signals
 
@@ -215,8 +215,6 @@ class UserDecisionSignal:
 @dataclass
 class LLMCallInput:
     prompt: str
-    llm_api_key: str
-    llm_model: str
 
 @dataclass
 class PDFGenerationInput:
@@ -226,9 +224,6 @@ class PDFGenerationInput:
 @dataclass
 class GenerateReportInput:
     prompt: str
-    llm_api_key: str
-    llm_research_model: str = "openai/gpt-4o"
-    llm_image_model: str = "dall-e-3"
 ```
 </details>
 
@@ -263,12 +258,10 @@ Your <code>workflow.py</code> should look like the following:
 
 ```ini
 from datetime import timedelta
-
 from temporalio import workflow
-from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call
+    from activities import create_pdf, llm_call, send_email
 
     from models import (
         GenerateReportInput,
@@ -289,13 +282,7 @@ class GenerateReportWorkflow:
 
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        self._current_prompt = input.prompt
-
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
         research_facts = await workflow.execute_activity(
             llm_call,
@@ -308,6 +295,12 @@ class GenerateReportWorkflow:
         pdf_filename = await workflow.execute_activity(
             create_pdf,
             pdf_generation_input,
+            start_to_close_timeout=timedelta(seconds=20),
+        )
+
+        # Adding a new Activity that has a simulated failure
+        email_sent = await workflow.execute_activity(
+            send_email,
             start_to_close_timeout=timedelta(seconds=20),
         )
 
@@ -340,7 +333,7 @@ class GenerateReportWorkflow:
         # Workflow logic...
 ```
 
-The `@workflow.signal` decorator turns the `user_decision_signal` method into a Signal handler.N Now, when a client sends a Signal to this Workflow (which we'll implement later), this method gets called automatically and receives the data that was sent.
+The `@workflow.signal` decorator turns the `user_decision_signal` method into a Signal handler. Now, when a client sends a Signal to this Workflow (which we'll implement later), this method gets called automatically and receives the data that was sent.
 
 In our case, the method receives a `UserDecisionSignal` object containing the user's decision (KEEP or EDIT) and any additional instructions. The handler's job is simple: take that data and store it in the Workflow's `self._user_decision` instance variable. That's it. 
 
@@ -351,12 +344,10 @@ Your <code>workflow.py</code> should look like the following:
 
 ```ini
 from datetime import timedelta
-
 from temporalio import workflow
-from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call
+    from activities import create_pdf, llm_call, send_email
 
     from models import (
         GenerateReportInput,
@@ -374,7 +365,7 @@ class GenerateReportWorkflow:
         self._user_decision: UserDecisionSignal = UserDecisionSignal(
             decision=UserDecision.WAIT
         )
-    
+
     @workflow.signal
     async def user_decision_signal(self, decision_data: UserDecisionSignal) -> None:
         """Signal handler that receives user decisions"""
@@ -382,13 +373,7 @@ class GenerateReportWorkflow:
 
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        self._current_prompt = input.prompt
-
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
         research_facts = await workflow.execute_activity(
             llm_call,
@@ -404,6 +389,12 @@ class GenerateReportWorkflow:
             start_to_close_timeout=timedelta(seconds=20),
         )
 
+        # Adding a new Activity that has a simulated failure
+        email_sent = await workflow.execute_activity(
+            send_email,
+            start_to_close_timeout=timedelta(seconds=20),
+        )
+
         return f"Successfully created research report PDF: {pdf_filename}"
 ```
 </details>
@@ -415,29 +406,77 @@ As mentioned early in our psuedocode, we now need to create our loop that reacts
 - If the Workflow receives `KEEP` as the `UserDecision`, then the Workflow exits the research loop and proceeds to PDF generation.
 - If the Workflow receives `EDIT` as the `UserDecision`, then the Workflow incorporates any additional feedback into the prompt, updates the research parameters, and resets the Signal state back to `WAIT` so it can loop again to regenerate the research and wait for the next user decision.
 
-Add this to `workflow.py`:
+Add this loop logic to `workflow.py` after setting the variable definition for `llm_call_input`:
 
 ```python
+# Continue looping until the user approves the research
+continue_user_input_loop = True
+
+# Execute the LLM call to generate research based on the current prompt
+while continue_user_input_loop:
+    research_facts = await workflow.execute_activity(
+        llm_call,
+        llm_call_input,
+        start_to_close_timeout=timedelta(seconds=30),
+    )
+
+    # User approved the research - exit the loop and proceed to PDF generation
+    if self._user_decision.decision == UserDecision.KEEP:
+        workflow.logger.info("User approved the research. Creating PDF...")
+        continue_user_input_loop = False
+    # User wants to edit the research - update the prompt and loop again
+    elif self._user_decision.decision == UserDecision.EDIT:
+        workflow.logger.info("User requested research modification.")
+        if self._user_decision.additional_prompt != "":
+            # Append the user's additional instructions to the existing prompt
+            self._current_prompt = (
+                f"{self._current_prompt}\n\nAdditional instructions: {self._user_decision.additional_prompt}"
+            )
+        else:
+            workflow.logger.info("No additional instructions provided. Regenerating with original prompt.")
+        # Update the Activity input with the modified prompt for the next iteration
+        llm_call_input.prompt = self._current_prompt
+        self._user_decision = UserDecisionSignal(decision=UserDecision.WAIT)
+```
+
+<details>
+<summary>
+Your <code>workflow.py</code> should look like the following:
+</summary>
+
+```ini
+from datetime import timedelta
+from temporalio import workflow
+
+with workflow.unsafe.imports_passed_through():
+    from activities import create_pdf, llm_call, send_email
+
+    from models import (
+        GenerateReportInput,
+        LLMCallInput,
+        PDFGenerationInput,
+        UserDecision,
+        UserDecisionSignal
+    )
+
 @workflow.defn
-lass GenerateReportWorkflow:
+class GenerateReportWorkflow:
     def __init__(self) -> None:
         self._current_prompt: str = ""
-        self._user_decision: UserDecisionSignal = UserDecisionSignal(decision=UserDecision.WAIT)
-    
+        # Instance variable to store Signal data
+        self._user_decision: UserDecisionSignal = UserDecisionSignal(
+            decision=UserDecision.WAIT
+        )
+
     @workflow.signal
     async def user_decision_signal(self, decision_data: UserDecisionSignal) -> None:
+        """Signal handler that receives user decisions"""
         self._user_decision = decision_data
 
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        self._current_prompt = input.prompt
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
-        llm_call_input = LLMCallInput(
-            prompt=self._current_prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
-        
         # Continue looping until the user approves the research
         continue_user_input_loop = True
 
@@ -477,10 +516,11 @@ lass GenerateReportWorkflow:
 
         return f"Successfully created research report PDF: {pdf_filename}"
 ```
+</details>
 
 ## Waiting for a Signal
 
-Now that we have a Signal handler to receive data, we need a way for the Workflow to pause and wait for that Signal to arrive. This is where `workflow.wait_condition()` comes in.
+We've now stored our initial Signal state and defined what happens when it comes in. Next, we need a way for the Workflow to pause and wait for that Signal to arrive. This is where `workflow.wait_condition()` comes in.
 
 - Use `workflow.wait_condition()` to pause until Signal is received (user decides the next step)
 - Creates a blocking checkpoint where the Workflow stops and waits
@@ -502,12 +542,10 @@ Your <code>workflow.py</code> should look like the following:
 
 ```ini
 from datetime import timedelta
-
 from temporalio import workflow
-from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call
+    from activities import create_pdf, llm_call, send_email
 
     from models import (
         GenerateReportInput,
@@ -518,25 +556,23 @@ with workflow.unsafe.imports_passed_through():
     )
 
 @workflow.defn
-lass GenerateReportWorkflow:
+class GenerateReportWorkflow:
     def __init__(self) -> None:
         self._current_prompt: str = ""
-        self._user_decision: UserDecisionSignal = UserDecisionSignal(decision=UserDecision.WAIT)
-    
+        # Instance variable to store Signal data
+        self._user_decision: UserDecisionSignal = UserDecisionSignal(
+            decision=UserDecision.WAIT
+        )
+
     @workflow.signal
     async def user_decision_signal(self, decision_data: UserDecisionSignal) -> None:
+        """Signal handler that receives user decisions"""
         self._user_decision = decision_data
 
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        self._current_prompt = input.prompt
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
-        llm_call_input = LLMCallInput(
-            prompt=self._current_prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
-        
         # Continue looping until the user approves the research
         continue_user_input_loop = True
 
@@ -547,7 +583,6 @@ lass GenerateReportWorkflow:
                 llm_call_input,
                 start_to_close_timeout=timedelta(seconds=30),
             )
-
             # Waiting for Signal with user decision
             await workflow.wait_condition(lambda: self._user_decision.decision != UserDecision.WAIT)
 
@@ -583,6 +618,12 @@ lass GenerateReportWorkflow:
 
 ## Sending Signals from the Client
 
+Let's recap what we've built so far:
+- **Defined our Signal** with `UserDecisionSignal` to structure the data we'll send
+- **Created a Signal handler** that receives incoming Signals and updates the Workflow's state variables (in this case, storing the user's decision)              
+- **Implemented the feedback loop** that checks the Signal data and decides whether to keep the research or edit it
+- **Added `wait_condition()`** to pause the Workflow until a Signal arrives
+
 We are now ready to send a Signal to our Research Workflow to let it know what to do. To send a Signal with the Temporal Client, we need to get a "handle" to a specific Workflow Execution, which will be used to interact with that Workflow.
 
 We'll do this with the [`get_workflow_handle`](https://docs.temporal.io/develop/python/message-passing#send-messages) method.
@@ -598,7 +639,13 @@ signal_data = UserDecisionSignal(decision=UserDecision.KEEP)
 await handle.signal("user_decision_signal", signal_data)
 ```
 
-We'll use this so if the input decision was to edit the the prompt, we'll send a Signal to your Workflow Handle with the new Signal data. If the input decision was to keep the response, we'll send a Keep Signal to your Workflow Handle to create the PDF. We'll create a function we'll add in `starter.py` like so:
+Now let's create a function that prompts the user for their decision and sends the appropriate Signal:
+- If the user chooses **"edit"**, we send a Signal with `UserDecision.EDIT` and any additional instructions
+- If the user chooses **"keep"**, we send a Signal with `UserDecision.KEEP` to approve the research and proceed to PDF creation
+
+Don't forget to add `UserDecision` and `UserDecisionSignal` into our imports.
+
+Add this function to `starter.py` before our starter code:
 
 ```python
 async def send_user_decision_signal(client: Client, workflow_id: str):
@@ -656,14 +703,8 @@ import uuid
 
 from dotenv import load_dotenv
 from models import GenerateReportInput, UserDecision, UserDecisionSignal
-from temporalio.client import Client
-from workflow import GenerateReportWorkflow
-
-load_dotenv(override=True)
-
-# Get LLM_API_KEY environment variable
-LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "YOU-DIDNT-PROVIDE-A-KEY")
+from temporalio.client import Client #  Connects to the Temporal service to start Workflows
+from workflow import GenerateReportWorkflow # Your Workflow definition
 
 async def send_user_decision_signal(client: Client, workflow_id: str):
     # Get handle to the Workflow Execution
@@ -699,23 +740,27 @@ async def send_user_decision_signal(client: Client, workflow_id: str):
         else:
             print("Please enter either 'keep' or 'edit'")
 
-async def main() -> None:
-    client = await Client.connect("localhost:7233")
+async def main():
+    # Connect to the Temporal service
+    client = await Client.connect("localhost:7233", namespace="default")
 
+    # Get user input for research topic
     print("Welcome to the Research Report Generator!")
     prompt = input("Enter your research topic or question: ").strip()
 
     if not prompt:
-        prompt = "Give me 5 fun and fascinating facts about tardigrades. Make them interesting and educational!"
+        prompt = "Give me 5 fun and fascinating facts about tardigrades."
         print(f"No prompt entered. Using default: {prompt}")
+    
+    # The input data for your Workflow, including the prompt and API key
+    research_input = GenerateReportInput(prompt=prompt)
 
-    research_input = GenerateReportInput(prompt=prompt, llm_api_key=LLM_API_KEY)
-
+    # Start the Workflow execution
     handle = await client.start_workflow(
-        GenerateReportWorkflow,
+        GenerateReportWorkflow, # The Workflow method to execute
         research_input,
         id=f"generate-researdch-report-workflow-{uuid.uuid4()}",
-        task_queue="durable",
+        task_queue="research", # task queue your Worker is polling
     )
 
     signal_task = asyncio.create_task(send_user_decision_signal(client, handle.id))
@@ -723,7 +768,6 @@ async def main() -> None:
     print(f"Started workflow. Workflow ID: {handle.id}, RunID {handle.result_run_id}")
     result = await handle.result()
     print(f"Result: {result}")
-
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -755,17 +799,19 @@ Here's what will happen:
 
 ## Observing Signals in the Web UI
 
-Now that your Workflow is running, open the Temporal Web UI at `http://localhost:8233` to watch what's happening. You should see your Workflow Execution listed there. Click on it to view the Event History.
+Now that your Workflow is running, open the Temporal Web UI at `http://localhost:8233` to watch what's happening. Click on your Workflow Execution listed there.
 
 ### Viewing the LLM Activity Results
 
 Scroll through the Event History and find the `ActivityTaskCompleted` event. This is where Temporal recorded the completion of your `llm_call` Activity. Click on it to expand the details, and you'll see the research content that the LLM generated in the output field. This is the actual research text that's now waiting for your approval.
 
+<img src="https://i.postimg.cc/Gm3sKn3y/activity-task-completed.png" />
+
 ### The Workflow is Waiting
 
 After the Activity completes, notice that your Workflow shows a status of "Running" at the top of the page. This might seem odd since nothing appears to be happening, but this is exactly what we want. The Workflow has reached the `wait_condition()` line in your code and is now paused, waiting for you to send a Signal.
 
-<img src="https://i.postimg.cc/J0nzgnDC/workflow-running.png" running="200%" />
+<img src="https://i.postimg.cc/qvtp41jP/workflow-running.png" />
 
 What's important to understand here is that while the Workflow is in a "Running" state, it's _not actually consuming any compute resources_. The Worker isn't sitting there spinning in a loop checking for Signals. Instead, Temporal has durably recorded that this Workflow is waiting for a specific condition (the Signal state to change), and the Workflow will only resume when that Signal arrives. There's no wasted CPU cycles or memory.
 
@@ -775,19 +821,21 @@ Back in your terminal where `starter.py` is running, let's try editing the resea
 
 Once you press Enter, switch back to the Web UI and refresh the page. You'll now see a new event in the Event History called `WorkflowExecutionSignaled`. Expand this event and you'll see the Signal name (`user_decision_signal`) and the data you sent (your decision and additional instructions).
 
-<img src="https://i.postimg.cc/Kzjf8PCb/workflow-execution-signaled.png" />
+<img src="https://i.postimg.cc/Fz7hzGhF/workflow-execution-signaled.png" />
 
 This event marks the exact moment your Signal was received and recorded in the Workflow's history. Once this Signal arrived, the `wait_condition()` unblocked, your Workflow logic checked the decision (EDIT), updated the prompt with your additional instructions, and looped back to call the LLM Activity again with the modified prompt.
 
 You'll see another `ActivityTaskCompleted` appear as the LLM generates new research based on your feedback. The Workflow will then reach `wait_condition()` again, waiting for your next decision.
 
+<img src="https://i.postimg.cc/LsQ9prMv/running-workflow-2.png" />
+
 ### Completing the Workflow
 
 When you're satisfied with the research, type `keep` in your terminal. Send that Signal, then refresh the Web UI. You'll see another `WorkflowExecutionSignaled` event, but this time the decision is KEEP. After this Signal, the Workflow exits the loop, executes the `create_pdf` Activity, and completes.
 
-<img src="https://i.postimg.cc/XNTRtqyn/workflow-execution-complete.png" />
-
 The Workflow status changes to "Completed", and you'll see the final `WorkflowExecutionCompleted` event in the history with the return value: "Successfully created research report PDF: research_pdf.pdf"
+
+<img src="https://i.postimg.cc/Z57tBpDc/workflow-execution-complete.png" />
 
 What you've just witnessed is the complete lifecycle of a durable human-in-the-loop interaction. Every Signal you sent, every Activity execution, and every state change was recorded in the Event History. If your system had crashed at any point during this process, Temporal would replay this entire history when it recovered, restoring the Workflow to its exact state—including remembering all the Signals you sent.
 
@@ -836,12 +884,10 @@ Your <code>workflow.py</code> should look like the following:
 
 ```ini
 from datetime import timedelta
-
 from temporalio import workflow
-from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call
+    from activities import create_pdf, llm_call, send_email
 
     from models import (
         GenerateReportInput,
@@ -855,27 +901,26 @@ with workflow.unsafe.imports_passed_through():
 class GenerateReportWorkflow:
     def __init__(self) -> None:
         self._current_prompt: str = ""
-        self._user_decision: UserDecisionSignal = UserDecisionSignal(decision=UserDecision.WAIT)
-        self._research_result: str | None = None
+        self._research_result: str = ""
+        # Instance variable to store Signal data
+        self._user_decision: UserDecisionSignal = UserDecisionSignal(
+            decision=UserDecision.WAIT
+        )
+
+    @workflow.query
+    def get_research_result(self) -> str:
+        """Query to get the current research result"""
+        return self._research_result
 
     @workflow.signal
     async def user_decision_signal(self, decision_data: UserDecisionSignal) -> None:
+        """Signal handler that receives user decisions"""
         self._user_decision = decision_data
-    
-    @workflow.query
-    def get_research_result(self) -> str | None:
-        return self._research_result
 
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        self._current_prompt = input.prompt
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
-        llm_call_input = LLMCallInput(
-            prompt=self._current_prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
-        
         # Continue looping until the user approves the research
         continue_user_input_loop = True
 
@@ -963,20 +1008,21 @@ async def send_user_decision(client: Client, workflow_id: str):
     while True:
         print("\n" + "=" * 50)
         print("Research is complete!")
-        print("1. Type 'keep' to approve the research and create PDF")
-        print("2. Type 'edit' to modify the research")
-        print("3. Type 'query' to view the current research result")
+        print("1. Type 'query' to view the current research result")
+        print("2. Type 'keep' to approve the research and create PDF")
+        print("3. Type 'edit' to modify the research")
         print("=" * 50)
 
-        decision = input("Your decision (keep/edit/query): ").strip().lower()
-
-        if decision in {"keep", "1"}:
+        decision = input("Your decision (query/keep/edit): ").strip().lower()
+        
+        if decision in {"query", "1"}:
+            await query_research_result(client, workflow_id)
+        elif decision in {"keep", "2"}:
             signal_data = UserDecisionSignal(decision=UserDecision.KEEP)
             await handle.signal("user_decision_signal", signal_data)
             print("Signal sent to keep research and create PDF")
             break
-
-        elif decision in {"edit", "2"}:
+        elif decision in {"edit", "3"}:
             additional_prompt = input(
                 "Enter additional instructions (optional): "
             ).strip()
@@ -986,10 +1032,6 @@ async def send_user_decision(client: Client, workflow_id: str):
             )
             await handle.signal("user_decision_signal", signal_data)
             print("Signal sent to regenerate research")
-
-        elif decision in {"query", "3"}:
-            await query_research_result(client, workflow_id)
-
         else:
             print("Please enter either 'keep', 'edit', or 'query'")
 ```
@@ -1008,85 +1050,84 @@ import uuid
 
 from dotenv import load_dotenv
 from models import GenerateReportInput, UserDecision, UserDecisionSignal
-from temporalio.client import Client
-from workflow import GenerateReportWorkflow
+from temporalio.client import Client #  Connects to the Temporal service to start Workflows
+from workflow import GenerateReportWorkflow # Your Workflow definition
 
-load_dotenv(override=True)
-
-# Get LLM_API_KEY environment variable
-LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "YOU-DIDNT-PROVIDE-A-KEY")
-
-async def query_research_result(client: Client, workflow_id: str) -> None:
+async def query_research_result(client: Client, workflow_id: str):
     handle = client.get_workflow_handle(workflow_id)
 
     try:
-        research_result = await handle.query(GenerateReportWorkflow.get_research_result)
+        research_result = await handle.query(
+            GenerateReportWorkflow.get_research_result
+        )
         if research_result:
-            print(f"Research Result: {research_result}")
+            print(f"\nResearch Result:\n{research_result}\n")
         else:
             print("Research Result: Not yet available")
-
     except Exception as e:
         print(f"Query failed: {e}")
 
-async def send_user_decision(client: Client, workflow_id: str) -> None:
+async def send_user_decision_signal(client: Client, workflow_id: str):
     handle = client.get_workflow_handle(workflow_id)
 
     while True:
         print("\n" + "=" * 50)
         print("Research is complete!")
-        print("1. Type 'keep' to approve the research and create PDF")
-        print("2. Type 'edit' to modify the research")
-        print(
-            "3. Type 'query' to query for research result. If querying, wait for `Reserch Complete` to appear in terminal window with Worker running first."
-        )
+        print("1. Type 'query' to view the current research result")
+        print("2. Type 'keep' to approve the research and create PDF")
+        print("3. Type 'edit' to modify the research")
         print("=" * 50)
 
-        decision = input("Your decision (keep/edit/query): ").strip().lower()
-
-        if decision in {"keep", "1"}:
+        decision = input("Your decision (query/keep/edit): ").strip().lower()
+        
+        if decision in {"query", "1"}:
+            await query_research_result(client, workflow_id)
+        elif decision in {"keep", "2"}:
             signal_data = UserDecisionSignal(decision=UserDecision.KEEP)
             await handle.signal("user_decision_signal", signal_data)
             print("Signal sent to keep research and create PDF")
             break
-        elif decision in {"edit", "2"}:
-            additional_prompt_input = input("Enter additional instructions for the research (optional): ").strip()
-            additional_prompt = additional_prompt_input if additional_prompt_input else ""
-
-            signal_data = UserDecisionSignal(decision=UserDecision.EDIT, additional_prompt=additional_prompt)
+        elif decision in {"edit", "3"}:
+            additional_prompt = input(
+                "Enter additional instructions (optional): "
+            ).strip()
+            signal_data = UserDecisionSignal(
+                decision=UserDecision.EDIT,
+                additional_prompt=additional_prompt
+            )
             await handle.signal("user_decision_signal", signal_data)
             print("Signal sent to regenerate research")
-        elif decision in {"query", "3"}:
-            await query_research_result(client, workflow_id)
         else:
             print("Please enter either 'keep', 'edit', or 'query'")
 
-async def main() -> None:
-    client = await Client.connect("localhost:7233")
+async def main():
+    # Connect to the Temporal service
+    client = await Client.connect("localhost:7233", namespace="default")
 
+    # Get user input for research topic
     print("Welcome to the Research Report Generator!")
     prompt = input("Enter your research topic or question: ").strip()
 
     if not prompt:
-        prompt = "Give me 5 fun and fascinating facts about tardigrades. Make them interesting and educational!"
+        prompt = "Give me 5 fun and fascinating facts about tardigrades."
         print(f"No prompt entered. Using default: {prompt}")
+    
+    # The input data for your Workflow, including the prompt and API key
+    research_input = GenerateReportInput(prompt=prompt)
 
-    research_input = GenerateReportInput(prompt=prompt, llm_api_key=LLM_API_KEY)
-
+    # Start the Workflow execution
     handle = await client.start_workflow(
-        GenerateReportWorkflow,
+        GenerateReportWorkflow, # The Workflow method to execute
         research_input,
         id=f"generate-researdch-report-workflow-{uuid.uuid4()}",
-        task_queue="durable",
+        task_queue="research", # task queue your Worker is polling
     )
 
-    signal_task = asyncio.create_task(send_user_decision(client, handle.id))
+    signal_task = asyncio.create_task(send_user_decision_signal(client, handle.id))
 
     print(f"Started workflow. Workflow ID: {handle.id}, RunID {handle.result_run_id}")
     result = await handle.result()
     print(f"Result: {result}")
-
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -1102,25 +1143,23 @@ Here's how to put it all together:
    temporal server start-dev
    ```
 
-2. **Run the Worker** (in one terminal):
+2. **Run the Worker** (in one terminal): Make sure you restart this to register our new changes.
    ```bash
-   python worker.py
+   uv run worker.py
    ```
 
 3. **Start the Workflow** (in another terminal):
    ```bash
-   python start_workflow.py
+   uv run starter.py
    ```
 
 4. **Interact with the Workflow**:
-   - Type `query` to view the current research
+   - Type `query` to view the current research (_you may have to wait a few seconds first for the LLM call to complete. Watch your Web UI to see when this is done._)
    - Type `edit` to provide feedback and regenerate
    - Type `keep` to approve and generate the PDF
 
 5. **Observe in the Web UI** at `http://localhost:8233`:
-   - See the Workflow waiting for Signals
-   - Notice that Queries don't create events in the history
-   - See Signal events when you send decisions
+   - Notice that Queries don't create events in the history 
 
 ## Key Takeaways
 
@@ -1131,8 +1170,12 @@ You've now built a complete **interactive, durable AI application** with Signals
 - All interactions are durable through failures
 - Workflows maintain complete state across crashes
 
+:::note
+Learn more about how Signals and Queries works with our free [Interacting with Workflows course](https://learn.temporal.io/courses/interacting_with_workflows/)
+:::
+
 ## What's Next?
 
 Your research application can generate content with LLMs, handle failures gracefully, and incorporate human feedback—all while maintaining durability through crashes and retries.
 
-In the next and final tutorial, [**Part 4: Building the Complete Agentic Loop**](../agentic-loop), we'll bring everything together into a agentic loop. You'll learn how to coordinate multiple LLM calls, chain Activities together, and orchestrate complex AI workflows that combine autonomous agent behavior. This is where you'll see the full power of the agentic loop pattern and Temporal.
+In our next tutorial series, we'll show you how to create an agentic loop with Temporal. You'll learn how to coordinate multiple LLM calls, chain Activities together, and orchestrate complex AI workflows that combine autonomous agent behavior. This is where you'll see the full power of the agentic loop pattern and Temporal. Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when that tutorial gets published.

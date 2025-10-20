@@ -78,6 +78,10 @@ This [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/even
 - **No lost progress** - All completed work is preserved
 - **Fast recovery** - Restart from the last checkpoint, not from scratch
 
+:::note
+Learn more about how Replay works with our free [Temporal 102 course](https://learn.temporal.io/courses/temporal_102/)
+:::
+
 ### What Stays the Same
 
 * Your core logic (LLM call ➝ PDF generation)
@@ -86,7 +90,7 @@ This [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/even
 
 ### Setup
 
-Open your `temporal-agentic-loop-tutorial` and add the `temporalio` package that you will need for this tutorial: `uv add temporalio`.
+Open your `durable-ai-temporal-tutorial` and add the `temporalio` package that you will need for this tutorial by running: `uv add temporalio`.
 
 ## Define External Interactions
 
@@ -123,8 +127,8 @@ Both those functions can be turned into Activities because because they interact
 @activity.defn
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 ```
@@ -135,15 +139,18 @@ Your <code>activities.py</code> should look like the following:
 </summary>
 
 ```ini
-from litellm import CustomStreamWrapper, completion
+import os
+from dotenv import load_dotenv
+from litellm import completion
 from litellm.types.utils import ModelResponse
+from models import LLMCallInput
 from models import LLMCallInput, PDFGenerationInput
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
-from temporalio import activity
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from temporalio import activity 
 
-load_dotenv(override=True)
+load_dotenv(override=True) # Reads your .env file and loads your environment variables
 
 # Get LLM_API_KEY environment variable
 LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
@@ -152,8 +159,8 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", None)
 @activity.defn
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 
@@ -188,11 +195,13 @@ def create_pdf(input: PDFGenerationInput) -> str:
 # Make the API call
 print("Welcome to the Research Report Generator!")
 prompt = input("Enter your research topic or question: ")
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=input.llm_api_key, llm_model=input.llm_research_model)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
 content = result.choices[0].message.content
+print(content)
+
 pdf_filename = create_pdf(PDFGenerationInput(content=content, filename="research_report.pdf"))
 ```
 </details>
@@ -231,19 +240,7 @@ from datetime import timedelta
 from temporalio import workflow
 ```
 
-#### Step 2: Define the Workflow Class
-
-Create your Workflow class with the required decorators:
-
-```python
-@workflow.defn
-class GenerateReportWorkflow:
-    @workflow.run
-    async def run(self, input: GenerateReportInput) -> str:
-        # Your orchestration logic will go here
-```
-
-#### Step 3: Import Activities and Models Inside the Workflow
+#### Step 2: Import Activities and Models Inside the Workflow
 
 Before you can use your Activities and models, you need to import them inside your Workflow. Temporal requires a special import pattern:
 
@@ -256,19 +253,34 @@ with workflow.unsafe.imports_passed_through():
         LLMCallInput,
         PDFGenerationInput,
     )
+```
 
+:::note
+**Why `workflow.unsafe.imports_passed_through()`?**
+Temporal relies on a [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/event-history-python) to recover from failure .As your program progresses, Temporal saves the input and output from function calls to the history. This allows a failed program to restart right where it left off.
+
+Temporal requires this special import pattern for Workflows for replay. This import pattern tells Temporal: "These imports are safe to use during replay."
+:::
+
+#### Step 3: Define the Workflow Class
+
+Create your Workflow class with the required decorators:
+
+```python
+with workflow.unsafe.imports_passed_through():
+    from activities import create_pdf, llm_call
+    from models import (
+        GenerateReportInput,
+        LLMCallInput,
+        PDFGenerationInput,
+    )
+    
 @workflow.defn
 class GenerateReportWorkflow:
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
         # Your orchestration logic will go here
 ```
-
-:::note
-**Why `workflow.unsafe.imports_passed_through()`?**
-
-Temporal requires this special import pattern for Workflows. When a Workflow resumes after a failure or restart, Temporal "replays" it by re-running the Workflow code using saved results from previous Activity executions. This import pattern tells Temporal: "These imports are safe to use during replay."
-:::
 
 #### Step 4: Execute the LLM Activity
 
@@ -289,11 +301,7 @@ Inside the `run` method, call your first Activity to generate research content. 
 class GenerateReportWorkflow:
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
         # Step 1: Call LLM Activity to generate research
         research_facts = await workflow.execute_activity(
@@ -314,11 +322,7 @@ Now add the second Activity to create the PDF. This Activity depends on the outp
 class GenerateReportWorkflow:
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
         # Step 1: Call LLM Activity
         research_facts = await workflow.execute_activity(
@@ -348,9 +352,7 @@ Your <code>workflow.py</code> should look like the following:
 
 ```ini
 from datetime import timedelta
-
 from temporalio import workflow
-from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
     from activities import create_pdf, llm_call
@@ -364,20 +366,20 @@ with workflow.unsafe.imports_passed_through():
 class GenerateReportWorkflow:
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
+        # Step 1: Call LLM Activity to generate research
         research_facts = await workflow.execute_activity(
             llm_call,
             llm_call_input,
             start_to_close_timeout=timedelta(seconds=30),
         )
 
-        pdf_generation_input = PDFGenerationInput(content=research_facts["choices"][0]["message"]["content"])
+        pdf_generation_input = PDFGenerationInput(
+            content=research_facts["choices"][0]["message"]["content"]
+        )
 
+        # Step 2: Create PDF Activity
         pdf_filename = await workflow.execute_activity(
             create_pdf,
             pdf_generation_input,
@@ -388,7 +390,7 @@ class GenerateReportWorkflow:
 ```
 </details>
 
-#### Adding a Retry Policy
+#### Optional: Adding a Retry Policy
 
 Each Activity has a [default Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies#default-values-for-retry-policy) that retries, then backs off increasingly to a maximum duration. You can also add a custom Retry Policy to your Activity execution like so:
 
@@ -522,38 +524,25 @@ Before creating the client, clean up your `activities.py` file. Remove two thing
 # Make the API call
 print("Welcome to the Research Report Generator!")
 prompt = input("Enter your research topic or question: ")
-llm_input = LLMCallInput(prompt=prompt, llm_api_key=input.llm_api_key, llm_model=input.llm_research_model)
+llm_input = LLMCallInput(prompt=prompt)
 result = llm_call(llm_input)
 
 # Extract the text content
 content = result.choices[0].message.content
+print(content)
+
 pdf_filename = create_pdf(PDFGenerationInput(content=content, filename="research_report.pdf"))
 ```
 
-2. **The environment variable loading code** (we'll move this to the starter file):
-
-```python
-load_dotenv(override=True)
-
-# Get LLM_API_KEY environment variable
-LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
-LLM_API_KEY = os.getenv("LLM_API_KEY", None)
-```
-
 :::note 
-**Why move the environment variables?**
-
-In a Temporal application, the **client** (starter file) is responsible for:
-- Loading configuration (like API keys)
-- Getting user input
-- Passing data to Workflows
+**Why move the starter code?**
 
 The **Activities** file should only contain:
 - Activity function definitions
 - Business logic for external interactions
 :::
 
-Your `activities.py` file should now only contain the Activity definitions and imports, not the execution code or environment configuration.
+Your `activities.py` file should now only contain the Activity definitions and imports, not the execution code.
 
 <details>
 <summary>
@@ -561,19 +550,28 @@ Your <code>activities.py</code> should look like the following:
 </summary>
 
 ```python
+import os
+from dotenv import load_dotenv
 from litellm import completion
 from litellm.types.utils import ModelResponse
+from models import LLMCallInput
 from models import LLMCallInput, PDFGenerationInput
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
-from temporalio import activity
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from temporalio import activity 
+
+load_dotenv(override=True) # Reads your .env file and loads your environment variables
+
+# Get LLM_API_KEY environment variable
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
+LLM_API_KEY = os.getenv("LLM_API_KEY", None)
 
 @activity.defn
 def llm_call(input: LLMCallInput) -> ModelResponse:
     return completion(
-        model=input.llm_model,
-        api_key=input.llm_api_key,
+        model=LLM_MODEL,
+        api_key=LLM_API_KEY,
         messages=[{"content": input.prompt, "role": "user"}],
     )
 
@@ -622,12 +620,6 @@ from dotenv import load_dotenv
 from models import GenerateReportInput # dataclass for Workflow input
 from temporalio.client import Client #  Connects to the Temporal service to start Workflows
 from workflow import GenerateReportWorkflow # Your Workflow definition
-
-load_dotenv(override=True)
-
-# Get LLM_API_KEY environment variable
-LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "YOU-DIDNT-PROVIDE-A-KEY")
 ```
 
 **Step 2: Create the Main Function**
@@ -646,7 +638,7 @@ async def main():
         print(f"No prompt entered. Using default: {prompt}")
     
     # The input data for your Workflow, including the prompt and API key
-    research_input = GenerateReportInput(prompt=prompt, llm_api_key=LLM_API_KEY)
+    research_input = GenerateReportInput(prompt=prompt)
 ```
 
 This sets up the connection to your local Temporal server and gets the research topic from the user.
@@ -669,6 +661,15 @@ This sets up the connection to your local Temporal server and gets the research 
 
 The method returns a `handle` that lets you interact with the running Workflow. The The `await handle.result()` call blocks until the Workflow completes and returns the final result.
 
+#### Step 4: Add the Entry Point
+
+```python
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+This allows you to run the file.
+
 <details>
 <summary>
 Your <code>starter.py</code> should look like the following:
@@ -680,33 +681,31 @@ import os
 import uuid
 
 from dotenv import load_dotenv
-from models import GenerateReportInput
-from temporalio.client import Client
-from workflow import GenerateReportWorkflow
+from models import GenerateReportInput # dataclass for Workflow input
+from temporalio.client import Client #  Connects to the Temporal service to start Workflows
+from workflow import GenerateReportWorkflow # Your Workflow definition
 
-load_dotenv(override=True)
+async def main():
+    # Connect to the Temporal service
+    client = await Client.connect("localhost:7233", namespace="default")
 
-# Get LLM_API_KEY environment variable
-LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "YOU-DIDNT-PROVIDE-A-KEY")
-
-async def main() -> None:
-    client = await Client.connect("localhost:7233")
-
+    # Get user input for research topic
     print("Welcome to the Research Report Generator!")
     prompt = input("Enter your research topic or question: ").strip()
 
     if not prompt:
-        prompt = "Give me 5 fun and fascinating facts about tardigrades. Make them interesting and educational!"
+        prompt = "Give me 5 fun and fascinating facts about tardigrades."
         print(f"No prompt entered. Using default: {prompt}")
+    
+    # The input data for your Workflow, including the prompt and API key
+    research_input = GenerateReportInput(prompt=prompt)
 
-    research_input = GenerateReportInput(prompt=prompt, llm_api_key=LLM_API_KEY)
-
+    # Start the Workflow execution
     handle = await client.start_workflow(
-        GenerateReportWorkflow,
+        GenerateReportWorkflow, # The Workflow method to execute
         research_input,
         id=f"generate-researdch-report-workflow-{uuid.uuid4()}",
-        task_queue="durable",
+        task_queue="research", # task queue your Worker is polling
     )
 
     print(f"Started workflow. Workflow ID: {handle.id}, RunID {handle.result_run_id}")
@@ -751,7 +750,7 @@ Temporal provides a robust [Web UI](https://docs.temporal.io/web-ui) for managin
 
 Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully!
 
-<img src="https://i.postimg.cc/s2vKVPkF/web-ui-example.png" />
+<img src="https://i.postimg.cc/qR7VQhcv/web-ui-example.png" />
 
 See if you can you locate the following items on the Web UI:
 
@@ -762,21 +761,19 @@ See if you can you locate the following items on the Web UI:
 
 That's it! You're now done adding durability to your research application. Your workflow now has:
 
-**Automatic state persistence** - Every completed Activity (LLM call, PDF generation) is saved to Temporal's event history
-**Crash recovery** - If your application crashes at any point, it resumes from the last completed Activity instead of starting over
-**No duplicate LLM calls** - You'll never pay twice for the same API call, even after failures or restarts
-**Built-in retry logic** - Transient failures (network timeouts, API rate limits) are automatically retried with exponential backoff
-**Complete observability** - Every execution is tracked in the Web UI with full input/output history for debugging
+- **Automatic state persistence** - Every completed Activity (LLM call, PDF generation) is saved to Temporal's event history
+- **Crash recovery** - If your application crashes at any point, it resumes from the last completed Activity instead of starting over
+- **No duplicate LLM calls** - You'll never pay twice for the same API call, even after failures or restarts
+- **Built-in retry logic** - Transient failures (network timeouts, API rate limits) are automatically retried with exponential backoff
+- **Complete observability** - Every execution is tracked in the Web UI with full input/output history for debugging
 
-Your simple research application. has been transformed into a production-ready, fault-tolerant application—without adding complex error handling code or state management logic. Temporal handles all of that for you.
+Your simple research application has been transformed into a production-ready, fault-tolerant application—without adding complex error handling code or state management logic. Temporal handles all of that for you.
+
+You're now done with the tutorial! Feel free to move on to the [next tutorial in this series](../human-in-the-loop) or continue on to see Temporal's durability in action and experience how it recovers from failures.
 
 ## Optional: Experiencing Failure and Recovery
 
-If you'd like to see Temporal's durability guarantees in action and experience how it recovers from failures, continue with this optional exercise.
-
-## Experiencing Failure and Recovery
-
-Let's practice experiencing failure and recovery firsthand. We'll add a new feature to our workflow: generating an executive summary before creating the PDF.
+Let's practice experiencing failure and recovery firsthand. We'll add a new feature to our workflow: sending an e-mail before creating the PDF.
 
 This will demonstrate:
 * How Activities automatically retry on failure
@@ -808,8 +805,8 @@ def send_email() -> str:
 
 Now modify the Workflow to:
 1. Generate research content (existing)
-2. **Send an email (new!)**
 3. Create the PDF with the summary (existing)
+2. **Send an email (new!)**
 
 ```python
 from datetime import timedelta
@@ -828,11 +825,7 @@ with workflow.unsafe.imports_passed_through():
 class GenerateReportWorkflow:
     @workflow.run
     async def run(self, input: GenerateReportInput) -> str:
-        llm_call_input = LLMCallInput(
-            prompt=input.prompt,
-            llm_api_key=input.llm_api_key,
-            llm_model=input.llm_research_model,
-        )
+        llm_call_input = LLMCallInput(prompt=input.prompt)
 
         research_facts = await workflow.execute_activity(
             llm_call,
@@ -862,6 +855,14 @@ class GenerateReportWorkflow:
 Update the Worker to include the new `send_email` Activity:
 
 ```python
+import concurrent.futures
+import logging
+
+from activities import create_pdf, llm_call, send_email
+from temporalio.client import Client
+from temporalio.worker import Worker
+from workflow import GenerateReportWorkflow
+
 async def run_worker():
     client = await Client.connect("localhost:7233", namespace="default")
 
@@ -910,7 +911,7 @@ Now let's "fix" our simulated failure by removing the error. In a real scenario,
 - An API endpoint being fixed
 - A network issue being resolved
 
-Update your `send_email` Activity:
+Update your `send_email` Activity by removing the error and saving the file:
 
 ```python
 from temporalio import activity
@@ -932,10 +933,9 @@ Restart your Worker (`uv run worker.py`) so it picks up the fixed Activity code.
 Your Web UI will now show:
 
 1. The `send_email` Activity now completes successfully!
-2. The `create_pdf_activity` executes and creates the PDF
-3. The entire Workflow shows **Completed** status
+2. The entire Workflow shows **Completed** status
 
-<img src="https://i.postimg.cc/Yqr6rfgp/successful-completion.png" />
+<img src="https://i.postimg.cc/cJv44bjh/successful-completion.png" />
 
 **What just happened?**
 - Your Workflow **preserved all state** through the failure
@@ -943,16 +943,10 @@ Your Web UI will now show:
 - When you fixed the bug, Temporal **automatically continued** from where it left off
 - No manual intervention needed - just fix the code and restart the Worker
 
-**This is the power of durable execution!** In production, this means:
-- API outages don't lose your progress
-- You can deploy bug fixes without restarting workflows
-- Your users never lose work
-- You never pay twice for the same LLM call
-
-This is the power of Temporal - your critical business processes are guaranteed to complete with no manual recovery, no lost data, and no duplicate operations.
+This is the power of Temporal and durable execution - your critical business processes are guaranteed to complete with no manual recovery, no lost data, and no duplicate operations.
 
 ## What's Next?
 
 Imagine your research application pausing after generating content, sending you the draft for review, waiting for your edits or approval, and then continuing automatically to create the final PDF—all while maintaining durable execution guarantees. That's the power of adding human-in-the-loop capabilities with fault-tolerant AI workflows! 
 
-In our next tutorial, we'll show you how to **add human-in-the-loop capabilities** to your AI workflows.
+In our [next tutorial](../human-in-the-loop), we'll show you how to **add human-in-the-loop capabilities** to your AI workflows.
