@@ -85,6 +85,11 @@
       "source": "/meetup_in_a_box/invincible_apps/typescript",
       "destination": "https://temporal.io/community/meetup-in-a-box/build-invincible-apps#typescript",
       "permanent": true
+    },
+     {
+      "source": "/best-practices",
+      "destination": "https://docs.temporal.io/best-practices",
+      "permanent": true
     }
   ]
 }
