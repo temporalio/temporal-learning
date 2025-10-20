@@ -17,7 +17,7 @@ Your durable research application now survives crashes and automatically retries
 
 _Imagine this scenario_: Your AI generates research on "best travel spots for summer 2025", your application generates a PDF, and sends it to your client - all automatically.
 
-Then your client calls: "I want cheaper options!"
+Then your client calls: "I want cheaper options."
 
 Your application had no way to pause and ask for clarification or approval. It just executed straight through to completion.
 
@@ -64,7 +64,7 @@ While human interaction points are valuable for AI applications, implementing th
 
 Without durable processes, you're forced to choose between security, user experience, and reliability.
 
-**It's Distributed System Challenges All Over Again!**
+**It's Distributed System Challenges All Over Again.**
 
 ## Durable Execution for Human Interaction
 
@@ -683,7 +683,7 @@ async def send_user_decision_signal(client: Client, workflow_id: str):
             print("Please enter either 'keep' or 'edit'")
 ```
 
-We'll now have to invoke this function within our starter code! In `starter.py`, after you start your Workflow, add this line:
+We'll now have to invoke this function within our starter code. In `starter.py`, after you start your Workflow, add this line:
 
 ```python
 signal_task = asyncio.create_task(send_user_decision_signal(client, handle.id))
@@ -785,7 +785,7 @@ The first step to run anything in Temporal is to make sure you have a local Temp
    ```bash
    uv run worker.py
    ```
-You should see output indicating the Worker has started and is listening on the "research" task queue. **Keep this terminal running** - the Worker needs to be active to execute your Workflows!
+You should see output indicating the Worker has started and is listening on the "research" task queue. **Keep this terminal running** - the Worker needs to be active to execute your Workflows.
 
 3. **Terminal 3** - Execute your Workflow:
    ```bash

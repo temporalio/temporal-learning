@@ -148,7 +148,7 @@ You should see your output from your LLM in your terminal window.
 
 ### Making It Interactive
 
-Great! You've successfully made your first LLM call with a hardcoded prompt. Now, let's transform this into an interactive research assistant that will perform research on any topic of your choosing.
+You've successfully made your first LLM call with a hardcoded prompt. Now, let's transform this into an interactive research assistant that will perform research on any topic of your choosing.
 
 Remove your hardcoded prompt:
 
@@ -214,7 +214,7 @@ print(content)
 ```
 </details>
 
-Now try it out! Run this file with `uv run app.py`, enter your prompt in the command-line, then see your response.
+Now try it out. Run this file with `uv run app.py`, enter your prompt in the command-line, then see your response.
 
 ### From Prompts to Actions
 
@@ -381,7 +381,7 @@ Challenges that can happen:
 - How do we scale these applications?
 - What happens when they take a long time to finish?
 
-### Try it Out!
+### Try it Out
 
 Let's see this problem in action. Run `uv run app.py` and enter a research topic when prompted. While the LLM is generating the response, press `CTRL-C` to interrupt the process.
 
@@ -409,7 +409,7 @@ Increasingly, we are seeing agents calling agents, which are calling other agent
 For example, your research application might:
 - Call a "Web Scraper" agent to gather sources (scrapes 5 research websites)
 - Call a "Fact Checker" agent to verify claims (validates statistics against government data)
-- Call a "PDF Generator" agent (what you built!)
+- Call a "PDF Generator" agent (what you built)
 
 Each agent has its own event loop **(Plan ➝ Execute ➝ Observe)**:
 
@@ -423,13 +423,13 @@ For example: Research Agent ➝ Executes web search ➝ Observes results ➝ Dec
 
 ### Now Overlay What Can Go Wrong
 
-Network partitions, timeouts, and service failures at any step can break the chain anywhere!
+Network partitions, timeouts, and service failures at any step can break the chain anywhere.
 
 <img src="https://i.postimg.cc/9MftM49H/agent-orchestration-problems.png" alt="Agent Orchestration Problems" width="50%" />
 
-The bottom line: **What looks like one AI task is actually a distributed system challenge!**
+The bottom line: **What looks like one AI task is actually a distributed system challenge.**
 
-### Agents Are Distributed Systems!
+### Agents Are Distributed Systems
 
 **This is why durability matters.** Without it, complex workflows become fragile and expensive. With it, failures become manageable interruptions instead of catastrophic losses.
 

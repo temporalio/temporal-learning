@@ -37,7 +37,7 @@ The challenges you identified in the previous tutorial aren't new problems. They
 **Your Research Application in Production Reality:**
 * **LLM API call** - External service that can timeout, rate limit, or be down
 * **PDF generation** - File system operation that can fail due to disk space
-* **Network connectivity** - Can drop mid-request, causing you to rerun everything from scratch. This can use lot of money since you'd be re-burning through tokens!
+* **Network connectivity** - Can drop mid-request, causing you to rerun everything from scratch. This can use lot of money since you'd be re-burning through tokens.
 
 **The good news:** You can use a platform that guarantees the _reliable execution_ of your code.
 
@@ -507,7 +507,7 @@ if __name__ == "__main__":
 
 ### Start Your Application
 
-Now it's time to actually start your Research Workflow! To do this, you'll use a [Temporal Client](https://docs.temporal.io/develop/python/temporal-client).
+Now it's time to actually start your Research Workflow. To do this, you'll use a [Temporal Client](https://docs.temporal.io/develop/python/temporal-client).
 
 A Temporal Client provides a set of APIs to communicate with a Temporal Service. You can use a Temporal Client in your application to perform various operations such as:
 
@@ -730,14 +730,14 @@ As you will see in the command line output, your Temporal Server should now be r
    ```bash
    uv run worker.py
    ```
-You should see output indicating the Worker has started and is listening on the "research" task queue. **Keep this terminal running** - the Worker needs to be active to execute your Workflows!
+You should see output indicating the Worker has started and is listening on the "research" task queue. **Keep this terminal running** - the Worker needs to be active to execute your Workflows.
 
 3. **Terminal 3** - Execute your Workflow:
    ```bash
    uv run starter.py
    ```
 
-Enter a research topic when prompted, and watch as Temporal orchestrates your LLM call and PDF generation! You should see:
+Enter a research topic when prompted, and watch as Temporal orchestrates your LLM call and PDF generation. You should see:
 - The Workflow ID printed in your client terminal
 - A PDF file created in your project directory
 
@@ -748,7 +748,7 @@ Temporal provides a robust [Web UI](https://docs.temporal.io/web-ui) for managin
 - Gain insights like responses from Activities, execution time, and failures
 - Debug and understand what's happening during your Workflow Executions
 
-Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully!
+Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully.
 
 <img src="https://i.postimg.cc/qR7VQhcv/web-ui-example.png" />
 
@@ -769,7 +769,7 @@ That's it! You're now done adding durability to your research application. Your 
 
 Your simple research application has been transformed into a production-ready, fault-tolerant application—without adding complex error handling code or state management logic. Temporal handles all of that for you.
 
-You're now done with the tutorial! Feel free to move on to the [next tutorial in this series](../human-in-the-loop) or continue on to see Temporal's durability in action and experience how it recovers from failures.
+You're now done with the tutorial. Feel free to move on to the [next tutorial in this series](../human-in-the-loop) or continue on to see Temporal's durability in action and experience how it recovers from failures.
 
 ## Optional: Experiencing Failure and Recovery
 
@@ -806,7 +806,7 @@ def send_email() -> str:
 Now modify the Workflow to:
 1. Generate research content (existing)
 3. Create the PDF with the summary (existing)
-2. **Send an email (new!)**
+2. **Send an email (new)**
 
 ```python
 from datetime import timedelta
@@ -886,10 +886,10 @@ Restart your Worker to register the changes with `uv run worker.py` and start yo
 
 ### Step 5: Observe Automatic Retries in the Web UI
 
-Go to your Temporal Web UI at `http://localhost:8233`!
+Go to your Temporal Web UI at `http://localhost:8233`.
 
 You should see:
-1. Your Workflow is **Running** (not Failed!)
+1. Your Workflow is **Running** (not Failed)
 2. The `llm_call` Activity completed successfully 
 3. The `send_email` Activity shows a **Pending Activity** with retry attempts
 
@@ -900,7 +900,7 @@ You should see:
 - The current retry attempt number
 - The countdown until the next retry
 
-**Key insight:** Notice that the expensive `llm_call` Activity isn't being re-executed! Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
+**Key insight:** Notice that the expensive `llm_call` Activity isn't being re-executed. Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
 
 In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again. By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.
 
@@ -932,14 +932,14 @@ Restart your Worker (`uv run worker.py`) so it picks up the fixed Activity code.
 
 Your Web UI will now show:
 
-1. The `send_email` Activity now completes successfully!
+1. The `send_email` Activity now completes successfully
 2. The entire Workflow shows **Completed** status
 
 <img src="https://i.postimg.cc/cJv44bjh/successful-completion.png" />
 
 **What just happened?**
 - Your Workflow **preserved all state** through the failure
-- The expensive `llm_call` was **never re-executed** (saving you money!)
+- The expensive `llm_call` was **never re-executed** (saving you money)
 - When you fixed the bug, Temporal **automatically continued** from where it left off
 - No manual intervention needed - just fix the code and restart the Worker
 
@@ -947,6 +947,6 @@ This is the power of Temporal and durable execution - your critical business pro
 
 ## What's Next?
 
-Imagine your research application pausing after generating content, sending you the draft for review, waiting for your edits or approval, and then continuing automatically to create the final PDF—all while maintaining durable execution guarantees. That's the power of adding human-in-the-loop capabilities with fault-tolerant AI workflows! 
+Imagine your research application pausing after generating content, sending you the draft for review, waiting for your edits or approval, and then continuing automatically to create the final PDF—all while maintaining durable execution guarantees. That's the power of adding human-in-the-loop capabilities with fault-tolerant AI workflows.
 
 In our [next tutorial](../human-in-the-loop), we'll show you how to **add human-in-the-loop capabilities** to your AI workflows.
