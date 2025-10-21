@@ -26,7 +26,7 @@ In this tutorial, we'll solve this problem by making your research application d
 
 ## Prerequisites
 
-This tutorial is part 2 of an Agentic Loop with Temporal tutorial. Please review [part 1](../creating-a-chain-workflow) of this series first.
+This tutorial is part 2 of a tutorial series. Please review [part 1](../creating-a-chain-workflow) of this series first.
 
 You need an [Open AI API key](https://platform.openai.com/api-keys) for this tutorial.
 

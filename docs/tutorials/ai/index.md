@@ -6,7 +6,7 @@ description: "Build AI tools with Temporal using these tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
 
-Learn how to build durable AI applications using Temporal's agentic loop pattern.
+Learn how to build durable AI applications using Temporal.
 
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
