@@ -5,7 +5,7 @@ keywords: [ai, durable, temporal, signals, queries, human-in-the-loop, hitl]
 tags: [AI, durable, temporal, LLM, genai, signals, queries]
 last_update:
   date: 2025-10-15
-  author: Temporal Team
+  author: Angela Zhou
 title: "Part 3: Adding Durable Human-in-the-Loop to Our Research Application"
 description: Learn how to build interactive AI applications that allow humans to provide feedback and make decisions using Temporal Signals and Queries
 image: /img/temporal-logo-twitter-card.png
@@ -81,7 +81,7 @@ With Temporal's durable execution, the workflow instance **persists throughout t
 - **User can walk away** - Close the browser, shut down the laptop, and the workflow continues running on the server
 
 :::info
-**Key insight:** Instead of managing complex coordination between services, queues, and databases to handle human input, you write straightforward code that waits for human decisions. Temporal handles all the reliability, state management, and recovery automatically.
+Instead of managing complex coordination between services, queues, and databases to handle human input, you write straightforward code that waits for human decisions. Temporal handles all the reliability, state management, and recovery automatically.
 :::
 
 ## Understanding Temporal Signals
@@ -235,7 +235,7 @@ class GenerateReportInput:
 
 ## Step 2: Store Signal State in the Workflow
 
-The workflow needs a place to remember what Signals it has received. We will use instance variables to persist Signal data across Workflow Execution. Add the following to your `workflow.py` file:
+The workflow needs a place to remember what Signals it has received. We will use instance variables to persist Signal data across Workflow Execution. Add the following to your `workflow.py` file (and don't forget to add `UserDecision` and `UserDecisionSignal` into your `workflow.unsafe.imports_passed_through`!)
 
 ```python
 from temporalio import workflow
@@ -692,10 +692,8 @@ Your <code>starter.py</code> should look like the following:
 
 ```ini
 import asyncio
-import os
 import uuid
 
-from dotenv import load_dotenv
 from models import GenerateReportInput, UserDecision, UserDecisionSignal
 from temporalio.client import Client #  Connects to the Temporal service to start Workflows
 from workflow import GenerateReportWorkflow # Your Workflow definition
@@ -1039,10 +1037,8 @@ Your <code>starter.py</code> should look like the following:
 
 ```ini
 import asyncio
-import os
 import uuid
 
-from dotenv import load_dotenv
 from models import GenerateReportInput, UserDecision, UserDecisionSignal
 from temporalio.client import Client #  Connects to the Temporal service to start Workflows
 from workflow import GenerateReportWorkflow # Your Workflow definition
@@ -1137,7 +1133,7 @@ Here's how to put it all together:
    temporal server start-dev
    ```
 
-2. **Run the Worker** (in one terminal): Make sure you restart this to register our new changes.
+2. **Run the Worker** (in another terminal): Make sure you restart this to register our new changes.
    ```bash
    uv run worker.py
    ```

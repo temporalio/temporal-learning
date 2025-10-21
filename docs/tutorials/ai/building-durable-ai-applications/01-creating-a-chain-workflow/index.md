@@ -5,7 +5,7 @@ keywords: [ai, durable, temporal, llm, genai, agents, workflow]
 tags: [AI, durable, temporal, LLM, genai]
 last_update:
   date: 2025-10-15
-  author: Temporal Team
+  author: Angela Zhou
 title: "Part 1: Creating a Chain Workflow with a Research Application"
 description: "Learn the fundamentals of building durable GenAI applications with Temporal by creating a research-to-PDF application"
 image: /img/temporal-logo-twitter-card.png

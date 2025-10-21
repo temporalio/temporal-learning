@@ -5,7 +5,7 @@ keywords: [ai, durable, temporal, workflow, activities, genai, llm]
 tags: [AI, durable, temporal, LLM, genai, workflow, activities]
 last_update:
   date: 2025-10-15
-  author: Temporal Team
+  author: Angela Zhou
 title: "Part 2: Adding Durability to Our Research Application"
 description: Learn how to make your GenAI applications durable and resilient to failures using Temporal Workflows and Activities
 image: /img/temporal-logo-twitter-card.png
@@ -143,7 +143,6 @@ import os
 from dotenv import load_dotenv
 from litellm import completion
 from litellm.types.utils import ModelResponse
-from models import LLMCallInput
 from models import LLMCallInput, PDFGenerationInput
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -427,7 +426,6 @@ Create a new file called `worker.py` and let's build it step by step:
 ```python
 import asyncio
 import concurrent.futures
-import logging
 
 from activities import create_pdf, llm_call
 from temporalio.client import Client
@@ -474,7 +472,6 @@ Your complete <code>worker.py</code> should look like this:
 ```python
 import asyncio
 import concurrent.futures
-import logging
 
 from activities import create_pdf, llm_call
 from temporalio.client import Client
@@ -554,7 +551,6 @@ import os
 from dotenv import load_dotenv
 from litellm import completion
 from litellm.types.utils import ModelResponse
-from models import LLMCallInput
 from models import LLMCallInput, PDFGenerationInput
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -613,10 +609,8 @@ Now, let's create a Client to start your `GenerateReportWorkflow`. Create a sepa
 
 ```python
 import asyncio
-import os
 import uuid
 
-from dotenv import load_dotenv
 from models import GenerateReportInput # dataclass for Workflow input
 from temporalio.client import Client #  Connects to the Temporal service to start Workflows
 from workflow import GenerateReportWorkflow # Your Workflow definition
@@ -677,10 +671,8 @@ Your <code>starter.py</code> should look like the following:
 
 ```ini
 import asyncio
-import os
 import uuid
 
-from dotenv import load_dotenv
 from models import GenerateReportInput # dataclass for Workflow input
 from temporalio.client import Client #  Connects to the Temporal service to start Workflows
 from workflow import GenerateReportWorkflow # Your Workflow definition
@@ -856,7 +848,6 @@ Update the Worker to include the new `send_email` Activity:
 
 ```python
 import concurrent.futures
-import logging
 
 from activities import create_pdf, llm_call, send_email
 from temporalio.client import Client
@@ -901,7 +892,7 @@ You should see:
 - The countdown until the next retry
 
 :::info
-**Key insight:** Notice that the expensive `llm_call` Activity isn't being re-executed. Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
+Notice that the expensive `llm_call` Activity isn't being re-executed. Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
 :::
 
 In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again. By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.
