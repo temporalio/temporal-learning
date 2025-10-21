@@ -2,7 +2,7 @@
 id: adding-durability-with-temporal
 sidebar_position: 2
 keywords: [ai, durable, temporal, workflow, activities, genai, llm]
-tags: [AI, Series]
+tags: [AI, durable, temporal, LLM, genai, workflow, activities]
 last_update:
   date: 2025-10-15
   author: Temporal Team
@@ -13,7 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 
 # Part 2: Adding Durability to Our Research Application
 
-In our [last tutorial](../primer), you built a research application that:
+In our [last tutorial](../creating-a-chain-workflow), you built a research application that:
 1. Calls an LLM to perform some research for you, then 
 2. Generates a PDF report of that research. 
 It's a simple chain workflow that works perfectly well - until it doesn't.
@@ -26,7 +26,7 @@ In this tutorial, we'll solve this problem by making your research application d
 
 ## Prerequisites
 
-This tutorial is part 2 of an Agentic Loop with Temporal tutorial. Please review [part 1](../primer) of this series first.
+This tutorial is part 2 of an Agentic Loop with Temporal tutorial. Please review [part 1](../creating-a-chain-workflow) of this series first.
 
 You need an [Open AI API key](https://platform.openai.com/api-keys) for this tutorial.
 
@@ -900,7 +900,9 @@ You should see:
 - The current retry attempt number
 - The countdown until the next retry
 
+:::info
 **Key insight:** Notice that the expensive `llm_call` Activity isn't being re-executed. Temporal saved its result and won't waste money calling the LLM again. Only the failing Activity retries.
+:::
 
 In practice, your code will continue retrying until whatever issue the Activity has encountered has resolved itself, whether that is the network coming back online or an internal service starting to respond again. By leveraging the durability of Temporal and out of the box retry capabilities, you have avoided writing retry and timeout logic yourself and saved your downstream services from being unnecessarily overwhelmed.
 

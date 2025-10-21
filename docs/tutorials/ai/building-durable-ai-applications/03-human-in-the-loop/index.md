@@ -2,7 +2,7 @@
 id: human-in-the-loop
 sidebar_position: 3
 keywords: [ai, durable, temporal, signals, queries, human-in-the-loop, hitl]
-tags: [AI, Series]
+tags: [AI, durable, temporal, LLM, genai, signals, queries]
 last_update:
   date: 2025-10-15
   author: Temporal Team
@@ -15,21 +15,25 @@ image: /img/temporal-logo-twitter-card.png
 
 Your durable research application now survives crashes and automatically retries failures. But there's a critical gap: **it runs completely autonomously**.
 
-_Imagine this scenario_: Your AI generates research on "best travel spots for summer 2025", your application generates a PDF, and sends it to your client - all automatically.
+_Imagine this scenario_: Your AI generates research, creates a PDF, and sends it to your client automatically. Then your client calls requesting changes - but your application had no way to pause for approval or feedback.
 
-Then your client calls: "I want cheaper options."
+**Real-world AI applications need human interaction** for feedback, approvals, and clarifications. But adding human input creates challenges: What if the user's browser crashes while reviewing? What if they close the tab and return later? How do you preserve expensive LLM work while waiting for approval?
 
-Your application had no way to pause and ask for clarification or approval. It just executed straight through to completion.
+In this tutorial, you'll solve these problems by adding durable human-in-the-loop capabilities to your application. You'll implement features that let you:
 
-**Real-world AI applications need human interaction** to provide feedback, approve decisions, or clarify requirements. But adding human input to automated workflows introduces new challenges: What if the user's browser crashes while they're reviewing? What if they close the tab and come back later? How do you prevent losing expensive LLM work while waiting for approval?
+- Approve research results by sending a `keep` signal to continue the workflow
+- Request revisions by editing the prompt to regenerate output
+- Query the workflow at any time to check the current LLM output
 
-In this tutorial, we'll solve these problems by adding durable human-in-the-loop capabilities.
+Temporal's durability ensures you maintain control over AI-generated content while reliably handling the human
+approval process.
+
 
 ## Prerequisites
 
 This tutorial is part 3 of a Foundartions of Durable AI with Temporal tutorial. Before starting, ensure you have:
 
-* Completed Part 1: [Understanding the Need for Durability](../primer) tutorial
+* Completed Part 1: [Understanding the Need for Durability](../creating-a-chain-workflow) tutorial
 * Completed Part 2: [Adding Durability with Temporal](../durable-ai-with-temporal) tutorial
 * An [Open AI API key](https://platform.openai.com/api-keys)
 
@@ -76,7 +80,9 @@ With Temporal's durable execution, the workflow instance **persists throughout t
 - **Automatic recovery** - System failures don't lose progress; the workflow picks up exactly where it left off
 - **User can walk away** - Close the browser, shut down the laptop, and the workflow continues running on the server
 
+:::info
 **Key insight:** Instead of managing complex coordination between services, queues, and databases to handle human input, you write straightforward code that waits for human decisions. Temporal handles all the reliability, state management, and recovery automatically.
+:::
 
 ## Understanding Temporal Signals
 
@@ -261,7 +267,7 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call, send_email
+    from activities import create_pdf, llm_call
 
     from models import (
         GenerateReportInput,
@@ -295,12 +301,6 @@ class GenerateReportWorkflow:
         pdf_filename = await workflow.execute_activity(
             create_pdf,
             pdf_generation_input,
-            start_to_close_timeout=timedelta(seconds=20),
-        )
-
-        # Adding a new Activity that has a simulated failure
-        email_sent = await workflow.execute_activity(
-            send_email,
             start_to_close_timeout=timedelta(seconds=20),
         )
 
@@ -347,7 +347,7 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call, send_email
+    from activities import create_pdf, llm_call
 
     from models import (
         GenerateReportInput,
@@ -386,12 +386,6 @@ class GenerateReportWorkflow:
         pdf_filename = await workflow.execute_activity(
             create_pdf,
             pdf_generation_input,
-            start_to_close_timeout=timedelta(seconds=20),
-        )
-
-        # Adding a new Activity that has a simulated failure
-        email_sent = await workflow.execute_activity(
-            send_email,
             start_to_close_timeout=timedelta(seconds=20),
         )
 
@@ -449,7 +443,7 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call, send_email
+    from activities import create_pdf, llm_call
 
     from models import (
         GenerateReportInput,
@@ -545,7 +539,7 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call, send_email
+    from activities import create_pdf, llm_call
 
     from models import (
         GenerateReportInput,
@@ -887,7 +881,7 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from activities import create_pdf, llm_call, send_email
+    from activities import create_pdf, llm_call
 
     from models import (
         GenerateReportInput,

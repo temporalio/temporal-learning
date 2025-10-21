@@ -2,7 +2,7 @@
 id: foundations-durable-ai
 sidebar_position: 1
 keywords: [ai, durable, temporal, llm, genai, agents, workflow]
-tags: [AI, Series]
+tags: [AI, durable, temporal, LLM, genai]
 last_update:
   date: 2025-10-15
   author: Temporal Team
