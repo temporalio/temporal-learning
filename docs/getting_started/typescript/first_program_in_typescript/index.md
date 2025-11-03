@@ -382,7 +382,6 @@ If this is your first time running this application, TypeScript might download s
 ```output
 Starting transfer from account 85-150 to account 43-812 for $400
 Started Workflow pay-invoice-801 with RunID 67fe2aff-3aa9-4239-af38-9460720832d3
-Transfer complete (transaction IDs: W9860038178, D8057327891)
 ```
 
 The Workflow is now running. Leave the program running.

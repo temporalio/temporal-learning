@@ -33,6 +33,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/ruby">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 
 -----
@@ -122,6 +123,19 @@ In this course, you’ll expand your ability to write dynamic Workflows by inter
 <Link className="button button--primary" to="interacting_with_workflows/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
+
+-----
+
+## [Worker Versioning](worker_versioning/index.md)
+
+In this course, you will learn an alternative versioning method that does not require you to add additional branches to revise your Workflows. Worker Versioning allows you to tag your Workers and programmatically roll them out in versioned deployments, so that old Workers can run old code paths and new Workers can run new code paths.
+
+**Estimated time**: ⏱️ 1 hour
+
+**Cost**: Free
+
+
+<Link className="button button--primary" to="worker_versioning">Learn more and enroll</Link>
 
 -----
 
