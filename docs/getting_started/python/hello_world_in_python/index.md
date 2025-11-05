@@ -4,7 +4,7 @@ title: Build a Temporal Application from scratch in Python
 sidebar_position: 3
 keywords: [python,temporal,sdk,tutorial, hello world, temporal application, workflow, activity, test temporal workflows, mock temporal activities, pytest]
 last_update:
-  date: 2023-03-02
+  date: 2025-11-05
 description: In this tutorial you will build a Temporal Application using the Python SDK. You'll write a Workflow, an Activity, tests, and define a Worker.
 tags: [Python, SDK]
 image: /img/temporal-logo-twitter-card.png
@@ -223,14 +223,14 @@ Create an empty `__init__.py` file within that directory:
 touch tests/__init__.py
 ```
 
-Create the `/test_run_worker.py` file in the `tests` directory and add the following content to test the Workflow:
+Create the `/test_run_workflow.py` file in the `tests` directory and add the following content to test the Workflow:
 
 ```command
-touch tests/test_run_worker.py
+touch tests/test_run_workflow.py
 ```
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-28"]} -->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
+[tests/test_run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_workflow.py)
 ```py
 import uuid
 
@@ -280,7 +280,7 @@ This code tests the Workflow and invokes the actual `say_hello` Activity. Howeve
 Add the following code to create a test that uses a mocked `say_hello` Activity:
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["29-51"]}-->
-[tests/test_run_worker.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_worker.py)
+[tests/test_run_workflow.py](https://github.com/temporalio/hello-world-project-template-python/blob/main/tests/test_run_workflow.py)
 ```py
 # ...
 
@@ -329,7 +329,7 @@ plugins: asyncio-0.20.3, anyio-3.6.2
 asyncio: mode=strict
 collected 2 items
 
-tests/test_run_worker.py ..                             [100%]
+tests/test_run_workflow.py ..                             [100%]
 ===================== 2 passed in 10.29s ======================
 ```
 
