@@ -13,7 +13,8 @@ image: /img/temporal-logo-twitter-card.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
+
 ### Introduction
 
 Follow these instructions to configure a development environment for building Temporal Applications with Python.

@@ -6,7 +6,7 @@ description: "Build Temporal applications with these Python tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 Python is a programming language that lets you work quickly and integrate systems more effectively. It's popular for building and scripting applications.
 

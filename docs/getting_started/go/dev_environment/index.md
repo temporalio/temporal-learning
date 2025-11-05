@@ -10,8 +10,7 @@ title: Set up a local development environment for Temporal and Go
 image: /img/temporal-logo-twitter-card.png
 ---
 
-
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 To follow the Go SDK tutorials we recommend that you have the following environments set up.
 

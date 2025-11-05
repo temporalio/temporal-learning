@@ -13,7 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 :::note Tutorial information
 
@@ -45,9 +45,7 @@ All the code in this tutorial is available in the [hello-world python template](
 
 ## Prerequisites
 
-Before starting this tutorial:
-
-- [Set up a local development environment for Temporal and Python](../dev_environment/index.md).
+- Ensure you have a running local Temporal server. For more information, refer to[Set up a local development environment for Temporal and Python](../dev_environment/index.md).
 
 ## ![](/img/icons/harbor-crane.png) Create a new Python project
 
@@ -172,7 +170,7 @@ Finally, the `run` method returns the result of the Activity Execution.
 
 In the Temporal Python SDK, Workflow files are reloaded in a sandbox for every run. To keep from reloading an import on every run, you can mark it as *passthrough* so it reuses the module from outside the sandbox. Standard library modules and `temporalio` modules are passed through by default. All other modules that are used in a deterministic way, such as activity function references or third-party modules, should be passed through this way.
 
-This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [knowledge base](https://docs.temporal.io/kb/python-sandbox-environment).
+This is why this example uses `with workflow.unsafe.imports_passed_through():`. You can learn more about this in our [sandbox documentation](https://docs.temporal.io/develop/python/python-sdk-sandbox).
 
 :::
 
@@ -225,10 +223,10 @@ Create an empty `__init__.py` file within that directory:
 touch tests/__init__.py
 ```
 
-Create the `test_run_workflow.py` file in the `tests` directory and add the following content to test the Workflow:
+Create the `/test_run_worker.py` file in the `tests` directory and add the following content to test the Workflow:
 
 ```command
-touch tests/test_run_workflow.py
+touch tests/test_run_worker.py
 ```
 
 <!--SNIPSTART hello-world-project-template-python-tests {"selectedLines": ["1-28"]} -->
@@ -439,7 +437,11 @@ You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execut
 
 To run your Temporal Application, you need to start the Workflow and the Worker. You can start these in any order, but you'll need to run each command from a separate terminal window, as the Worker needs to be constantly running to look for tasks to execute.
 
-First, ensure that your local Temporal Cluster is running.
+First, ensure that your local Temporal Cluster is running. If it is not running, run the following command to start it.
+
+```
+temporal server start-dev
+```
 
 To start the Worker, run this command from the project root:
 

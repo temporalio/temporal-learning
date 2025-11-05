@@ -13,7 +13,7 @@ last_update:
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 **Estimated time**: ~⏱️ 3 hours, self-paced.
 
