@@ -5,7 +5,7 @@ sidebar_position: 3
 description: In this tutorial you will build your first Temporal app using the Java SDK
 keywords: [Java,java,temporal,sdk,tutorial,hello world]
 last_update:
-  date: 2023-03-24
+  date: 2024-04-08
 tags:
   - helloworld
   - java
@@ -146,33 +146,33 @@ Next you will add the Temporal SDK as a dependency, along with a handful of othe
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-sdk</artifactId>
-      <version>1.19.0</version>
+      <version>1.28.4</version>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
-      <version>2.0.6</version>
+      <version>2.0.17</version>
     </dependency>
 
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-testing</artifactId>
-      <version>1.19.0</version>
+      <version>1.28.4</version>
       <scope>test</scope>
     </dependency>  
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.1.1</version>
+      <version>5.17.0</version>
       <scope>test</scope>
     </dependency>  
   
