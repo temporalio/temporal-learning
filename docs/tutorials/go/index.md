@@ -6,7 +6,7 @@ description: "Build Temporal applications with these Go tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 Go is an open source programming language that offers built-in concurrency and a robust standard library. It's popular for building microservices and command line tools.
 

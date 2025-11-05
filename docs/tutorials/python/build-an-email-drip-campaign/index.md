@@ -12,7 +12,7 @@ description: Implement an email subscription application with Temporal's Workflo
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 ### Introduction
 

@@ -15,11 +15,9 @@ description: "Grow your Temporal knowledge with free self-paced, hands-on online
 
 import Link from '@docusaurus/Link';
 
-<h1>
-  <img alt="Temporal Courses" src="/img/banners/courses.png" />
-</h1>
+<img className="banner" src="/img/banners/courses.png" alt="Temporal Courses" />
 
-Go deeper with self-paced online courses that provide in-depth hands-on learning experiences.
+<h3>Go deeper with our free, self-paced online courses that provide in-depth hands-on learning experiences.</h3>
 
 ## [Temporal 101: Introducing the Temporal Platform](temporal_101/index.md)
 
@@ -33,9 +31,10 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 <Link className="button button--primary" to="temporal_101/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/java">Java</Link>&nbsp;
-<Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
-<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 <Link className="button button--primary" to="temporal_101/dotnet">.NET</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/ruby">Ruby</Link>&nbsp;
+<Link className="button button--primary" to="temporal_101/typescript">TypeScript</Link>&nbsp;
 
 -----
 
@@ -51,6 +50,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 
 <Link className="button button--primary" to="temporal_102/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
@@ -68,6 +68,7 @@ In this course, you will design and implement effective error handling strategie
 
 <Link className="button button--primary" to="errstrat/go">Go</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/java">Java</Link>&nbsp;
+<Link className="button button--primary" to="errstrat/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="errstrat/typescript">TypeScript</Link>&nbsp;
 
@@ -122,6 +123,19 @@ In this course, you’ll expand your ability to write dynamic Workflows by inter
 <Link className="button button--primary" to="interacting_with_workflows/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/python">Python</Link>&nbsp;
 <Link className="button button--primary" to="interacting_with_workflows/typescript">TypeScript</Link>&nbsp;
+
+-----
+
+## [Worker Versioning](worker_versioning/index.md)
+
+In this course, you will learn an alternative versioning method that does not require you to add additional branches to revise your Workflows. Worker Versioning allows you to tag your Workers and programmatically roll them out in versioned deployments, so that old Workers can run old code paths and new Workers can run new code paths.
+
+**Estimated time**: ⏱️ 1 hour
+
+**Cost**: Free
+
+
+<Link className="button button--primary" to="worker_versioning">Learn more and enroll</Link>
 
 -----
 

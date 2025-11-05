@@ -11,7 +11,7 @@ code_repo: https://github.com/temporalio/money-transfer-project-template-python
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 :::note Tutorial information
 
@@ -47,7 +47,7 @@ In this tutorial, you will run a [Temporal Application](https://docs.temporal.io
 
 This project in this tutorial simulates a money transfer application, focusing on essential transactions such as withdrawals, deposits, and refunds. The importance of Temporal in this context lies in its ability to handle your code efficiently and reliably.
 
-In this sample application, money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there is no need to try to make a deposit. But if the withdrawal succeeds, but the deposit fails, then the money needs to go back to the original account.
+In this sample application, money comes out of one account and goes into another. However, there are a few things that can go wrong with this process. If the withdrawal fails, then there is no need to try to make a deposit. But if the withdrawal succeeds, and the deposit fails, then the money needs to go back to the original account.
 
 One of Temporal's most important features is its ability to maintain the application state when something fails. When failures happen, Temporal recovers processes where they left off or rolls them back correctly. This allows you to focus on business logic, instead of writing application code to recover from failure.
 

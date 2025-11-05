@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and Java"
-sidebar_position: 1
+title: "Get Started with Temporal and Java"
+sidebar_position: 3
 sidebar_label: Java
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 Take your first steps into building apps with Temporal and Java by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
@@ -32,13 +32,6 @@ Download and run a small application and explore how Temporal executes Workflows
 Write a program from the ground up with tests.
 
 ----
-
-## [Run Workers with Temporal Cloud](run_workers_with_cloud_java/index.md)
-
-**Estimated time**: ⏱️ ~10 minutes
-
-Update your Worker code to connect to Temporal Cloud and run your Workflows.
-
 
 ## [Take Temporal 101 with Java](/courses/temporal_101/java.md)
 

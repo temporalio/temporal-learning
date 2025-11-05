@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and .NET"
-sidebar_position: 4
+title: "Get Started with Temporal and .NET"
+sidebar_position: 1
 sidebar_label: .NET
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal .NET SDK](/img/sdk_banners/banner_dotnet.png)
+<img className="banner" src="/img/sdk_banners/banner_dotnet.png" alt="Temporal Dotnet SDK" />
 
 Take your first steps into building apps with Temporal and .NET by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 

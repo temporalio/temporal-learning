@@ -6,7 +6,7 @@ description: "Build Temporal applications with these Java tutorials"
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Java SDK](/img/sdk_banners/banner_java.png)
+<img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 Java is a high-level, object-oriented programming language known for its platform independence, robustness, and extensive ecosystem. 
 
