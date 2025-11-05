@@ -131,8 +131,8 @@ task run(type: JavaExec) {
    * **com.squareup.okhttp3**: Basic HTTP client for network requests
    * **org.json:json**: Parse and manipulate JSON data
    * **commons-io**: Perform file tasks with common input/output routines
-   * **slf4j-nop:2.0.6**: Minimizes unnecessary log output
-   * **temporal-sdk:1.22.2**: Provides support for building Temporal applications in Java (this is the Temporal SDK)
+   * **slf4j-nop**: Minimizes unnecessary log output
+   * **temporal-sdk**: Provides support for building Temporal applications in Java (this is the Temporal SDK)
 
    The run task starts your TTS application.
 
