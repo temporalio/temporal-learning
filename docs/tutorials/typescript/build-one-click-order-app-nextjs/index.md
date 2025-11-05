@@ -277,7 +277,7 @@ When the Worker finds [Workflow Tasks](https://docs.temporal.io/workers#workflow
 Run your Worker with the following command to make sure that everything builds and there are no errors:
 
 ```command
-npm run build:temporal && npm run start:worker`
+npm run build:temporal && npm run start:worker
 ```
 
 The Worker runs, but it won't have any tasks to perform because you haven't started a Workflow yet.
