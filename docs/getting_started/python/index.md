@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal and Python"
+title: "Get Started with Temporal and Python"
 sidebar_position: 5
 sidebar_label: Python
 hide_table_of_contents: false

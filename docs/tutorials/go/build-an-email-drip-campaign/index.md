@@ -163,7 +163,7 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop the Activities
 
-An [Activity](https://docs.temporal.io/activities) is a normal function or method that executes a single, well-defined action (either short or long running), such as calling another service, transcoding a media file, or sending an email message. Workflow code orchestrates the execution of Activities, persisting the results.
+An [Activity](https://docs.temporal.io/activities) is a function or method that executes a single, well-defined action (either short or long running), such as calling another service, transcoding a media file, or sending an email message. Workflow code orchestrates the execution of Activities, persisting the results.
 
 Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
