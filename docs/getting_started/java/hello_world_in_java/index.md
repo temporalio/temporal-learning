@@ -142,7 +142,6 @@ Next you will add the Temporal SDK as a dependency, along with a handful of othe
 ```xml
   <dependencies>
 
-
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-sdk</artifactId>
