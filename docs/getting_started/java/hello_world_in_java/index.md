@@ -5,7 +5,7 @@ sidebar_position: 3
 description: In this tutorial you will build your first Temporal app using the Java SDK
 keywords: [Java,java,temporal,sdk,tutorial,hello world]
 last_update:
-  date: 2023-03-24
+  date: 2025-11-05
 tags:
   - helloworld
   - java
@@ -118,7 +118,7 @@ Your output will be similar to this:
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  1.037 s
-[INFO] Finished at: 2023-03-29T10:05:47-05:00
+[INFO] Finished at: 2025-11-05T10:05:47-05:00
 [INFO] ------------------------------------------------------------------------
 ```
 
@@ -146,33 +146,33 @@ Next you will add the Temporal SDK as a dependency, along with a handful of othe
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-sdk</artifactId>
-      <version>1.19.0</version>
+      <version>1.31.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
-      <version>2.0.6</version>
+      <version>2.0.17</version>
     </dependency>
 
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-testing</artifactId>
-      <version>1.19.0</version>
+      <version>1.31.0</version>
       <scope>test</scope>
     </dependency>  
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.1.1</version>
+      <version>5.20.0</version>
       <scope>test</scope>
     </dependency>  
   
@@ -227,7 +227,7 @@ Downloaded from central: https://repo.maven.apache.org/maven2/com/thoughtworks/q
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  5.973 s
-[INFO] Finished at: 2023-03-29T15:47:31-05:00
+[INFO] Finished at: 2025-11-05T10:47:31-05:00
 [INFO] ------------------------------------------------------------------------
 ```
 
@@ -506,7 +506,7 @@ You'll see output similar to the following from your test run indicating that th
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  1.959 s
-[INFO] Finished at: 2023-03-29T15:54:46-05:00
+[INFO] Finished at: 2025-11-05T10:58:46-05:00
 [INFO] ------------------------------------------------------------------------
 ```
 
