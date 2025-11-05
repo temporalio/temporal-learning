@@ -7,7 +7,7 @@ pagination_next: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Zines](/img/banners/zines.png)
+<img className="banner" src="/img/banners/zines.png" alt="Zines" />
 
 Check out [our first Zine](../../static/zines/zines.pdf), a comic that delves into the world of Temporal and Durable Execution. This Zine illustrates how Temporal works to ensure reliable and durable execution of tasks and covers the following from a high-level perspective:
 

@@ -1,5 +1,5 @@
 ---
-title: "Example applications"
+title: "Example Applications"
 hide_title: true
 sidebar_position: 5
 hide_table_of_contents: true
@@ -8,9 +8,7 @@ image: /img/temporal-logo-twitter-card.png
 description: "Understand Temporal more clearly through example applications and code samples."
 ---
 
-<h1>
-  <img alt="Example Applications" src="/img/banners/exampleapplications.png" />
-</h1>
+<img className="banner" src="/img/banners/exampleapplications.png" alt="Example Applications" />
 
 Explore example applications and code samples that use Temporal and gain a clearer understanding of how everything fits together.
 

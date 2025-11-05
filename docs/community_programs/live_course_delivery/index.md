@@ -4,18 +4,18 @@ sidebar_position: 1
 public: false
 draft: false
 tags: [Community Programs]
-keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, games, signals, queries, updates]
+keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, Signals, Queries, Updates, Versioning, Codec Server]
 description: "Want to take a Temporal course live? Discover where our courses are being taught live or request a live delivery for your community."
 custom_edit_url: null
 hide_table_of_contents: true
 last_update:
-  date: 2025-02-25
+  date: 2025-03-12
 image: /img/temporal-logo-twitter-card.png
 ---
 
 import Link from '@docusaurus/Link';
 
-![Temporal .NET SDK](/img/banners/courses.png)
+<img className="banner" src="/img/banners/courses.png" alt="Temporal Courses" />
 
 ## Take Our Courses Live
 
@@ -25,17 +25,15 @@ Our curriculum covers all core platform features, beginning from the fundamental
 We can deliver the full catalog, or a subset, depending on your business needs. 
 We offer both in-person and remote training opportunities.
 
-
 ### Summary
 
 - We offer live, instructor-led versions of our [self-paced online courses](https://learn.temporal.io/courses) in Go, Java, Python, TypeScript, and .NET. 
 
-- Minimum number of participants is 20. Maximum is 100.
+- The minimum number of participants is 20. The maximum is 100.
 
 - We require at least four weeks’ advance notice for in-person course delivery.
 
-- Workshop sites must provide space, projector with HDMI input, and high-speed internet with access to [github.com](http://github.com) and [gitpod.io](http://gitpod.io).
-
+- Workshop sites must provide space, projector with HDMI input, and high-speed internet with access to [github.com](http://github.com).
 
 ### What You Need
 
@@ -48,9 +46,6 @@ For the best quality experience, you’ll need:
 - Laptops or desktop machines.
 
 - GitHub accounts for each participant.
-
-- Ability to access [gitpod.io](http://gitpod.io) and [github.com](http://github.com) from the individual workstations.
-
 
 ### Courses offered
 
@@ -66,7 +61,6 @@ For the best quality experience, you’ll need:
 
 **We strongly recommend taking Temporal 101 self-paced and starting your live training with Temporal 102.**
 
-
 ### Requesting Training
 
 ⚠️ Availability varies by language and capacity. We may need to decline or push out dates to make things fit our availability.
@@ -75,7 +69,7 @@ For the best quality experience, you’ll need:
 
 If you’d like to request a training, please post your request in the `#request-live-workshop` channel in the [Temporal Community Slack](https://t.mp/slack) with the following details:
 
-- **Courses**: Which courses you want us to deliver
+- **Courses**: Which courses you would like delivered
 
 - **Delivery type**: Online or in-person
 
@@ -85,15 +79,8 @@ If you’d like to request a training, please post your request in the `#request
 
 - **Number of expected participants**: Minimum of 20, maximum of 100
 
-- **Dates**: At least three date options. (Please allow for Monday or Friday travel.)
+- **Dates**: At least three date options (please allow for Monday or Friday travel)
 
 - **Time zone**: What time zone are you in, or what time zone would work best for your workshop?
 
 Please allow a 2-business-day turnaround time for a response.
-
-## Upcoming Public Courses
-
-| Course Offered | Date & Time | Location | Registration Link | 
-| -------------- | ---- | -------- | ----------------- |
-| Temporal 102 and Crafting an Error Handling Strategy in Go, Java, and .NET | March 3, 2025 @ 9:00 GMT | London, UK | [Get your ticket to Replay](https://replay.temporal.io/) |
-| Temporal 101 in Java | March 12, 2025 @ 12:00 EST | Virtual | [Register today](https://pages.temporal.io/workshop-java-101-2503) |

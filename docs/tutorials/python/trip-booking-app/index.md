@@ -10,6 +10,8 @@ description: Implement the Saga Pattern in Python using Temporal.
 image: /img/temporal-logo-twitter-card.png
 ---
 
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
+
 When dealing with distributed systems, a failure in one service can lead to a domino effect, compromising the entire transaction.
 The Saga pattern offers a solution to this problem by allowing distributed transactions to be broken into smaller, manageable transactions, each with its own compensation logic in case of failure.
 

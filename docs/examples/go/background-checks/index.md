@@ -7,6 +7,8 @@ description: Understand how to design and implement a background check applicati
 image: /img/temporal-logo-twitter-card.png
 ---
 
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
+
 ## What is the goal of this project?
 
 The goal of this project is to teach you, the developer, how to think about building Temporal Applications that have Human-Driven Long-Running Workflows using a Temporal SDK, by leading you through a comprehensive implementation within the context of a real-life use case.
