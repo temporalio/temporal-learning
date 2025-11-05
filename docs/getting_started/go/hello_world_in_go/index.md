@@ -40,7 +40,7 @@ The app will consist of the following pieces:
 
 1. A [Workflow](https://docs.temporal.io/workflows): Workflows are functions that define the overall flow of the application.  Your Workflow will execute both Activities you define. It will call the first Activity to fetch the IP address, and then use the result of that Activity to call the next Activity to find your location.
 2. A [Worker](https://docs.temporal.io/workers): Workers host the Activity and Workflow code and execute the code piece by piece.
-3. A client program: You'll need to start your Worfklow. In this tutorial you'll create a small program using the [Temporal Client](https://docs.temporal.io/encyclopedia/temporal-sdks#temporal-client) to start the Workflow.
+3. A client program: You'll need to start your Workflow. In this tutorial you'll create a small program using the [Temporal Client](https://docs.temporal.io/encyclopedia/temporal-sdks#temporal-client) to start the Workflow.
 
 You'll also write tests to ensure your Workflow executes successfully.
 
@@ -816,7 +816,7 @@ Select the **Pending Activity** item in the table to see why it failed and you'l
 
 ![The Activity stack trace shows the error](images/activity_stack_trace.png)
 
-In the **Last Failure** field, you can see there was a TypeScript error indicating that `fetch` failed.
+In the **Last Failure** field, you can see that a DNS error occurred whilst resolving the domain name for the external service that the `GetIP` activity fetches data from.
 
 Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
 

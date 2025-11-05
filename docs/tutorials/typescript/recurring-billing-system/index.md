@@ -665,7 +665,7 @@ You now know when to use a Signal and Query, as well as how to define and handle
 
 ## Wait for user input to continue or cancel your subscription
 
-Often, you may want to pause the Workflow Execution until a specific Signal is received or a certain condition is met. For example, in the `subscriptiptionWorkflow`, you might want to wait for the `subscriptionCancelled` Signal before invoking the `sendCancellationEmailDuringTrialPeriod` Activity.
+Often, you may want to pause the Workflow Execution until a specific Signal is received or a certain condition is met. For example, in the `subscriptionWorkflow`, you might want to wait for the `subscriptionCancelled` Signal before invoking the `sendCancellationEmailDuringTrialPeriod` Activity.
 
 The Temporal SDK provides the [`condition`](https://typescript.temporal.io/api/namespaces/workflow#condition) method for this purpose. The `condition` method allows you to determine the execution path of the Workflow until a specified condition is satisfied or a timeout is reached.
 

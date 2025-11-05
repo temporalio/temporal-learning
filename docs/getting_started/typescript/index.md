@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal and TypeScript"
+title: "Get Started with Temporal and TypeScript"
 sidebar_position: 6
 sidebar_label: TypeScript
 hide_table_of_contents: false

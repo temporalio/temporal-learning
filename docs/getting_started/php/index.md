@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal and PHP"
+title: "Get Started with Temporal and PHP"
 sidebar_position: 4
 sidebar_label: PHP
 hide_table_of_contents: false

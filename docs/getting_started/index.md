@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal"
+title: "Get Started with Temporal"
 hide_title: true
 sidebar_position: 2
 hide_table_of_contents: true

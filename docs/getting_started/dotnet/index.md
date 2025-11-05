@@ -1,5 +1,5 @@
 ---
-title: "Get started with Temporal and .NET"
+title: "Get Started with Temporal and .NET"
 sidebar_position: 1
 sidebar_label: .NET
 hide_table_of_contents: false
