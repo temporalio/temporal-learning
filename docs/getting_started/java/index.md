@@ -1,6 +1,6 @@
 ---
-title: "Get started with Temporal and Java"
-sidebar_position: 1
+title: "Get Started with Temporal and Java"
+sidebar_position: 3
 sidebar_label: Java
 hide_table_of_contents: false
 pagination_prev: null

@@ -1,6 +1,6 @@
 ---
-title: "Get started with Temporal and Go"
-sidebar_position: 1
+title: "Get Started with Temporal and Go"
+sidebar_position: 2
 sidebar_label: Go
 hide_table_of_contents: false
 pagination_prev: null
