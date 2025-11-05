@@ -1,6 +1,6 @@
 ---
-title: "Get started with Temporal and PHP"
-sidebar_position: 5
+title: "Get Started with Temporal and PHP"
+sidebar_position: 4
 sidebar_label: PHP
 hide_table_of_contents: false
 pagination_prev: null
@@ -24,5 +24,6 @@ Download and run a small application and explore how Temporal executes Workflows
 Once you're familiar with the basics, you may want to explore the documentation and code examples.
 
 * [Temporal Application Developers Guide](https://docs.temporal.io/dev-guide/php)
+* [Temporal PHP SDK API documentation](https://php.temporal.io/)
 * [Temporal PHP SDK code samples](https://github.com/temporalio/samples-php)
 * [Temporal PHP SDK on GitHub](https://github.com/temporalio/sdk-php)

@@ -12,15 +12,11 @@ image: /img/temporal-logo-twitter-card.png
 
 <img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
-import { OutdatedNotice } from '@site/src/components'
-
-<OutdatedNotice />
-
 To follow the PHP SDK tutorials and build your own Temporal applications with PHP, you'll need the PHP SDK, the [RoadRunner application server](https://github.com/roadrunner-server/roadrunner), and a Temporal development server.
 
 ## Install the PHP SDK
 
-Install the PHP SDK using Composer:
+Install the PHP SDK using [Composer](http://getcomposer.org):
 
 ```command
 composer require temporal/sdk
@@ -28,8 +24,29 @@ composer require temporal/sdk
 
 ## Download RoadRunner
 
-See the [RoadRunner README file](https://github.com/roadrunner-server/roadrunner) for installation instructions.
+You can download RoadRunner in your project using the following command:
 
+```command
+vendor/bin/rr get
+```
+
+See [RoadRunner installation instructions](https://docs.roadrunner.dev/docs/general/install) to learn about other installation methods.
+
+To configure RoadRunner Temporal plugin create or open the `.rr.yaml` file in your project directory and make sure it contains the following:
+
+```yaml
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+server:
+  command: "php worker.php"
+
+temporal:
+  address: "127.0.0.1:7233"
+
+logs:
+  level: info
+```
 
 Next, you'll configure a local Temporal Service for development.
 

@@ -4,7 +4,7 @@ sidebar_position: 1
 public: false
 draft: false
 tags: [Community Programs]
-keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, games, signals, queries, updates]
+keywords: [Temporal, Workflows, Activities, Workers, Task Queues, Courses, external service, Signals, Queries, Updates, Versioning, Codec Server]
 description: "Want to take a Temporal course live? Discover where our courses are being taught live or request a live delivery for your community."
 custom_edit_url: null
 hide_table_of_contents: true
@@ -47,8 +47,6 @@ For the best quality experience, you’ll need:
 
 - GitHub accounts for each participant.
 
-- Ability to access [github.com](http://github.com) from the individual workstations.
-
 ### Courses offered
 
 | Course                                                                                             | Hours     | Languages Offered                  |
@@ -71,7 +69,7 @@ For the best quality experience, you’ll need:
 
 If you’d like to request a training, please post your request in the `#request-live-workshop` channel in the [Temporal Community Slack](https://t.mp/slack) with the following details:
 
-- **Courses**: Which courses you want us to deliver
+- **Courses**: Which courses you would like delivered
 
 - **Delivery type**: Online or in-person
 
@@ -86,10 +84,3 @@ If you’d like to request a training, please post your request in the `#request
 - **Time zone**: What time zone are you in, or what time zone would work best for your workshop?
 
 Please allow a 2-business-day turnaround time for a response.
-
-## Upcoming Public Courses
-
-| Course Offered | Date & Time | Location | Registration Link | 
-| -------------- | ---- | -------- | ----------------- |
-| Temporal 101 in .NET | April 9, 2025 @ 12:00 EST | Virtual | [Register today](https://pages.temporal.io/workshop-dotnet-101-2504) |
-| Temporal 101 in Go | May 14, 2025 @ 12:00 EST | Virtual | [Register today](https://pages.temporal.io/workshop-go-101-2505) |
