@@ -816,7 +816,7 @@ Select the **Pending Activity** item in the table to see why it failed and you'l
 
 ![The Activity stack trace shows the error](images/activity_stack_trace.png)
 
-In the **Last Failure** field, you can see there was a TypeScript error indicating that `fetch` failed.
+In the **Last Failure** field, you can see that a DNS error occurred whilst resolving the domain name for the external service that the `GetIP` activity fetches data from.
 
 Connect to the internet again and wait. After a few moments, the Workflow recovers and completes:
 
