@@ -3,7 +3,7 @@ id: audiobook-tutorial
 keywords: [Java, temporal, sdk, tutorial, entity workflow, audiobook, text to speech, OpenAI]
 tags: [Java, SDK]
 last_update:
-  date: 2024-07-16
+  date: 2025-11-05
 title: Create audiobooks from text with OpenAI and Java
 description: Build your own audiobooks from text using OpenAI Web APIs and Temporal. Step-by-step guide for hassle-free MP3 creation with robust failure mitigation.
 sidebar_label: Create audiobooks from text with OpenAI and Java
@@ -109,11 +109,11 @@ apply plugin: 'java'
 sourceSets.main.java.srcDirs 'src'
 
 dependencies {
-    implementation 'io.temporal:temporal-sdk:1.22.2'
-    implementation 'org.slf4j:slf4j-nop:2.0.6' // logging suppression
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'org.json:json:20210307'
+    implementation 'io.temporal:temporal-sdk:1.31.0'
+    implementation 'org.slf4j:slf4j-nop:2.0.17' // logging suppression
+    implementation 'commons-io:commons-io:2.20.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.2.0'
+    implementation 'org.json:json:20250517'
 }
 
 // Run the App
@@ -128,11 +128,11 @@ task run(type: JavaExec) {
 3. Review your dependencies and run task:
    Your dependencies include Temporal's [Java SDK](https://github.com/temporalio/sdk-java), and a few basic libraries:
 
-   * **com.squareup.okhttp3:okhttp:4.9.3**: OkHttp is a basic HTTP client for network requests.
-   * **org.json:json:20210307**: Parse and manipulate JSON data.
-   * **commons-io:commons-io:2.11.0**: Perform file tasks with common input/output routines.
-   * **org.slf4j:slf4j-nop:2.0.6**: Minimizes unnecessary output with logging suppression.
-   * **io.temporal:temporal-sdk:1.22.2**: Add error mitigation.
+   * **com.squareup.okhttp3**: Basic HTTP client for network requests
+   * **org.json:json**: Parse and manipulate JSON data
+   * **commons-io**: Perform file tasks with common input/output routines
+   * **slf4j-nop:2.0.6**: Minimizes unnecessary log output
+   * **temporal-sdk:1.22.2**: Provides support for building Temporal applications in Java (this is the Temporal SDK)
 
    The run task starts your TTS application.
 
