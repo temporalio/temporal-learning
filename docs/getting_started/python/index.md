@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and Python"
-sidebar_position: 4
+title: "Get Started with Temporal and Python"
+sidebar_position: 5
 sidebar_label: Python
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
 Take your first steps into building apps with Temporal and Python by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 

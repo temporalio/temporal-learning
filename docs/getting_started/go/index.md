@@ -1,13 +1,13 @@
 ---
-title: "Get started with Temporal and Go"
-sidebar_position: 1
+title: "Get Started with Temporal and Go"
+sidebar_position: 2
 sidebar_label: Go
 hide_table_of_contents: false
 pagination_prev: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-![Temporal Go SDK](/img/sdk_banners/banner_go.png)
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
 Take your first steps into building apps with Temporal and Go by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 

@@ -11,7 +11,7 @@ last_update:
   date: 2021-10-01
 ---
 
-![Temporal PHP SDK](/img/sdk_banners/banner_php.png)
+<img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
 import { OutdatedNotice } from '@site/src/components'
 

@@ -11,6 +11,8 @@ last_update:
   date: 2023-09-28
 ---
 
+<img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
+
 ### Introduction
 
 In this tutorial, you'll build an email subscription web application using Temporal and Go. You'll create a web server to handle requests, and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or queue. This reduces the complexity of the code you have to write and support.
@@ -161,7 +163,7 @@ With this Workflow Definition in place, you can now develop an Activity to send 
 
 ## Develop the Activities
 
-An [Activity](https://docs.temporal.io/activities) is a normal function or method that executes a single, well-defined action (either short or long running), such as calling another service, transcoding a media file, or sending an email message. Workflow code orchestrates the execution of Activities, persisting the results.
+An [Activity](https://docs.temporal.io/activities) is a function or method that executes a single, well-defined action (either short or long running), such as calling another service, transcoding a media file, or sending an email message. Workflow code orchestrates the execution of Activities, persisting the results.
 
 Create a new file called `activities.go` and add the following code to create the Activity Definition:
 
