@@ -1,12 +1,12 @@
 ---
 id: human-in-the-loop
-sidebar_position: 3
+sidebar_position: 2
 keywords: [ai, durable, temporal, signals, queries, human-in-the-loop, hitl]
 tags: [AI, durable, temporal, LLM, genai, signals, queries]
 last_update:
-  date: 2025-10-15
+  date: 2025-11-6
   author: Angela Zhou
-title: "Part 3: Adding Durable Human-in-the-Loop to Our Research Application"
+title: "Part 2: Adding Durable Human-in-the-Loop to Our Research Application"
 description: Learn how to build interactive AI applications that allow humans to provide feedback and make decisions using Temporal Signals and Queries
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -31,28 +31,10 @@ approval process.
 
 ## Prerequisites
 
-This tutorial is part 3 of a Foundartions of Durable AI with Temporal tutorial. Before starting, ensure you have:
+This tutorial is part 2 of a Foundartions of Durable AI with Temporal tutorial. Before starting, ensure you have:
 
-* Completed Part 1: [Understanding the Need for Durability](../creating-a-chain-workflow) tutorial
-* Completed Part 2: [Adding Durability with Temporal](../durable-ai-with-temporal) tutorial
+* Completed Part 1 of this tutorial: [Adding Durability with Temporal](../durable-ai-with-temporal)
 * An [Open AI API key](https://platform.openai.com/api-keys)
-
-## Why Human Interaction Matters
-
-While some AI applications may operate entirely autonomously, many require human intervention. They may provide input on launch or at various points throughout the execution.
-
-Examples:
-- Validation at critical decision points
-- Final review before implementation
-- Feedback loops
-
-This can happen in a chain workflow like if the human wants to confirm the research before outputting it into a PDF:
-
-![Chain Workflow](https://images.ctfassets.net/0uuz8ydxyd9p/70SBemKQHnqfLxoHgPovQX/33f3a0b6cfc96eae2d17d1a463079560/Screenshot_2025-07-08_at_10.26.26%C3%A2__AM.png)
-
-Or there can be continuous feedback cycle in a human-in-the-loop system. The AI agent performs work based on input or previous feedback, then pauses to wait for human review. This feedback is fed back into the AI agent, which then continues execution based on the human's decision:
-
-<img src="https://i.postimg.cc/43pm5mfw/hitl-loop.png" width="45%" />
 
 ## Challenges in Non-Durable Human in the Loop Processes
 

@@ -1,96 +1,92 @@
 ---
 id: adding-durability-with-temporal
-sidebar_position: 2
+sidebar_position: 1
 keywords: [ai, durable, temporal, workflow, activities, genai, llm]
 tags: [AI, durable, temporal, LLM, genai, workflow, activities]
 last_update:
   date: 2025-10-15
   author: Angela Zhou
-title: "Part 2: Adding Durability to Our Research Application"
+title: "Part 1: Adding Durability to Our Research Application"
 description: Learn how to make your GenAI applications durable and resilient to failures using Temporal Workflows and Activities
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Part 2: Adding Durability to Our Research Application
+# Adding Durability to AI Applications with Temporal
 
-In our [last tutorial](../creating-a-chain-workflow), you built a research application that:
-1. Calls an LLM to perform some research for you, then 
-2. Generates a PDF report of that research. 
-It's a simple chain workflow that works perfectly well - until it doesn't.
+By now, you've probably experienced generative AI firsthand. You've used ChatGPT and seen what LLMs can do. They excel at tasks like research, but their real power emerges when we connect them to users and external systems to build advanced applications that go beyond simple chat interfaces.
 
-_Imagine this_: Your application conducts expensive research through an LLM call (costing time and money), but then **crashes** during PDF generation due to a network outage. When you restart, everything is lost. You're back to the beginning, paying for the same LLM call again, making your users wait, and burning through your API budget.
+But building these applications comes with a critical challenge: **durability**. Imagine your application conducts expensive research through an LLM call (costing time and money), but then crashes during PDF generation due to a network outage. When you restart, everything is lost. You're back at the beginning—paying for the same LLM call again, making your users wait, and burning through your API budget.
 
-As these workflows grow more complex - chaining multiple LLM calls, database queries, external APIs - the problem compounds. Every failure means starting over completely.
+To begin, let's take a look at this simple chain: using an LLM to generate research, then turning that research into a PDF and see in real-time why durability matters.
 
-In this tutorial, we'll solve this problem by making your research application durable. You'll learn how to build GenAI applications that survive failures, recover automatically, and never lose progress.
+INSERT VIDEO!!!!
+
+In this tutorial, we'll solve this problem by using Temporal to make your research application durable. You'll learn how to build GenAI applications that survive failures, recover automatically, and never lose progress.
 
 ## Prerequisites
 
-This tutorial is part 2 of a tutorial series. Please review [part 1](../creating-a-chain-workflow) of this series first.
+Before you begin this tutorial, ensure you have:
 
-You need an [Open AI API key](https://platform.openai.com/api-keys) for this tutorial.
+- An [OpenAI API key](https://platform.openai.com/api-keys)
+- Cloned [this repository](https://github.com/temporalio/edu-durable-ai-tutorial-template) or use [Codespace](https://github.com/temporalio/edu-durable-ai-tutorial-template/blob/main/codespaces.md) if you don't want to clone it.
 
-## Understanding the Problem 
+## Getting Started: Clone the Template Repository
 
-The challenges you identified in the previous tutorial aren't new problems. They're the same problems we've been solving in distributed systems for decades:
+To start, you'll clone a template repository that contains a basic research application. This application uses an LLM to generate research content and creates a PDF report, but it lacks durability - any failure means starting over from scratch.
 
-**Your Research Application in Production Reality:**
-* **LLM API call** - External service that can timeout, rate limit, or be down
-* **PDF generation** - File system operation that can fail due to disk space
-* **Network connectivity** - Can drop mid-request, causing you to rerun everything from scratch. This can use lot of money since you'd be re-burning through tokens.
+1. **Clone the repository:**
 
-**The good news:** You can use a platform that guarantees the _reliable execution_ of your code.
+```bash
+git clone https://github.com/temporalio/edu-durable-ai-tutorial-template.git
+cd edu-durable-ai-tutorial-template
+```
+
+2. **Install dependencies:**
+
+```bash
+uv sync
+```
+
+3. **Set up your OpenAI API key:**
+
+Create a `.env` file in the project root:
+
+```bash
+LLM_API_KEY=your_openai_api_key_here
+LLM_MODEL=openai/gpt-4o
+```
+
+4. **Review the code:**
+
+Run the basic application to see how it works:
+
+```bash
+uv run app.py
+```
+
+Enter a research topic when prompted, and you'll see the LLM generate content and create a PDF. This works fine - until something fails.
+
+**The Problem:** If this application crashes after the expensive LLM call but before PDF generation, you lose all progress and have to start over, wasting time and money. Let's fix that with Temporal.
 
 ## Introducing Temporal
 
 [Temporal](https://temporal.io/) is an open source platform that ensures the successful completion of long-running processes despite failures or network issues. 
 
-Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a power outage.
+Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a network outage.
 
-### Making Your GenAI Application Durable
-
-Let's transform your simple research application into a durable one. With Temporal, you get:
+With Temporal, you get:
 
 * **Crash-proof execution** - Your application survives failures and restarts
 * **Automatic retries** - Failed operations retry automatically
 * **State persistence** - Progress is saved at each step, so you never lose work even in the case of a network outage or something else 
 
-This means your workflow becomes:
-```
-LLM Call ➝ Result Saved ➝ PDF Generation ➝ Result Saved
-```
-
-Instead of running operations as a single fragile chain, Temporal creates **durable checkpoints** after each step. 
-
-Let's say your application crashes after the LLM call but before PDF generation:
-
-```
-LLM Call ➝ ✓ Result Saved ➝ [CRASH] ➝ PDF Generation (not started)
-```
-
-When Temporal restarts your workflow, it doesn't re-run the LLM call. Instead, it:
-1. **Replays** from the event history - retrieving the saved LLM result
-2. **Resumes** execution at the PDF generation step
-3. **Continues** as if nothing happened
-
-This [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/event-history-python) means:
-- **No duplicate API calls** - You don't pay for the same LLM request twice
-- **No lost progress** - All completed work is preserved
-- **Fast recovery** - Restart from the last checkpoint, not from scratch
-
-:::note
-Learn more about how Replay works with our free [Temporal 102 course](https://learn.temporal.io/courses/temporal_102/)
-:::
-
-### What Stays the Same
-
-* Your core logic (LLM call ➝ PDF generation)
-* Your inputs and outputs
-* Your business requirements
-
 ### Setup
 
-Open your `durable-ai-temporal-tutorial` and add the `temporalio` package that you will need for this tutorial by running: `uv add temporalio`.
+Now let's add Temporal to your application. In your `edu-durable-ai-tutorial-template` directory, add the `temporalio` package:
+
+```bash
+uv add temporalio
+```
 
 ## Define External Interactions
 
@@ -111,17 +107,21 @@ Examples:
 
 ## Creating Your First Activities
 
-From our last tutorial, we wrote two functions:
-1. A call to an LLM to generate research
-2. Taking that research and generating a PDF with it
+The template repository contains an `app.py` file with two functions:
+1. `llm_call` - Calls an LLM to generate research
+2. `create_pdf` - Takes that research and generates a PDF
 
-Both those functions can be turned into Activities because because they interact with external systems (an LLM API and the file system) that can fail due to network issues, timeouts, or other transient errors. 
+Both functions interact with external systems (an LLM API and the file system) that can fail due to network issues, timeouts, or other transient errors. Let's convert them into Temporal Activities.
 
-1. To be clear, let's rename `app.py` from the last tutorial to `activities.py`.
+1. **Rename `app.py` to `activities.py`:**
 
-2. Add `from temporalio import activity` to the top of your `app.py` file.
+2. **Add the Temporal activity import** to the top of your `activities.py` file:
 
-3. To turn a function into an Activity, add the `@activity.defn` decorator on top of the `llm_call` and `create_pdf` functions like so:
+```python
+from temporalio import activity
+```
+
+3. **Turn functions into Activities** by adding the `@activity.defn` decorator above the `llm_call` and `create_pdf` functions:
 
 ```python
 @activity.defn
@@ -292,7 +292,7 @@ Inside the `run` method, call your first Activity to generate research content. 
 **Key points about `workflow.execute_activity()`:**
     - First parameter: The Activity function to execute (referenced by name)
     - Second parameter: The input to pass into the Activity
-    - Third parameter: The Activity timeout you wish to set. 
+    - Third parameter: The Activity timeout you wish to set 
 :::
 
 ```python
@@ -504,6 +504,11 @@ if __name__ == "__main__":
 
 ### Start Your Application
 
+You've now built the core components of your durable application:
+- **Activities** - Your external interactions (LLM call and PDF generation)
+- **Workflow** - Your business logic that orchestrates the Activities
+- **Worker** - The execution engine that runs your Workflows and Activities
+
 Now it's time to actually start your Research Workflow. To do this, you'll use a [Temporal Client](https://docs.temporal.io/develop/python/temporal-client).
 
 A Temporal Client provides a set of APIs to communicate with a Temporal Service. You can use a Temporal Client in your application to perform various operations such as:
@@ -513,9 +518,7 @@ A Temporal Client provides a set of APIs to communicate with a Temporal Service.
 - **Send signals** to running Workflows (like updating the research prompt mid-execution)
 - **Get results** from completed Workflows (like retrieving the final PDF filename)
 
-Before creating the client, clean up your `activities.py` file. Remove two things:
-
-1. **The old script execution code** at the bottom of the file (we'll be starting Workflows through the client instead):
+Before creating the client, clean up your `activities.py` file. **Remove the script execution code** at the bottom of the file - we'll be starting Workflows through the client instead. This includes:
 
 ```python
 # Make the API call
@@ -531,15 +534,17 @@ print(content)
 pdf_filename = create_pdf(PDFGenerationInput(content=content, filename="research_report.pdf"))
 ```
 
-:::note 
-**Why move the starter code?**
+:::note
+**Why remove the execution code?**
 
 The **Activities** file should only contain:
 - Activity function definitions
 - Business logic for external interactions
+
+Workflow execution logic belongs in separate starter/client files.
 :::
 
-Your `activities.py` file should now only contain the Activity definitions and imports, not the execution code.
+Your `activities.py` file should now only contain imports and Activity definitions.
 
 <details>
 <summary>
@@ -653,7 +658,7 @@ This sets up the connection to your local Temporal server and gets the research 
     print(f"Result: {result}")
 ```
 
-The method returns a `handle` that lets you interact with the running Workflow. The The `await handle.result()` call blocks until the Workflow completes and returns the final result.
+The method returns a `handle` that lets you interact with the running Workflow. The `await handle.result()` call blocks until the Workflow completes and returns the final result.
 
 #### Step 4: Add the Entry Point
 
@@ -774,7 +779,7 @@ This will demonstrate:
 
 ### Step 1: Create a New Activity with an Intentional Error
 
-We'll create a `send_email` Activity that contains an intentional error to simulate a real-world failure.In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more. Add this code to `activities.py`:
+We'll create a `send_email` Activity that contains an intentional error to simulate a real-world failure. In our case, this is just an error we are intentionally throwing, but this could just as easily be an internal service that isn't responding, a network outage, an application crashing, or more. Add this code to `activities.py`:
 
 ```python
 from temporalio.exceptions import ApplicationError
@@ -795,12 +800,14 @@ def send_email() -> str:
 
 ### Step 2: Update the Workflow to Call the `send_email` Activity
 
-Now modify the Workflow to:
-1. Generate research content (existing)
-3. Create the PDF with the summary (existing)
-2. **Send an email (new)**
+Now modify the Workflow to call the `send_email` Activity after generating the PDF. Try this on your own!
 
-```python
+<details>
+<summary>
+Your <code>workflow.py</code> should look like the following:
+</summary>
+
+```ini
 from datetime import timedelta
 from temporalio import workflow
 
@@ -841,10 +848,11 @@ class GenerateReportWorkflow:
 
         return f"Successfully created research report PDF: {pdf_filename}"
 ```
+</details>
 
 ### Step 3: Register the New Activity with the Worker
 
-Update the Worker to include the new `send_email` Activity:
+Update the Worker to register the new `send_email` Activity:
 
 ```python
 import concurrent.futures
@@ -942,4 +950,4 @@ This is the power of Temporal and durable execution - your critical business pro
 
 Imagine your research application pausing after generating content, sending you the draft for review, waiting for your edits or approval, and then continuing automatically to create the final PDF—all while maintaining durable execution guarantees. That's the power of adding human-in-the-loop capabilities with fault-tolerant AI workflows.
 
-In our [next tutorial](../human-in-the-loop), we'll show you how to **add human-in-the-loop capabilities** to your AI workflows.
+In the [next tutorial](../human-in-the-loop) in this mini-series, we'll show you how to **add human-in-the-loop capabilities** to your AI workflows.
