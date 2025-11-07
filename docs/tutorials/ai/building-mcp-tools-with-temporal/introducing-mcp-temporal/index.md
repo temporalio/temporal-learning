@@ -27,7 +27,7 @@ Before you begin, you'll need:
 
 - [Claude Desktop](https://www.claude.com/download)
 - Python with uv installed
-- An understanding of MCP (check out [this section](#if-youre-new-to-mcp-here-are-some-important-concepts) of the tutorial if you'll like to learn more!)
+- A basic understanding of MCP (check out [this section](#if-youre-new-to-mcp-here-are-some-key-concepts) of the tutorial if you'll like to learn more!)
 
 ## What You'll Learn
 
@@ -37,7 +37,7 @@ By the end of this tutorial, you'll understand:
 - How to build MCP tools that are durable and fault-tolerant
 - How Temporal Workflows make MCP tools production-ready
 
-## If you're new to MCP, here are some important concepts:
+## If you're new to MCP, here are some key concepts:
 
 <details>
 <summary>
@@ -125,23 +125,11 @@ We want to build agents that can be extended beyond their initial configuration 
 MCP Primitives: Prompts, Resources, and Tools
 </summary>
 
-### MCP has two main components:
-
-#### 1. Primitives
-
-The things you interact with through MCP:
+### MCP primitives are the things you interact with through MCP:
 
 - **Prompts** - Templates and instructions
 - **Resources** - Static data like files, databases, and external APIs
 - **Tools** - Agent-ready APIs that perform actions
-
-#### 2. Client-Server Architecture
-
-How applications communicate with downstream systems:
-
-- **MCP Clients** - Embedded in AI applications
-- **MCP Servers** - Provide tools and resources
-- **Transport Protocol** - Communication layer between them
 
 ### How Primitives Work Together
 
@@ -163,6 +151,10 @@ How MCP Client-Server Architecture Works
 </summary>
 
 MCP establishes a client-server communication model where the client and server exchange messages. The protocol defines how clients communicate with the server.
+
+- **MCP Clients** - Embedded in AI applications
+- **MCP Servers** - Provide tools and resources
+- **Transport Protocol** - Communication layer between them
 
 ### MCP Server
 
@@ -362,7 +354,7 @@ Our weather tool needs to make HTTP requests to the National Weather Service API
 
 #### Creating Your First Activities
 
-Create a new file called `activities.py`:
+Create a new file to call the National Weather Service API called `activities.py`:
 
 ```python
 from typing import Any
@@ -384,7 +376,7 @@ async def make_nws_request(url: str) -> dict[str, Any] | None:
         return response.json()
 ```
 
-As an Activity, your API call is now:
+As you can see, this is as straightforward as adding the `@activity.defn` decorator above your regular Python function. As an Activity, your API call is now:
 
 - Protected against API timeouts
 - Automatically retried with backoff
@@ -434,7 +426,7 @@ with workflow.unsafe.imports_passed_through():
 ```
 
 :::note 
-**Why `workflow.unsafe.imports_passed_through()`?** Temporal relies on a [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/event-history-python) to recover from failure. As your program progresses, Temporal saves the input and output from function calls to the history. This allows a failed program to restart right where it left off.
+**Why `workflow.unsafe.imports_passed_through()`?** Temporal relies on a [Replay mechanism](https://docs.temporal.io/encyclopedia/event-history/event-history-python#How-History-Replay-Provides-Durable-Execution) to recover from failure. As your program progresses, Temporal saves the input and output from function calls to the history. This allows a failed program to restart right where it left off.
 
 Temporal requires this special import pattern for Workflows for replay. This import pattern tells Temporal: "These imports are safe to use during replay."
 :::
@@ -444,9 +436,9 @@ Temporal requires this special import pattern for Workflows for replay. This imp
 Create your Workflow class with the required decorators:
 
 ```python
-@workflow.defn
+@workflow.defn # marks the class as a Workflow
 class GetForecast:
-    @workflow.run
+    @workflow.run # a single async method
     async def run(self, latitude: float, longitude: float) -> str:
         """Get weather forecast for a location.
 
@@ -506,9 +498,9 @@ You can add a delay between API calls in case of the Weather Service's rate limi
 Now add the second Activity call to fetch the actual forecast. This Activity depends on the output from the first Activity:
 
 ```python
-@workflow.defn
+@workflow.defn # marks the class as a Workflow
 class GetForecast:
-    @workflow.run
+    @workflow.run # a single async method
     async def run(self, latitude: float, longitude: float) -> str:
         # Step 1: Get the forecast grid endpoint
         points_url = f"{NWS_API_BASE}/points/{latitude},{longitude}"
@@ -783,7 +775,7 @@ if __name__ == "__main__":
 ```
 </details>
 
-### Step 4: Run Your Application
+### Step 4: Run Your Worker
 
 When you start a Workflow in Temporal, it generates tasks that are placed into a queue called a Task Queue. [Workers](https://docs.temporal.io/workers) continuously poll this queue, pick up available tasks, and execute them. Your Workflow progresses as Workers complete each task. Think of it as the "engine" that powers your Temporal application.
 
@@ -923,7 +915,7 @@ Now let's test your durable MCP tool!
 1. Open Claude Desktop
 2. When you open Claude Desktop, click on the icon to the right of the plus sign button. You should now see your configured MCP server (e.g., weather) on your Claude Desktop and the blue toggle should be switched on.
 
-<img src="https://camo.githubusercontent.com/dff311b777f64a5e0895259250018e6cddc59ea478dc34c2c5e7d44d0a8c34f1/68747470733a2f2f692e706f7374696d672e63632f386b576a4d39536d2f636c617564652d6465736b746f702d6d63702d7365727665722d636f6e666967757265642e706e67" />
+<a href="https://camo.githubusercontent.com/dff311b777f64a5e0895259250018e6cddc59ea478dc34c2c5e7d44d0a8c34f1/68747470733a2f2f692e706f7374696d672e63632f386b576a4d39536d2f636c617564652d6465736b746f702d6d63702d7365727665722d636f6e666967757265642e706e67" target="_blank"><img src="https://camo.githubusercontent.com/dff311b777f64a5e0895259250018e6cddc59ea478dc34c2c5e7d44d0a8c34f1/68747470733a2f2f692e706f7374696d672e63632f386b576a4d39536d2f636c617564652d6465736b746f702d6d63702d7365727665722d636f6e666967757265642e706e67" alt="Temporal Web UI showing completed workflow" /></a>
 
 #### Test the Weather Tool
 
@@ -932,7 +924,7 @@ Now let's test your durable MCP tool!
 3. Claude will analyze your request and determine it needs the `get_forecast` tool
 4. You'll see a prompt asking for permission to use the tool - click **"Allow"**
 
-<img src = "https://i.postimg.cc/W4HtBTp0/allow-tool-use.png" />
+<a href="https://i.postimg.cc/W4HtBTp0/allow-tool-use.png" target="_blank"><img src="https://i.postimg.cc/W4HtBTp0/allow-tool-use.png" alt="Temporal Web UI showing completed workflow" /></a>
 
 5. Claude will call the tool with the latitude and longitude for San Francisco.
 
@@ -945,7 +937,7 @@ Temporal provides a robust [Web UI](https://docs.temporal.io/web-ui) for managin
 
 Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully.
 
-<img src="https://i.postimg.cc/XvGnyF3c/weather-workflow-execution.png" />
+<a href="https://i.postimg.cc/XvGnyF3c/weather-workflow-execution.png" target="_blank"><img src="https://i.postimg.cc/XvGnyF3c/weather-workflow-execution.png" alt="Temporal Web UI showing completed workflow" /></a>
 
 See if you can you locate the following items on the Web UI:
 
@@ -1004,7 +996,7 @@ Immediately after allowing the tool use:
 
 #### Step 4: Observe the Workflow Still Running
 
-<img src="https://i.postimg.cc/GphqMJ9k/running-workflow.png" />
+<a href="https://i.postimg.cc/GphqMJ9k/running-workflow.png" target="_blank"><img src="https://i.postimg.cc/GphqMJ9k/running-workflow.png" alt="Temporal Web UI showing completed workflow" /></a>
 
 Notice the following:
 - **Status**: The Workflow is still "Running"
@@ -1032,4 +1024,4 @@ You've now completed this tutorial and seen the power of durable MCP tools with 
 
 ## What's Next?
 
-In our next MCP tutorial, we'll show you how to add durable human-in-the-loop capabilities to your MCP tools with Temporal. Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when that tutorial gets published.
+In our next MCP tutorial, we'll show you how to add **durable human-in-the-loop capabilities to your MCP tools with Temporal**. Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when that tutorial gets published.
