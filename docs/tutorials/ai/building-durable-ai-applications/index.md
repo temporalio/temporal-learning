@@ -7,7 +7,7 @@ This two-part tutorial series will walk you through building understanding how t
 
 - **Tutorial 1**: Transform a simple LLM app (that does some research then generates PDFs) into a resilient system that handles crashes, rate limits, and outages using Temporal workflows.
 
-- **Tutorial 2**: Add durable human-in-the-loop capabilities to your reseearch application to review, refine, and query research results interactively
+- **Tutorial 2**: Add durable human-in-the-loop capabilities to your research application to review, refine, and query research results interactively
 
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
