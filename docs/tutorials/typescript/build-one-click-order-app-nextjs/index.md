@@ -22,7 +22,7 @@ You also need to make sure that any calls to external services, like databases, 
 [Next.js](https://nextjs.org/) is a popular choice for building full-stack web applications using Node.js and React. You can deliver a great experience across the stack by integrating a Temporal Workflow with Next.js.
 Temporal provides fault tolerance and ensures that long-running processes and background tasks complete successfully, even in the event of failures. This is ideal for critical business operations and transactions.
 
-In this tutorial you'll build a back-end API using Nest API Routes that starts a Temporal Workflow.
+In this tutorial you'll build a back-end API using Next API Routes that starts a Temporal Workflow.
 Then you'll build a quick user interface with React and Tailwind to call that API.
 When you're done, you'll have a framework you can follow for building full-stack web applications powered by Temporal.
 
@@ -277,7 +277,7 @@ When the Worker finds [Workflow Tasks](https://docs.temporal.io/workers#workflow
 Run your Worker with the following command to make sure that everything builds and there are no errors:
 
 ```command
-npm run build:temporal && npm run start:worker`
+npm run build:temporal && npm run start:worker
 ```
 
 The Worker runs, but it won't have any tasks to perform because you haven't started a Workflow yet.

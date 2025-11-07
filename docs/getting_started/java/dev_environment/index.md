@@ -5,7 +5,7 @@ description: Set up a local development environment for developing Temporal appl
 tags: [Java, SDK, development environment]
 keywords: [Java, JRE, Temporal, IntelliJ, Gradle, development environment]
 last_update:
-  date: 2024-02-23
+  date: 2025-11-05
 title: Set up a local development environment for Temporal and Java
 image: /img/temporal-logo-twitter-card.png
 ---
@@ -55,7 +55,7 @@ Add the following dependencies to your Maven Project Object Model (POM) configur
     <dependency>
       <groupId>io.temporal</groupId>
       <artifactId>temporal-sdk</artifactId>
-      <version>1.24.1</version>
+      <version>1.31.0</version>
     </dependency>
 
     <dependency>
@@ -64,7 +64,7 @@ Add the following dependencies to your Maven Project Object Model (POM) configur
       -->
       <groupId>io.temporal</groupId>
       <artifactId>temporal-testing</artifactId>
-      <version>1.24.1</version>
+      <version>1.31.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -81,8 +81,8 @@ Add the following lines to `build.gradle`, your Gradle configuration file. This 
 
 
 ```groovy
-implementation 'io.temporal:temporal-sdk:1.24.1'
-testImplementation 'io.temporal:temporal-testing:1.24.1'
+implementation 'io.temporal:temporal-sdk:1.31.0'
+testImplementation 'io.temporal:temporal-testing:1.31.0'
 ```
 
   </TabItem>
