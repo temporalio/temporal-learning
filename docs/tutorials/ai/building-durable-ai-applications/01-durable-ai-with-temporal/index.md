@@ -80,6 +80,34 @@ With Temporal, you get:
 * **Automatic retries** - Failed operations retry automatically
 * **State persistence** - Progress is saved at each step, so you never lose work even in the case of a network outage or something else 
 
+<details>
+<summary>What is Durable Execution?</summary>
+
+Durable Execution ensures that your application behaves correctly despite adverse conditions by guaranteeing that it will run to completion. 
+
+- If an LLM call fails halfway through processing, you **don't lose the work already completed**.
+- If a database query times out, you can **retry just that step** without restarting everything.
+- If your application crashes, it can **resume from the last successful operation**.
+- **Long-running processes** can span hours or days without losing context.
+
+Without durability, every failure means starting over. With durability, failures become recoverable interruptions instead of catastrophic losses. This is especially critical for GenAI applications where LLM calls are expensive, slow, and unpredictable.
+
+### AI Needs Durability
+
+Your research application needs to:
+1. Accept user input
+   - Possible problems: input validation service, rate limiting
+2. Call the LLM for research
+   - Possible problems: Internet connection, API down, rate limiting, timeout
+3. Generate PDF
+   - Possible problems: Memory limits
+4. Return success/failure
+   - Possible problem: Connection dropped
+
+**This is why durability matters.** Without it, complex workflows become fragile and expensive. With it, failures become manageable interruptions instead of catastrophic losses.
+
+</details>
+
 ### Setup
 
 Now let's add Temporal to your application. In your `edu-durable-ai-tutorial-template` directory, add the `temporalio` package:
@@ -747,7 +775,7 @@ Temporal provides a robust [Web UI](https://docs.temporal.io/web-ui) for managin
 
 Access the Web UI at `http://localhost:8233` when running the Temporal development server, and you should see that your Workflow Execution has completed successfully.
 
-<img src="https://i.postimg.cc/qR7VQhcv/web-ui-example.png" />
+<a href="https://i.postimg.cc/qR7VQhcv/web-ui-example.png" target="_blank"><img src="https://i.postimg.cc/qR7VQhcv/web-ui-example.png" alt="Temporal Web UI showing completed workflow" /></a>
 
 See if you can you locate the following items on the Web UI:
 
@@ -892,7 +920,7 @@ You should see:
 2. The `llm_call` Activity completed successfully 
 3. The `send_email` Activity shows a **Pending Activity** with retry attempts
 
-<img src="https://i.postimg.cc/cLw9VF52/retrying-activity.png" />
+<a href="https://i.postimg.cc/cLw9VF52/retrying-activity.png" target="_blank"><img src="https://i.postimg.cc/cLw9VF52/retrying-activity.png" alt="Web UI showing activity retrying after failure" /></a>
 
 **Click on the Pending Activity to see:**
 - The error message
@@ -936,7 +964,7 @@ Your Web UI will now show:
 1. The `send_email` Activity now completes successfully
 2. The entire Workflow shows **Completed** status
 
-<img src="https://i.postimg.cc/cJv44bjh/successful-completion.png" />
+<a href="https://i.postimg.cc/cJv44bjh/successful-completion.png" target="_blank"><img src="https://i.postimg.cc/cJv44bjh/successful-completion.png" alt="Web UI showing workflow completed successfully" /></a>
 
 **What just happened?**
 - Your Workflow **preserved all state** through the failure
