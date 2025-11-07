@@ -19,7 +19,9 @@ But building these applications comes with a critical challenge: **durability**.
 
 To begin, let's take a look at this simple chain: using an LLM to generate research, then turning that research into a PDF and see in real-time why durability matters.
 
-INSERT VIDEO!!!!
+Here's a video that introduces the importance of durability and what you'll learn in this tutorial:
+
+<iframe width="1040" height="585" src="https://www.youtube.com/embed/Jv2RayRlnm8?rel=0&iv_load_policy=3&modestbranding=1&showsearch=0&showinfo=0&wmode=transparent" title="Code Walkthrough (Welcome to Temporal 101 - .NET)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 In this tutorial, we'll solve this problem by using Temporal to make your research application durable. You'll learn how to build GenAI applications that survive failures, recover automatically, and never lose progress.
 
