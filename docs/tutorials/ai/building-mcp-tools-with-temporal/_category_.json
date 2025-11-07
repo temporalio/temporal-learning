@@ -1,0 +1,8 @@
+{
+  "label": "Building Durable MCP Tools with Temporal",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn how to build durable MCP (Model Context Protocol) tools using Temporal Workflows for reliable AI integrations."
+  }
+}
