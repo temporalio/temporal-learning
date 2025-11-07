@@ -11,7 +11,7 @@ description: Learn how to build interactive AI applications that allow humans to
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Part 3: Adding Durable Human-in-the-Loop to Our Research Application
+# Part 2: Adding Durable Human-in-the-Loop to Our Research Application
 
 Your durable research application now survives crashes and automatically retries failures. But there's a critical gap: **it runs completely autonomously**.
 
