@@ -11,7 +11,7 @@ description: Learn how to make your GenAI applications durable and resilient to 
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Adding Durability to AI Applications with Temporal
+# Part 1: Adding Durability to AI Applications with Temporal
 
 By now, you've probably experienced generative AI firsthand. You've used ChatGPT and seen what LLMs can do. They excel at tasks like research, but their real power emerges when we connect them to users and external systems to build advanced applications that go beyond simple chat interfaces.
 
