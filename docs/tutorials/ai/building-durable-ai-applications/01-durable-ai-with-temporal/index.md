@@ -68,7 +68,7 @@ uv run app.py
 
 Enter a research topic when prompted, and you'll see the LLM generate content and create a PDF. This works fine - until something fails.
 
-**The Problem:** If this application crashes after the expensive LLM call but before PDF generation, you lose all progress and have to start over, wasting time and money. Let's fix that with Temporal.
+**The Problem:** If this application crashes after the expensive LLM call but before PDF generation, you lose all progress and have to start over, wasting time and money. Review the video in the beginning of this video to see that in action. Let's fix that with Temporal.
 
 ## Introducing Temporal
 
@@ -438,7 +438,7 @@ pdf_filename: str = await workflow.execute_activity(
 )
 ```
 
-The PDF generation Activity includes a custom retry policy that controls how failures are handled:
+In this example, the PDF generation Activity would include a custom retry policy that controls how failures are handled:
 - `initial_interval`: Wait 2 seconds before the first retry
 - `maximum_attempts`: Try up to 3 times total
 - `backoff_coefficient`: Triple the wait time between each retry (2s → 6s)
@@ -469,7 +469,7 @@ from workflow import GenerateReportWorkflow
 async def run_worker():
     # Connect to Temporal service
     client = await Client.connect("localhost:7233", namespace="default")
-
+    
     # Create a thread pool for running Activities
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as activity_executor:
         # Configure the Worker
@@ -484,6 +484,12 @@ async def run_worker():
         print(f"Starting the worker....")
         await worker.run()
 ```
+
+This Worker configuration tells Temporal how your application should execute:
+
+- **`task_queue="research"`** - Specifies which Task Queue the Worker monitors for incoming work. When you start a Workflow using this same Task Queue name, this Worker will pick it up and execute it.
+- **`workflows=[GenerateReportWorkflow]`** - Registers your Workflow definition with the Worker, enabling it to execute instances of this Workflow when tasks appear in the queue.
+- **`activities=[llm_call, create_pdf]`** - Registers your Activity functions with the Worker, allowing it to execute these Activities when your Workflow calls them.
 
 **Step 3: Add the Entry Point**
 
