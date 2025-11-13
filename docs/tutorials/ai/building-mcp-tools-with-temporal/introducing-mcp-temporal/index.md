@@ -297,6 +297,19 @@ MCP servers need to orchestrate complex, multi-step operations that interact wit
 - State is preserved across failures automatically
 - When an external API is temporarily down, Temporal retries automatically
 
+<details>
+<summary>Temporal Provides Durable Execution</summary>
+
+Durable Execution ensures that your application behaves correctly despite adverse conditions by guaranteeing that it will run to completion. 
+
+- If an LLM call fails halfway through processing, you **don't lose the work already completed**.
+- If a database query times out, you can **retry just that step** without restarting everything.
+- If your application crashes, it can **resume from the last successful operation**.
+- **Long-running processes** can span hours or days without losing context.
+
+Without durability, every failure means starting over. With durability, failures become recoverable interruptions instead of catastrophic losses. This is especially critical for GenAI applications where LLM calls are expensive, slow, and unpredictable.
+</details>
+
 ## Building a Durable MCP Tool
 
 In this tutorial, you'll build a weather forecast tool that Claude Desktop can use to fetch real-time weather data from the National Weather Service API. By the end, you'll have a working MCP server that:
