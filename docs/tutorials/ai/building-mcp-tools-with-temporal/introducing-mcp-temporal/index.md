@@ -244,7 +244,7 @@ Streamable HTTP uses Server-Sent Events (SSE) over HTTP, allowing the MCP server
 ![Streamable HTTP Transport](https://i.postimg.cc/HnYRFvtz/streamable-http.png)
 </details>
 
-## The Limitations of Basic MCP Tools
+## The Limitations of MCP Tools
 
 MCP enables powerful tool integrations, but the protocol itself doesn't provide durability. When your AI agent calls an MCP tool that:
 - Makes external API calls
@@ -305,7 +305,7 @@ In this tutorial, you'll build a weather forecast tool that Claude Desktop can u
 - Returns formatted weather information that Claude can present to users
 - Automatically handles API failures, retries, and network issues through Temporal
 
-This hands-on example will show you exactly how Temporal transforms a simple MCP tool into a production-ready, fault-tolerant integration. 
+This hands-on example will show you exactly how Temporal transforms a simple MCP tool into a production-ready, fault-tolerant integration. You can follow along or check out the code used [in this repository](https://github.com/temporalio/edu-durable-mcp-tutorial-template).
 
 ### Project Setup
 
