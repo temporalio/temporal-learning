@@ -44,7 +44,7 @@ By the end of this tutorial, you'll understand:
 What is Model Context Protocol (MCP)?
 </summary>
 
-### [Model Context Protocol (MCP)]((https://modelcontextprotocol.io/docs/getting-started/intro)) is a protocol that allows LLMs to direct AI applications to invoke external functions.
+### [Model Context Protocol (MCP)](https://modelcontextprotocol.io/docs/getting-started/intro) is a protocol that allows LLMs to direct AI applications to invoke external functions.
 
 ### Three Main Benefits:
 
