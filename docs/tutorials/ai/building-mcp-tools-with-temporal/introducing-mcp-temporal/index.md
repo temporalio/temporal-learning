@@ -4,9 +4,9 @@ sidebar_position: 1
 keywords: [temporal, mcp, model context protocol, ai, durability, workflows]
 tags: [temporal, mcp, ai, workflows]
 last_update:
-  date: 2025-11-06
+  date: 2025-11-13
   author: Angela Zhou
-title: Creating a Durable Weather MCP Server with Temporal
+title: "Part 1: Creating a Durable Weather MCP Server with Temporal"
 description: Learn how to combine MCP (Model Context Protocol) and Temporal to build AI applications with powerful, durable tool integrations that automatically handle failures and retries.
 image: /img/temporal-logo-twitter-card.png
 ---
