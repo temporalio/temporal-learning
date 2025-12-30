@@ -540,7 +540,7 @@ public interface Shared {
 
 Now you'll create the Worker process. In this tutorial you'll create a small standalone Worker program so you can see how all of the components work together. 
 
-Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register the workflow and activities:
+Create the file `HelloWorldWorker.java` in `app/src/main/java/helloworldapp` and add the following code to connect to the Temporal Server, instantiate the Worker, and register the Workflow and Activities:
 
 <!--SNIPSTART hello-world-project-template-java-worker-->
 [app/src/main/java/helloworldapp/HelloWorldWorker.java](https://github.com/temporalio/hello-world-project-template-java/blob/main/app/src/main/java/helloworldapp/HelloWorldWorker.java)
