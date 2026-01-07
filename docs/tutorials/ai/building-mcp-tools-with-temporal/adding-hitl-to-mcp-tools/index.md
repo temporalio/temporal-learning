@@ -27,7 +27,7 @@ Before you begin, you'll need:
 
 - [Claude Desktop](https://www.claude.com/download)
 - A basic understanding of MCP
-    - Check out [this section](#if-youre-new-to-mcp-here-are-some-key-concepts) of the tutorial if you'll like to learn more) or
+    - Check out [this section](#if-youre-new-to-mcp-here-are-some-key-concepts) of the tutorial if you'll like to learn more or
     - Check out [our first MCP tutorial](/tutorials/ai/building-mcp-tools-with-temporal/introducing-mcp-temporal/) which builds a request-response MCP server without human-in-the-loop capabilities.
 
 ## What You'll Learn
@@ -1338,7 +1338,7 @@ if __name__ == "__main__":
 
 ### Step 8: Configure Claude Desktop
 
-As mentioned, Claude Desktop has a built-in MCP client. Once you've connected your MCP server, Claude Desktop can discover the tools you've made available. To connect Claude Desktop your weather MCP server, let's set up a `claude_desktop_config.json` file.
+Claude Desktop has a built-in MCP Client. Once you've connected your MCP server, Claude Desktop can discover the tools you've made available. To connect Claude Desktop your weather MCP server, let's set up a `claude_desktop_config.json` file.
 
 Create a `claude_desktop_config.json` file:
 
@@ -1366,7 +1366,14 @@ Create a `claude_desktop_config.json` file:
 cp claude_desktop_config.json ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
+Or on Windows: 
+```bash
+copy claude_desktop_config.json %APPDATA%\Claude\claude_desktop_config.json
+```
+
 3. Completely quit and restart Claude Desktop for the changes to take effect.
+   - On macOS: Right-click the Claude icon in the dock and select "Quit"
+   - On Windows: Right-click the system tray icon and select "Exit"
 
 ### Step 9: Run Your Application
 
@@ -1451,7 +1458,7 @@ Or to reject it:
 Reject invoice INV-001
 ```
 
-Claude will send the appropriate Signal, and the Workflow will immediately proceed based on the decision. In this case, go ahead and approve the invoice and you'll see in the Web UI that the Workflow Execution has completed successfully:
+ In this case, go ahead and approve the invoice and you'll see Claude will send the appropriate Signal, and the Workflow will immediately proceed based on the decision. In the Web UI, observe that the Workflow Execution has completed successfully:
 
 <a href="https://i.postimg.cc/YCvp3LdR/workflow-execution-completed.png" target="_blank"><img src="https://i.postimg.cc/YCvp3LdR/workflow-execution-completed.png" alt="Workflow execution details" /></a>
 

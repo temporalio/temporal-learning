@@ -905,6 +905,8 @@ cp claude_desktop_config.json ~/Library/Application\ Support/Claude/claude_deskt
 ```
 
 3. Completely quit and restart Claude Desktop for the changes to take effect.
+   - On macOS: Right-click the Claude icon in the dock and select "Quit"
+   - On Windows: Right-click the system tray icon and select "Exit"
 
 ### Step 7: Test the Integration
 
@@ -1024,4 +1026,6 @@ You've now completed this tutorial and seen the power of durable MCP tools with 
 
 ## What's Next?
 
-In our next MCP tutorial, we'll show you how to add **durable human-in-the-loop capabilities to your MCP tools with Temporal**. Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when that tutorial gets published.
+In our [next MCP tutorial](/tutorials/ai/building-mcp-tools-with-temporal/adding-hitl-to-mcp-tools/), we'll show you how to add **durable human-in-the-loop capabilities to your MCP tools with Temporal**. 
+
+Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when new tutorials and educational content get published.
