@@ -255,7 +255,7 @@ What happens if the Weather API is down? What if the network fails halfway throu
 
 ### Example of a Non-Durable MCP Tool
 
-Without durability, if the code below fails, everything is lostno retry, no recovery, no memory of what happened.
+Without durability, if the code below fails, everything is lost - no retry, no recovery, no memory of what happened.
 
 ```python
 from fastmcp import FastMCP
