@@ -21,7 +21,9 @@ To begin, let's take a look at this simple chain: using an LLM to generate resea
 
 Here's a video that introduces the importance of durability and what you'll learn in this tutorial:
 
-<iframe width="1040" height="585" src="https://www.youtube.com/embed/bxpbVUMl7-w?rel=0&iv_load_policy=3&modestbranding=1&showsearch=0&showinfo=0&wmode=transparent" title="Code Walkthrough (Welcome to Temporal 101 - .NET)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%' }}>
+  <iframe style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} src="https://www.youtube.com/embed/bxpbVUMl7-w?rel=0&iv_load_policy=3&modestbranding=1&showsearch=0&showinfo=0&wmode=transparent" title="Adding Durability to AI Applications with Temporal" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 In this tutorial, we'll solve this problem by using Temporal to make your research application durable. You'll learn how to build GenAI applications that survive failures, recover automatically, and never lose progress.
 
