@@ -1395,7 +1395,7 @@ Now let's test the complete invoice workflow with Claude Desktop!
 ### Step 1: Process an Invoice
 
 1. Open Claude Desktop
-2. When you open Claude Desktop, click on the icon to the right of the plus sign button. You should now see your configured MCP server (e.g., weather) on your Claude Desktop and the blue toggle should be switched on.
+2. When you open Claude Desktop, click on the icon to the right of the plus sign button. You should now see your configured MCP server (e.g., `invoice-processor`) on your Claude Desktop and the blue toggle should be switched on.
 
 <a href="https://i.postimg.cc/q7HNYGhh/invoice-processor-claude.png" target="_blank"><img src="https://i.postimg.cc/q7HNYGhh/invoice-processor-claude.png" alt="Claude Code and invoice processor integration" /></a>
 
