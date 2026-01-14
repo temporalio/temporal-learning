@@ -1,6 +1,6 @@
 ---
 title: "Python tutorials"
-sidebar_position: 3
+sidebar_position: 5
 keywords: [python,tutorial,temporal,workflows,flask,pytest]
 description: "Build Temporal applications with these Python tutorials"
 image: /img/temporal-logo-twitter-card.png

@@ -1,6 +1,6 @@
 ---
 title: "Go tutorials"
-sidebar_position: 1
+sidebar_position: 2
 keywords: [Go,tutorial,temporal,workflows]
 description: "Build Temporal applications with these Go tutorials"
 image: /img/temporal-logo-twitter-card.png

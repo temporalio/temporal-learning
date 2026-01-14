@@ -1,6 +1,6 @@
 ---
 title: "TypeScript tutorials"
-sidebar_position: 2
+sidebar_position: 6
 keywords: [TypeScript,tutorial,temporal,workflows,nextjs,express,node.js,javascript]
 description: "Build Temporal applications with these TypeScript tutorials"
 image: /img/temporal-logo-twitter-card.png
