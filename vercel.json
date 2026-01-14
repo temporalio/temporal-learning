@@ -95,6 +95,21 @@
       "source": "/best_practice_guides/",
       "destination": "https://docs.temporal.io/best-practices",
       "permanent": true
+    },
+    {
+      "source": "/community_programs/live_course_delivery/",
+      "destination": "https://learn.temporal.io/courses/",
+      "permanent": true
+    },
+    {
+      "source": "/community_programs/",
+      "destination": "https://temporal.io/community",
+      "permanent": true
+    },
+    {
+      "source": "/community_programs/web_dev_challenge/",
+      "destination": "https://www.youtube.com/watch?v=XCRLSy5AJPI&embeds_referring_euri=https%3A%2F%2Flearn.temporal.io%2F&source_ve_path=MjM4NTE",
+      "permanent": true
     }
   ]
 }
