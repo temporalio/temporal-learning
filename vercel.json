@@ -102,11 +102,6 @@
       "permanent": true
     },
     {
-      "source": "/community_programs/live_course_delivery/",
-      "destination": "https://learn.temporal.io/courses/",
-      "permanent": true
-    },
-    {
       "source": "/community_programs/",
       "destination": "https://temporal.io/community",
       "permanent": true
