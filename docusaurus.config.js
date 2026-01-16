@@ -47,7 +47,7 @@ const config = {
     //   isCloseable: true,
     // },
     colorMode: {
-      defaultMode: "light",
+      respectPrefersColorScheme: true,
       disableSwitch: false,
       // switchConfig: {
       //   darkIcon: "🌙",
@@ -56,7 +56,7 @@ const config = {
       //     transform: "scale(2)",
       //     margin: "0 0.2rem",
       //   },
-      //   lightIcon: "\u{1F602}",
+      //   lightIcon: "☀️",
       //   lightIconStyle: {
       //     content: `url(/img/sun.svg)`,
       //     transform: "scale(2)",
