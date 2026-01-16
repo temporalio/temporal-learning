@@ -47,8 +47,13 @@ Samples are more targeted examples that showcase particular Temporal features or
 
 * [Go SDK samples](https://github.com/temporalio/samples-go)
 * [Java SDK samples](https://github.com/temporalio/samples-java)
-* [Python SDK samples](https://github.com/temporalio/samples-python)
-* [TypeScript SDK samples](https://github.com/temporalio/samples-typescript)
 * [.NET SDK samples](https://github.com/temporalio/samples-dotnet)
+* [PHP SDK samples](https://github.com/temporalio/samples-php)
+* [Python SDK samples](https://github.com/temporalio/samples-python)
+* [Ruby SDK samples](https://github.com/temporalio/samples-ruby)
+* [TypeScript SDK samples](https://github.com/temporalio/samples-typescript)
+
+
+
 
 More examples coming soon.
