@@ -294,7 +294,7 @@ Both services should now be running in the background. Navigate to **YOUR_SERVER
 
 ### Other Database Backends
 
-This tutorial provides an example of using Temporal with a SQLite database backend. Temporal also supports MySQL, PostgreSQL, and Cassandra as database backends. Refer to the [datasores](https://docs.temporal.io/references/configuration#datastores) documentation reference to make changes.
+This tutorial provides an example of using Temporal with a SQLite database backend. Temporal also supports MySQL, PostgreSQL, and Cassandra as database backends. Refer to the [datastores](https://docs.temporal.io/references/configuration#datastores) documentation reference to make changes.
 
 ### Load Balancing
 
