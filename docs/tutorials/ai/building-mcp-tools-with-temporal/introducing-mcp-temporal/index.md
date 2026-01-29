@@ -19,6 +19,10 @@ When you're building these tools with [MCP (Model Context Protocol)](https://mod
 
 But **standardization doesn't solve reliability**. Your MCP tools still need to handle failures, manage retries, and maintain state when things go wrong. That's where Temporal comes in. It provides the infrastructure to make your MCP tools durable—automatically retrying failed operations, preserving state across crashes, and ensuring long-running operations complete even if your process restarts.
 
+<div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', marginBottom: '1.5rem' }}>
+  <iframe style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} src="https://www.youtube.com/embed/myovLBN2RvQ?rel=0&iv_load_policy=3&modestbranding=1&showsearch=0&showinfo=0&wmode=transparent" title="Adding Durability to AI Applications with Temporal" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+
 In this tutorial, you'll build a weather forecast MCP server that Claude Desktop can use to fetch real-time weather data from the National Weather Service API. You'll implement the tool using Temporal Workflows, which handle the API calls, retries, and state management automatically.
 
 ## Prerequisites
