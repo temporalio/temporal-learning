@@ -640,4 +640,4 @@ You've transformed a fragile, in-memory research agent into a production-ready a
 ## Next Steps
 
 - Sign up [here](https://pages.temporal.io/get-updates-education) to get notified when new Temporal educational content gets published
-- Join our Temporal Community Slack [here](https://t.mp/slack)
+- Join our Temporal Community Slack [here](https://t.mp/slack) to stay up to date about what's going on in the Temporal community!

@@ -65,6 +65,8 @@ cp .env-sample .env
 # Edit .env and add your OPENAI_API_KEY
 ```
 
+Skip this step if you already have `OPENAI_API_KEY` exported in your shell profile (e.g., `.zshrc` or `.bashrc`).
+
 4. **Run the application:**
 
 ```bash
@@ -95,7 +97,7 @@ Try entering a research query like _"what is the best spaghetti recipe?"_ The ag
 Before adding Temporal, let's understand the existing structure:
 
 ```
-├── run_server.py              # FastAPI server (entry point)
+├── run_server.py              # Backend API for the chat interface
 ├── ui/                        # Browser-based chat interface
 └── deep_research/
     ├── agents/                # Individual AI agents (OpenAI Agents SDK)
