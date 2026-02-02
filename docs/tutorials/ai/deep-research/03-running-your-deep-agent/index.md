@@ -29,9 +29,9 @@ Create `run_worker.py` in the project root:
 touch run_worker.py
 ```
 
-### Set Up Imports
+### Setting Up Imports
 
-Start with the imports:
+The Worker needs to import Temporal components, the OpenAI Agents plugin, and your Workflow. Add the following imports:
 
 ```python
 import asyncio
@@ -49,6 +49,8 @@ load_dotenv()  # Load OPENAI_API_KEY from .env
 
 TASK_QUEUE = "deep-research-queue"
 ```
+
+The imports bring in the core Temporal components: `Client` for connecting to Temporal, `Worker` for executing Workflows, and `RetryPolicy` for configuring retry behavior. The `OpenAIAgentsPlugin` and `ModelActivityParameters` from `temporalio.contrib.openai_agents` provide the integration that makes `Runner.run()` calls durable. The `load_dotenv()` call loads your OpenAI API key from the `.env` file. The `TASK_QUEUE` constant defines which queue this Worker listens to—Workflows started on this queue will be picked up by this Worker.
 
 :::note Task Queues
 The [`task_queue`](https://docs.temporal.io/task-queue) parameter is how Temporal routes work to Workers. When you start a Workflow on the `"deep-research-queue"` task queue, only Workers listening to that queue will execute it. This lets you run different types of work on different machines.
@@ -76,7 +78,7 @@ async def main():
     )
 ```
 
-Let's break down the `ModelActivityParameters`:
+Here's what each `ModelActivityParameters` setting does:
 
 - **[`start_to_close_timeout`](https://docs.temporal.io/encyclopedia/detecting-activity-failures#start-to-close-timeout)**: Each LLM call has 120 seconds to complete. If it takes longer, Temporal considers it failed and retries. We strongly recommend always setting a Start-to-Close Timeout!
 - **[`retry_policy`](https://docs.temporal.io/encyclopedia/retry-policies#default-values-for-retry-policy)**: Controls how failures are handled:
@@ -104,9 +106,9 @@ The plugin is passed when connecting to Temporal:
 
 Passing the plugin here is what connects everything—it tells the Temporal client to intercept `Runner.run()` calls and execute them as durable Activities.
 
-### Create and Run the Worker
+### Creating and Running the Worker
 
-Finally, create the Worker and start it:
+Now that you have the client configured with the plugin, create the Worker and start it. The Worker is the process that actually executes your Workflows:
 
 ```python
     # Create worker
@@ -125,6 +127,8 @@ Finally, create the Worker and start it:
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
+The `Worker` constructor takes three arguments: the `client` (which carries the OpenAI Agents plugin configuration), the `task_queue` name to listen on, and a list of `workflows` this Worker can execute. When you call `worker.run()`, the Worker starts polling the Task Queue for work. When a Workflow is started on the `"deep-research-queue"`, this Worker picks it up and executes it. The `if __name__ == "__main__"` block uses `asyncio.run()` to start the async `main()` function when you run the script directly.
 
 <details>
 <summary>Your complete <code>run_worker.py</code> should look like this</summary>
@@ -200,11 +204,11 @@ The Worker is now ready, and you'll start the Worker in the "Running the Applica
 
 ## Updating the FastAPI Server
 
-Remember, the template's `run_server.py` uses an in-memory manager that loses state on restart. Let's update it to use Temporal instead. Remove the contents of your `run_server.py` file.
+Remember, the template's `run_server.py` uses an in-memory manager that loses state on restart. Now update it to use Temporal instead. Remove the contents of your `run_server.py` file.
 
-### Add Temporal Imports
+### Adding Temporal Imports
 
-Add these imports at the top of `run_server.py`:
+The server needs to import Temporal components and your Workflow's data classes. Add these imports at the top of `run_server.py`:
 
 ```python
 from datetime import timedelta
@@ -221,7 +225,9 @@ from deep_research.workflows.research_workflow import (
 TASK_QUEUE = "deep-research-queue"
 ```
 
-### Add Temporal Client Connection
+These imports bring in `Client` for connecting to Temporal, plus the `OpenAIAgentsPlugin` and `ModelActivityParameters` for the OpenAI Agents integration. From your Workflow module, you import the `InteractiveResearchWorkflow` class (to reference its methods when starting Workflows and sending Updates), along with `UserQueryInput` and `SingleClarificationInput` (the data classes for sending input to the Workflow). The `TASK_QUEUE` constant must match the queue your Worker listens on.
+
+### Adding Temporal Client Connection
 
 <details>
 <summary>What is a Temporal Client for?</summary>
@@ -237,12 +243,7 @@ A Temporal Client provides APIs to:
 
 </details>
 
-Each request handler (starting research, submitting answers, checking status) needs access to the same Temporal client.
-
-To share the client across all request handlers, we:
-1. Create a global variable to hold the client
-2. Initialize it once when the server starts (using [FastAPI's startup event](https://fastapi.tiangolo.com/advanced/events/#startup-event))
-3. Access it from any request handler
+Each request handler (starting research, submitting answers, checking status) needs access to the same Temporal client. Add the following code to connect to Temporal when the server starts:
 
 ```python
 temporal_client: Client = None
@@ -265,6 +266,8 @@ async def startup():
     )
     print("Connected to Temporal!")
 ```
+
+The code declares `temporal_client` as a global variable that starts as `None`. The `@app.on_event("startup")` decorator registers the `startup()` function to run when FastAPI starts. Inside, it creates the `OpenAIAgentsPlugin` with a 120-second timeout for LLM calls, then connects to the Temporal server at `localhost:7233` with the plugin attached. The `global temporal_client` statement allows the function to modify the global variable, making the client accessible to all request handlers.
 
 ### Update the API Endpoints
 

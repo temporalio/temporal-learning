@@ -43,7 +43,7 @@ Before starting this tutorial, you should have:
 
 ## Clone the Template Repository
 
-The [template repository](https://github.com/temporalio/edu-deep-research-tutorial-template) contains a fully functional deep research agent—but **without any durability**. Let's get it running first so you can see what we're working with.
+The [template repository](https://github.com/temporalio/edu-deep-research-tutorial-template) contains a fully functional deep research agent—but **without any durability**. Get it running first so you can see what you're working with.
 
 1. **Clone the repository:**
 
@@ -77,7 +77,7 @@ uv run run_server.py
 Try entering a research query like _"what is the best spaghetti recipe?"_ The agent will ask clarifying questions, then conduct research and generate a report.
 
 :::note
-**Optional - Observe The Problem:** While this works, try stopping the server (Ctrl+C) mid-research. When you restart, all the context is gone. Your agent has no memory of what you last asked and you need to start from scratch. Let's fix that.
+**Optional - Observe The Problem:** While this works, try stopping the server (Ctrl+C) mid-research. When you restart, all the context is gone. Your agent has no memory of what you last asked and you need to start from scratch. This tutorial fixes that.
 :::
 
 <details>
@@ -145,7 +145,7 @@ The `research_manager.py` file orchestrates this pipeline and tracks session sta
 
 ## The OpenAI Agents SDK and Temporal
 
-Before diving into the implementation, let's understand how the OpenAI Agents SDK works and how Temporal integrates with it.
+Before diving into the implementation, understand how the OpenAI Agents SDK works and how Temporal integrates with it.
 
 The [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) provides primitives for building AI agents. An **Agent** combines an LLM with instructions and tools. A **Runner** executes those agents:
 
@@ -159,6 +159,8 @@ agent = Agent(
 )
 result = await Runner.run(agent, "What is the best spaghetti recipe?")
 ```
+
+The `Agent` class defines an agent with a name, instructions (the system prompt), and a model. The `Runner.run()` method sends the user's input to the agent and returns a result containing the agent's response in `result.final_output`.
 
 You can chain agents together—use one agent's output as input to the next—to build complex multi-agent systems like the deep research agent in this tutorial:
 
@@ -175,6 +177,8 @@ results = await Runner.run(searcher, plan.final_output)
 writer = Agent(name="Writer", instructions="Write a research report.")
 report = await Runner.run(writer, results.final_output)
 ```
+
+This code creates three agents that work together as a pipeline. The planner agent receives the user's query and outputs a search plan. The searcher agent takes that plan (via `plan.final_output`) and executes web searches. Finally, the writer agent takes the search results and synthesizes them into a report. Each `Runner.run()` call is independent—if any fails, the work from previous calls is lost. That's the problem Temporal solves.
 
 ### Making Agents Durable with Temporal
 
@@ -214,4 +218,4 @@ Browser UI ──► Workflow ──► Manager ──► OpenAI API
                   └── tracks state (query, questions, answers)
 ```
 
-Now that we've set the stage by exploring the template's architecture and how Temporal makes `Runner.run()` calls durable, let's build these components in [Part 2: Creating the Workflow](../creating-the-workflow).
+Now that you've set the stage by exploring the template's architecture and how Temporal makes `Runner.run()` calls durable, continue to [Part 2: Creating the Workflow](../creating-the-workflow) to build these components.
