@@ -20,9 +20,9 @@ You'll create three components:
 2. **InteractiveResearchWorkflow** - Manages state and human-in-the-loop
 3. **Worker** - Executes Workflows with the OpenAI Agents plugin
 
-Let's start building.
+Now, start building.
 
-## Step 1: Create the Interactive Research Manager
+## Creating the Interactive Research Manager
 
 The manager orchestrates the multi-agent research pipeline. It runs inside the Workflow, and thanks to the OpenAI Agents integration, all its `Runner.run()` calls are automatically durable.
 
@@ -53,7 +53,7 @@ When the user provides answers, the manager enriches the original query with the
 
 Create the directory structure:
 
-```bash
+```command
 mkdir -p deep_research/workflows
 ```
 
@@ -426,7 +426,7 @@ class InteractiveResearchManager:
 
 ---
 
-## Step 2: Create the Interactive Research Workflow
+## Creating the Interactive Research Workflow
 
 Now we bring in Temporal. The manager handles LLM orchestration, but it can't:
 
@@ -890,13 +890,13 @@ The Workflow exposes three interfaces for external communication:
 
 ---
 
-## Step 3: Clean Up the Old Manager
+## Cleaning Up the Old Manager
 
 The template's original `deep_research/research_manager.py` managed sessions in memory without durability. Now that you've created the durable `InteractiveResearchManager` in `deep_research/workflows/research_manager.py`, the old file is no longer needed.
 
 Delete it:
 
-```bash
+```command
 rm deep_research/research_manager.py
 ```
 

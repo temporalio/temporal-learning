@@ -1,5 +1,5 @@
 ---
-id: adding-durability-with-temporal
+id: running-your-deep-agent
 sidebar_position: 2
 keywords: [ai, durable, temporal, genai, llm, openai-agents-sdk, deep-research, agents]
 tags: [AI, durable, temporal, LLM, genai, workflow, activities, OpenAI Agents SDK]
@@ -19,13 +19,13 @@ You'll build two final components:
 1. [**Worker**](https://docs.temporal.io/workers) - Executes Workflows with the OpenAI Agents plugin
 2. [**FastAPI Server**](https://fastapi.tiangolo.com/) - Connects the UI to your Temporal Workflows
 
-## Step 1: Create the Worker
+## Creating the Worker
 
 The [Worker](https://docs.temporal.io/workers) is the process that executes your Workflows and Activities. For this project, the key is configuring the [`OpenAIAgentsPlugin`](https://python.temporal.io/temporalio.contrib.openai_agents.OpenAIAgentsPlugin.html)—this is what makes all `Runner.run()` calls automatically durable.
 
 Create `run_worker.py` in the project root:
 
-```bash
+```command
 touch run_worker.py
 ```
 
@@ -198,7 +198,7 @@ The Worker is now ready, and you'll start the Worker in the "Running the Applica
 
 ---
 
-## Step 2: Update the FastAPI Server
+## Updating the FastAPI Server
 
 Remember, the template's `run_server.py` uses an in-memory manager that loses state on restart. Let's update it to use Temporal instead. Remove the contents of your `run_server.py` file.
 
@@ -563,7 +563,7 @@ You'll need three terminal windows.
 
 ### Terminal 1: Start the Temporal Server
 
-```bash
+```command
 temporal server start-dev
 ```
 
@@ -572,7 +572,7 @@ As you will see in the command line output, your Temporal Server should now be r
 
 ### Terminal 2: Start the Worker
 
-```bash
+```command
 uv run run_worker.py
 ```
 
@@ -580,7 +580,7 @@ You'll see the output: `Worker started on task queue: deep-research-queue`
 
 ### Terminal 3: Start the FastAPI Server
 
-```bash
+```command
 uv run run_server.py
 ```
 
