@@ -20,9 +20,9 @@ You'll create three components:
 2. **InteractiveResearchWorkflow** - Manages state and human-in-the-loop
 3. **Worker** - Executes Workflows with the OpenAI Agents plugin
 
-Let's start building.
+Now, start building.
 
-## Step 1: Create the Interactive Research Manager
+## Creating the Interactive Research Manager
 
 The manager orchestrates the multi-agent research pipeline. It runs inside the Workflow, and thanks to the OpenAI Agents integration, all its `Runner.run()` calls are automatically durable.
 
@@ -53,11 +53,11 @@ When the user provides answers, the manager enriches the original query with the
 
 Create the directory structure:
 
-```bash
+```command
 mkdir -p deep_research/workflows
 ```
 
-Now create `deep_research/workflows/research_manager.py` and let's build it step by step.
+Now create `deep_research/workflows/research_manager.py` and build it step by step.
 
 ### Set Up Imports
 
@@ -141,13 +141,15 @@ The manager initializes all five agents from your existing agent files:
 - **Search Agent**: Executes web searches
 - **Writer Agent**: Synthesizes results into a report
 
-### Add the Helper Methods
+### Adding the Helper Methods
 
-Now add the individual pipeline steps. These are the building blocks that the rest of the manager will use:
+Now add the individual pipeline steps. These are the building blocks that the rest of the manager will use.
 
 :::info Automatic Durability
 Every `Runner.run()` call is automatically a durable Temporal Activity. If a call fails due to rate limiting, Temporal retries it. If the Worker crashes mid-pipeline, Temporal remembers which calls succeeded and resumes from there.
 :::
+
+The first helper method creates a search plan. Before the agent can search for information, it needs to decide *what* to search for. Add the following method:
 
 ```python
     async def _plan_searches(self, query: str) -> WebSearchPlan:
@@ -157,7 +159,13 @@ Every `Runner.run()` call is automatically a durable Temporal Activity. If a cal
             f"Create a search plan for: {query}",
         )
         return result.final_output_as(WebSearchPlan)
+```
 
+The `_plan_searches` method takes a user query and passes it to the planner agent via `Runner.run()`. The planner agent analyzes the query and returns a structured `WebSearchPlan` containing multiple search queries to execute. The `final_output_as()` method parses the agent's response into the `WebSearchPlan` Pydantic model.
+
+Next, add the method that executes the searches. Once you have a plan, you need to perform the actual web searches:
+
+```python
     async def _perform_searches(self, search_plan: WebSearchPlan) -> list[str]:
         """Execute all searches concurrently."""
         async def search(item) -> str:
@@ -170,7 +178,13 @@ Every `Runner.run()` call is automatically a durable Temporal Activity. If a cal
 
         tasks = [search(item) for item in search_plan.searches]
         return await asyncio.gather(*tasks)
+```
 
+The `_perform_searches` method takes a `WebSearchPlan` and executes all searches concurrently. It defines an inner `search` function that calls the search agent for a single query. The method then creates a list of tasks—one for each search in the plan—and uses `asyncio.gather()` to run them all in parallel. This concurrent execution speeds up research significantly when the plan contains multiple searches.
+
+Finally, add the method that writes the report. After gathering search results, the agent needs to synthesize them into a coherent report:
+
+```python
     async def _write_report(self, query: str, search_results: list[str]) -> ReportData:
         """Use the writer agent to synthesize results into a report."""
         prompt = f"Original query: {query}\nSearch results: {search_results}"
@@ -181,9 +195,11 @@ Every `Runner.run()` call is automatically a durable Temporal Activity. If a cal
         return result.final_output_as(ReportData)
 ```
 
-### Add the Research Pipeline
+The `_write_report` method combines the original query with all search results and passes them to the writer agent. The writer agent synthesizes this information into a structured `ReportData` object containing a summary, full markdown report, and suggested follow-up questions.
 
-Now that the helper methods exist, add the method that orchestrates them:
+### Adding the Research Pipeline
+
+Now that the helper methods exist, add the method that orchestrates them. This method ties together planning, searching, and writing into a single pipeline:
 
 ```python
     async def _run_research_pipeline(self, query: str) -> ReportData:
@@ -203,14 +219,13 @@ Now that the helper methods exist, add the method that orchestrates them:
         return report
 ```
 
-The pipeline follows three steps:
-1. **Plan**: The planner agent creates a list of searches to perform
-2. **Search**: All searches run concurrently for speed
-3. **Write**: The writer agent synthesizes everything into a report
+The `_run_research_pipeline` method executes the full research process in three steps. First, it calls `_plan_searches()` to generate a search strategy from the query. Second, it passes that plan to `_perform_searches()`, which executes all searches concurrently. Third, it sends the original query and all search results to `_write_report()` to generate the final report. The `print` statements provide visibility into the pipeline's progress. Each step is a separate `Runner.run()` call (inside the helper methods), which means each step is independently durable—if the Writer crashes after searches complete, Temporal won't re-run the searches.
 
-### Add the Public Methods
+### Adding the Public Methods
 
-Finally, add the two public methods that the Workflow will call. First, the completion method (simpler of the two):
+Finally, add the two public methods that the Workflow will call. These are the entry points that coordinate the entire research process.
+
+First, add the completion method. After the user answers clarification questions, you need a way to combine their answers with the original query and run the research:
 
 ```python
     async def run_with_clarifications_complete(
@@ -225,7 +240,9 @@ Finally, add the two public methods that the Workflow will call. First, the comp
         return await self._run_research_pipeline(enriched_query)
 ```
 
-Next, the main entry point that triages the query and either asks for clarifications or runs research directly:
+The `run_with_clarifications_complete` method takes the original query, the clarification questions that were asked, and the user's responses. It uses `zip()` to pair each question with its corresponding answer, then formats them into a readable string. This enriched query—containing both the original request and the clarifying context—is passed to `_run_research_pipeline()` for the full research process.
+
+Next, add the main entry point. When research starts, the system needs to decide whether the query is specific enough or needs clarification:
 
 ```python
     async def run_with_clarifications_start(self, query: str) -> ClarificationResult:
@@ -236,7 +253,7 @@ Next, the main entry point that triages the query and either asks for clarificat
         - The clarification questions (if needed)
         - The completed report (if query was specific enough)
         """
-        # Step 1: Check if clarifications are needed
+        # Check if clarifications are needed
         triage_result = await Runner.run(
             self.triage_agent,
             query,
@@ -244,7 +261,7 @@ Next, the main entry point that triages the query and either asks for clarificat
         needs_clarification = triage_result.final_output_as(TriageResult)
 
         if needs_clarification.needs_clarification:
-            # Step 2a: Generate clarifying questions
+            # Generate clarifying questions
             clarify_result = await Runner.run(
                 self.clarifying_agent,
                 f"Generate clarifying questions for: {query}",
@@ -255,12 +272,15 @@ Next, the main entry point that triages the query and either asks for clarificat
                 questions=questions.questions,
             )
         else:
-            # Step 2b: Query is specific enough, run research directly
+            # Query is specific enough, run research directly
             report = await self._run_research_pipeline(query)
             return ClarificationResult(
                 needs_clarifications=False,
                 report_data=report,
             )
+```
+
+The `run_with_clarifications_start` method is the main entry point for research. It first runs the triage agent to determine if the query needs clarification. The triage agent returns a `TriageResult` with a `needs_clarification` boolean. If clarification is needed, the method runs the clarifying agent to generate questions, then returns a `ClarificationResult` with `needs_clarifications=True` and the list of questions. If the query is specific enough, it skips clarification entirely and runs the full research pipeline, returning the completed report in the `ClarificationResult`.
 ```
 
 ### What You Built
@@ -426,7 +446,7 @@ class InteractiveResearchManager:
 
 ---
 
-## Step 2: Create the Interactive Research Workflow
+## Creating the Interactive Research Workflow
 
 Now we bring in Temporal. The manager handles LLM orchestration, but it can't:
 
@@ -562,7 +582,7 @@ Add a helper method for building results:
 
 ### Adding Human in the Loop
 
-Let's understand how the UI communicates with the Workflow to enable human-in-the-loop interactions.
+Here's how the UI communicates with the Workflow to enable human-in-the-loop interactions.
 
 The research Workflow follows this pattern:
 
@@ -612,16 +632,13 @@ The Workflow exposes three types of handlers for this communication:
 | `start_research()` | Update | Send query, receive status with any clarification questions |
 | `provide_clarification()` | Update | Send answer, receive updated status |
 
-Now let's implement each of these handlers.
+Now implement each of these handlers.
 
-### Add the Query Handler
+### Adding the Query Handler
 
-Before adding the handlers that modify state, let's add a method to read state. The `get_status` method serves two purposes:
+Before adding the handlers that modify state, add a method to read state. The UI needs to check the Workflow's progress—what questions were asked, how many have been answered, and whether research is complete.
 
-1. **As a Query handler** — Clients can call it directly to check the Workflow's current state
-2. **As a helper** — The Update handlers (which we'll add next) call it to return status after modifying state
-
-[Queries](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-queries) are read-only—they can inspect Workflow state but cannot modify it. The server's `/api/status` endpoint calls this Query to get the current state: What's the original query? Are there clarification questions? How many have been answered?
+[Queries](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-queries) are read-only—they can inspect Workflow state but cannot modify it. Add the following Query handler:
 
 ```python
     @workflow.query
@@ -644,9 +661,13 @@ Before adding the handlers that modify state, let's add a method to read state. 
         )
 ```
 
-### Add the Update Handlers
+The `@workflow.query` decorator registers this method as a Query handler that clients can call. The method determines the current status by checking the Workflow's state variables in order of priority: if `report_data` exists, research is `"completed"`; if there are unanswered questions, status is `"awaiting_clarification"`; if there's a query but no questions, status is `"researching"`; otherwise it's `"pending"`. The method returns a `ResearchStatus` object containing the original query, all clarification questions, all responses so far, and the computed status string.
 
-Now let's add the handlers that receive input and modify state. That's where [Updates](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-updates) come in.
+This method serves two purposes: clients call it directly via `handle.query()` to check progress, and the Update handlers (which you'll add next) call it internally to return status after modifying state.
+
+### Adding the Update Handlers
+
+Now add the handlers that receive input and modify state. That's where [Updates](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-updates) come in.
 
 <details>
 <summary>What is an Update?</summary>
@@ -663,7 +684,7 @@ An [Update](https://docs.temporal.io/encyclopedia/workflow-message-passing#sendi
 
 </details>
 
-First, add the Update that starts research:
+First, add the Update that starts research. When the user submits a query, the Workflow needs to process it and determine whether clarification is needed:
 
 ```python
     @workflow.update
@@ -684,9 +705,9 @@ First, add the Update that starts research:
         return self.get_status()
 ```
 
-This Update calls the manager to check if clarifications are needed, stores the result, then sets `research_initialized = True`. It returns the current status (using the `get_status` Query we just defined) so the UI knows immediately whether to show clarification questions.
+The `@workflow.update` decorator registers this method as an Update handler. When called, it stores the user's query in `self.original_query`, then calls the manager's `run_with_clarifications_start()` method—which runs the triage and possibly clarifying agents. Based on the result, it either stores clarification questions (if needed) or stores the completed report (if the query was specific enough). Setting `research_initialized = True` signals the main `run()` method to continue. Finally, it calls `get_status()` to return the current state to the UI.
 
-Next, add the Update that accepts clarification answers:
+Next, add the Update that accepts clarification answers. When the user answers a question, the Workflow needs to record their response:
 
 ```python
     @workflow.update
@@ -696,11 +717,11 @@ Next, add the Update that accepts clarification answers:
         return self.get_status()
 ```
 
-Each time the user answers a question, this Update appends their answer to `clarification_responses`.
+The `provide_clarification` Update handler appends the user's answer to the `clarification_responses` list. Each time this Update is called, another answer is recorded. When the number of responses equals the number of questions, the `wait_condition` in the `run()` method wakes up and research continues. The method returns `get_status()` so the UI knows the updated state.
 
-### Add the Main Run Method
+### Adding the Main Run Method
 
-Now that you've created handlers for receiving input (Updates) and checking state (Queries), let's add the main `run` method that coordinates everything.
+Now that you've created handlers for receiving input (Updates) and checking state (Queries), add the main `run` method that coordinates everything.
 
 The `run` method needs to wait for external input—first for the user's query, then potentially for their answers to clarification questions. This is where [`workflow.wait_condition()`](https://python.temporal.io/temporalio.workflow.html#wait_condition) comes in:
 
@@ -708,6 +729,8 @@ The `run` method needs to wait for external input—first for the user's query, 
 - Consumes **zero resources** while waiting—no polling, no timers
 - Resumes instantly when an Update modifies state
 - Optionally accepts a timeout: `workflow.wait_condition(lambda: condition, timeout=timedelta(hours=24))`
+
+Add the main run method:
 
 ```python
     @workflow.run
@@ -735,6 +758,12 @@ The `run` method needs to wait for external input—first for the user's query, 
             self.report_data.follow_up_questions,
         )
 ```
+
+The `@workflow.run` decorator marks this as the Workflow's entry point. When the Workflow starts, it immediately calls `workflow.wait_condition()` with a lambda that checks `self.research_initialized`. This pauses execution—at zero cost—until the `start_research` Update sets that flag to `True`.
+
+Once initialized, the method checks if clarification questions exist. If they do, it calls `wait_condition()` again, this time waiting until the number of responses matches the number of questions. This wait could last hours or days while the user thinks—Temporal persists the state and resumes instantly when the final answer arrives.
+
+When all answers are collected, the method calls `run_with_clarifications_complete()` to run the research pipeline with the enriched query. Finally, it uses `_build_result()` to construct and return the `InteractiveResearchResult`.
 
 Here's how the pieces connect:
 
@@ -890,13 +919,13 @@ The Workflow exposes three interfaces for external communication:
 
 ---
 
-## Step 3: Clean Up the Old Manager
+## Cleaning Up the Old Manager
 
 The template's original `deep_research/research_manager.py` managed sessions in memory without durability. Now that you've created the durable `InteractiveResearchManager` in `deep_research/workflows/research_manager.py`, the old file is no longer needed.
 
 Delete it:
 
-```bash
+```command
 rm deep_research/research_manager.py
 ```
 
@@ -904,4 +933,4 @@ Your new Workflow and Manager handle everything the old file did—but durably.
 
 ---
 
-Now that you've created the Workflow, Manager, and data classes, let's run everything and see durability in action in [Part 3: Running Your Application](../running-your-deep-agent).
+Now that you've created the Workflow, Manager, and data classes, continue to [Part 3: Running Your Application](../running-your-deep-agent) to run everything and see durability in action.

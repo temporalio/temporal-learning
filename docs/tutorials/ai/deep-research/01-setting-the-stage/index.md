@@ -7,7 +7,7 @@ last_update:
   date: 2026-02-01
   author: Angela Zhou
 title: "Part 1: Setting the Stage"
-description: Learn how to build a durable, multi-agent research application with human-in-the-loop capabilities using Temporal
+description: Build a durable, multi-agent research application with human-in-the-loop capabilities using Temporal
 image: /img/temporal-logo-twitter-card.png
 ---
 
@@ -31,7 +31,7 @@ In this tutorial, you'll transform a working (but non-durable) deep research age
 - **Automatically retry** failed LLM calls with exponential backoff
 - **Resume seamlessly** after crashes or restarts
 
-We use the OpenAI Agents SDK in this tutorial because it provides a clean, minimal abstraction for building multi-agent systems—and because Temporal has a built-in integration that makes every agent call automatically durable.
+This tutorial uses the OpenAI Agents SDK because it provides a clean, minimal abstraction for building multi-agent systems—and because Temporal has a built-in integration that makes every agent call automatically durable.
 
 ## Prerequisites
 
@@ -41,33 +41,34 @@ Before starting this tutorial, you should have:
 - An [OpenAI API key](https://platform.openai.com/api-keys)
 - Cloned [the template repository](https://github.com/temporalio/edu-deep-research-tutorial-template)
 
-## Getting Started: Clone the Template Repository
+## Clone the Template Repository
 
-The [template repository](https://github.com/temporalio/edu-deep-research-tutorial-template) contains a fully functional deep research agent—but **without any durability**. Let's get it running first so you can see what we're working with.
+The [template repository](https://github.com/temporalio/edu-deep-research-tutorial-template) contains a fully functional deep research agent—but **without any durability**. Get it running first so you can see what you're working with.
 
 1. **Clone the repository:**
 
-```bash
+```command
 git clone https://github.com/temporalio/edu-deep-research-tutorial-template.git
 cd edu-deep-research-tutorial-template
 ```
 
 2. **Install dependencies:**
 
-```bash
+```command
 uv sync
 ```
 
 3. **Set up your OpenAI API key:**
 
-```bash
+```command
 cp .env-sample .env
-# Edit .env and add your OPENAI_API_KEY
 ```
+
+Edit `.env` and add your `OPENAI_API_KEY`.
 
 4. **Run the application:**
 
-```bash
+```command
 uv run run_server.py
 ```
 
@@ -76,7 +77,7 @@ uv run run_server.py
 Try entering a research query like _"what is the best spaghetti recipe?"_ The agent will ask clarifying questions, then conduct research and generate a report.
 
 :::note
-**Optional - Observe The Problem:** While this works, try stopping the server (Ctrl+C) mid-research. When you restart, all the context is gone. Your agent has no memory of what you last asked and you need to start from scratch. Let's fix that.
+**Optional - Observe The Problem:** While this works, try stopping the server (Ctrl+C) mid-research. When you restart, all the context is gone. Your agent has no memory of what you last asked and you need to start from scratch. This tutorial fixes that.
 :::
 
 <details>
@@ -92,7 +93,7 @@ Try entering a research query like _"what is the best spaghetti recipe?"_ The ag
 
 ## Understanding the Current Architecture
 
-Before adding Temporal, let's understand the existing structure:
+Before adding Temporal, review the existing structure:
 
 ```
 ├── run_server.py              # FastAPI server (entry point)
@@ -140,11 +141,11 @@ User Query
 Final Report
 ```
 
-The `research_manager.py` file orchestrates this pipeline and tracks session state in memory. If the server restarts, _all that state is lost_. **We'll replace this with a Temporal Workflow that persists state durably and can wait indefinitely for human input**.
+The `research_manager.py` file orchestrates this pipeline and tracks session state in memory. If the server restarts, _all that state is lost_. **You'll replace this with a Temporal Workflow that persists state durably and can wait indefinitely for human input**.
 
 ## The OpenAI Agents SDK and Temporal
 
-Before diving into the implementation, let's understand how the OpenAI Agents SDK works and how Temporal integrates with it.
+Before diving into the implementation, understand how the OpenAI Agents SDK works and how Temporal integrates with it.
 
 The [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) provides primitives for building AI agents. An **Agent** combines an LLM with instructions and tools. A **Runner** executes those agents:
 
@@ -158,6 +159,8 @@ agent = Agent(
 )
 result = await Runner.run(agent, "What is the best spaghetti recipe?")
 ```
+
+The `Agent` class defines an agent with a name, instructions (the system prompt), and a model. The `Runner.run()` method sends the user's input to the agent and returns a result containing the agent's response in `result.final_output`.
 
 You can chain agents together—use one agent's output as input to the next—to build complex multi-agent systems like the deep research agent in this tutorial:
 
@@ -175,6 +178,8 @@ writer = Agent(name="Writer", instructions="Write a research report.")
 report = await Runner.run(writer, results.final_output)
 ```
 
+This code creates three agents that work together as a pipeline. The planner agent receives the user's query and outputs a search plan. The searcher agent takes that plan (via `plan.final_output`) and executes web searches. Finally, the writer agent takes the search results and synthesizes them into a report. Each `Runner.run()` call is independent—if any fails, the work from previous calls is lost. That's the problem Temporal solves.
+
 ### Making Agents Durable with Temporal
 
 The OpenAI Agents SDK has a **built-in Temporal integration** via the [`OpenAIAgentsPlugin`](https://python.temporal.io/temporalio.contrib.openai_agents.OpenAIAgentsPlugin.html).
@@ -185,13 +190,13 @@ Without the plugin, `Runner.run()` calls the LLM directly—if it fails or your 
 - **If your Worker crashes mid-research**, Temporal knows which `Runner.run()` calls already completed and skips them on restart—you don't pay for the same LLM calls twice
 - **Your code stays clean**—you write normal `Runner.run()` calls, no special wrappers needed
 
-You code the happy path; Temporal handles the rest. Let's go ahead and try it out!
+You code the happy path; Temporal handles the rest. Now try it out.
 
 ## Setup
 
 Add the Temporal SDK with the OpenAI Agents integration:
 
-```bash
+```command
 uv add 'temporalio[openai-agents]'
 ```
 
@@ -213,4 +218,4 @@ Browser UI ──► Workflow ──► Manager ──► OpenAI API
                   └── tracks state (query, questions, answers)
 ```
 
-Now that we've set the stage by exploring the template's architecture and how Temporal makes `Runner.run()` calls durable, let's build these components in [Part 2: Creating the Workflow](../creating-the-workflow).
+Now that you've set the stage by exploring the template's architecture and how Temporal makes `Runner.run()` calls durable, continue to [Part 2: Creating the Workflow](../creating-the-workflow) to build these components.
