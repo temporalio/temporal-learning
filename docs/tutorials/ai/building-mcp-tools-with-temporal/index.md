@@ -1,5 +1,5 @@
 ---
-title: "Building Durable AI Applications with Temporal"
+title: "Building Durable MCP Tools with Temporal"
 sidebar_position: 1
 ---
 
