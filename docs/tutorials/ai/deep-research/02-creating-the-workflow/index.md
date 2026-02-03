@@ -181,6 +181,8 @@ Every `Runner.run()` call is automatically a durable Temporal Activity. If a cal
         return result.final_output_as(ReportData)
 ```
 
+Notice how `_perform_searches` uses `asyncio.gather` to run multiple Search Agent calls concurrently. The Planner Agent doesn't just generate one search—it creates a comprehensive search plan with multiple queries to cover different angles of the topic. For example, a question about "production AI best practices" might generate searches for error handling, cost optimization, monitoring, rate limiting, and more. Running these in parallel is faster than sequential execution, and gives the Writer Agent richer material to synthesize into the final report.
+
 ### Add the Research Pipeline
 
 Now that the helper methods exist, add the method that orchestrates them:

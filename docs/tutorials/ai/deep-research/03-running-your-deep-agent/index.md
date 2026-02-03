@@ -200,6 +200,14 @@ The Worker is now ready, and you'll start the Worker in the "Running the Applica
 
 ## Step 2: Update the FastAPI Server
 
+<details>
+<summary>Why use the FastAPI Server?</summary>
+
+The [FastAPI Server](https://fastapi.tiangolo.com/) acts as the HTTP layer between your browser UI and Temporal. When a user submits a query or answers a question, the server translates that HTTP request into Temporal operations (starting Workflows, sending Updates, running Queries).
+
+The server doesn't run the research agents directly—it simply communicates with Temporal, while the Worker executes the actual agent logic.
+</details>
+
 Remember, the template's `run_server.py` uses an in-memory manager that loses state on restart. Let's update it to use Temporal instead. Remove the contents of your `run_server.py` file.
 
 ### Add Temporal Imports
