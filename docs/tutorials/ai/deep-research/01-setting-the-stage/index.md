@@ -45,6 +45,8 @@ Before starting this tutorial, you should have:
 
 The [template repository](https://github.com/temporalio/edu-deep-research-tutorial-template) contains a fully functional deep research agent—but **without any durability**. Let's get it running first so you can see what we're working with.
 
+You can follow along with the solution [here](https://github.com/temporalio/edu-deep-research-tutorial-template/tree/video_tutorial).
+
 1. **Clone the repository:**
 
 ```bash
