@@ -38,14 +38,14 @@ const config = {
     },
   ],
   themeConfig: {
-    // announcementBar: {
-    //   id: "replay_announcement",
-    //   content:
-    //     'Replay is coming to London, March 3-5! <a href="https://www.eventbrite.com/e/replay-conference-2025-tickets-1045108576887">Secure your ticket</a>',
-    //   backgroundColor: "#141414",
-    //   textColor: "#ffffff",
-    //   isCloseable: true,
-    // },
+    announcementBar: {
+      id: "replay_announcement",
+      content:
+        'Help shape how we teach Temporal! Take this <a href="https://docs.google.com/forms/d/e/1FAIpQLScvXtr039tv9V_m4C2F147FFhXrUC7CFnIMULA8Bm16KHdnVQ/viewform">survey</a> for an Amazon gift card (US only).',
+      backgroundColor: "#C039C0",
+      textColor: "#ffffff",
+      isCloseable: true,
+    },
     colorMode: {
       respectPrefersColorScheme: true,
       disableSwitch: false,
