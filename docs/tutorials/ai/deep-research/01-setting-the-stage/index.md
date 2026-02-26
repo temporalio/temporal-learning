@@ -33,6 +33,8 @@ In this tutorial, you'll transform a working (but non-durable) deep research age
 
 We use the OpenAI Agents SDK in this tutorial because it provides a clean, minimal abstraction for building multi-agent systems—and because Temporal has a built-in integration that makes every agent call automatically durable.
 
+<iframe style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} src="https://www.youtube.com/watch?v=eyLf4Kqd6lg?rel=0&iv_load_policy=3&modestbranding=1&showsearch=0&showinfo=0&wmode=transparent" title="Build a Deep Research Agent Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Prerequisites
 
 Before starting this tutorial, you should have:
