@@ -1,8 +1,27 @@
 ---
 id: building-deep-research-agent
 sidebar_position: 1
-keywords: [ai, temporal, agents, deep-research, human-in-the-loop, multi-agent, openai-agents-sdk]
-tags: [AI, temporal, LLM, agents, workflow, activities, human-in-the-loop, OpenAI Agents SDK]
+keywords:
+  [
+    ai,
+    temporal,
+    agents,
+    deep-research,
+    human-in-the-loop,
+    multi-agent,
+    openai-agents-sdk,
+  ]
+tags:
+  [
+    AI,
+    temporal,
+    LLM,
+    agents,
+    workflow,
+    activities,
+    human-in-the-loop,
+    OpenAI Agents SDK,
+  ]
 last_update:
   date: 2026-02-01
   author: Angela Zhou
@@ -13,9 +32,10 @@ image: /img/temporal-logo-twitter-card.png
 
 # Part 1: Setting the Stage for Your Deep Research Agent
 
-Deep research agents orchestrate multiple LLM calls—triaging queries, asking clarifying questions, planning searches, gathering information, and writing reports. But there's a catch: **what happens when an agent fails halfway through?** 
+Deep research agents orchestrate multiple LLM calls—triaging queries, asking clarifying questions, planning searches, gathering information, and writing reports. But there's a catch: **what happens when an agent fails halfway through?**
 
 Consider this scenario: Your research agent has already:
+
 1. Determined your query needs clarification ✓
 2. Generated three clarifying questions ✓
 3. Collected your answers to two of them ✓
@@ -32,6 +52,19 @@ In this tutorial, you'll transform a working (but non-durable) deep research age
 - **Resume seamlessly** after crashes or restarts
 
 We use the OpenAI Agents SDK in this tutorial because it provides a clean, minimal abstraction for building multi-agent systems—and because Temporal has a built-in integration that makes every agent call automatically durable.
+
+### Video version of this tutorial
+
+<div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+  <iframe
+    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+    src="https://www.youtube.com/embed/eyLf4Kqd6lg?rel=0&iv_load_policy=3&modestbranding=1&showinfo=0&wmode=transparent"
+    title="Build a Deep Research Agent Video"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  />
+</div>
 
 ## Prerequisites
 
@@ -92,7 +125,6 @@ Try entering a research query like _"what is the best spaghetti recipe?"_ The ag
 - **Found a bug mid-execution?** Fix it and continue running Workflows
 
 </details>
-
 
 ## Understanding the Current Architecture
 

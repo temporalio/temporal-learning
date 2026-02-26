@@ -11,7 +11,9 @@ This three-part tutorial series will walk you through building a durable, multi-
 
 - **Part 3: Running Your Application**: Create the Temporal Worker with the OpenAI Agents plugin, and test durability by surviving crashes.
 
-**[Sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!**
+:::tip 🔔 Stay Updated!
+**[Sign up here](https://pages.temporal.io/get-updates-education)** to get notified when we drop new educational content!
+:::
 
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
