@@ -335,3 +335,18 @@ html[data-theme="light"] a.button--primary:hover {
 .banner {
   width: 100%;
 }
+
+/* PushFeedback widget styling */
+feedback-button::part(button) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 16px 20px;
+  letter-spacing: 0.5px;
+  min-width: 50px;
+}
+
+feedback-button {
+  --feedback-button-background: #1a1a1a;
+  --feedback-button-color: #ffffff;
+  transform: scale(4);
+}
