@@ -7,12 +7,12 @@ last_update:
   date: 2026-03-05
   author: Nikolay Advolodkin
   editor: Angela Zhou
-title: Decouple Your Teams with Synchronous Nexus Operations
+title: Decoupling Temporal Services with Nexus
 description: Learn how to decouple teams with Temporal Nexus
 image: /img/temporal-logo-twitter-card.png
 ---
 
-# Decouple Your Teams with Synchronous Nexus Operations
+# Decoupling Temporal Services with Nexus
 
 ##### Author: Nikolay Advolodkin    |   Editor: Angela Zhou
 
@@ -72,8 +72,6 @@ The obvious fix is splitting them into microservices with REST calls. But that i
 
 The Payments workflow calls the Compliance team through a Nexus operation. If the Compliance Worker goes down mid-call, the payment workflow just...waits. When Compliance comes back, it picks up exactly where it left off. No retry logic. No data loss. No 3am page for the Payments team.
 
-<img className="nexus-image" src="/img/images/nexus.png" alt="Temporal Nexus" />
-
 The best part? The code change is almost invisible:
 
 ```java
@@ -94,7 +92,7 @@ Same method name. Same input. Same output. Completely different architecture.
 
 _The Payments team owns validation and execution (left). The Compliance team owns risk assessment, isolated behind a Nexus boundary (right). Data flows left-to-right — and if the Compliance side goes down mid-check, the payment resumes when it comes back._
 
-> **Interactive version:** Open [`nexus-decouple.html`](https://github.com/nadvolod/temporal-warmups/blob/1300a-java/exercise-1300a-nexus-sync/ui/nexus-decouple.html) in your browser to toggle between Monolith and Nexus modes with animated data flow.
+> **Interactive version:** Open [the interactive version](pathname:///html/nexus-decouple.html) to toggle between Monolith and Nexus modes with animated data flow.
 
 ### What You'll Build
 
@@ -184,6 +182,10 @@ You'll see **three completed executions** of the `PaymentProcessingWorkflow`:
 **Checkpoint 0 passed** if all 3 transactions complete with the expected results. The system works! Now let's decouple it.
 
 > **Stop the Worker** (Ctrl+C in Terminal 1) before continuing.
+
+:::tip
+** Are you enjoying this tutorial?** Feel free to leave feedback with the Feedback widget on the side and [sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
+:::
 
 ---
 
@@ -641,5 +643,3 @@ The Nexus Machinery treats unknown errors as **retryable** by default. It will a
 You've just learned the fundamental Nexus pattern: **same method call, different architecture**.
 
 From here you can explore **async Nexus handlers** using `fromWorkflowMethod()` — where the Compliance side starts a full Temporal workflow instead of running inline. That's where Nexus truly shines: long-running, durable operations across team boundaries. See the [Nexus documentation](https://docs.temporal.io/nexus) to go deeper.
-
-**[Sign up here](https://pages.temporal.io/get-updates-education)** to get notified when we drop new educational content!
