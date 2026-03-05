@@ -1,4 +1,20 @@
+---
+id: nexus-sync-tutorial
+sidebar_position: 1
+keywords: [nexus, temporal]
+tags: [nexus, temporal]
+last_update:
+  date: 2026-03-05
+  author: Nikolay Advolodkin
+  editor: Angela Zhou
+title: Decouple Your Teams with Synchronous Nexus Operations
+description: Learn how to decouple teams with Temporal Nexus
+image: /img/temporal-logo-twitter-card.png
+---
+
 # Decouple Your Teams with Synchronous Nexus Operations
+
+##### Author: Nikolay Advolodkin    |   Editor: Angela Zhou
 
 In this walkthrough, you'll take a monolithic Temporal application — where Payments and Compliance share a single Worker — and split it into two independently deployable services connected through [Temporal Nexus](https://docs.temporal.io/nexus). 
 
@@ -29,12 +45,12 @@ Two teams split this work:
 <th>Task Queue</th>
 </tr>
 <tr>
-<td><strong>&#x1F4B3; Payments</strong></td>
+<td><strong>Payments</strong></td>
 <td>Steps 1 &amp; 3 — validate and execute</td>
 <td><code>payments-processing</code></td>
 </tr>
 <tr>
-<td><strong>&#x1F50D; Compliance</strong></td>
+<td><strong>Compliance</strong></td>
 <td>Step 2 — risk assessment &amp; regulatory checks</td>
 <td><code>compliance-risk</code></td>
 </tr>
@@ -146,26 +162,26 @@ You'll see **three completed executions** of the `PaymentProcessingWorkflow`:
 <td><code>TXN-A</code></td>
 <td>$250</td>
 <td>US &#x2192; US</td>
-<td>&#x1F7E2; LOW</td>
-<td>&#x2705; <code>COMPLETED</code></td>
+<td>LOW</td>
+<td><code>COMPLETED</code></td>
 </tr>
 <tr>
 <td><code>TXN-B</code></td>
 <td>$12,000</td>
 <td>US &#x2192; UK</td>
-<td>&#x1F7E0; MEDIUM</td>
-<td>&#x2705; <code>COMPLETED</code></td>
+<td>MEDIUM</td>
+<td><code>COMPLETED</code></td>
 </tr>
 <tr>
 <td><code>TXN-C</code></td>
 <td>$75,000</td>
 <td>US &#x2192; North Korea</td>
-<td>&#x1F534; HIGH</td>
-<td>&#x1F6AB; <code>DECLINED_COMPLIANCE</code></td>
+<td>HIGH</td>
+<td><code>DECLINED_COMPLIANCE</code></td>
 </tr>
 </table>
 
-:white_check_mark: **Checkpoint 0 passed** if all 3 transactions complete with the expected results. The system works! Now let's decouple it.
+**Checkpoint 0 passed** if all 3 transactions complete with the expected results. The system works! Now let's decouple it.
 
 > **Stop the Worker** (Ctrl+C in Terminal 1) before continuing.
 
@@ -203,31 +219,31 @@ In this exercise, you're going to pull Compliance out of the Payments Worker and
 <tr>
 <td><strong>1</strong></td>
 <td><code>shared/nexus/ComplianceNexusService.java</code></td>
-<td>&#x1F7E2; Create</td>
+<td>Create</td>
 <td>Shared contract between teams</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
 <td><code>compliance/temporal/ComplianceNexusServiceImpl.java</code></td>
-<td>&#x1F7E2; Create</td>
+<td>Create</td>
 <td>Compliance handles incoming Nexus calls</td>
 </tr>
 <tr>
 <td><strong>3</strong></td>
 <td><code>compliance/temporal/ComplianceWorkerApp.java</code></td>
-<td>&#x1F7E2; Create</td>
+<td>Create</td>
 <td>Compliance gets its own worker</td>
 </tr>
 <tr>
 <td><strong>4</strong></td>
 <td><code>payments/temporal/PaymentProcessingWorkflowImpl.java</code></td>
-<td>&#x1F7E1; Modify</td>
+<td>Modify</td>
 <td>One-line swap changes the architecture</td>
 </tr>
 <tr>
 <td><strong>5</strong></td>
 <td><code>payments/temporal/PaymentsWorkerApp.java</code></td>
-<td>&#x1F7E1; Modify</td>
+<td>Modify</td>
 <td>Payments points to the new endpoint</td>
 </tr>
 </table>
@@ -368,7 +384,7 @@ cd exercise-1300a-nexus-sync/exercise
 mvn compile exec:java@compliance-worker
 ```
 
-:white_check_mark: **Checkpoint 1 passed** if you see:
+**Checkpoint 1 passed** if you see:
 ```log
 Compliance Worker started on: compliance-risk
 ```
@@ -419,8 +435,8 @@ The `scheduleToCloseTimeout` is how long the workflow is willing to wait for the
 
 <table>
 <tr>
-<th>&#x1F534; Before (Monolith)</th>
-<th>&#x1F7E2; After (Nexus)</th>
+<th>Before (Monolith)</th>
+<th>After (Nexus)</th>
 </tr>
 <tr>
 <td><code>Workflow.newActivityStub()</code></td>
@@ -503,7 +519,7 @@ cd exercise-1300a-nexus-sync/exercise
 mvn compile exec:java@starter
 ```
 
-:white_check_mark: **Checkpoint 2 passed** if you get the **exact same results** as Checkpoint 0:
+**Checkpoint 2 passed** if you get the **exact same results** as Checkpoint 0:
 
 <table>
 <tr>
@@ -513,18 +529,18 @@ mvn compile exec:java@starter
 </tr>
 <tr>
 <td><code>TXN-A</code></td>
-<td>&#x1F7E2; LOW</td>
-<td>&#x2705; <code>COMPLETED</code></td>
+<td>LOW</td>
+<td><code>COMPLETED</code></td>
 </tr>
 <tr>
 <td><code>TXN-B</code></td>
-<td>&#x1F7E0; MEDIUM</td>
-<td>&#x2705; <code>COMPLETED</code></td>
+<td>MEDIUM</td>
+<td><code>COMPLETED</code></td>
 </tr>
 <tr>
 <td><code>TXN-C</code></td>
-<td>&#x1F534; HIGH</td>
-<td>&#x1F6AB; <code>DECLINED_COMPLIANCE</code></td>
+<td>HIGH</td>
+<td><code>DECLINED_COMPLIANCE</code></td>
 </tr>
 </table>
 
