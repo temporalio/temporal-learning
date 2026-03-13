@@ -20,6 +20,14 @@ In this walkthrough, you'll take a monolithic Temporal application — where Pay
 
 You'll define a shared service contract, implement a synchronous Nexus handler, and rewire the caller — all while keeping the exact same business logic and workflow behavior. By the end, you'll understand how Nexus lets teams decouple without sacrificing durability.
 
+## What you'll learn
+
+- Register a Nexus Endpoint using the Temporal CLI
+- Define a shared Nexus Service contract between teams with `@Service` and `@Operation`
+- Implement a synchronous Nexus handler with `@ServiceImpl` and `@OperationImpl`
+- Swap a local Activity call for a durable cross-team Nexus call
+- Inspect Nexus operations in the Web UI event history
+
 ## Prerequisites
 
 Before you begin this walkthrough, ensure you have:
@@ -58,7 +66,9 @@ Two teams split this work:
 
 ### The Problem
 
-Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius.
+Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius. Toggle the interactive diagram below to **Monolith mode** to see what this looks like — click on any component to explore how the pieces fit together:
+
+<iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
 That's a problem because the Compliance team deals with sensitive regulatory work — OFAC sanctions screening, anti-money laundering (AML) monitoring, risk decisions — that requires stricter access controls, separate audit trails, and its own release cycle. Payments has none of those constraints. But because both teams share a single process, they're forced into the same failure domain, the same security perimeter, and the same deploy pipeline.
 
@@ -88,11 +98,9 @@ Same method name. Same input. Same output. Completely different architecture.
 
 ## Overview
 
-![Scenario Overview: Payments and Compliance teams separated by a Nexus security boundary, with animated transaction data flowing through validate, compliance check, and execute steps](./ui/scenario-overview.svg)
+![Architecture Overview: Payments and Compliance teams separated by a Nexus security boundary, with animated data flowing through validate, compliance check, and execute steps](./ui/architecture-overview.svg)
 
 _The Payments team owns validation and execution (left). The Compliance team owns risk assessment, isolated behind a Nexus boundary (right). Data flows left-to-right — and if the Compliance side goes down mid-check, the payment resumes when it comes back._
-
-> **Interactive version:** Open [the interactive version](pathname:///html/nexus-decouple.html) to toggle between Monolith and Nexus modes with animated data flow.
 
 ### What You'll Build
 
@@ -144,7 +152,7 @@ mvn compile exec:java@starter
 
 You'll see **three completed executions** of the `PaymentProcessingWorkflow`:
 
-<a href="https://i.postimg.cc/DZyx0wmD/completed-workflow-executions.png" target="_blank"><img src="https://i.postimg.cc/DZyx0wmD/completed-workflow-executions.png" alt="Temporal Web UI showing completed executions of PaymentProcessingWorkflow" /></a>
+![Three transactions with different risk levels: TXN-A approved (low risk), TXN-B approved (medium risk), TXN-C declined (high risk, OFAC-sanctioned)](./ui/three-transactions.svg)
 
 **Expected results:**
 
@@ -191,19 +199,25 @@ You'll see **three completed executions** of the `PaymentProcessingWorkflow`:
 
 ## Nexus Building Blocks
 
-Before diving into code, here's a quick map of the 4 Nexus concepts you'll encounter:
+You already know how to expose logic as an **Activity** on a Worker. Nexus adds four concepts that let you expose that same logic **across team boundaries**:
 
 ```text
-Endpoint    →    Registry    →    Service    →    Operation
-(phone #)        (phone book)     (department)    (specific request)
+Service    →    Operation    →    Endpoint    →    Registry
+(contract)      (method)          (routing rule)    (directory)
 ```
 
-- [**Nexus Endpoint**](https://docs.temporal.io/nexus/endpoints) — A named entry point that routes requests to the right Namespace and Task Queue, so the caller doesn't need to know where the handler lives
-- [**Nexus Registry**](https://docs.temporal.io/nexus/registry) — The directory where all Endpoints are registered
-- [**Nexus Service**](https://docs.temporal.io/nexus/services) — A named collection of operations — the contract between teams (e.g., the `ComplianceNexusService` interface)
-- [**Nexus Operation**](https://docs.temporal.io/nexus/operations) — A single callable method on a Service, marked with `@Operation` (e.g., `checkCompliance`)
+- [**Nexus Service**](https://docs.temporal.io/nexus/services) — A named collection of operations — the contract between teams. In this tutorial, that's the `ComplianceNexusService` interface. Think of it like the Activity interface you already have, but shared across services instead of internal to one Worker.
+- [**Nexus Operation**](https://docs.temporal.io/nexus/operations) — A single callable method on a Service, marked with `@Operation` (e.g., `checkCompliance`). This is the Nexus equivalent of an Activity method — the actual work the other team exposes.
+- [**Nexus Endpoint**](https://docs.temporal.io/nexus/endpoints) — A named routing rule that connects a caller to the right Namespace and Task Queue, so the caller doesn't need to know where the handler lives. You create `compliance-endpoint` and point it at the `compliance-risk` task queue.
+- [**Nexus Registry**](https://docs.temporal.io/nexus/registry) — The directory in Temporal where all Endpoints are registered. You register the endpoint once; callers look it up by name.
 
-In this exercise, you'll create an **Endpoint** in the **Registry** (Checkpoint 0.5) and define a **Service** with **Operations** (TODOs 1-2). The caller dials the Endpoint name — Temporal routes the rest.
+In this exercise, you'll define a **Service** with an **Operation** (TODOs 1-2), then create an **Endpoint** in the **Registry** (Checkpoint 0.5) so the Payments team can reach it.
+
+### Quick match
+
+**Test yourself**: can you match each Nexus concept to what it represents in our payments scenario?
+
+<iframe src="/html/nexus-quick-match.html" width="100%" height="700" style={{border: 'none', borderRadius: '8px'}} title="Nexus Building Blocks — Quick Match"></iframe>
 
 ---
 
@@ -464,6 +478,15 @@ The `scheduleToCloseTimeout` is how long the workflow is willing to wait for the
 - All surrounding logic — untouched
 
 > **Where does the endpoint come from?** Not here! The workflow only knows the **service** (`ComplianceNexusService`). The **endpoint** (`"compliance-endpoint"`) is configured in the worker (TODO 5). This keeps the workflow portable.
+
+### Quick Check
+
+<details>
+<summary>Why does the workflow use <code>ComplianceNexusService.class</code> but NOT specify the endpoint name <code>"compliance-endpoint"</code>?</summary>
+
+The workflow only knows the **service contract** (the interface). The **endpoint** (where the call actually routes) is configured in the Worker (TODO 5). This separation keeps the workflow portable — you could point it at a different endpoint (staging, production) without changing workflow code.
+
+</details>
 
 ---
 

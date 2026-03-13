@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Building Blocks — Quick Match</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --nexus-color: #f97316;
+    --nexus-glow: rgba(249, 115, 22, 0.4);
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --panel-bg: #1c2128;
+    --success: #22c55e;
+    --error: #ef4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .container {
+    max-width: 720px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  /* Drop targets */
+  .match-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .concept-label {
+    width: 130px;
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--nexus-color);
+  }
+
+  .drop-zone {
+    flex: 1;
+    min-height: 52px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .drop-zone.drag-over {
+    border-color: var(--nexus-color);
+    background: rgba(249, 115, 22, 0.06);
+  }
+
+  .drop-zone.filled {
+    border-style: solid;
+    border-color: var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    justify-content: flex-start;
+  }
+
+  .drop-zone.correct {
+    border-color: var(--success);
+    background: rgba(34, 197, 94, 0.08);
+  }
+
+  .drop-zone.incorrect {
+    border-color: var(--error);
+    background: rgba(239, 68, 68, 0.08);
+  }
+
+  /* Draggable items */
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+    min-height: 52px;
+    padding: 4px 0;
+  }
+
+  .option {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    line-height: 1.4;
+  }
+
+  .option:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .option:active, .option.dragging {
+    cursor: grabbing;
+    opacity: 0.6;
+    transform: scale(0.97);
+  }
+
+  /* When placed in a drop zone, keep visible */
+  .drop-zone .option.placed {
+    display: block;
+  }
+
+  /* When placed, hide from the pool */
+  #optionsPool .option.placed {
+    display: none;
+  }
+
+  /* In drop zone */
+  .drop-zone .option {
+    cursor: grab;
+    margin: 0;
+  }
+
+  .drop-zone .option:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Buttons */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  button {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  button:hover {
+    background: var(--surface);
+    border-color: var(--text-muted);
+  }
+
+  button.primary {
+    background: var(--nexus-color);
+    border-color: var(--nexus-color);
+    color: #fff;
+  }
+
+  button.primary:hover {
+    background: #ea6c0a;
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Result banner */
+  .result {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .result.show { display: block; }
+
+  .result.perfect {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+  }
+
+  .result.partial {
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid var(--nexus-color);
+    color: var(--nexus-color);
+  }
+
+  .result.none {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .match-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+    .concept-label { width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Nexus Building Blocks — Quick Match</h1>
+  <p class="subtitle">Drag each description to the Nexus concept it matches.</p>
+
+  <div class="options" id="optionsPool">
+    <div class="option" draggable="true" data-answer="operation">The <code>checkCompliance</code> method — a single callable action</div>
+    <div class="option" draggable="true" data-answer="endpoint"><code>compliance-endpoint</code> — routes requests to the <code>compliance-risk</code> task queue</div>
+    <div class="option" draggable="true" data-answer="service">The <code>ComplianceNexusService</code> interface — the contract between teams</div>
+    <div class="option" draggable="true" data-answer="registry">The directory in Temporal where all endpoints are registered</div>
+  </div>
+
+  <div class="match-row">
+    <div class="concept-label">Service</div>
+    <div class="drop-zone" data-concept="service"><span class="placeholder">Drop here</span></div>
+  </div>
+  <div class="match-row">
+    <div class="concept-label">Operation</div>
+    <div class="drop-zone" data-concept="operation"><span class="placeholder">Drop here</span></div>
+  </div>
+  <div class="match-row">
+    <div class="concept-label">Endpoint</div>
+    <div class="drop-zone" data-concept="endpoint"><span class="placeholder">Drop here</span></div>
+  </div>
+  <div class="match-row">
+    <div class="concept-label">Registry</div>
+    <div class="drop-zone" data-concept="registry"><span class="placeholder">Drop here</span></div>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="checkBtn" disabled>Check Answers</button>
+    <button id="resetBtn">Reset</button>
+    <button id="revealBtn">See Answers</button>
+  </div>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const pool = document.getElementById('optionsPool');
+  const zones = document.querySelectorAll('.drop-zone');
+  const checkBtn = document.getElementById('checkBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const revealBtn = document.getElementById('revealBtn');
+  const resultEl = document.getElementById('result');
+  let draggedEl = null;
+
+  // Shuffle options on load
+  (function shuffle() {
+    const items = Array.from(pool.children);
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      pool.appendChild(items[j]);
+    }
+  })();
+
+  // Drag from pool
+  pool.addEventListener('dragstart', e => {
+    if (!e.target.classList.contains('option')) return;
+    draggedEl = e.target;
+    draggedEl.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  pool.addEventListener('dragend', e => {
+    if (draggedEl) draggedEl.classList.remove('dragging');
+    draggedEl = null;
+  });
+
+  // Also allow dragging out of drop zones
+  zones.forEach(zone => {
+    zone.addEventListener('dragstart', e => {
+      if (!e.target.classList.contains('option')) return;
+      draggedEl = e.target;
+      draggedEl.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    zone.addEventListener('dragend', e => {
+      if (draggedEl) draggedEl.classList.remove('dragging');
+      draggedEl = null;
+    });
+  });
+
+  // Drop zones
+  zones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+
+    zone.addEventListener('dragleave', () => {
+      zone.classList.remove('drag-over');
+    });
+
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      if (!draggedEl) return;
+
+      // If zone already has an option, move it back to pool
+      const existing = zone.querySelector('.option');
+      if (existing) {
+        existing.classList.remove('placed');
+        pool.appendChild(existing);
+      }
+
+      // Place dragged element
+      const placeholder = zone.querySelector('.placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+      zone.classList.add('filled');
+      zone.appendChild(draggedEl);
+      draggedEl.classList.add('placed');
+      draggedEl.classList.remove('dragging');
+      draggedEl.style.display = '';
+      draggedEl = null;
+
+      updateCheckButton();
+      clearResults();
+    });
+  });
+
+  // Allow dropping back into pool
+  pool.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!draggedEl) return;
+
+    // Return to pool
+    const parentZone = draggedEl.closest('.drop-zone');
+    if (parentZone) {
+      parentZone.classList.remove('filled');
+      const placeholder = parentZone.querySelector('.placeholder');
+      if (placeholder) placeholder.style.display = '';
+    }
+    draggedEl.classList.remove('placed', 'dragging');
+    pool.appendChild(draggedEl);
+    draggedEl = null;
+
+    updateCheckButton();
+    clearResults();
+  });
+
+  // Click to return to pool
+  zones.forEach(zone => {
+    zone.addEventListener('click', e => {
+      const option = zone.querySelector('.option');
+      if (!option) return;
+      option.classList.remove('placed');
+      pool.appendChild(option);
+      zone.classList.remove('filled', 'correct', 'incorrect');
+      const placeholder = zone.querySelector('.placeholder');
+      if (placeholder) placeholder.style.display = '';
+      updateCheckButton();
+      clearResults();
+    });
+  });
+
+  function updateCheckButton() {
+    const filled = document.querySelectorAll('.drop-zone.filled').length;
+    checkBtn.disabled = filled < 4;
+  }
+
+  function clearResults() {
+    zones.forEach(z => z.classList.remove('correct', 'incorrect'));
+    resultEl.classList.remove('show');
+  }
+
+  // Check answers
+  checkBtn.addEventListener('click', () => {
+    let correct = 0;
+    zones.forEach(zone => {
+      const concept = zone.dataset.concept;
+      const option = zone.querySelector('.option');
+      zone.classList.remove('correct', 'incorrect');
+      if (option && option.dataset.answer === concept) {
+        zone.classList.add('correct');
+        correct++;
+      } else if (option) {
+        zone.classList.add('incorrect');
+      }
+    });
+
+    resultEl.classList.add('show');
+    if (correct === 4) {
+      resultEl.className = 'result show perfect';
+      resultEl.textContent = 'All 4 correct! You\'ve got the building blocks down. Time to build.';
+    } else if (correct > 0) {
+      resultEl.className = 'result show partial';
+      resultEl.textContent = `${correct}/4 correct. Click the red ones to return them and try again.`;
+    } else {
+      resultEl.className = 'result show none';
+      resultEl.textContent = '0/4 — review the Nexus Building Blocks section in the tutorial and try again.';
+    }
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    zones.forEach(zone => {
+      const option = zone.querySelector('.option');
+      if (option) {
+        option.classList.remove('placed');
+        pool.appendChild(option);
+      }
+      zone.classList.remove('filled', 'correct', 'incorrect');
+      const placeholder = zone.querySelector('.placeholder');
+      if (placeholder) placeholder.style.display = '';
+    });
+    clearResults();
+    updateCheckButton();
+  });
+
+  // See Answers — place each option in its correct zone
+  revealBtn.addEventListener('click', () => {
+    // Return all options to pool first
+    zones.forEach(zone => {
+      const option = zone.querySelector('.option');
+      if (option) {
+        option.classList.remove('placed');
+        pool.appendChild(option);
+      }
+      zone.classList.remove('filled', 'correct', 'incorrect');
+      const placeholder = zone.querySelector('.placeholder');
+      if (placeholder) placeholder.style.display = '';
+    });
+
+    // Place each option in its correct zone
+    const allOptions = Array.from(pool.querySelectorAll('.option'));
+    allOptions.forEach(option => {
+      const answer = option.dataset.answer;
+      const targetZone = document.querySelector(`.drop-zone[data-concept="${answer}"]`);
+      if (targetZone) {
+        const placeholder = targetZone.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+        targetZone.classList.add('filled', 'correct');
+        targetZone.appendChild(option);
+        option.classList.add('placed');
+      }
+    });
+
+    resultEl.className = 'result show perfect';
+    resultEl.textContent = 'Here are the correct answers. Click Reset to try again on your own.';
+    checkBtn.disabled = true;
+  });
+</script>
+
+</body>
+</html>
