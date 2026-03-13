@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 920 380" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="payGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#1a2940"/>
+    </linearGradient>
+    <linearGradient id="compGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a3d2a"/>
+      <stop offset="100%" stop-color="#162b20"/>
+    </linearGradient>
+    <linearGradient id="nexusGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1117"/>
+      <stop offset="15%" stop-color="#f97316"/>
+      <stop offset="85%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#0f1117"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowBig">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Full path: validate &#x2192; nexus &#x2192; compliance &#x2192; checker &#x2192; nexus &#x2192; execute -->
+    <path id="fullPath" d="M 137,230 L 325,230 L 458,260 L 600,230 L 790,230 L 600,230 L 458,260 L 325,270 L 200,310 L 137,310" fill="none" stroke="none"/>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="380" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="460" y="34" text-anchor="middle" fill="#e6edf3" font-size="17" font-weight="700">Nexus Sync: Decouple Your Teams</text>
+  <text x="460" y="54" text-anchor="middle" fill="#e6edf3" font-size="12">Separate security perimeters. Independent blast radii. Durable cross-team calls.</text>
+
+  <!-- Security callout pill -->
+  <rect x="190" y="68" width="540" height="28" rx="14" fill="#1c2128" stroke="#f97316" stroke-opacity="0.4"/>
+  <text x="460" y="86" text-anchor="middle" fill="#f97316" font-size="11" font-weight="600">Compliance handles OFAC sanctions, AML monitoring, regulatory risk &#x2014; it needs its own perimeter</text>
+
+  <!-- ======= PAYMENTS TEAM ZONE ======= -->
+  <rect x="30" y="115" width="400" height="240" rx="12" fill="url(#payGrad)" stroke="#3b82f6" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="50" y="138" fill="#3b82f6" font-size="11" font-weight="700" letter-spacing="0.08em">PAYMENTS TEAM</text>
+  <text x="50" y="153" fill="#e6edf3" font-size="9">Security perimeter #1 &#x00B7; Deploy pipeline #1 &#x00B7; Blast radius #1</text>
+
+  <!-- Blast radius dashed border -->
+  <rect x="34" y="119" width="392" height="232" rx="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.3"/>
+
+  <!-- Step 1: Validate -->
+  <rect x="55" y="195" width="165" height="70" rx="8" fill="#1c2128" stroke="#30363d"/>
+  <text x="70" y="218" fill="#3b82f6" font-size="10" font-weight="700">STEP 1</text>
+  <text x="137" y="232" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">validatePayment</text>
+  <text x="137" y="250" text-anchor="middle" fill="#e6edf3" font-size="10">amount, accounts, format</text>
+
+  <!-- Step 3: Execute -->
+  <rect x="55" y="280" width="165" height="60" rx="8" fill="#1c2128" stroke="#30363d"/>
+  <text x="70" y="303" fill="#3b82f6" font-size="10" font-weight="700">STEP 3</text>
+  <text x="137" y="317" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">executePayment</text>
+  <text x="137" y="333" text-anchor="middle" fill="#e6edf3" font-size="10">call payment gateway</text>
+
+  <!-- Workflow orchestrator box -->
+  <rect x="240" y="195" width="170" height="155" rx="8" fill="#1c2128" fill-opacity="0.3" stroke="#3b82f6" stroke-opacity="0.2" stroke-dasharray="5 3"/>
+  <text x="325" y="215" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600">PaymentProcessing</text>
+  <text x="325" y="228" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600">Workflow</text>
+  <text x="325" y="245" text-anchor="middle" fill="#e6edf3" font-size="9">durable orchestrator</text>
+
+  <!-- Internal arrows -->
+  <line x1="220" y1="230" x2="238" y2="230" stroke="#3b82f6" stroke-width="1" stroke-dasharray="3 2" opacity="0.5"/>
+  <path d="M 280,270 Q 260,290 220,310" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="3 2" opacity="0.5"/>
+
+  <!-- Arrow: workflow to nexus -->
+  <line x1="410" y1="260" x2="448" y2="260" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+  <polygon points="445,255 455,260 445,265" fill="#f97316" opacity="0.6"/>
+
+  <!-- ======= NEXUS BOUNDARY ======= -->
+  <rect x="455" y="115" width="6" height="240" rx="3" fill="url(#nexusGrad)" filter="url(#glow)" opacity="0.8"/>
+
+  <!-- Nexus label -->
+  <rect x="430" y="243" width="56" height="50" rx="7" fill="#1c2128" stroke="#f97316" stroke-width="1.5" filter="url(#glow)"/>
+  <text x="458" y="260" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700" letter-spacing="0.05em">NEXUS</text>
+  <text x="458" y="274" text-anchor="middle" fill="#e6edf3" font-size="8">sync RPC</text>
+  <text x="458" y="286" text-anchor="middle" fill="#e6edf3" font-size="8">durable</text>
+
+  <!-- Arrow: nexus to compliance -->
+  <line x1="461" y1="260" x2="498" y2="260" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+  <polygon points="495,255 505,260 495,265" fill="#f97316" opacity="0.6"/>
+
+  <!-- ======= COMPLIANCE TEAM ZONE ======= -->
+  <rect x="490" y="115" width="400" height="240" rx="12" fill="url(#compGrad)" stroke="#22c55e" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="510" y="138" fill="#22c55e" font-size="11" font-weight="700" letter-spacing="0.08em">COMPLIANCE TEAM</text>
+  <text x="510" y="153" fill="#e6edf3" font-size="9">Security perimeter #2 &#x00B7; Deploy pipeline #2 &#x00B7; Blast radius #2</text>
+
+  <!-- Blast radius dashed border -->
+  <rect x="494" y="119" width="392" height="232" rx="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.3"/>
+
+  <!-- Step 2: Nexus Handler -->
+  <rect x="515" y="195" width="170" height="70" rx="8" fill="#1c2128" stroke="#30363d"/>
+  <text x="530" y="218" fill="#22c55e" font-size="10" font-weight="700">STEP 2</text>
+  <text x="600" y="232" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">NexusServiceImpl</text>
+  <text x="600" y="250" text-anchor="middle" fill="#e6edf3" font-size="10">receives cross-team calls</text>
+
+  <!-- ComplianceChecker -->
+  <rect x="710" y="195" width="160" height="70" rx="8" fill="#1c2128" stroke="#30363d"/>
+  <text x="790" y="222" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">ComplianceChecker</text>
+  <text x="790" y="240" text-anchor="middle" fill="#e6edf3" font-size="10">OFAC &#x00B7; AML &#x00B7; Risk Rules</text>
+  <text x="790" y="254" text-anchor="middle" fill="#e6edf3" font-size="9">sanctioned countries, thresholds</text>
+
+  <!-- Arrow: handler to checker -->
+  <line x1="685" y1="230" x2="708" y2="230" stroke="#22c55e" stroke-width="1.5" opacity="0.5"/>
+  <polygon points="705,225 715,230 705,235" fill="#22c55e" opacity="0.5"/>
+
+  <!-- ======= ANIMATED DATA FLOW ======= -->
+  <g filter="url(#glowBig)">
+    <circle r="8" fill="#3b82f6">
+      <animateMotion dur="7s" repeatCount="indefinite" keyPoints="0;0.2;0.28;0.42;0.5;0.58;0.72;0.85;1" keyTimes="0;0.15;0.22;0.38;0.5;0.58;0.72;0.88;1" calcMode="linear">
+        <mpath xlink:href="#fullPath"/>
+      </animateMotion>
+      <animate attributeName="fill" values="#3b82f6;#3b82f6;#f97316;#22c55e;#22c55e;#22c55e;#f97316;#3b82f6;#3b82f6" keyTimes="0;0.15;0.22;0.38;0.5;0.58;0.72;0.88;1" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="8;8;12;8;8;8;12;8;8" keyTimes="0;0.15;0.22;0.38;0.5;0.58;0.72;0.88;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Label follows the dot -->
+  <text font-size="7" font-weight="700" fill="#fff" text-anchor="middle" dy="-14">
+    <animateMotion dur="7s" repeatCount="indefinite" keyPoints="0;0.2;0.28;0.42;0.5;0.58;0.72;0.85;1" keyTimes="0;0.15;0.22;0.38;0.5;0.58;0.72;0.88;1" calcMode="linear">
+      <mpath xlink:href="#fullPath"/>
+    </animateMotion>
+    $12,000
+  </text>
+
+  <!-- Nexus crossing pulse -->
+  <circle cx="458" cy="260" r="4" fill="#f97316" opacity="0">
+    <animate attributeName="r" values="4;18;4;4;18;4" keyTimes="0;0.11;0.22;0.5;0.61;1" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.4;0;0;0.4;0" keyTimes="0;0.11;0.22;0.5;0.61;1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Footer -->
+  <text x="460" y="372" text-anchor="middle" fill="#e6edf3" font-size="10">Same method call syntax. Same results. Different security perimeters. Different blast radii.</text>
+</svg>
