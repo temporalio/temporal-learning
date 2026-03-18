@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match the Change — Monolith to Nexus</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --nexus-color: #f97316;
+    --nexus-glow: rgba(249, 115, 22, 0.4);
+    --payments-color: #3b82f6;
+    --compliance-color: #22c55e;
+    --high-risk: #ef4444;
+    --panel-bg: #1c2128;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .game {
+    display: flex;
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+
+  .column {
+    flex: 1;
+  }
+  .column-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .column-title.before { color: var(--high-risk); }
+  .column-title.after { color: var(--compliance-color); }
+
+  /* Left side: monolith items with drop zones */
+  .match-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .monolith-item {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+    color: var(--high-risk);
+    flex: 1;
+  }
+
+  .arrow {
+    color: var(--text-muted);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .drop-zone {
+    flex: 1;
+    min-height: 42px;
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .drop-zone.drag-over {
+    border-color: var(--nexus-color);
+    background: rgba(249, 115, 22, 0.06);
+  }
+  .drop-zone.filled {
+    border-style: solid;
+    border-color: var(--border);
+    background: var(--panel-bg);
+    justify-content: flex-start;
+  }
+  .drop-zone.correct {
+    border-color: var(--compliance-color);
+    background: rgba(34, 197, 94, 0.06);
+  }
+  .drop-zone.incorrect {
+    border-color: var(--high-risk);
+    background: rgba(239, 68, 68, 0.06);
+    animation: shake 0.4s ease-in-out;
+  }
+  .drop-zone .placeholder {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-3px); }
+  }
+
+  /* Draggable nexus items */
+  .drag-pool {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-height: 60px;
+  }
+  .drag-pool-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+
+  .drag-item {
+    background: var(--panel-bg);
+    border: 1px solid var(--compliance-color);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+    color: var(--compliance-color);
+    cursor: grab;
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .drag-item:hover {
+    border-color: var(--nexus-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .drag-item:active, .drag-item.dragging {
+    cursor: grabbing;
+    opacity: 0.6;
+  }
+  .drag-item.placed {
+    cursor: grab;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--text-muted); }
+  .btn.primary {
+    background: var(--nexus-color);
+    border-color: var(--nexus-color);
+    color: black;
+    font-weight: 600;
+  }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn.show-answers {
+    border-color: var(--compliance-color);
+    color: var(--compliance-color);
+  }
+  .btn.show-answers:hover {
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  /* Result message */
+  .result {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  .result.success { color: var(--compliance-color); }
+  .result.partial { color: var(--nexus-color); }
+
+  /* What stayed the same */
+  .stayed-same {
+    max-width: 800px;
+    margin: 20px auto 0;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .stayed-same .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .stayed-same ul {
+    list-style: none;
+    padding: 0;
+  }
+  .stayed-same li {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 3px 0;
+  }
+  .stayed-same li code {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 11px;
+    color: var(--payments-color);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Match the Change: Monolith to Nexus</h1>
+  <p>Drag each Nexus replacement to its matching monolith API on the right</p>
+</div>
+
+<div class="game" id="game">
+  <div class="column" style="flex: 2;">
+    <div class="column-title before">Before (Monolith) → After (Nexus)</div>
+
+    <div class="match-row">
+      <div class="monolith-item">Workflow.newActivityStub()</div>
+      <div class="arrow">→</div>
+      <div class="drop-zone" id="drop-0" data-answer="0">
+        <span class="placeholder">drop here</span>
+      </div>
+    </div>
+
+    <div class="match-row">
+      <div class="monolith-item">ComplianceActivity.class</div>
+      <div class="arrow">→</div>
+      <div class="drop-zone" id="drop-1" data-answer="1">
+        <span class="placeholder">drop here</span>
+      </div>
+    </div>
+
+    <div class="match-row">
+      <div class="monolith-item">ActivityOptions</div>
+      <div class="arrow">→</div>
+      <div class="drop-zone" id="drop-2" data-answer="2">
+        <span class="placeholder">drop here</span>
+      </div>
+    </div>
+
+    <div class="match-row">
+      <div class="monolith-item">complianceActivity.</div>
+      <div class="arrow">→</div>
+      <div class="drop-zone" id="drop-3" data-answer="3">
+        <span class="placeholder">drop here</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drag-pool" id="dragPool">
+  <div class="drag-pool-label">Nexus replacements (drag these)</div>
+</div>
+
+<div class="result" id="result"></div>
+
+<div class="controls">
+  <button class="btn" onclick="resetGame()">Reset</button>
+  <button class="btn primary" onclick="checkAnswers()">Check Answers</button>
+  <button class="btn show-answers" onclick="showAnswers()">Show Answers</button>
+</div>
+
+<div class="stayed-same">
+  <div class="label">What stayed the same</div>
+  <ul>
+    <li><code>.checkCompliance(compReq)</code> — identical call</li>
+    <li><code>ComplianceResult</code> — same return type</li>
+    <li>All surrounding logic — untouched</li>
+  </ul>
+</div>
+
+<script>
+var answers = [
+  { id: 0, text: 'Workflow.newNexusServiceStub()' },
+  { id: 1, text: 'ComplianceNexusService.class' },
+  { id: 2, text: 'NexusServiceOptions + scheduleToCloseTimeout' },
+  { id: 3, text: 'complianceService.' },
+];
+
+var dragState = null;
+var placements = {}; // dropId -> answerId
+var answerLocations = {}; // answerId -> 'pool' | dropId
+
+function init() {
+  // Shuffle answers for the pool
+  var shuffled = answers.slice().sort(function() { return Math.random() - 0.5; });
+  var pool = document.getElementById('dragPool');
+  // Keep the label
+  var label = pool.querySelector('.drag-pool-label');
+  pool.innerHTML = '';
+  pool.appendChild(label);
+
+  shuffled.forEach(function(a) {
+    var el = createDragItem(a);
+    pool.appendChild(el);
+    answerLocations[a.id] = 'pool';
+  });
+
+  setupDropZones();
+}
+
+function createDragItem(answer) {
+  var el = document.createElement('div');
+  el.className = 'drag-item';
+  el.textContent = answer.text;
+  el.setAttribute('data-id', answer.id);
+  el.draggable = true;
+
+  el.addEventListener('dragstart', function(e) {
+    dragState = answer.id;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', answer.id);
+  });
+
+  el.addEventListener('dragend', function() {
+    el.classList.remove('dragging');
+    dragState = null;
+    document.querySelectorAll('.drop-zone').forEach(function(z) {
+      z.classList.remove('drag-over');
+    });
+  });
+
+  // Touch support
+  el.addEventListener('touchstart', function(e) {
+    dragState = answer.id;
+    el.classList.add('dragging');
+  }, { passive: true });
+
+  el.addEventListener('touchend', function(e) {
+    el.classList.remove('dragging');
+    if (dragState === null) return;
+
+    var touch = e.changedTouches[0];
+    var target = document.elementFromPoint(touch.clientX, touch.clientY);
+    var dropZone = target ? target.closest('.drop-zone') : null;
+
+    if (dropZone) {
+      handleDrop(dropZone, dragState);
+    }
+
+    dragState = null;
+    document.querySelectorAll('.drop-zone').forEach(function(z) {
+      z.classList.remove('drag-over');
+    });
+  });
+
+  return el;
+}
+
+function setupDropZones() {
+  document.querySelectorAll('.drop-zone').forEach(function(zone) {
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+
+    zone.addEventListener('dragleave', function() {
+      zone.classList.remove('drag-over');
+    });
+
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      var answerId = parseInt(e.dataTransfer.getData('text/plain'));
+      handleDrop(zone, answerId);
+    });
+
+    // Touch hover
+    zone.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      var touch = e.touches[0];
+      var target = document.elementFromPoint(touch.clientX, touch.clientY);
+      document.querySelectorAll('.drop-zone').forEach(function(z) {
+        z.classList.remove('drag-over');
+      });
+      var dz = target ? target.closest('.drop-zone') : null;
+      if (dz) dz.classList.add('drag-over');
+    });
+  });
+}
+
+function handleDrop(zone, answerId) {
+  var dropId = zone.id;
+
+  // If this zone already has something, send it back to pool
+  if (placements[dropId] !== undefined) {
+    sendToPool(placements[dropId]);
+  }
+
+  // If this answer was in another zone, clear that zone
+  if (answerLocations[answerId] && answerLocations[answerId] !== 'pool') {
+    var prevZone = document.getElementById(answerLocations[answerId]);
+    delete placements[answerLocations[answerId]];
+    prevZone.innerHTML = '<span class="placeholder">drop here</span>';
+    prevZone.classList.remove('filled', 'correct', 'incorrect');
+  }
+
+  // Remove from pool if there
+  var poolItem = document.querySelector('#dragPool .drag-item[data-id="' + answerId + '"]');
+  if (poolItem) poolItem.remove();
+
+  // Place in zone
+  var answer = answers[answerId];
+  var el = createDragItem(answer);
+  el.classList.add('placed');
+  zone.innerHTML = '';
+  zone.appendChild(el);
+  zone.classList.add('filled');
+  zone.classList.remove('correct', 'incorrect');
+
+  placements[dropId] = answerId;
+  answerLocations[answerId] = dropId;
+
+  // Clear result
+  document.getElementById('result').textContent = '';
+  document.getElementById('result').className = 'result';
+}
+
+function sendToPool(answerId) {
+  var answer = answers[answerId];
+  var pool = document.getElementById('dragPool');
+  var el = createDragItem(answer);
+  pool.appendChild(el);
+  answerLocations[answerId] = 'pool';
+}
+
+function checkAnswers() {
+  var correct = 0;
+  var total = answers.length;
+
+  for (var i = 0; i < total; i++) {
+    var dropId = 'drop-' + i;
+    var zone = document.getElementById(dropId);
+    var expectedAnswer = parseInt(zone.getAttribute('data-answer'));
+
+    zone.classList.remove('correct', 'incorrect');
+
+    if (placements[dropId] === expectedAnswer) {
+      zone.classList.add('correct');
+      correct++;
+    } else if (placements[dropId] !== undefined) {
+      zone.classList.add('incorrect');
+    }
+  }
+
+  var result = document.getElementById('result');
+  if (correct === total) {
+    result.textContent = correct + '/' + total + ' correct! Same shape, completely different architecture.';
+    result.className = 'result success';
+  } else {
+    result.textContent = correct + '/' + total + ' correct \u2014 try again!';
+    result.className = 'result partial';
+  }
+}
+
+function showAnswers() {
+  // Clear everything and place correct answers
+  for (var i = 0; i < answers.length; i++) {
+    var dropId = 'drop-' + i;
+    var zone = document.getElementById(dropId);
+    var expectedAnswer = parseInt(zone.getAttribute('data-answer'));
+    var answer = answers[expectedAnswer];
+
+    // Remove old item from pool if exists
+    var poolItem = document.querySelector('#dragPool .drag-item[data-id="' + expectedAnswer + '"]');
+    if (poolItem) poolItem.remove();
+
+    // Place correct answer
+    var el = document.createElement('div');
+    el.className = 'drag-item placed';
+    el.textContent = answer.text;
+    el.setAttribute('data-id', expectedAnswer);
+    el.draggable = false;
+    el.style.cursor = 'default';
+
+    zone.innerHTML = '';
+    zone.appendChild(el);
+    zone.classList.add('filled', 'correct');
+    zone.classList.remove('incorrect');
+
+    placements[dropId] = expectedAnswer;
+    answerLocations[expectedAnswer] = dropId;
+  }
+
+  var result = document.getElementById('result');
+  result.textContent = '4/4 \u2014 Answers revealed. Same shape, completely different architecture.';
+  result.className = 'result success';
+}
+
+function resetGame() {
+  placements = {};
+  answerLocations = {};
+
+  document.querySelectorAll('.drop-zone').forEach(function(zone) {
+    zone.innerHTML = '<span class="placeholder">drop here</span>';
+    zone.classList.remove('filled', 'correct', 'incorrect');
+  });
+
+  document.getElementById('result').textContent = '';
+  document.getElementById('result').className = 'result';
+
+  init();
+}
+
+init();
+</script>
+</body>
+</html>

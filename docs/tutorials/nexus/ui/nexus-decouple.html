@@ -525,7 +525,6 @@
 
 <header>
   <div class="badge">NEXUS</div>
-  <h1>Nexus Sync — Decouple Your Teams</h1>
   <span class="subtitle">Before & After: Monolith vs Nexus-Decoupled Architecture</span>
 </header>
 
@@ -539,7 +538,7 @@
       TXN-B &middot; $12K &middot; US&rarr;UK
     </button>
     <button class="txn-btn" data-txn="C" onclick="selectTxn('C', this)">
-      TXN-C &middot; $75K &middot; US&rarr;&#x1F6AB;
+      TXN-C &middot; $75K &middot; US&rarr;US
     </button>
   </div>
 
@@ -614,7 +613,6 @@
       <div class="nexus-line"></div>
       <div class="nexus-label-box" id="nexusBox">
         <div class="nx-title">NEXUS</div>
-        <div class="nx-sub">durable RPC</div>
       </div>
     </div>
 
@@ -661,7 +659,7 @@ const TXN = {
        explanation: 'Routine domestic/standard international transfer. No regulatory concerns.' },
   B: { id: 'TXN-B', amount: '$12,000', route: 'US \u2192 UK', risk: 'MEDIUM', approved: true,
        explanation: 'International transfer above $10K threshold. Approved with AML monitoring note.' },
-  C: { id: 'TXN-C', amount: '$75,000', route: 'US \u2192 North Korea', risk: 'HIGH', approved: false,
+  C: { id: 'TXN-C', amount: '$75,000', route: 'US \u2192 US', risk: 'HIGH', approved: false,
        explanation: 'Destination/source country is OFAC-sanctioned. Transaction blocked per regulatory requirements.' },
 };
 

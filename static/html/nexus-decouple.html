@@ -59,7 +59,7 @@
     font-size: 12px;
     font-weight: 600;
   }
-  header .subtitle { color: var(--text-muted); font-size: 13px; margin-left: auto; }
+  header .subtitle { color: var(--text); font-size: 15px; margin-left: auto; line-height: 1.5; }
 
   /* ── Controls row ────────────────────────────────────── */
   .controls {
@@ -71,23 +71,6 @@
     gap: 16px;
     flex-wrap: wrap;
   }
-  .controls label { color: var(--text-muted); font-size: 13px; font-weight: 500; }
-
-  .txn-selector { display: flex; gap: 8px; }
-  .txn-btn {
-    padding: 6px 16px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.15s;
-  }
-  .txn-btn:hover { border-color: var(--text-muted); color: var(--text); }
-  .txn-btn.active { border-color: var(--nexus-color); color: var(--nexus-color); background: rgba(249,115,22,0.1); }
-
   .mode-toggle {
     margin-left: auto;
     display: flex;
@@ -519,29 +502,127 @@
     vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Failure simulation ──────────────────────────────────────── */
+  .failure-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--high-risk);
+    background: rgba(239,68,68,0.1);
+    color: var(--high-risk);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    display: none;
+  }
+  .failure-btn:hover { background: rgba(239,68,68,0.25); }
+  .failure-btn.visible { display: inline-block; }
+  .failure-btn.restart {
+    border-color: var(--compliance-color);
+    background: rgba(34,197,94,0.1);
+    color: var(--compliance-color);
+  }
+  .failure-btn.restart:hover { background: rgba(34,197,94,0.25); }
+
+  /* Zone crash states */
+  .team-zone.crashed {
+    border-color: var(--high-risk) !important;
+    background: rgba(239,68,68,0.08) !important;
+    animation: crash-shake 0.4s ease-in-out;
+  }
+  .team-zone.crashed .component {
+    border-color: rgba(239,68,68,0.4);
+    opacity: 0.5;
+  }
+  @keyframes crash-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+  }
+
+  /* Waiting state for payments zone during nexus failure */
+  .team-zone.waiting {
+    border-color: rgba(249,115,22,0.5) !important;
+  }
+  .team-zone.waiting .component.waiting-step {
+    border-color: rgba(249,115,22,0.4);
+  }
+
+  /* Crash overlay banner */
+  .crash-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15,17,23,0.92);
+    border: 2px solid var(--high-risk);
+    border-radius: 10px;
+    padding: 18px 28px;
+    text-align: center;
+    z-index: 30;
+    display: none;
+    max-width: 90%;
+  }
+  .crash-banner.visible { display: block; }
+  .crash-banner .crash-title {
+    color: var(--high-risk);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .crash-banner .crash-detail {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .crash-banner .crash-detail strong { color: var(--text); }
+
+  /* Nexus waiting banner */
+  .waiting-banner {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,17,23,0.92);
+    border: 1px solid rgba(249,115,22,0.4);
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-align: center;
+    z-index: 30;
+    display: none;
+    white-space: nowrap;
+  }
+  .waiting-banner.visible { display: block; }
+  .waiting-banner .waiting-text {
+    color: var(--nexus-color);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Recovery flash */
+  .team-zone.recovering {
+    animation: recover-flash 0.6s ease-in-out;
+  }
+  @keyframes recover-flash {
+    0% { border-color: var(--high-risk); }
+    50% { border-color: var(--compliance-color); box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+    100% { border-color: var(--compliance-border); }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="badge">NEXUS</div>
-  <h1>Nexus Sync — Decouple Your Teams</h1>
-  <span class="subtitle">Before & After: Monolith vs Nexus-Decoupled Architecture</span>
+  <div class="badge">TODO</div>
+  <span class="subtitle">Click <strong>"Next Step"</strong> in <strong>Monolith</strong> mode until <strong>"Kill Compliance Worker"</strong> appears &mdash; click it and watch everything crash. Then switch to <strong>Nexus</strong> and try again &mdash; only Compliance goes down while Payments waits.</span>
 </header>
 
 <div class="controls">
-  <label>Transaction:</label>
-  <div class="txn-selector">
-    <button class="txn-btn active" data-txn="A" onclick="selectTxn('A', this)">
-      TXN-A &middot; $250 &middot; US&rarr;US
-    </button>
-    <button class="txn-btn" data-txn="B" onclick="selectTxn('B', this)">
-      TXN-B &middot; $12K &middot; US&rarr;UK
-    </button>
-    <button class="txn-btn" data-txn="C" onclick="selectTxn('C', this)">
-      TXN-C &middot; $75K &middot; US&rarr;&#x1F6AB;
-    </button>
-  </div>
+  <button class="failure-btn" id="btnKill" onclick="killCompliance()">Kill Compliance Worker</button>
+  <button class="failure-btn restart" id="btnRestart" onclick="restartCompliance()">Restart Worker</button>
 
   <div class="mode-toggle" onclick="toggleMode()">
     <span class="mode-label monolith">Monolith</span>
@@ -614,7 +695,6 @@
       <div class="nexus-line"></div>
       <div class="nexus-label-box" id="nexusBox">
         <div class="nx-title">NEXUS</div>
-        <div class="nx-sub">durable RPC</div>
       </div>
     </div>
 
@@ -639,6 +719,15 @@
       </div>
     </div>
 
+    <!-- Crash banners -->
+    <div class="crash-banner" id="crashBanner">
+      <div class="crash-title" id="crashTitle"></div>
+      <div class="crash-detail" id="crashDetail"></div>
+    </div>
+    <div class="waiting-banner" id="waitingBanner">
+      <div class="waiting-text"><span class="spinner"></span> Payments waiting &mdash; Nexus operation backing off...</div>
+    </div>
+
     <!-- Animated token -->
     <div class="token hidden" id="token">&#x25CF;</div>
   </div>
@@ -661,13 +750,14 @@ const TXN = {
        explanation: 'Routine domestic/standard international transfer. No regulatory concerns.' },
   B: { id: 'TXN-B', amount: '$12,000', route: 'US \u2192 UK', risk: 'MEDIUM', approved: true,
        explanation: 'International transfer above $10K threshold. Approved with AML monitoring note.' },
-  C: { id: 'TXN-C', amount: '$75,000', route: 'US \u2192 North Korea', risk: 'HIGH', approved: false,
+  C: { id: 'TXN-C', amount: '$75,000', route: 'US \u2192 US', risk: 'HIGH', approved: false,
        explanation: 'Destination/source country is OFAC-sanctioned. Transaction blocked per regulatory requirements.' },
 };
 
 let currentTxn = 'A';
 let currentStep = 0;
 let isNexusMode = false; // start in monolith mode
+let failureActive = false;
 const MAX_STEPS = 6;
 
 const stepsMonolith = [
@@ -689,14 +779,6 @@ const stepsNexus = [
   { title: 'Compliance result returned', tip: 'Result crosses back over the Nexus boundary. The payment workflow resumes exactly where it left off.' },
   { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Approved transactions proceed to executePayment. Declined ones stop. Same logic, different architecture.' },
 ];
-
-// ── Transaction selector ─────────────────────────────────────────
-function selectTxn(key, btn) {
-  document.querySelectorAll('.txn-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentTxn = key;
-  reset();
-}
 
 // ── Mode toggle ──────────────────────────────────────────────────
 function toggleMode() {
@@ -721,6 +803,7 @@ function stepBack() {
 }
 function reset() {
   currentStep = 0;
+  clearFailure();
   renderStep();
 }
 
@@ -774,6 +857,18 @@ function renderStep() {
   const token = document.getElementById('token');
   token.classList.add('hidden');
   token.classList.remove('beam');
+
+  // Show/hide kill button during compliance steps (3-5) when no failure active
+  const killBtn = document.getElementById('btnKill');
+  const restartBtn = document.getElementById('btnRestart');
+  if (!failureActive && currentStep >= 3 && currentStep <= 5) {
+    killBtn.classList.add('visible');
+  } else if (!failureActive) {
+    killBtn.classList.remove('visible');
+  }
+  if (!failureActive) {
+    restartBtn.classList.remove('visible');
+  }
 
   if (isNexusMode) {
     renderNexusStep(txn);
@@ -1055,6 +1150,107 @@ function showPanel(key) {
     </div>
     <div class="panel-body">${content.body}</div>
   `;
+}
+
+// ── Failure simulation ───────────────────────────────────────────
+function killCompliance() {
+  failureActive = true;
+  const killBtn = document.getElementById('btnKill');
+  const restartBtn = document.getElementById('btnRestart');
+  const token = document.getElementById('token');
+  const crashBanner = document.getElementById('crashBanner');
+  const crashTitle = document.getElementById('crashTitle');
+  const crashDetail = document.getElementById('crashDetail');
+  const waitingBanner = document.getElementById('waitingBanner');
+
+  killBtn.classList.remove('visible');
+  token.classList.add('hidden');
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnBack').disabled = true;
+
+  if (!isNexusMode) {
+    // MONOLITH: everything crashes
+    document.getElementById('zonePayments').classList.add('crashed');
+    crashTitle.textContent = 'CRASH \u2014 Both Teams Down';
+    crashDetail.innerHTML = 'The Compliance worker crashed, but it runs on the <strong>same Worker</strong> as Payments. ' +
+      'Both teams are down. No payments can be processed until someone fixes and redeploys the entire monolith.';
+    crashBanner.classList.add('visible');
+
+    // Update step bar
+    document.getElementById('stepTitle').textContent = 'Compliance bug crashes EVERYTHING';
+    document.getElementById('stepTip').textContent = 'One worker, one blast radius. The payment workflow is dead \u2014 not waiting, not retrying. Dead.';
+
+    // Show restart to reset demo
+    setTimeout(function() { restartBtn.classList.add('visible'); }, 1200);
+  } else {
+    // NEXUS: only compliance crashes, payments waits
+    document.getElementById('zoneCompliance').classList.add('crashed');
+    crashTitle.textContent = 'Compliance Worker Down';
+    crashDetail.innerHTML = 'The Compliance worker crashed. But the Payment workflow is <strong>safe</strong> \u2014 ' +
+      'Temporal is retrying the Nexus operation automatically. When the worker comes back, it picks up right where it left off.';
+    crashBanner.classList.add('visible');
+    waitingBanner.classList.add('visible');
+
+    // Payments zone shows waiting state
+    document.getElementById('zonePayments').classList.add('waiting');
+    document.getElementById('compWorkflow').classList.add('waiting-step');
+
+    // Update step bar
+    document.getElementById('stepTitle').textContent = 'Compliance is down \u2014 Payments waits durably';
+    document.getElementById('stepTip').textContent = 'Two blast radii. The payment workflow is alive, just waiting. No crash, no data loss, no retry loops.';
+
+    // Show restart button
+    setTimeout(function() { restartBtn.classList.add('visible'); }, 1200);
+  }
+}
+
+function restartCompliance() {
+  const crashBanner = document.getElementById('crashBanner');
+  const waitingBanner = document.getElementById('waitingBanner');
+  const restartBtn = document.getElementById('btnRestart');
+
+  crashBanner.classList.remove('visible');
+  waitingBanner.classList.remove('visible');
+  restartBtn.classList.remove('visible');
+
+  if (!isNexusMode) {
+    // Monolith: just reset everything
+    document.getElementById('zonePayments').classList.remove('crashed');
+    failureActive = false;
+    reset();
+  } else {
+    // Nexus: compliance recovers, flow resumes
+    var compZone = document.getElementById('zoneCompliance');
+    compZone.classList.remove('crashed');
+    compZone.classList.add('recovering');
+    document.getElementById('zonePayments').classList.remove('waiting');
+    document.getElementById('compWorkflow').classList.remove('waiting-step');
+
+    // Update step bar for recovery
+    document.getElementById('stepTitle').textContent = 'Worker restarted \u2014 resuming automatically';
+    document.getElementById('stepTip').textContent = 'Temporal routes the pending Nexus operation to the recovered worker. The payment workflow resumes exactly where it left off.';
+
+    setTimeout(function() {
+      compZone.classList.remove('recovering');
+      failureActive = false;
+      // Resume from where we were (advance one step to show result)
+      if (currentStep < MAX_STEPS) {
+        currentStep++;
+      }
+      renderStep();
+    }, 1500);
+  }
+}
+
+function clearFailure() {
+  failureActive = false;
+  document.getElementById('zonePayments').classList.remove('crashed', 'waiting');
+  document.getElementById('zoneCompliance').classList.remove('crashed', 'recovering');
+  document.getElementById('compWorkflow').classList.remove('waiting-step');
+  document.getElementById('crashBanner').classList.remove('visible');
+  document.getElementById('waitingBanner').classList.remove('visible');
+  document.getElementById('btnKill').classList.remove('visible');
+  document.getElementById('btnRestart').classList.remove('visible');
 }
 
 // ── Init ─────────────────────────────────────────────────────────
