@@ -182,7 +182,7 @@ cd exercise
 mvn compile exec:java@starter
 ```
 
-**Change the namespace in Temporal UI**. You'll find this on the top of the Web UI.
+**Switch to `payments-namespace` in the Temporal UI** using the namespace selector at the top of the Web UI.
 
 ![Three transactions with different risk levels: TXN-A approved (low risk), TXN-B approved (medium risk), TXN-C declined (high risk, OFAC-sanctioned)](./ui/new-namespace.png)
 
@@ -740,7 +740,7 @@ mvn compile exec:java@starter
 
 Two Workers, two blast radii, two independent teams. The automated compliance path works end-to-end through Nexus.
 
-> **Check the Temporal UI** at http://localhost:8233 — you should see Nexus operations in the workflow Event History!
+> **Check the Temporal UI** at http://localhost:8233 — switch to `**payments-namespace**` and open any completed workflow. You should see Nexus operations in the Event History!
 
 ---
 
@@ -748,9 +748,23 @@ Two Workers, two blast radii, two independent teams. The automated compliance pa
 
 This is where it gets fun. Let's prove that Nexus is **durable**.
 
-Both Workers should still be running from Checkpoint 2. If you stopped them, restart them now (`mvn compile exec:java@compliance-worker` and `mvn compile exec:java@payments-worker`). Make sure any previous workflows have completed or been terminated before continuing.
+Make sure any previous workflows have completed or been terminated before continuing. Both Workers should still be running from Checkpoint 2. If you stopped them, restart them now: 
 
-**Terminal 3 — Run the starter:**
+**Terminal 1:** Temporal server (already running)
+
+**Terminal 2 — Compliance Worker**:
+```bash
+cd exercise
+mvn compile exec:java@compliance-worker
+```
+
+**Terminal 3 — Payments Worker**:
+```bash
+cd exercise
+mvn compile exec:java@payments-worker
+```
+
+**Terminal 4 — Run the starter:**
 ```bash
 cd exercise
 mvn compile exec:java@starter
@@ -763,7 +777,9 @@ The starter runs TXN-A first. TXN-A has a 10-second durable sleep in `Compliance
 Now watch what happens:
 
 1. **Terminal 3 (starter)** — hangs. It's waiting for the TXN-A result. No crash, no error.
-2. **Temporal UI** (http://localhost:8233) — open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
+2. **Temporal UI** (http://localhost:8233) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
+
+<img src="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" />
 
 **Terminal 1 — Restart the compliance Worker:**
 ```bash
@@ -925,6 +941,6 @@ The fundamental pattern: **same method call, different architecture**. The workf
 
 ## What's Next?
 
-From here you can explore more advanced patterns - multi-step compliance pipelines, async human escalation chains, or cross-namespace Nexus operations. See the [Nexus documentation](https://docs.temporal.io/nexus) to go deeper.
+From here you can explore more advanced patterns - multi-step compliance pipelines, async human escalation chains, or cross-namespace Nexus operations. See the [Nexus documentation](https://docs.temporal.io/nexus) to learn more.
 
 Don't forget to [sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
