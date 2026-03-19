@@ -1,3 +1,5 @@
+import React from 'react';
+
 function AskAIButton({ query, closeDocSearch }) {
   // Handle button click by opening Kapa with the query
   const handleClick = () => {
