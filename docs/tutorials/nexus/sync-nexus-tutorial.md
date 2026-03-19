@@ -787,6 +787,33 @@ Now watch:
 
 You already implemented both handlers in TODO 2 — `checkCompliance` (async, `fromWorkflowHandle`) and `submitReview` (sync, `OperationHandler.sync`). Now let's use `submitReview` to approve TXN-B's MEDIUM-risk transaction.
 
+### How the review path works
+
+Three pre-provided files work together to send a human review decision through the Nexus boundary:
+
+**[`ReviewStarter.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewStarter.java)** — Client code that starts the review workflow:
+```java
+ReviewRequest request = new ReviewRequest("TXN-B", true, "Approved after manual review");
+ReviewCallerWorkflow workflow = client.newWorkflowStub(ReviewCallerWorkflow.class, ...);
+ComplianceResult result = workflow.submitReview(request);
+```
+
+**[`ReviewCallerWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewCallerWorkflowImpl.java)** — A thin workflow that calls `submitReview` through the Nexus stub:
+```java
+public ComplianceResult submitReview(ReviewRequest request) {
+    return complianceService.submitReview(request);  // Nexus call
+}
+```
+
+**Why a workflow instead of calling `temporal workflow update` directly?** Team boundaries. The Payments team doesn't need to know the Compliance team's workflow IDs or internal method names. The review goes through the same Nexus endpoint as `checkCompliance` — the Compliance team controls what's exposed.
+
+The full flow:
+1. `ReviewStarter` starts a `ReviewCallerWorkflow` in the **payments** namespace
+2. The workflow calls `complianceService.submitReview()` via the Nexus stub
+3. Nexus routes to the Compliance team's sync handler (TODO 2b)
+4. The handler looks up the `compliance-TXN-B` workflow and sends the `review()` Update
+5. The `ComplianceWorkflow` unblocks, returns the result back through Nexus
+
 ### Checkpoint: Approve TXN-B via Nexus
 
 Make sure both Workers are running and TXN-B is still waiting from Checkpoint 2. If you need to restart, run the starter again first.
@@ -796,8 +823,6 @@ Make sure both Workers are running and TXN-B is still waiting from Checkpoint 2.
 cd exercise
 mvn compile exec:java@review-starter
 ```
-
-This starts a `ReviewCallerWorkflow` in the payments namespace that calls the `submitReview` Nexus operation. The Compliance team's sync handler receives it, looks up the `compliance-TXN-B` workflow, and sends the `review` Update — all through the Nexus boundary, with no direct access to the compliance workflow internals.
 
 > **Want to deny instead?** Edit `ReviewStarter.java`, change `true` to `false`, and re-run.
 
