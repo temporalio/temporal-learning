@@ -147,7 +147,7 @@ BEFORE (Monolith):                    AFTER (Nexus Decoupled):
 ## Checkpoint 0: Run the Monolith
 
 :::tip
-Don't forget to clone [this repo](https://github.com/temporalio/edu-nexus-code/) for the exercise!
+Don't forget to clone [this repository](https://github.com/temporalio/edu-nexus-code/) for the exercise!
 :::
 
 Before changing anything, let's see the system working. You need **3 terminal windows** and a running Temporal server. Navigate into the [`java/decouple-monolith/exercise`](https://github.com/temporalio/edu-nexus-code/tree/main/java/decouple-monolith/exercise) directory.
@@ -260,15 +260,15 @@ Can you match each Nexus concept to what it represents in our payments scenario?
 <details>
 <summary>The TODOs</summary>
 
-> **Pre-provided:** The `ComplianceWorkflow` interface and implementation are already complete in the exercise. They use Temporal patterns you've already seen — `@WorkflowMethod`, `@UpdateMethod`, and `Workflow.await()`. Your work starts at **TODO 1** — the Nexus-specific parts.
+> **Pre-provided:** The [`ComplianceWorkflow`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflow.java) interface and [implementation](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflowImpl.java) are already complete in the exercise. They use Temporal patterns you've already seen — `@WorkflowMethod`, `@UpdateMethod`, and `Workflow.await()`. Your work starts at **TODO 1** — the Nexus-specific parts.
 
 | # | File | Action | Key Concept |
 |---|---|---|---|
-| **1** | `shared/nexus/ComplianceNexusService.java` | Your work | `@Service` + `@Operation` on both operations |
-| **2** | `compliance/temporal/ComplianceNexusServiceImpl.java` | Your work | `fromWorkflowHandle` (async) + `OperationHandler.sync` (sync) |
-| **3** | `compliance/temporal/ComplianceWorkerApp.java` | Your work | Register workflow + Activity + Nexus handler |
-| **4** | `payments/temporal/PaymentProcessingWorkflowImpl.java` | Modify | Replace Activity stub → Nexus stub |
-| **5** | `payments/temporal/PaymentsWorkerApp.java` | Modify | Add `NexusServiceOptions`, remove `ComplianceActivity` |
+| **1** | [`shared/nexus/ComplianceNexusService.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/shared/nexus/ComplianceNexusService.java) | Your work | `@Service` + `@Operation` on both operations |
+| **2** | [`compliance/temporal/ComplianceNexusServiceImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/ComplianceNexusServiceImpl.java) | Your work | `fromWorkflowHandle` (async) + `OperationHandler.sync` (sync) |
+| **3** | [`compliance/temporal/ComplianceWorkerApp.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/ComplianceWorkerApp.java) | Your work | Register workflow + Activity + Nexus handler |
+| **4** | [`payments/temporal/PaymentProcessingWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentProcessingWorkflowImpl.java) | Modify | Replace Activity stub → Nexus stub |
+| **5** | [`payments/temporal/PaymentsWorkerApp.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentsWorkerApp.java) | Modify | Add `NexusServiceOptions`, remove `ComplianceActivity` |
 
 **Teaching order:** Service interface (1) → Both handlers (2) → Worker (3, CLI) → Caller (4-5) → Run the human review path.
 
@@ -563,6 +563,10 @@ private final ComplianceNexusService complianceService = Workflow.newNexusServic
 ComplianceResult compliance = complianceService.checkCompliance(compReq);
 ```
 
+- `Workflow.newNexusServiceStub` replaces `Workflow.newActivityStub` — instead of calling a local Activity, the workflow now makes a durable Nexus call across the team boundary.
+- `NexusServiceOptions` with `scheduleToCloseTimeout` replaces `ActivityOptions` with `startToCloseTimeout` — same idea (how long to wait), different scope (cross-team vs in-process).
+- The method call (`checkCompliance`) stays identical — the workflow doesn't know or care that the implementation moved to a different Worker.
+
 **What changed:** Drag each Nexus replacement to its monolith equivalent:
 
 <iframe src="/html/nexus-match-change.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Match the Change — Monolith to Nexus"></iframe>
@@ -606,27 +610,95 @@ worker.registerActivitiesImplementations(new ComplianceActivityImpl(checker));
 
 > **Analogy:** You're removing the compliance department from your building and adding a phone extension to their new office. The workflow dials the same number (`checkCompliance`), but the call now routes across the street.
 
+<details><summary>New <code>PaymentsWorkerApp.java</code> Code</summary>
+
+```java
+package payments.temporal;
+
+import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
+import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.worker.Worker;
+import io.temporal.worker.WorkerFactory;
+import io.temporal.worker.WorkflowImplementationOptions;
+import io.temporal.workflow.NexusServiceOptions;
+import payments.PaymentGateway;
+import payments.Shared;
+import payments.temporal.activity.PaymentActivityImpl;
+
+import java.util.Collections;
+
+/**
+ * DECOUPLED VERSION — Payments worker with Nexus endpoint mapping.
+ *
+ * Changes from monolith:
+ *   1. Workflow registered with NexusServiceOptions (endpoint mapping)
+ *   2. ComplianceActivityImpl registration removed (lives on compliance worker now)
+ */
+public class PaymentsWorkerApp {
+
+    public static void main(String[] args) {
+        // C — Connect to Temporal (payments-namespace)
+        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder()
+                .setNamespace("payments-namespace")
+                .build();
+        WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
+
+        // R — Register with Nexus endpoint mapping
+        WorkerFactory factory = WorkerFactory.newInstance(client);
+        Worker worker = factory.newWorker(Shared.TASK_QUEUE);
+
+        worker.registerWorkflowImplementationTypes(
+                WorkflowImplementationOptions.newBuilder()
+                        .setNexusServiceOptions(Collections.singletonMap(
+                                "ComplianceNexusService",
+                                NexusServiceOptions.newBuilder()
+                                        .setEndpoint("compliance-endpoint")
+                                        .build()))
+                        .build(),
+                PaymentProcessingWorkflowImpl.class,
+                ReviewCallerWorkflowImpl.class);
+
+        // A — Activities (payment only — compliance moved to its own worker)
+        PaymentGateway gateway = new PaymentGateway();
+        worker.registerActivitiesImplementations(new PaymentActivityImpl(gateway));
+
+        // L — Launch
+        factory.start();
+
+        System.out.println("=========================================================");
+        System.out.println("  Payments Worker started on: " + Shared.TASK_QUEUE);
+        System.out.println("  Namespace: payments-namespace");
+        System.out.println("  Registered: PaymentProcessingWorkflow, ReviewCallerWorkflow, PaymentActivity");
+        System.out.println("  Nexus: ComplianceNexusService → compliance-endpoint");
+        System.out.println("=========================================================");
+    }
+}
+```
+</details>
+
 ---
 
 ## Checkpoint 2: Decoupled End-to-End (Automated Decisions)
 
-You need **3 terminal windows** now:
+You need **4 terminal windows** now:
 
-**Terminal 0:** Temporal server (already running)
+**Terminal 1:** Temporal server (already running)
 
-**Terminal 1 — Compliance Worker** (already running from Checkpoint 1, or restart):
+**Terminal 2 — Compliance Worker** (already running from Checkpoint 1, or restart):
 ```bash
 cd exercise
 mvn compile exec:java@compliance-worker
 ```
 
-**Terminal 2 — Payments Worker** (restart with your changes):
+**Terminal 3 — Payments Worker** (restart with your changes):
 ```bash
 cd exercise
 mvn compile exec:java@payments-worker
 ```
 
-**Terminal 3 — Starter:**
+**Terminal 4 — Starter:**
 ```bash
 cd exercise
 mvn compile exec:java@starter
@@ -634,6 +706,8 @@ mvn compile exec:java@starter
 
 - **TXN-A and TXN-C** take ~10 seconds each (the compliance workflow includes a durable sleep for the Checkpoint 3 demo).
 - **TXN-B** is MEDIUM risk — its workflow durably pauses (`Workflow.await()`) until a human reviewer submits a decision. It will stay waiting until you complete the human review path after Checkpoint 3.
+
+![TXN-B human-in-the-loop flow: Payment workflow calls compliance via Nexus, compliance scores MEDIUM and durably pauses, human reviewer approves via Nexus Update, workflow resumes](./ui/human-in-the-loop.svg)
 
 **Checkpoint 2 passed** if you see these results:
 
@@ -674,7 +748,7 @@ Two Workers, two blast radii, two independent teams. The automated compliance pa
 
 This is where it gets fun. Let's prove that Nexus is **durable**.
 
-Make sure both Workers are running and that any previous workflows have completed or been terminated.
+Both Workers should still be running from Checkpoint 2. If you stopped them, restart them now (`mvn compile exec:java@compliance-worker` and `mvn compile exec:java@payments-worker`). Make sure any previous workflows have completed or been terminated before continuing.
 
 **Terminal 3 — Run the starter:**
 ```bash
