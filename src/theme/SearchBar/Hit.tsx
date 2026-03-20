@@ -34,15 +34,24 @@ export function Hit({ hit, isSelected, onNavigate, isAnchor, isLastAnchor, paren
 
   const hierarchyAttribute = getHierarchyAttribute(hit);
 
+  const fullUrl = hit.url || hit.objectID;
+  let isExternal = false;
+  try {
+    const parsed = new URL(fullUrl, window.location.origin);
+    isExternal = parsed.origin !== window.location.origin;
+  } catch {}
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const fullUrl = hit.url || hit.objectID;
-    // Extract pathname from full URL to avoid appending the whole URL
-    try {
-      const url = new URL(fullUrl, window.location.origin);
-      history.push(url.pathname + url.hash);
-    } catch {
-      history.push(fullUrl);
+    if (isExternal) {
+      window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      try {
+        const url = new URL(fullUrl, window.location.origin);
+        history.push(url.pathname + url.hash);
+      } catch {
+        history.push(fullUrl);
+      }
     }
     onNavigate();
   };
@@ -66,12 +75,13 @@ export function Hit({ hit, isSelected, onNavigate, isAnchor, isLastAnchor, paren
   return (
     <a
       ref={hitRef}
-      href={hit.url || hit.objectID}
+      href={fullUrl}
       onClick={handleClick}
       className={hitClassName}
       tabIndex={-1}
       role="option"
       aria-selected={isSelected}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       {isAnchor ? (
         <div className="custom-search-hit-icon-wrapper">

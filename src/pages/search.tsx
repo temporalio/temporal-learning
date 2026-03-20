@@ -56,22 +56,33 @@ function SearchResultItem({ hit }: { hit: any }) {
   const hierarchyAttr = getHierarchyAttribute(hit);
   const breadcrumbs = getBreadcrumbPath(hit);
 
+  const fullUrl = hit.url || hit.objectID;
+  let isExternal = false;
+  try {
+    const parsed = new URL(fullUrl, window.location.origin);
+    isExternal = parsed.origin !== window.location.origin;
+  } catch {}
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const fullUrl = hit.url || hit.objectID;
-    try {
-      const url = new URL(fullUrl, window.location.origin);
-      history.push(url.pathname + url.hash);
-    } catch {
-      history.push(fullUrl);
+    if (isExternal) {
+      window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      try {
+        const url = new URL(fullUrl, window.location.origin);
+        history.push(url.pathname + url.hash);
+      } catch {
+        history.push(fullUrl);
+      }
     }
   };
 
   return (
     <a
-      href={hit.url || hit.objectID}
+      href={fullUrl}
       onClick={handleClick}
       className="search-page-result"
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       <div className="search-page-result-title">
         <Highlight attribute={hierarchyAttr} hit={hit} />
