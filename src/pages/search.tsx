@@ -57,23 +57,26 @@ function SearchResultItem({ hit }: { hit: any }) {
   const breadcrumbs = getBreadcrumbPath(hit);
 
   const fullUrl = hit.url || hit.objectID;
+  const LEARN_SITE_HOST = 'learn.temporal.io';
   let isExternal = false;
+  let internalPath = '';
   try {
     const parsed = new URL(fullUrl, window.location.origin);
-    isExternal = parsed.origin !== window.location.origin;
-  } catch {}
+    if (parsed.hostname === LEARN_SITE_HOST || parsed.origin === window.location.origin) {
+      internalPath = parsed.pathname + parsed.hash;
+    } else {
+      isExternal = true;
+    }
+  } catch {
+    internalPath = fullUrl;
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isExternal) {
       window.open(fullUrl, '_blank', 'noopener,noreferrer');
     } else {
-      try {
-        const url = new URL(fullUrl, window.location.origin);
-        history.push(url.pathname + url.hash);
-      } catch {
-        history.push(fullUrl);
-      }
+      history.push(internalPath);
     }
   };
 

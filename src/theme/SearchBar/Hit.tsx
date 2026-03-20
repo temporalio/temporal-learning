@@ -35,23 +35,31 @@ export function Hit({ hit, isSelected, onNavigate, isAnchor, isLastAnchor, paren
   const hierarchyAttribute = getHierarchyAttribute(hit);
 
   const fullUrl = hit.url || hit.objectID;
+
+  // Determine if this URL is internal to the learn site or external (e.g. docs.temporal.io)
+  // Algolia stores absolute URLs with the production domain (learn.temporal.io),
+  // so we can't just compare origins (would break in Vercel previews).
+  const LEARN_SITE_HOST = 'learn.temporal.io';
   let isExternal = false;
+  let internalPath = '';
   try {
     const parsed = new URL(fullUrl, window.location.origin);
-    isExternal = parsed.origin !== window.location.origin;
-  } catch {}
+    if (parsed.hostname === LEARN_SITE_HOST || parsed.origin === window.location.origin) {
+      // Internal: either matches production domain or current origin (local dev)
+      internalPath = parsed.pathname + parsed.hash;
+    } else {
+      isExternal = true;
+    }
+  } catch {
+    internalPath = fullUrl;
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isExternal) {
       window.open(fullUrl, '_blank', 'noopener,noreferrer');
     } else {
-      try {
-        const url = new URL(fullUrl, window.location.origin);
-        history.push(url.pathname + url.hash);
-      } catch {
-        history.push(fullUrl);
-      }
+      history.push(internalPath);
     }
     onNavigate();
   };
