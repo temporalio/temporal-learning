@@ -779,8 +779,8 @@ Now watch what happens:
 1. **Terminal 3 (starter)** — hangs. It's waiting for the TXN-A result. No crash, no error.
 2. **Temporal UI** (`http://localhost:8233`) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
 
-<a href="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" target="_blank">
-  <img src="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" alt="Temporal UI showing Nexus operation in backing off state after compliance Worker is killed" width="100%" />
+<a href={require('./ui/backing-off-nexus-operation.png').default} target="_blank">
+  <img src={require('./ui/backing-off-nexus-operation.png').default} alt="Temporal UI showing Nexus operation in backing off state after compliance Worker is killed" width="100%" />
 </a>
 
 **Terminal 1 — Restart the compliance Worker:**
