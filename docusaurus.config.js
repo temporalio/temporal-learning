@@ -314,6 +314,8 @@ const config = {
       "data-website-id": "13e12f4a-b295-4cb5-9470-783dc6b98f68",
       "data-project-name": "Temporal",
       "data-project-color": "#000000",
+      "data-mcp-enabled": "true",
+      "data-mcp-server-url": "https://temporal.mcp.kapa.ai",
       "data-project-logo":
         "https://avatars.githubusercontent.com/u/56493103?s=280&v=4",
       "data-modal-title": "Temporal's AI developer assistant",
