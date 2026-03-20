@@ -740,7 +740,7 @@ mvn compile exec:java@starter
 
 Two Workers, two blast radii, two independent teams. The automated compliance path works end-to-end through Nexus.
 
-> **Check the Temporal UI** at http://localhost:8233 — switch to `**payments-namespace**` and open any completed workflow. You should see Nexus operations in the Event History!
+> **Check the Temporal UI** at `http://localhost:8233` — switch to **`payments-namespace`** and open any completed workflow. You should see Nexus operations in the Event History!
 
 ---
 
@@ -777,9 +777,11 @@ The starter runs TXN-A first. TXN-A has a 10-second durable sleep in `Compliance
 Now watch what happens:
 
 1. **Terminal 3 (starter)** — hangs. It's waiting for the TXN-A result. No crash, no error.
-2. **Temporal UI** (http://localhost:8233) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
+2. **Temporal UI** (`http://localhost:8233`) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
 
-<img src="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" />
+<a href="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" target="_blank">
+  <img src="https://i.postimg.cc/1XX3pPnR/backing-off-nexus-operation.png" alt="Temporal UI showing Nexus operation in backing off state after compliance Worker is killed" width="100%" />
+</a>
 
 **Terminal 1 — Restart the compliance Worker:**
 ```bash
