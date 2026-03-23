@@ -27,7 +27,7 @@ You'll define a shared service contract, implement a synchronous Nexus handler, 
 - Register a Nexus Endpoint using the Temporal CLI
 - Define a shared Nexus Service contract between teams with `@Service` and `@Operation`
 - Implement a synchronous Nexus handler with `@ServiceImpl` and `@OperationImpl`
-- Swap a local Activity call for a durable cross-team Nexus call
+- Swap an Activity call for a durable cross-team Nexus call
 - Inspect Nexus operations in the Web UI Event History
 
 ## Prerequisites
@@ -103,18 +103,20 @@ Here's what happens when the Compliance Worker goes down mid-call — and why it
 
 You could split Payments and Compliance into microservices with REST calls. But then you'd write your own retry loops, circuit breakers, and dead letter queues. Here's how the options compare:
 
-|                       | REST / HTTP                | Direct Temporal Activity     | Temporal Nexus                                                                                                     |
-| --------------------- | -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Worker goes down**  | Request lost, manual retry | Same crash domain            | Workflow pauses, auto-resumes                                                                                      |
-| **Retry logic**       | Write it yourself          | Temporal retries within team | Built-in across the boundary                                                                                       |
-| **Type safety**       | OpenAPI + code gen         | Java interface               | Shared Java interface                                                                                              |
-| **Human review**      | Custom callback URLs       | Couple teams together        | `@UpdateMethod`, durable wait                                                                                      |
-| **Team independence** | Shared failure domain      | Shared deployment            | Separate Workers, blast radii                                                                                      |
-| **Code change**       | Full rewrite               | —                            | One-line stub swap, also [nexus-rpc-gen](https://github.com/nexus-rpc/nexus-rpc-gen/) generates code automatically |
+|                      | HTTP in an Activity                    | Direct Temporal Activity      | Temporal Nexus                                                                                                     |
+| -------------------- | -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Worker goes down** | Activity retries the HTTP call         | Same crash domain             | Workflow pauses, auto-resumes                                                                                      |
+| **Retry logic**      | Activity retry policy + HTTP errors    | Temporal retries within team  | Built-in across the boundary                                                                                       |
+| **Type safety**      | OpenAPI + code gen                     | Java interface                | Shared Java interface                                                                                              |
+| **Human review**     | Custom callback URLs                   | Couple teams together         | `@UpdateMethod` on the underlying workflow (async updates not yet supported across Nexus)                          |
+| **Team isolation**   | Separate services, shared API contract | Same namespace, shared access | Separate namespaces, scoped access                                                                                 |
+| **Code change**      | Update HTTP client + server            | —                             | One-line stub swap, also [nexus-rpc-gen](https://github.com/nexus-rpc/nexus-rpc-gen/) generates code automatically |
 
 </details>
 
-> **New to Nexus?** Try the [Nexus Quick Start](https://docs.temporal.io/nexus) for a faster path. Come back here for the full decoupling exercise.
+:::tip New to Nexus?
+Try the [Nexus Quick Start](https://docs.temporal.io/nexus) for a faster path. Come back here for the full decoupling exercise.
+:::
 
 ---
 
@@ -548,11 +550,11 @@ Without this, the Payments Worker (TODO 5) won't know where to route `Compliance
 
 **File:** [`payments/temporal/PaymentProcessingWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentProcessingWorkflowImpl.java)
 
-You're replacing the local Activity stub with a Nexus stub — same method call, but it now crosses a team boundary instead of running in-process.
+You're replacing the Activity stub with a Nexus stub — same method call, but it now crosses a namespace boundary.
 
 **What to change for TODO 4:**
 
-1. Replace the `ComplianceActivity` Activity stub with a `ComplianceNexusService` Nexus stub — this swaps the in-process Activity call for a durable cross-team Nexus call. The stub uses `Workflow.newNexusServiceStub` instead of `Workflow.newActivityStub`.
+1. Replace the `ComplianceActivity` Activity stub with a `ComplianceNexusService` Nexus stub — this swaps the Activity call for a durable cross-namespace Nexus call. The stub uses `Workflow.newNexusServiceStub` instead of `Workflow.newActivityStub`.
 2. Change `complianceActivity.checkCompliance(compReq)` to `complianceService.checkCompliance(compReq)` — same method name, same input, same output.
 
 **BEFORE:**
@@ -580,8 +582,8 @@ private final ComplianceNexusService complianceService = Workflow.newNexusServic
 ComplianceResult compliance = complianceService.checkCompliance(compReq);
 ```
 
-- `Workflow.newNexusServiceStub` replaces `Workflow.newActivityStub` — instead of calling a local Activity, the workflow now makes a durable Nexus call across the team boundary.
-- `NexusServiceOptions` with `scheduleToCloseTimeout` replaces `ActivityOptions` with `startToCloseTimeout` — same idea (how long to wait), different scope (cross-team vs in-process).
+- `Workflow.newNexusServiceStub` replaces `Workflow.newActivityStub` — the workflow now makes a durable Nexus call across the namespace boundary.
+- `NexusServiceOptions` with `scheduleToCloseTimeout` replaces `ActivityOptions` with `startToCloseTimeout` — same idea (how long to wait), different scope (cross-namespace vs same namespace).
 - The method call (`checkCompliance`) stays identical — the workflow doesn't know or care that the implementation moved to a different Worker.
 
 **What changed:** Drag each Nexus replacement to its monolith equivalent:
