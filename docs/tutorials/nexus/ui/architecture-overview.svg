@@ -137,5 +137,5 @@
   </circle>
 
   <!-- Footer -->
-  <text x="460" y="372" text-anchor="middle" fill="#e6edf3" font-size="10">Same method call syntax. Same results. Different security perimeters. Different blast radii.</text>
+  <text x="460" y="372" text-anchor="middle" fill="#e6edf3" font-size="10">Same method call syntax. Same results. Independent code. Independent deployments. Independent blast radii.</text>
 </svg>

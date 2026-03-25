@@ -68,11 +68,10 @@
     padding: 12px 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
   .mode-toggle {
-    margin-left: auto;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -132,7 +131,7 @@
     font-style: italic;
     margin-top: 2px;
   }
-  .step-dots { display: flex; gap: 6px; margin-left: auto; }
+  .step-dots { display: flex; gap: 6px; }
   .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
@@ -621,14 +620,21 @@
 </header>
 
 <div class="controls">
-  <button class="failure-btn" id="btnKill" onclick="killCompliance()">Kill Compliance Worker</button>
-  <button class="failure-btn restart" id="btnRestart" onclick="restartCompliance()">Restart Worker</button>
-
   <div class="mode-toggle" onclick="toggleMode()">
     <span class="mode-label monolith">Monolith</span>
     <div class="toggle-switch" id="modeSwitch"></div>
     <span class="mode-label nexus">Nexus</span>
   </div>
+
+  <div class="step-nav">
+    <button class="nav-btn" id="btnBack" onclick="stepBack()" disabled>&larr; Back</button>
+    <button class="nav-btn primary" id="btnNext" onclick="stepNext()">Next Step &rarr;</button>
+  </div>
+
+  <button class="failure-btn" id="btnKill" onclick="killCompliance()">Kill Compliance Worker</button>
+  <button class="failure-btn restart" id="btnRestart" onclick="restartCompliance()">Restart Worker</button>
+
+  <div class="step-dots" id="stepDots" style="margin-left: auto;"></div>
 </div>
 
 <div class="step-bar">
@@ -636,11 +642,6 @@
   <div class="step-text">
     <strong id="stepTitle">Ready to start</strong>
     <div class="tip" id="stepTip">Toggle between Monolith and Nexus, then click "Next Step" to animate the flow</div>
-  </div>
-  <div class="step-dots" id="stepDots"></div>
-  <div class="step-nav">
-    <button class="nav-btn" id="btnBack" onclick="stepBack()" disabled>&larr; Back</button>
-    <button class="nav-btn primary" id="btnNext" onclick="stepNext()">Next Step &rarr;</button>
   </div>
 </div>
 
@@ -761,23 +762,23 @@ let failureActive = false;
 const MAX_STEPS = 6;
 
 const stepsMonolith = [
-  { title: 'Ready', tip: 'This is the MONOLITH \u2014 single worker, everything coupled. Click "Next Step" to see the flow.' },
-  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. Everything runs on ONE worker, ONE task queue.' },
-  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity. So far, no different from the decoupled version.' },
-  { title: 'Step 2 \u2014 Compliance check (same worker!)', tip: 'The workflow calls complianceActivity.checkCompliance() \u2014 runs on the SAME worker. If this worker crashes, BOTH teams go down.' },
-  { title: 'ComplianceChecker evaluates rules', tip: 'The rule engine runs inside the same process. No isolation \u2014 a compliance bug crashes the payment worker too.' },
-  { title: 'Compliance result returned', tip: 'Result comes back instantly (same process). But there\'s no team boundary \u2014 no independent deployment, no separate blast radius.' },
-  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Same as the decoupled version. But the whole system is one big domino line.' },
+  { title: 'Ready', tip: 'This is the MONOLITH \u2014 single worker, everything coupled. Click "Next Step" to see the flow.', panel: null },
+  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. Everything runs on ONE worker, ONE task queue.', panel: 'starter' },
+  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity. So far, no different from the decoupled version.', panel: 'validate' },
+  { title: 'Step 2 \u2014 Compliance check (same worker!)', tip: 'Compliance is mandatory \u2014 regulations require every payment to pass risk assessment before execution. The workflow calls complianceActivity.checkCompliance() on the SAME worker. If this worker crashes, BOTH teams go down.', panel: 'monolithCompliance' },
+  { title: 'ComplianceChecker evaluates rules', tip: 'The rule engine runs inside the same process. No isolation \u2014 a compliance bug crashes the payment worker too.', panel: 'checker' },
+  { title: 'Compliance result returned', tip: 'Result comes back instantly (same process). But there\'s no team boundary \u2014 no independent deployment, no separate blast radius.', panel: 'workflow' },
+  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Payment can only execute after compliance passes. Declined transactions stop here. But the whole system is one big domino line.', panel: 'execute' },
 ];
 
 const stepsNexus = [
-  { title: 'Ready', tip: 'This is NEXUS-DECOUPLED \u2014 two workers, two teams, one durable boundary. Click "Next Step".' },
-  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. The starter code is IDENTICAL to the monolith version.' },
-  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity on the Payments worker. Same as before.' },
-  { title: 'Step 2 \u2014 Nexus call to Compliance', tip: 'The workflow calls complianceService.checkCompliance() via Nexus. The call crosses the orange boundary \u2014 durably, with retries.' },
-  { title: 'ComplianceChecker evaluates rules', tip: 'Runs on the Compliance worker. If it crashes, only compliance is affected. Temporal retries the Nexus operation automatically.' },
-  { title: 'Compliance result returned', tip: 'Result crosses back over the Nexus boundary. The payment workflow resumes exactly where it left off.' },
-  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Approved transactions proceed to executePayment. Declined ones stop. Same logic, different architecture.' },
+  { title: 'Ready', tip: 'This is NEXUS-DECOUPLED \u2014 two workers, two teams, one durable boundary. Click "Next Step".', panel: null },
+  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. The starter code is IDENTICAL to the monolith version.', panel: 'starter' },
+  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity on the Payments worker. Same as before.', panel: 'validate' },
+  { title: 'Step 2 \u2014 Nexus call to Compliance', tip: 'Compliance is mandatory \u2014 regulations require every payment to pass risk assessment before execution. The workflow calls complianceService.checkCompliance() via Nexus. The call crosses the orange boundary \u2014 durably, with retries.', panel: 'nexusImpl' },
+  { title: 'ComplianceChecker evaluates rules', tip: 'Runs on the Compliance worker. If it crashes, only compliance is affected. Temporal retries the Nexus operation automatically.', panel: 'checker' },
+  { title: 'Compliance result returned', tip: 'Result crosses back over the Nexus boundary. The payment workflow resumes exactly where it left off.', panel: 'workflow' },
+  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Payment can only execute after compliance passes. Declined transactions stop here. Same logic, different architecture.', panel: 'execute' },
 ];
 
 // ── Mode toggle ──────────────────────────────────────────────────
@@ -868,6 +869,11 @@ function renderStep() {
   }
   if (!failureActive) {
     restartBtn.classList.remove('visible');
+  }
+
+  // Auto-show side panel for current step
+  if (step.panel) {
+    showPanel(step.panel);
   }
 
   if (isNexusMode) {
