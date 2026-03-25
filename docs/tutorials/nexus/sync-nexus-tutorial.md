@@ -67,7 +67,26 @@ Two teams split this work:
 
 Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius.
 
-**Try me!** This diagram is interactive — click **"Next Step"** to walk through the flow, then switch between **Monolith** and **Nexus** modes to see the difference.
+<div style={{textAlign: 'center', marginBottom: '8px'}}>
+  <span style={{
+    display: 'inline-block',
+    background: 'linear-gradient(135deg, #f97316, #fb923c)',
+    color: '#fff',
+    fontWeight: 800,
+    fontSize: '14px',
+    padding: '6px 18px',
+    borderRadius: '20px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2)',
+    animation: 'tryMePulse 2s ease-in-out infinite',
+  }}>🖱️ TRY ME — This diagram is interactive!</span>
+</div>
+<style>{`
+  @keyframes tryMePulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2); }
+    50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4); }
+  }
+`}</style>
 
 <iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
