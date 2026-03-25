@@ -63,15 +63,11 @@ Two teams split this work:
 </tr>
 </table>
 
-:::tip Namespaces and Nexus are architectural decisions
-The decision to create separate namespaces and whether to use Nexus is a decision of architecture and context, not a team decision. Teams may share a namespace, or a single team may use multiple namespaces. Choose based on isolation requirements, blast radius, and security boundaries — not org chart lines.
-
-For production namespace strategies, see [Managing Namespaces Best Practices](https://docs.temporal.io/best-practices/managing-namespace).
-:::
-
 ### The Problem
 
 Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius.
+
+**Try me!** This diagram is interactive — click **"Next Step"** to walk through the flow, then switch between **Monolith** and **Nexus** modes to see the difference.
 
 <iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
@@ -80,6 +76,10 @@ Compliance isn't optional — every payment must pass risk assessment before exe
 ### The Solution: Temporal Nexus
 
 [**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, deployment pipeline, and security perimeter — while Temporal manages durable, type-safe calls between them through a global gateway that handles discovery and routing. If the Compliance Worker goes down mid-call, the payment workflow just waits. When Compliance comes back, it picks up exactly where it left off — no retry logic, no data loss, no 3 AM page for the Payments team.
+
+:::tip Namespaces and Nexus are architectural decisions
+The decision to create separate namespaces and whether to use Nexus is a decision of architecture and context, not a team decision. Teams may share a namespace, or a single team may use multiple namespaces. Choose based on isolation requirements, blast radius, and security boundaries — not org chart lines. For production namespace strategies, see [Managing Namespaces Best Practices](https://docs.temporal.io/best-practices/managing-namespace).
+:::
 
 The best part? The code change is almost invisible:
 
