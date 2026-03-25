@@ -4,7 +4,7 @@ sidebar_position: 1
 keywords: [nexus, temporal]
 tags: [nexus, temporal]
 last_update:
-  date: 2026-03-18
+  date: 2026-03-25
   author: Nikolay Advolodkin
   editor: Angela Zhou
 title: Decoupling Temporal Services with Nexus and the Java SDK
@@ -66,6 +66,12 @@ Two teams split this work:
 </tr>
 </table>
 
+:::tip Namespaces and Nexus are architectural decisions
+The decision to create separate namespaces and whether to use Nexus is a decision of architecture and context, not a team decision. Teams may share a namespace, or a single team may use multiple namespaces. Choose based on isolation requirements, blast radius, and security boundaries — not org chart lines.
+
+For production namespace strategies, see [Managing Namespaces Best Practices](https://docs.temporal.io/best-practices/managing-namespace).
+:::
+
 ### The Problem
 
 Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius.
@@ -74,7 +80,7 @@ Right now, **both teams' code runs on the same Worker**. One process. One deploy
 
 Compliance ships a bug at 3 AM. Their code crashes. But it's running on the same namespace — so **Payments goes down too**. Same blast radius. Same 3 AM page. Two teams, one shared fate.
 
-The obvious fix is microservices with REST calls — but then you're writing retry loops, circuit breakers, and dead letter queues. You've traded one problem for three.
+The obvious fix is to split into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. You've traded one problem for three.
 
 ### The Solution: Temporal Nexus
 
@@ -99,18 +105,20 @@ Here's what happens when the Compliance Worker goes down mid-call — and why it
 ![Nexus Durability svg](./ui/nexus-durability.svg)
 
 <details>
-<summary>Why Nexus over REST or a shared Activity?</summary>
+<summary>Why Nexus over an Activity-wrapped HTTP call or a shared Activity?</summary>
 
-You could split Payments and Compliance into microservices with REST calls. But then you'd write your own retry loops, circuit breakers, and dead letter queues. Here's how the options compare:
+You could split Payments and Compliance into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. Think of a Nexus Operation as a built-in system Activity that handles routing, permissions, and efficiently getting responses from long-running operations. Here's how the options compare:
 
-|                      | HTTP in an Activity                    | Direct Temporal Activity      | Temporal Nexus                                                                                                     |
-| -------------------- | -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Worker goes down** | Activity retries the HTTP call         | Same crash domain             | Workflow pauses, auto-resumes                                                                                      |
-| **Retry logic**      | Activity retry policy + HTTP errors    | Temporal retries within team  | Built-in across the boundary                                                                                       |
-| **Type safety**      | OpenAPI + code gen                     | Java interface                | Shared Java interface                                                                                              |
-| **Human review**     | Custom callback URLs                   | Couple teams together         | `@UpdateMethod` on the underlying workflow (async updates not yet supported across Nexus)                          |
-| **Team isolation**   | Separate services, shared API contract | Same namespace, shared access | Separate namespaces, scoped access                                                                                 |
-| **Code change**      | Update HTTP client + server            | —                             | One-line stub swap, also [nexus-rpc-gen](https://github.com/nexus-rpc/nexus-rpc-gen/) generates code automatically |
+|                      | Activity wrapping HTTP call            | Shared Activity (same namespace) | Temporal Nexus                                                                                                     |
+| -------------------- | -------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Worker goes down** | Activity retries the HTTP call         | Same crash domain                | Workflow pauses, auto-resumes                                                                                      |
+| **Retry logic**      | Activity retry policy + HTTP errors    | Temporal retries within team     | Built-in across namespace boundary                                                                                 |
+| **Routing**          | You manage service discovery + URLs    | N/A (same namespace)             | Built-in, Temporal routes to target namespace                                                                      |
+| **Permissions**      | Custom auth between services           | Shared namespace access          | Scoped cross-namespace permissions                                                                                 |
+| **Type safety**      | OpenAPI + code gen                     | Java interface                   | Shared Java interface                                                                                              |
+| **Human review**     | Custom callback URLs                   | Couples teams together           | `@UpdateMethod` on the underlying workflow (async updates not yet supported across Nexus)                          |
+| **Team isolation**   | Separate services, shared API contract | Same namespace, shared access    | Separate namespaces, scoped access                                                                                 |
+| **Code change**      | Update HTTP client + server            | —                                | One-line stub swap, also [nexus-rpc-gen](https://github.com/nexus-rpc/nexus-rpc-gen/) generates code automatically |
 
 </details>
 
@@ -154,7 +162,7 @@ BEFORE (Monolith):                    AFTER (Nexus Decoupled):
 Don't forget to clone [this repository](https://github.com/temporalio/edu-nexus-code/) for the exercise!
 :::
 
-Before changing anything, let's see the system working. You need **3 terminal windows** and a running Temporal server. Navigate into the [`java/decouple-monolith/exercise`](https://github.com/temporalio/edu-nexus-code/tree/main/java/decouple-monolith/exercise) directory.
+Before changing anything, let's see the system working. You need **3 terminal windows** and a running Temporal server. Navigate into the [`java/decouple-monolith/exercise`](https://github.com/temporalio/edu-nexus-code/tree/main/java/decouple-monolith/exercise) directory in each terminal.
 
 **Terminal 0 — Temporal Server** (if not already running):
 
@@ -162,7 +170,7 @@ Before changing anything, let's see the system working. You need **3 terminal wi
 temporal server start-dev
 ```
 
-**Create namespaces** (one-time setup):
+**Terminal 1 — Create namespaces** (one-time setup):
 
 ```bash
 temporal operator namespace create --namespace payments-namespace
@@ -172,7 +180,6 @@ temporal operator namespace create --namespace compliance-namespace
 **Terminal 1 — Start the monolith Worker:**
 
 ```bash
-cd exercise
 mvn compile exec:java@payments-worker
 ```
 
@@ -187,13 +194,20 @@ Registered: PaymentProcessingWorkflow, PaymentActivity
 **Terminal 2 — Run the starter:**
 
 ```bash
-cd exercise
 mvn compile exec:java@starter
 ```
 
-**Switch to `payments-namespace` in the Temporal UI** using the namespace selector at the top of the Web UI.
+**Switch to `payments-namespace` in the [Temporal UI](http://localhost:8233)** using the namespace selector at the top of the Web UI.
 
 ![Three transactions with different risk levels: TXN-A approved (low risk), TXN-B approved (medium risk), TXN-C declined (high risk, OFAC-sanctioned)](./ui/new-namespace.png)
+
+:::tip Navigating the Temporal UI across namespaces
+You created two namespaces earlier. Right now everything runs in `payments-namespace`, but once you decouple the system, your workflows will span both:
+- **`payments-namespace`** — where the payment workflows run.
+- **`compliance-namespace`** — where the compliance workflows will run after decoupling.
+
+Use the namespace selector at the top of the [Temporal UI](http://localhost:8233) to switch between them. You'll need to check both namespaces throughout the rest of this tutorial. For production namespace strategies, see [Managing Namespaces](https://docs.temporal.io/best-practices/managing-namespace).
+:::
 
 **Expected results:**
 
@@ -230,7 +244,9 @@ mvn compile exec:java@starter
 
 **Checkpoint 0 passed** if all 3 transactions complete with the expected results. The system works! Now let's decouple it.
 
-> **Stop the Worker** (Ctrl+C in Terminal 1) before continuing.
+:::warning Stop before continuing
+**Stop the monolith Worker** by pressing Ctrl+C in **Terminal 1**. The starter in Terminal 2 should have already exited on its own.
+:::
 
 :::tip
 ** Are you enjoying this tutorial?** [Sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
@@ -279,7 +295,7 @@ Can you match each Nexus concept to what it represents in our payments scenario?
 | **4** | [`payments/temporal/PaymentProcessingWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentProcessingWorkflowImpl.java) | Modify    | Replace Activity stub → Nexus stub                            |
 | **5** | [`payments/temporal/PaymentsWorkerApp.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentsWorkerApp.java)                         | Modify    | Add `NexusServiceOptions`, remove `ComplianceActivity`        |
 
-**Teaching order:** Service interface (1) → Both handlers (2) → Worker (3, CLI) → Caller (4-5) → Run the human review path.
+You'll work through these files in order: define the service interface (1), implement the handlers (2), register everything in the Worker (3), then update the caller to use Nexus instead of a direct Activity (4-5). After that, you'll run the full system end-to-end.
 
 </details>
 
@@ -300,7 +316,7 @@ Can you match each Nexus concept to what it represents in our payments scenario?
 ```java
 public class ComplianceWorkflowImpl implements ComplianceWorkflow {
 
-    @Override // @WorkflowMethod
+    @Override
     public ComplianceResult run(ComplianceRequest request) {
         // Step 1: Run automated compliance check
         autoResult = complianceActivity.checkCompliance(request);
@@ -318,14 +334,14 @@ public class ComplianceWorkflowImpl implements ComplianceWorkflow {
         return reviewResult;
     }
 
-    @Override // @UpdateMethod
+    @Override
     public ComplianceResult review(boolean approved, String explanation) {
         // Stores the decision and unblocks run()
         this.reviewResult = new ComplianceResult(..., approved, "MEDIUM", explanation);
         return reviewResult;
     }
 
-    @Override // @UpdateValidatorMethod
+    @Override
     public void validateReview(boolean approved, String explanation) {
         // Rejects reviews that arrive at the wrong time
         if (autoResult == null || !"MEDIUM".equals(autoResult.getRiskLevel()))
@@ -500,8 +516,9 @@ The **task queue name** is `compliance-risk` — remember this value. You'll use
 
 ## Checkpoint 1: Compliance Worker Starts
 
+**Terminal 1 — Start the Compliance Worker:**
+
 ```bash
-cd exercise
 mvn compile exec:java@compliance-worker
 ```
 
@@ -510,14 +527,6 @@ mvn compile exec:java@compliance-worker
 ```log
 Compliance Worker started on: compliance-risk
 ```
-
-:::danger
-If it fails to compile or crashes at startup, check:
-
-- TODO 1: Does `ComplianceNexusService` have `@Service` and `@Operation` on **both** methods?
-- TODO 2: Does `ComplianceNexusServiceImpl` have `@ServiceImpl` and `@OperationImpl` on **both** handlers (`checkCompliance` and `submitReview`)?
-- TODO 3: Are you registering the Workflow, Activity, and Nexus service?
-  :::
 
 > **Keep the compliance Worker running** — you'll need it for Checkpoint 2.
 
@@ -555,7 +564,7 @@ You're replacing the Activity stub with a Nexus stub — same method call, but i
 **What to change for TODO 4:**
 
 1. Replace the `ComplianceActivity` Activity stub with a `ComplianceNexusService` Nexus stub — this swaps the Activity call for a durable cross-namespace Nexus call. The stub uses `Workflow.newNexusServiceStub` instead of `Workflow.newActivityStub`.
-2. Change `complianceActivity.checkCompliance(compReq)` to `complianceService.checkCompliance(compReq)` — same method name, same input, same output.
+2. Rename the variable: `compliance`**`Activity`** becomes `compliance`**`Service`** — so `complianceActivity.checkCompliance(compReq)` becomes `complianceService.checkCompliance(compReq)`. Same method name, same input, same output.
 
 **BEFORE:**
 
@@ -712,61 +721,36 @@ You need **4 terminal windows** now:
 **Terminal 2 — Compliance Worker** (already running from Checkpoint 1, or restart):
 
 ```bash
-cd exercise
 mvn compile exec:java@compliance-worker
 ```
 
 **Terminal 3 — Payments Worker** (restart with your changes):
 
 ```bash
-cd exercise
 mvn compile exec:java@payments-worker
 ```
 
 **Terminal 4 — Starter:**
 
 ```bash
-cd exercise
 mvn compile exec:java@starter
 ```
 
 - **TXN-A and TXN-C** take ~10 seconds each (the compliance workflow includes a durable sleep for the Checkpoint 3 demo).
 - **TXN-B** is MEDIUM risk — its workflow durably pauses (`Workflow.await()`) until a human reviewer submits a decision. It will stay waiting until you complete the human review path after Checkpoint 3.
 
+The starter runs transactions in series, so **TXN-B will block the terminal** while it waits for human review. This is expected — TXN-C won't start yet.
+
 ![TXN-B human-in-the-loop flow: Payment workflow calls compliance via Nexus, compliance scores MEDIUM and durably pauses, human reviewer approves via Nexus Update, workflow resumes](./ui/human-in-the-loop.svg)
 
-**Checkpoint 2 passed** if you see these results:
+Verify in the [Temporal UI](http://localhost:8233): switch to **`payments-namespace`** and **`compliance-namespace`** to confirm the following. **Checkpoint 2 passed** if you see:
 
-<table>
-<tr>
-<th>Transaction</th>
-<th>Risk</th>
-<th>Result</th>
-<th>How</th>
-</tr>
-<tr>
-<td><code>TXN-A</code></td>
-<td>LOW</td>
-<td><code>COMPLETED</code></td>
-<td>Auto-approved (~10s)</td>
-</tr>
-<tr>
-<td><code>TXN-B</code></td>
-<td>MEDIUM</td>
-<td>Waiting</td>
-<td>Paused for human review (you'll complete this after Checkpoint 3)</td>
-</tr>
-<tr>
-<td><code>TXN-C</code></td>
-<td>HIGH</td>
-<td><code>DECLINED_COMPLIANCE</code></td>
-<td>Auto-denied (~10s, amount &gt; $50K)</td>
-</tr>
-</table>
+1. **TXN-A** completes with `COMPLETED` (~10s, auto-approved).
+2. **TXN-B** is running — the starter hangs, waiting for a human review decision. This is correct. Leave it running. In `compliance-namespace`, you'll see the corresponding compliance workflow waiting too.
+3. **TXN-C** has not started yet — it will run after TXN-B completes.
 
 Two Workers, two blast radii, two independent teams. The automated compliance path works end-to-end through Nexus.
 
-> **Check the Temporal UI** at `http://localhost:8233` — switch to **`payments-namespace`** and open any completed workflow. You should see Nexus operations in the Event History!
 
 ---
 
@@ -781,27 +765,24 @@ Make sure any previous workflows have completed or been terminated before contin
 **Terminal 2 — Compliance Worker**:
 
 ```bash
-cd exercise
 mvn compile exec:java@compliance-worker
 ```
 
 **Terminal 3 — Payments Worker**:
 
 ```bash
-cd exercise
 mvn compile exec:java@payments-worker
 ```
 
 **Terminal 4 — Run the starter:**
 
 ```bash
-cd exercise
 mvn compile exec:java@starter
 ```
 
 The starter runs TXN-A first. TXN-A has a 10-second durable sleep in `ComplianceWorkflowImpl`. **During that 10-second window:**
 
-**Terminal 1 — Kill the compliance Worker (Ctrl+C)**
+**Terminal 2 — Kill the compliance Worker (Ctrl+C)**
 
 Now watch what happens:
 
@@ -812,16 +793,15 @@ Now watch what happens:
 <img src={require('./ui/backing-off-nexus-operation.png').default} alt="Temporal UI showing Nexus operation in backing off state after compliance Worker is killed" width="100%" />
 </a>
 
-**Terminal 1 — Restart the compliance Worker:**
+**Terminal 2 — Restart the compliance Worker:**
 
 ```bash
-cd exercise
 mvn compile exec:java@compliance-worker
 ```
 
 Now watch:
 
-3. **Terminal 1 (compliance Worker)** — picks up the work immediately. You'll see `[ComplianceChecker] Evaluating TXN-A` in the logs.
+3. **Terminal 2 (compliance Worker)** — picks up the work immediately. You'll see `[ComplianceChecker] Evaluating TXN-A` in the logs.
 4. **Terminal 3 (starter)** — TXN-A completes with `COMPLETED`. The starter moves on to TXN-B and TXN-C as if nothing happened.
 5. **Temporal UI** — the Nexus operation shows as completed. No retries of the payment workflow. No duplicate compliance checks. The system just resumed.
 
@@ -843,7 +823,7 @@ Three pre-provided files work together to send a human review decision through t
 
 ```java
 ReviewRequest request = new ReviewRequest("TXN-B", true, "Approved after manual review");
-ReviewCallerWorkflow workflow = client.newWorkflowStub(ReviewCallerWorkflow.class, ...);
+ReviewCallerWorkflow workflow = client.newWorkflowStub(ReviewCallerWorkflow.class, workflowOptions);
 ComplianceResult result = workflow.submitReview(request);
 ```
 
@@ -872,7 +852,6 @@ Make sure both Workers are running and TXN-B is still waiting from Checkpoint 2.
 **Terminal 4 — Approve TXN-B via Nexus:**
 
 ```bash
-cd exercise
 mvn compile exec:java@review-starter
 ```
 
