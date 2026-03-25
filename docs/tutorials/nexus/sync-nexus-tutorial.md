@@ -75,17 +75,11 @@ Right now, **both teams' code runs on the same Worker**. One process. One deploy
 
 <iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
-Compliance isn't optional — regulations require that every payment passes risk assessment *before* execution. This hard dependency makes the coupling especially dangerous: a bug in compliance code blocks *all* payments, not just flagged ones. Compliance ships a bug at 3 AM. Their code crashes. But it's running on the same namespace — so **Payments goes down too**. Same blast radius. Same 3 AM page. Two teams, one shared fate.
-
-The obvious fix is to split into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. You've traded one problem for three.
+Compliance isn't optional — every payment must pass risk assessment before execution. This hard dependency is dangerous: a bug in compliance code at 3 AM crashes payments too, because they share the same namespace and blast radius. The obvious fix is to split into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself.
 
 ### The Solution: Temporal Nexus
 
-[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. The primary advantage: **each team can modify, deploy, and version their code independently**. The Compliance team doesn't ship code into the Payments Worker, and the Payments team doesn't need to understand compliance internals. Each team controls its own governance, authentication, and authorization.
-
-Each team gets its own Worker process, its own deployment pipeline, its own security perimeter, its own blast radius — while Temporal manages the durable, type-safe calls between them. Nexus provides a **global gateway and directory** that simplifies discovery and routing — callers look up an endpoint by name rather than managing connection details.
-
-The Payments workflow calls the Compliance team through a Nexus operation. If the Compliance Worker goes down mid-call, the payment workflow just...waits. When Compliance comes back, it picks up exactly where it left off. No retry logic. No data loss. No 3am page for the Payments team. In production, you'd run multiple replicas of each Worker — if one host goes down, Temporal routes pending work to the remaining replicas and traffic continues without interruption.
+[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, deployment pipeline, and security perimeter — while Temporal manages durable, type-safe calls between them through a global gateway that handles discovery and routing. If the Compliance Worker goes down mid-call, the payment workflow just waits. When Compliance comes back, it picks up exactly where it left off — no retry logic, no data loss, no 3 AM page for the Payments team.
 
 The best part? The code change is almost invisible:
 
@@ -206,7 +200,7 @@ You created two namespaces earlier. Right now everything runs in `payments-names
 - **`payments-namespace`** — where the payment workflows run.
 - **`compliance-namespace`** — where the compliance workflows will run after decoupling.
 
-Use the namespace selector at the top of the [Temporal UI](http://localhost:8233) to switch between them. You'll need to check both namespaces throughout the rest of this tutorial. For production namespace strategies, see [Managing Namespaces](https://docs.temporal.io/best-practices/managing-namespace).
+Use the namespace selector at the top of the [Temporal UI](http://localhost:8233) to switch between them. You'll need to check both namespaces throughout the rest of this tutorial. 
 :::
 
 **Expected results:**
@@ -247,11 +241,6 @@ Use the namespace selector at the top of the [Temporal UI](http://localhost:8233
 :::warning Stop before continuing
 **Stop the monolith Worker** by pressing Ctrl+C in **Terminal 1**. The starter in Terminal 2 should have already exited on its own.
 :::
-
-:::tip
-** Are you enjoying this tutorial?** [Sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
-:::
-
 ---
 
 <details>
@@ -285,7 +274,7 @@ Can you match each Nexus concept to what it represents in our payments scenario?
 <details>
 <summary>The TODOs</summary>
 
-> **Pre-provided:** The [`ComplianceWorkflow`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflow.java) interface and [implementation](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflowImpl.java) are already complete in the exercise. They use Temporal patterns you've already seen — `@WorkflowMethod`, `@UpdateMethod`, and `Workflow.await()`. Your work starts at **TODO 1** — the Nexus-specific parts.
+**Pre-provided:** The [`ComplianceWorkflow`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflow.java) interface and [implementation](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflowImpl.java) are already complete in the exercise. They use Temporal patterns you've already seen — `@WorkflowMethod`, `@UpdateMethod`, and `Workflow.await()`. Your work starts at **TODO 1** — the Nexus-specific parts.
 
 | #     | File                                                                                                                                                                                                                | Operation | Key Concept                                                   |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------- |
@@ -455,11 +444,13 @@ public class ComplianceNexusServiceImpl {
 
 This class has two handlers that use different patterns:
 
-- **`checkCompliance`** uses `WorkflowRunOperation.fromWorkflowHandle` — the pattern for **starting** a long-running workflow. It returns a _handle_ that binds the Nexus operation to that workflow's ID. On retries (transient failures), Temporal matches on the handle and reuses the existing workflow instead of starting a duplicate.
-- **`submitReview`** uses `OperationHandler.sync` — the pattern for **interacting** with an already-running workflow. It looks up the `compliance-{transactionId}` workflow and sends a `review` Update. Sync handlers must complete within 10 seconds — fine here because the Update returns immediately.
+- **`checkCompliance`** — Uses `WorkflowRunOperation.fromWorkflowHandle` to start a long-running workflow. The handle binds the Nexus operation to a workflow ID, so retries reuse the existing workflow instead of creating duplicates.
+- **`submitReview`** — Uses `OperationHandler.sync` to interact with an already-running workflow. It looks up `compliance-{transactionId}` and sends a review Update. Sync handlers must complete within 10 seconds.
 
-:::info Signal vs Update for human review
-This tutorial uses an `@UpdateMethod` for `submitReview` because it returns the compliance result synchronously — the caller gets the answer immediately. However, an `@UpdateMethod` requires the Worker to be running at the time of the call; if the Worker is down, the Update will fail. An alternative is to use a [Signal](https://docs.temporal.io/workflows#signal) instead, which is delivered to the workflow's event history even when the Worker is offline. The trade-off: Signals are fire-and-forget — the caller doesn't get a return value, so you'd need a separate mechanism (e.g., a Query or another Nexus operation) to retrieve the result.
+:::info Signal vs Update for Human Review
+This tutorial uses an `@UpdateMethod` for `submitReview` because it returns the compliance result synchronously — the caller gets the answer immediately. 
+
+However, an `@UpdateMethod` requires the Worker to be running at the time of the call; if the Worker is down, the Update will fail. An alternative is to use a [Signal](https://docs.temporal.io/workflows#signal) instead, which is delivered to the workflow's Event History even when the Worker is offline. The trade-off: Signals are fire-and-forget — the caller doesn't get a return value, so you'd need a separate mechanism (e.g., a Query or another Nexus operation) to retrieve the result.
 :::
 
 ![Nexus handle retry diagram: first call starts a workflow and returns a handle, retries reuse the same workflow instead of creating duplicates](./ui/nexus-handle-retry.svg)
@@ -534,6 +525,9 @@ Compliance Worker started on: compliance-risk
 
 > **Keep the compliance Worker running** — you'll need it for Checkpoint 2.
 
+:::tip
+** Are you enjoying this tutorial?** [Sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
+:::
 ---
 
 ## Checkpoint 1.5: Create the Nexus Endpoint
@@ -815,11 +809,11 @@ Now watch:
 
 3. **Terminal 2 (compliance Worker)** — picks up the work immediately. You'll see `[ComplianceChecker] Evaluating TXN-A` in the logs.
 4. **Terminal 3 (starter)** — TXN-A completes with `COMPLETED`. The starter moves on to TXN-B and TXN-C as if nothing happened.
-5. **Temporal UI** — the Nexus operation shows as completed. No retries of the payment workflow. No duplicate compliance checks. The system just resumed.
+5. **Temporal UI** — check both namespaces. In `payments-namespace`, the Nexus operation shows as completed. In `compliance-namespace`, the compliance workflow completed successfully. No retries of the payment workflow. No duplicate compliance checks. The system just resumed.
 
-**Checkpoint 3 passed** if TXN-A completes successfully after you restart the compliance Worker.
+> **Checkpoint 3 passed** if TXN-A completes successfully after you restart the compliance Worker.
 
-**What just happened:** The payment workflow didn't crash. It didn't timeout. It didn't lose data. It didn't need retry logic. It just... waited. When the compliance Worker came back, Temporal automatically routed the pending Nexus operation to it. Durability extends across the team boundary — that's the whole point of Nexus. With multiple replicas, this scenario would be even smoother — the pending Nexus operation would be picked up by another replica immediately, with no visible interruption.
+**What just happened:** The payment workflow didn't crash, timeout, or lose data — it just waited. When the compliance Worker came back, Temporal automatically routed the pending Nexus operation to it. Durability extends across the team boundary — that's the whole point of Nexus. With multiple replicas, another instance would pick up the work immediately with no visible interruption.
 
 ---
 
