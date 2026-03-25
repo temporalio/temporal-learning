@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1200 627" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D1117"/>
+      <stop offset="100%" stop-color="#161B22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="627" fill="url(#bg)"/>
+
+  <!-- Top accent line -->
+  <rect x="60" y="45" width="700" height="4" fill="#00C4B4" rx="2"/>
+
+  <!-- Label -->
+  <text x="60" y="100" fill="#8B949E" font-family="sans-serif" font-size="20" font-weight="bold" letter-spacing="3">HANDS-ON TUTORIAL</text>
+
+  <!-- Title -->
+  <text x="60" y="155" fill="#FFFFFF" font-family="sans-serif" font-size="42" font-weight="bold">Decoupling Temporal Services</text>
+  <text x="60" y="208" fill="#FFFFFF" font-family="sans-serif" font-size="42" font-weight="bold">with Nexus</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="260" fill="#8B949E" font-family="sans-serif" font-size="22">Split a monolith into two independent services. Keep durability across the boundary.</text>
+
+  <!-- Architecture visual: Before/After -->
+  <!-- Before box -->
+  <rect x="60" y="295" width="340" height="130" rx="10" fill="#1A2332" stroke="#30363D" stroke-width="1.5"/>
+  <text x="80" y="325" fill="#8B949E" font-family="sans-serif" font-size="14" font-weight="bold" letter-spacing="2">BEFORE</text>
+  <rect x="80" y="340" width="130" height="32" rx="4" fill="#2D333B"/>
+  <text x="95" y="362" fill="#F0883E" font-family="monospace" font-size="14">Payments</text>
+  <rect x="80" y="380" width="130" height="32" rx="4" fill="#2D333B"/>
+  <text x="88" y="402" fill="#F0883E" font-family="monospace" font-size="14">Compliance</text>
+  <rect x="240" y="350" width="140" height="50" rx="6" fill="#2D333B" stroke="#F0883E" stroke-width="1.5"/>
+  <text x="258" y="381" fill="#F0883E" font-family="monospace" font-size="15">1 Worker</text>
+
+  <!-- Arrow between -->
+  <line x1="420" y1="360" x2="470" y2="360" stroke="#8B949E" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="470,354 482,360 470,366" fill="#8B949E"/>
+
+  <!-- After box -->
+  <rect x="490" y="295" width="450" height="130" rx="10" fill="#1A2332" stroke="#00C4B4" stroke-width="1.5"/>
+  <text x="510" y="325" fill="#00C4B4" font-family="sans-serif" font-size="14" font-weight="bold" letter-spacing="2">AFTER (NEXUS)</text>
+  <rect x="510" y="340" width="140" height="32" rx="4" fill="#2D333B"/>
+  <text x="525" y="362" fill="#00C4B4" font-family="monospace" font-size="14">Payments</text>
+  <rect x="510" y="380" width="140" height="32" rx="4" fill="#2D333B"/>
+  <text x="523" y="402" fill="#8B949E" font-family="monospace" font-size="14">Worker 1</text>
+
+  <!-- Nexus bridge -->
+  <rect x="672" y="350" width="80" height="30" rx="15" fill="#00C4B4"/>
+  <text x="685" y="371" fill="#0D1117" font-family="monospace" font-size="13" font-weight="bold">Nexus</text>
+
+  <rect x="774" y="340" width="148" height="32" rx="4" fill="#2D333B"/>
+  <text x="785" y="362" fill="#00C4B4" font-family="monospace" font-size="14">Compliance</text>
+  <rect x="774" y="380" width="148" height="32" rx="4" fill="#2D333B"/>
+  <text x="787" y="402" fill="#8B949E" font-family="monospace" font-size="14">Worker 2</text>
+
+  <!-- Concept tags -->
+  <rect x="60" y="455" width="165" height="38" rx="6" fill="#1A2332" stroke="#30363D" stroke-width="1"/>
+  <text x="78" y="480" fill="#00C4B4" font-family="monospace" font-size="15">@Service</text>
+
+  <rect x="240" y="455" width="190" height="38" rx="6" fill="#1A2332" stroke="#30363D" stroke-width="1"/>
+  <text x="258" y="480" fill="#00C4B4" font-family="monospace" font-size="15">@Operation</text>
+
+  <rect x="445" y="455" width="250" height="38" rx="6" fill="#1A2332" stroke="#30363D" stroke-width="1"/>
+  <text x="463" y="480" fill="#00C4B4" font-family="monospace" font-size="15">fromWorkflowHandle</text>
+
+  <rect x="710" y="455" width="225" height="38" rx="6" fill="#1A2332" stroke="#30363D" stroke-width="1"/>
+  <text x="728" y="480" fill="#00C4B4" font-family="monospace" font-size="15">@UpdateMethod</text>
+
+  <!-- SDK + meta -->
+  <rect x="60" y="520" width="90" height="34" rx="6" fill="#00C4B4"/>
+  <text x="82" y="543" fill="#0D1117" font-family="monospace" font-size="16" font-weight="bold">Java</text>
+  <text x="170" y="543" fill="#8B949E" font-family="sans-serif" font-size="17">Intermediate  |  ~45-60 min</text>
+
+  <!-- URL + branding -->
+  <text x="60" y="585" fill="#8B949E" font-family="sans-serif" font-size="16">learn.temporal.io/tutorials/nexus/nexus-sync-tutorial</text>
+  <text x="60" y="612" fill="#FFFFFF" font-family="sans-serif" font-size="22" font-weight="bold">temporal</text>
+</svg>
