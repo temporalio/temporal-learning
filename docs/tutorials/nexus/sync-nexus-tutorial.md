@@ -458,6 +458,10 @@ This class has two handlers that use different patterns:
 - **`checkCompliance`** uses `WorkflowRunOperation.fromWorkflowHandle` — the pattern for **starting** a long-running workflow. It returns a _handle_ that binds the Nexus operation to that workflow's ID. On retries (transient failures), Temporal matches on the handle and reuses the existing workflow instead of starting a duplicate.
 - **`submitReview`** uses `OperationHandler.sync` — the pattern for **interacting** with an already-running workflow. It looks up the `compliance-{transactionId}` workflow and sends a `review` Update. Sync handlers must complete within 10 seconds — fine here because the Update returns immediately.
 
+:::info Signal vs Update for human review
+This tutorial uses an `@UpdateMethod` for `submitReview` because it returns the compliance result synchronously — the caller gets the answer immediately. However, an `@UpdateMethod` requires the Worker to be running at the time of the call; if the Worker is down, the Update will fail. An alternative is to use a [Signal](https://docs.temporal.io/workflows#signal) instead, which is delivered to the workflow's event history even when the Worker is offline. The trade-off: Signals are fire-and-forget — the caller doesn't get a return value, so you'd need a separate mechanism (e.g., a Query or another Nexus operation) to retrieve the result.
+:::
+
 ![Nexus handle retry diagram: first call starts a workflow and returns a handle, retries reuse the same workflow instead of creating duplicates](./ui/nexus-handle-retry.svg)
 
 <details><summary>Key differences between the two handlers:</summary>
