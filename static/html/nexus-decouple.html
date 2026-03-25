@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Sync: Decouple Your Teams</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --payments-color: #3b82f6;
+    --payments-bg: rgba(59, 130, 246, 0.08);
+    --payments-border: rgba(59, 130, 246, 0.3);
+    --compliance-color: #22c55e;
+    --compliance-bg: rgba(34, 197, 94, 0.08);
+    --compliance-border: rgba(34, 197, 94, 0.3);
+    --nexus-color: #f97316;
+    --nexus-glow: rgba(249, 115, 22, 0.4);
+    --text: #e6edf3;
+    --text-muted: #ffffff;
+    --low-risk: #22c55e;
+    --medium-risk: #f97316;
+    --high-risk: #ef4444;
+    --panel-bg: #1c2128;
+    --monolith-color: #a78bfa;
+    --monolith-bg: rgba(167, 139, 250, 0.08);
+    --monolith-border: rgba(167, 139, 250, 0.3);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  header h1 { font-size: 16px; font-weight: 600; }
+  header .badge {
+    background: rgba(249,115,22,0.15);
+    color: var(--nexus-color);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  header .subtitle { color: var(--text); font-size: 15px; margin-left: auto; line-height: 1.5; }
+
+  /* ── Controls row ────────────────────────────────────── */
+  .controls {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .mode-label { font-size: 13px; font-weight: 500; }
+  .mode-label.monolith { color: var(--monolith-color); }
+  .mode-label.nexus { color: var(--nexus-color); }
+  .toggle-switch {
+    width: 40px; height: 20px;
+    background: var(--monolith-color);
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .toggle-switch.on { background: var(--nexus-color); }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: transform 0.3s;
+  }
+  .toggle-switch.on::after { transform: translateX(20px); }
+
+  /* ── Step description bar ────────────────────────────── */
+  .step-bar {
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 52px;
+  }
+  .step-indicator {
+    background: var(--nexus-color);
+    color: black;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { flex: 1; }
+  .step-text strong { display: block; font-size: 14px; }
+  .step-text .tip {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 2px;
+  }
+  .step-dots { display: flex; gap: 6px; }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .dot.done { background: var(--compliance-color); }
+  .dot.current { background: var(--nexus-color); }
+  .step-nav { display: flex; gap: 8px; }
+  .nav-btn {
+    padding: 6px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: var(--nexus-color);
+    border-color: var(--nexus-color);
+    color: black;
+    font-weight: 600;
+  }
+  .nav-btn.primary:hover:not(:disabled) { opacity: 0.85; }
+  .nav-btn:hover:not(:disabled):not(.primary) { border-color: var(--text-muted); }
+
+  /* ── Main content ────────────────────────────────────── */
+  .main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── Canvas ──────────────────────────────────────────── */
+  .canvas {
+    flex: 1;
+    position: relative;
+    padding: 32px 24px;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    transition: all 0.5s;
+  }
+
+  /* Team zones */
+  .team-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid;
+    position: relative;
+    transition: all 0.5s ease;
+  }
+  .team-zone.payments {
+    background: var(--payments-bg);
+    border-color: var(--payments-border);
+    flex: 1;
+  }
+  .team-zone.compliance {
+    background: var(--compliance-bg);
+    border-color: var(--compliance-border);
+    flex: 1;
+  }
+
+  /* Monolith mode: single container */
+  .canvas.monolith .team-zone.payments {
+    background: var(--monolith-bg);
+    border-color: var(--monolith-border);
+    flex: 2;
+  }
+  .canvas.monolith .nexus-boundary {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  .canvas.monolith .team-zone.compliance {
+    width: 0;
+    flex: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+  }
+
+  .team-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .team-label.payments { color: var(--payments-color); }
+  .team-label.compliance { color: var(--compliance-color); }
+  .canvas.monolith .team-label.payments { color: var(--monolith-color); }
+
+  /* Monolith zone label */
+  .monolith-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--monolith-color);
+    display: none;
+    margin-bottom: 4px;
+  }
+  .canvas.monolith .monolith-label { display: block; }
+  .canvas.monolith .team-label.payments { display: none; }
+
+  /* Blast radius */
+  .blast-radius {
+    position: absolute;
+    inset: -4px;
+    border-radius: 16px;
+    border: 2px dashed var(--high-risk);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .blast-radius.visible { opacity: 0.6; }
+  .blast-radius-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--high-risk);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .blast-radius-label.visible { opacity: 1; }
+
+  /* Nexus boundary */
+  .nexus-boundary {
+    width: 64px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    z-index: 10;
+    transition: all 0.5s ease;
+  }
+  .nexus-line {
+    width: 3px;
+    height: 100%;
+    position: absolute;
+    background: linear-gradient(to bottom,
+      transparent 0%, var(--nexus-color) 20%, var(--nexus-color) 80%, transparent 100%);
+    box-shadow: 0 0 12px var(--nexus-glow);
+  }
+  .nexus-label-box {
+    background: var(--surface);
+    border: 1.5px solid var(--nexus-color);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 16px var(--nexus-glow);
+  }
+  .nexus-label-box .nx-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--nexus-color);
+    letter-spacing: 0.06em;
+  }
+  .nexus-label-box .nx-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Component boxes */
+  .component {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .component:hover { border-color: var(--text-muted); transform: translateY(-1px); }
+  .component.active-step {
+    border-color: var(--nexus-color);
+    box-shadow: 0 0 0 2px rgba(249,115,22,0.3);
+  }
+  .component.completed-step {
+    border-color: var(--compliance-color);
+    background: rgba(34,197,94,0.06);
+  }
+  .component-title {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .component-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .component-icon { font-size: 16px; }
+
+  /* Monolith compliance components (shown inside payments zone) */
+  .monolith-compliance {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .canvas.monolith .monolith-compliance { display: flex; }
+  .monolith-divider-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Token (animated transaction blob) */
+  .token {
+    position: absolute;
+    width: 28px; height: 28px;
+    background: var(--nexus-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: black;
+    box-shadow: 0 0 16px var(--nexus-glow);
+    z-index: 20;
+    transition: left 0.6s cubic-bezier(0.4,0,0.2,1), top 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+    pointer-events: none;
+  }
+  .token.hidden { opacity: 0; }
+  .token.beam {
+    background: white;
+    box-shadow: 0 0 24px white, 0 0 48px var(--nexus-color);
+    animation: beam-pulse 0.6s ease-in-out;
+  }
+
+  @keyframes beam-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.8); }
+    100% { transform: scale(1); }
+  }
+
+  /* Result banner */
+  .result-banner {
+    margin-top: auto;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+  }
+  .result-banner.show { display: block; }
+  .result-banner.approved { background: rgba(34,197,94,0.15); border: 1px solid var(--compliance-color); color: var(--compliance-color); }
+  .result-banner.declined { background: rgba(239,68,68,0.15); border: 1px solid var(--high-risk); color: var(--high-risk); }
+  .risk-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 8px;
+    font-weight: 700;
+  }
+  .risk-badge.LOW { background: rgba(34,197,94,0.2); color: var(--low-risk); }
+  .risk-badge.MEDIUM { background: rgba(249,115,22,0.2); color: var(--medium-risk); }
+  .risk-badge.HIGH { background: rgba(239,68,68,0.2); color: var(--high-risk); }
+
+  /* ── Side panel ──────────────────────────────────────── */
+  .side-panel {
+    width: 300px;
+    border-left: 1px solid var(--border);
+    background: var(--panel-bg);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-header h3 { font-size: 14px; font-weight: 600; }
+  .panel-header .panel-type {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .panel-body { padding: 16px; flex: 1; }
+  .panel-body p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+  .panel-body .highlight {
+    background: rgba(249,115,22,0.1);
+    border-left: 3px solid var(--nexus-color);
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .panel-body code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+    color: var(--payments-color);
+  }
+  .panel-placeholder {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .panel-placeholder .icon { font-size: 32px; margin-bottom: 12px; }
+
+  /* Compliance result display */
+  .compliance-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+  .compliance-result .cr-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .compliance-result .cr-value { font-size: 14px; font-weight: 600; }
+  .cr-approved { color: var(--compliance-color); }
+  .cr-declined { color: var(--high-risk); }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(249,115,22,0.3);
+    border-top-color: var(--nexus-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Failure simulation ──────────────────────────────────────── */
+  .failure-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--high-risk);
+    background: rgba(239,68,68,0.1);
+    color: var(--high-risk);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    display: none;
+  }
+  .failure-btn:hover { background: rgba(239,68,68,0.25); }
+  .failure-btn.visible { display: inline-block; }
+  .failure-btn.restart {
+    border-color: var(--compliance-color);
+    background: rgba(34,197,94,0.1);
+    color: var(--compliance-color);
+  }
+  .failure-btn.restart:hover { background: rgba(34,197,94,0.25); }
+
+  /* Zone crash states */
+  .team-zone.crashed {
+    border-color: var(--high-risk) !important;
+    background: rgba(239,68,68,0.08) !important;
+    animation: crash-shake 0.4s ease-in-out;
+  }
+  .team-zone.crashed .component {
+    border-color: rgba(239,68,68,0.4);
+    opacity: 0.5;
+  }
+  @keyframes crash-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+  }
+
+  /* Waiting state for payments zone during nexus failure */
+  .team-zone.waiting {
+    border-color: rgba(249,115,22,0.5) !important;
+  }
+  .team-zone.waiting .component.waiting-step {
+    border-color: rgba(249,115,22,0.4);
+  }
+
+  /* Crash overlay banner */
+  .crash-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15,17,23,0.92);
+    border: 2px solid var(--high-risk);
+    border-radius: 10px;
+    padding: 18px 28px;
+    text-align: center;
+    z-index: 30;
+    display: none;
+    max-width: 90%;
+  }
+  .crash-banner.visible { display: block; }
+  .crash-banner .crash-title {
+    color: var(--high-risk);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .crash-banner .crash-detail {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .crash-banner .crash-detail strong { color: var(--text); }
+
+  /* Nexus waiting banner */
+  .waiting-banner {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,17,23,0.92);
+    border: 1px solid rgba(249,115,22,0.4);
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-align: center;
+    z-index: 30;
+    display: none;
+    white-space: nowrap;
+  }
+  .waiting-banner.visible { display: block; }
+  .waiting-banner .waiting-text {
+    color: var(--nexus-color);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Recovery flash */
+  .team-zone.recovering {
+    animation: recover-flash 0.6s ease-in-out;
+  }
+  @keyframes recover-flash {
+    0% { border-color: var(--high-risk); }
+    50% { border-color: var(--compliance-color); box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+    100% { border-color: var(--compliance-border); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">TODO</div>
+  <span class="subtitle">Click <strong>"Next Step"</strong> in <strong>Monolith</strong> mode until <strong>"Kill Compliance Worker"</strong> appears &mdash; click it and watch everything crash. Then switch to <strong>Nexus</strong> and try again &mdash; only Compliance goes down while Payments waits.</span>
+</header>
+
+<div class="controls">
+  <div class="mode-toggle" onclick="toggleMode()">
+    <span class="mode-label monolith">Monolith</span>
+    <div class="toggle-switch" id="modeSwitch"></div>
+    <span class="mode-label nexus">Nexus</span>
+  </div>
+
+  <div class="step-nav">
+    <button class="nav-btn" id="btnBack" onclick="stepBack()" disabled>&larr; Back</button>
+    <button class="nav-btn primary" id="btnNext" onclick="stepNext()">Next Step &rarr;</button>
+  </div>
+
+  <button class="failure-btn" id="btnKill" onclick="killCompliance()">Kill Compliance Worker</button>
+  <button class="failure-btn restart" id="btnRestart" onclick="restartCompliance()">Restart Worker</button>
+
+  <div class="step-dots" id="stepDots" style="margin-left: auto;"></div>
+</div>
+
+<div class="step-bar">
+  <div class="step-indicator" id="stepIndicator">0</div>
+  <div class="step-text">
+    <strong id="stepTitle">Ready to start</strong>
+    <div class="tip" id="stepTip">Toggle between Monolith and Nexus, then click "Next Step" to animate the flow</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="canvas" id="canvas">
+
+    <!-- Payments Team Zone -->
+    <div class="team-zone payments" id="zonePayments">
+      <div class="monolith-label">Single Worker &mdash; Everything Coupled</div>
+      <div class="team-label payments">Payments Team</div>
+      <div class="blast-radius" id="blastPayments"></div>
+      <div class="blast-radius-label" id="blastPaymentsLabel">Blast Radius</div>
+
+      <div class="component" id="compStarter" onclick="showPanel('starter')">
+        <div class="component-title"><span class="component-icon">&#x1F680;</span> PaymentStarter</div>
+        <div class="component-type">Client &mdash; starts workflows</div>
+      </div>
+
+      <div class="component" id="compWorkflow" onclick="showPanel('workflow')">
+        <div class="component-title"><span class="component-icon">&#x2699;&#xFE0F;</span> PaymentProcessingWorkflow</div>
+        <div class="component-type">Workflow &mdash; orchestrates steps durably</div>
+      </div>
+
+      <div class="component" id="compValidate" onclick="showPanel('validate')">
+        <div class="component-title"><span class="component-icon">&#x2705;</span> validatePayment</div>
+        <div class="component-type">Activity &mdash; checks amount &amp; accounts</div>
+      </div>
+
+      <div class="component" id="compExecute" onclick="showPanel('execute')">
+        <div class="component-title"><span class="component-icon">&#x1F4B3;</span> executePayment</div>
+        <div class="component-type">Activity &mdash; calls payment gateway</div>
+      </div>
+
+      <!-- Monolith-only: compliance components inside payments zone -->
+      <div class="monolith-compliance" id="monolithCompliance">
+        <div class="monolith-divider-label">&#x26A0;&#xFE0F; Compliance (tightly coupled)</div>
+        <div class="component" id="compMonolithCompliance" onclick="showPanel('monolithCompliance')">
+          <div class="component-title"><span class="component-icon">&#x1F50D;</span> ComplianceActivity</div>
+          <div class="component-type">Activity &mdash; compliance check (same worker!)</div>
+        </div>
+        <div class="component" id="compMonolithChecker" onclick="showPanel('checker')">
+          <div class="component-title"><span class="component-icon">&#x1F4CB;</span> ComplianceChecker</div>
+          <div class="component-type">Rule engine &mdash; deterministic risk assessment</div>
+        </div>
+      </div>
+
+      <div class="result-banner" id="resultBanner"></div>
+    </div>
+
+    <!-- Nexus Boundary -->
+    <div class="nexus-boundary" id="nexusBoundary">
+      <div class="nexus-line"></div>
+      <div class="nexus-label-box" id="nexusBox">
+        <div class="nx-title">NEXUS</div>
+      </div>
+    </div>
+
+    <!-- Compliance Team Zone -->
+    <div class="team-zone compliance" id="zoneCompliance">
+      <div class="team-label compliance">Compliance Team</div>
+      <div class="blast-radius" id="blastCompliance"></div>
+      <div class="blast-radius-label" id="blastComplianceLabel">Blast Radius</div>
+
+      <div class="component" id="compNexusImpl" onclick="showPanel('nexusImpl')">
+        <div class="component-title"><span class="component-icon">&#x1F50C;</span> ComplianceNexusServiceImpl</div>
+        <div class="component-type">Nexus handler &mdash; receives cross-team calls</div>
+      </div>
+
+      <div class="component" id="compChecker" onclick="showPanel('checker')">
+        <div class="component-title"><span class="component-icon">&#x1F4CB;</span> ComplianceChecker</div>
+        <div class="component-type">Rule engine &mdash; deterministic risk assessment</div>
+      </div>
+
+      <div id="complianceResultBox" style="display:none">
+        <div class="compliance-result" id="complianceResultContent"></div>
+      </div>
+    </div>
+
+    <!-- Crash banners -->
+    <div class="crash-banner" id="crashBanner">
+      <div class="crash-title" id="crashTitle"></div>
+      <div class="crash-detail" id="crashDetail"></div>
+    </div>
+    <div class="waiting-banner" id="waitingBanner">
+      <div class="waiting-text"><span class="spinner"></span> Payments waiting &mdash; Nexus operation backing off...</div>
+    </div>
+
+    <!-- Animated token -->
+    <div class="token hidden" id="token">&#x25CF;</div>
+  </div>
+
+  <!-- Side panel -->
+  <div class="side-panel" id="sidePanel">
+    <div class="panel-placeholder">
+      <div class="icon">&#x1F446;</div>
+      <strong>Click any component</strong> to learn what it does<br><br>
+      Toggle <em>Monolith / Nexus</em> to see the architecture change,<br>
+      then use <em>Next Step</em> to walk through the flow.
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────
+const TXN = {
+  A: { id: 'TXN-A', amount: '$250', route: 'US \u2192 US', risk: 'LOW', approved: true,
+       explanation: 'Routine domestic/standard international transfer. No regulatory concerns.' },
+  B: { id: 'TXN-B', amount: '$12,000', route: 'US \u2192 UK', risk: 'MEDIUM', approved: true,
+       explanation: 'International transfer above $10K threshold. Approved with AML monitoring note.' },
+  C: { id: 'TXN-C', amount: '$75,000', route: 'US \u2192 US', risk: 'HIGH', approved: false,
+       explanation: 'Destination/source country is OFAC-sanctioned. Transaction blocked per regulatory requirements.' },
+};
+
+let currentTxn = 'A';
+let currentStep = 0;
+let isNexusMode = false; // start in monolith mode
+let failureActive = false;
+const MAX_STEPS = 6;
+
+const stepsMonolith = [
+  { title: 'Ready', tip: 'This is the MONOLITH \u2014 single worker, everything coupled. Click "Next Step" to see the flow.', panel: null },
+  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. Everything runs on ONE worker, ONE task queue.', panel: 'starter' },
+  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity. So far, no different from the decoupled version.', panel: 'validate' },
+  { title: 'Step 2 \u2014 Compliance check (same worker!)', tip: 'Compliance is mandatory \u2014 regulations require every payment to pass risk assessment before execution. The workflow calls complianceActivity.checkCompliance() on the SAME worker. If this worker crashes, BOTH teams go down.', panel: 'monolithCompliance' },
+  { title: 'ComplianceChecker evaluates rules', tip: 'The rule engine runs inside the same process. No isolation \u2014 a compliance bug crashes the payment worker too.', panel: 'checker' },
+  { title: 'Compliance result returned', tip: 'Result comes back instantly (same process). But there\'s no team boundary \u2014 no independent deployment, no separate blast radius.', panel: 'workflow' },
+  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Payment can only execute after compliance passes. Declined transactions stop here. But the whole system is one big domino line.', panel: 'execute' },
+];
+
+const stepsNexus = [
+  { title: 'Ready', tip: 'This is NEXUS-DECOUPLED \u2014 two workers, two teams, one durable boundary. Click "Next Step".', panel: null },
+  { title: 'PaymentStarter fires', tip: 'Client starts a PaymentProcessingWorkflow. The starter code is IDENTICAL to the monolith version.', panel: 'starter' },
+  { title: 'Step 1 \u2014 Validate payment', tip: 'Workflow calls validatePayment activity on the Payments worker. Same as before.', panel: 'validate' },
+  { title: 'Step 2 \u2014 Nexus call to Compliance', tip: 'Compliance is mandatory \u2014 regulations require every payment to pass risk assessment before execution. The workflow calls complianceService.checkCompliance() via Nexus. The call crosses the orange boundary \u2014 durably, with retries.', panel: 'nexusImpl' },
+  { title: 'ComplianceChecker evaluates rules', tip: 'Runs on the Compliance worker. If it crashes, only compliance is affected. Temporal retries the Nexus operation automatically.', panel: 'checker' },
+  { title: 'Compliance result returned', tip: 'Result crosses back over the Nexus boundary. The payment workflow resumes exactly where it left off.', panel: 'workflow' },
+  { title: 'Step 3 \u2014 Execute payment (or decline)', tip: 'Payment can only execute after compliance passes. Declined transactions stop here. Same logic, different architecture.', panel: 'execute' },
+];
+
+// ── Mode toggle ──────────────────────────────────────────────────
+function toggleMode() {
+  isNexusMode = !isNexusMode;
+  document.getElementById('modeSwitch').classList.toggle('on', isNexusMode);
+  document.getElementById('canvas').classList.toggle('monolith', !isNexusMode);
+  reset();
+}
+
+// ── Navigation ───────────────────────────────────────────────────
+function stepNext() {
+  if (currentStep < MAX_STEPS) {
+    currentStep++;
+    renderStep();
+  }
+}
+function stepBack() {
+  if (currentStep > 0) {
+    currentStep--;
+    renderStep();
+  }
+}
+function reset() {
+  currentStep = 0;
+  clearFailure();
+  renderStep();
+}
+
+// ── Render step ──────────────────────────────────────────────────
+function renderStep() {
+  const txn = TXN[currentTxn];
+  const steps = isNexusMode ? stepsNexus : stepsMonolith;
+  const step = steps[Math.min(currentStep, steps.length - 1)];
+
+  // Nav buttons
+  document.getElementById('btnBack').disabled = currentStep === 0;
+  document.getElementById('btnNext').disabled = currentStep === MAX_STEPS;
+
+  // Step indicator
+  document.getElementById('stepIndicator').textContent = currentStep;
+  document.getElementById('stepTitle').textContent = currentStep === 0 ? 'Ready to start' : step.title;
+  document.getElementById('stepTip').textContent = step.tip || '';
+
+  // Dots
+  const dots = document.getElementById('stepDots');
+  dots.innerHTML = '';
+  for (let i = 1; i <= MAX_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' current' : '');
+    dots.appendChild(d);
+  }
+
+  // Clear highlights
+  document.querySelectorAll('.component').forEach(c => {
+    c.classList.remove('active-step', 'completed-step');
+  });
+
+  // Hide banners/results
+  const banner = document.getElementById('resultBanner');
+  banner.classList.remove('show', 'approved', 'declined');
+  document.getElementById('complianceResultBox').style.display = 'none';
+
+  // Hide blast radius
+  ['blastPayments', 'blastCompliance'].forEach(id => {
+    document.getElementById(id).classList.remove('visible');
+  });
+  ['blastPaymentsLabel', 'blastComplianceLabel'].forEach(id => {
+    document.getElementById(id).classList.remove('visible');
+  });
+
+  // Reset checker type text
+  const checkerEls = document.querySelectorAll('#compChecker .component-type, #compMonolithChecker .component-type');
+  checkerEls.forEach(el => el.textContent = 'Rule engine \u2014 deterministic risk assessment');
+
+  // Token
+  const token = document.getElementById('token');
+  token.classList.add('hidden');
+  token.classList.remove('beam');
+
+  // Show/hide kill button during compliance steps (3-5) when no failure active
+  const killBtn = document.getElementById('btnKill');
+  const restartBtn = document.getElementById('btnRestart');
+  if (!failureActive && currentStep >= 3 && currentStep <= 5) {
+    killBtn.classList.add('visible');
+  } else if (!failureActive) {
+    killBtn.classList.remove('visible');
+  }
+  if (!failureActive) {
+    restartBtn.classList.remove('visible');
+  }
+
+  // Auto-show side panel for current step
+  if (step.panel) {
+    showPanel(step.panel);
+  }
+
+  if (isNexusMode) {
+    renderNexusStep(txn);
+  } else {
+    renderMonolithStep(txn);
+  }
+}
+
+function renderMonolithStep(txn) {
+  switch (currentStep) {
+    case 0:
+      // Show blast radius for the single worker
+      document.getElementById('blastPayments').classList.add('visible');
+      document.getElementById('blastPaymentsLabel').classList.add('visible');
+      break;
+    case 1:
+      highlight('compStarter', 'active');
+      placeToken('compStarter');
+      break;
+    case 2:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'active');
+      placeToken('compValidate');
+      break;
+    case 3:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compMonolithCompliance', 'active');
+      placeToken('compMonolithCompliance');
+      break;
+    case 4:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compMonolithCompliance', 'done');
+      highlight('compMonolithChecker', 'active');
+      placeToken('compMonolithChecker');
+      document.getElementById('compMonolithChecker').querySelector('.component-type').innerHTML =
+        '<span class="spinner"></span> Evaluating rules... (' + txn.id + ', ' + txn.amount + ')';
+      break;
+    case 5:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compMonolithCompliance', 'done');
+      highlight('compMonolithChecker', 'done');
+      placeToken('compWorkflow');
+      showMonolithResult(txn);
+      break;
+    case 6:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compMonolithCompliance', 'done');
+      highlight('compMonolithChecker', 'done');
+      showMonolithResult(txn);
+      if (txn.approved) {
+        highlight('compExecute', 'active');
+        placeToken('compExecute');
+        showResultBanner(txn, true);
+      } else {
+        showResultBanner(txn, false);
+      }
+      break;
+  }
+}
+
+function renderNexusStep(txn) {
+  switch (currentStep) {
+    case 0:
+      // Show separate blast radii
+      document.getElementById('blastPayments').classList.add('visible');
+      document.getElementById('blastPaymentsLabel').classList.add('visible');
+      document.getElementById('blastCompliance').classList.add('visible');
+      document.getElementById('blastComplianceLabel').classList.add('visible');
+      break;
+    case 1:
+      highlight('compStarter', 'active');
+      placeToken('compStarter');
+      break;
+    case 2:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'active');
+      placeToken('compValidate');
+      break;
+    case 3:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compNexusImpl', 'active');
+      placeTokenAtNexus();
+      break;
+    case 4:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compNexusImpl', 'done');
+      highlight('compChecker', 'active');
+      placeToken('compChecker');
+      document.getElementById('compChecker').querySelector('.component-type').innerHTML =
+        '<span class="spinner"></span> Evaluating rules... (' + txn.id + ', ' + txn.amount + ')';
+      break;
+    case 5:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compNexusImpl', 'done');
+      highlight('compChecker', 'done');
+      showComplianceResult(txn);
+      placeToken('compWorkflow');
+      document.getElementById('token').classList.add('beam');
+      break;
+    case 6:
+      highlight('compStarter', 'done');
+      highlight('compWorkflow', 'done');
+      highlight('compValidate', 'done');
+      highlight('compNexusImpl', 'done');
+      highlight('compChecker', 'done');
+      showComplianceResult(txn);
+      if (txn.approved) {
+        highlight('compExecute', 'active');
+        placeToken('compExecute');
+        showResultBanner(txn, true);
+      } else {
+        showResultBanner(txn, false);
+      }
+      break;
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────
+function highlight(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('active-step', 'completed-step');
+  if (state === 'active') el.classList.add('active-step');
+  if (state === 'done') el.classList.add('completed-step');
+}
+
+function placeToken(componentId) {
+  const token = document.getElementById('token');
+  const canvas = document.getElementById('canvas');
+  const target = document.getElementById(componentId);
+  if (!target || target.offsetParent === null) { token.classList.add('hidden'); return; }
+  const cr = canvas.getBoundingClientRect();
+  const tr = target.getBoundingClientRect();
+  token.style.left = (tr.left - cr.left + tr.width / 2 - 14) + 'px';
+  token.style.top = (tr.top - cr.top + tr.height / 2 - 14) + 'px';
+  token.classList.remove('hidden', 'beam');
+}
+
+function placeTokenAtNexus() {
+  const token = document.getElementById('token');
+  const canvas = document.getElementById('canvas');
+  const nexus = document.getElementById('nexusBox');
+  const cr = canvas.getBoundingClientRect();
+  const nr = nexus.getBoundingClientRect();
+  token.style.left = (nr.left - cr.left + nr.width / 2 - 14) + 'px';
+  token.style.top = (nr.top - cr.top + nr.height / 2 - 14) + 'px';
+  token.classList.remove('hidden');
+  token.classList.add('beam');
+}
+
+function showComplianceResult(txn) {
+  const box = document.getElementById('complianceResultBox');
+  const content = document.getElementById('complianceResultContent');
+  box.style.display = 'block';
+  const cls = txn.approved ? 'cr-approved' : 'cr-declined';
+  const txt = txn.approved ? '\u2705 APPROVED' : '\uD83D\uDEAB DECLINED';
+  content.innerHTML = `
+    <div class="cr-label">Compliance Result</div>
+    <div class="cr-value ${cls}">${txt}
+      <span class="risk-badge ${txn.risk}">${txn.risk} RISK</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.5">${txn.explanation}</div>
+  `;
+}
+
+function showMonolithResult(txn) {
+  // In monolith mode, show result inline
+  showComplianceResult(txn);
+}
+
+function showResultBanner(txn, approved) {
+  const banner = document.getElementById('resultBanner');
+  banner.classList.add('show');
+  if (approved) {
+    banner.classList.add('approved');
+    banner.innerHTML = `\u2705 Payment COMPLETED <span class="risk-badge ${txn.risk}">${txn.risk} RISK</span>`;
+  } else {
+    banner.classList.add('declined');
+    banner.innerHTML = `\uD83D\uDEAB Payment DECLINED <span class="risk-badge ${txn.risk}">${txn.risk} RISK</span>`;
+  }
+}
+
+// ── Side panel content ────────────────────────────────────────────
+const panelContent = {
+  starter: {
+    title: 'PaymentStarter',
+    type: 'Client code \u2014 not a workflow',
+    body: `
+      <p>The <strong>PaymentStarter</strong> connects to Temporal and kicks off workflow executions.</p>
+      <div class="highlight">This file is IDENTICAL in both the monolith and the Nexus-decoupled version. The caller doesn't know (or care) how compliance runs.</div>
+      <p>Business ID pattern: <code>"payment-" + txn.getTransactionId()</code> makes workflows findable in the Temporal UI.</p>
+    `
+  },
+  workflow: {
+    title: 'PaymentProcessingWorkflow',
+    type: 'Temporal Workflow \u2014 durable orchestrator',
+    body: `
+      <p>The workflow orchestrates 3 steps without doing any actual work.</p>
+      <div class="highlight">The key change when decoupling:<br>
+      <code>complianceActivity.checkCompliance()</code><br>\u2192 <code>complianceService.checkCompliance()</code><br><br>
+      Same method name, same input, same output. Different architecture.</div>
+      <p>The workflow must be <strong>deterministic</strong> \u2014 no <code>System.currentTimeMillis()</code>, no <code>Math.random()</code>.</p>
+    `
+  },
+  validate: {
+    title: 'validatePayment',
+    type: 'Temporal Activity \u2014 non-deterministic work',
+    body: `
+      <p>Checks amount and account info. Delegates to <code>PaymentGateway.validatePayment()</code>.</p>
+      <div class="highlight">This activity stays on the Payments worker in both versions. Only the compliance check moves.</div>
+    `
+  },
+  execute: {
+    title: 'executePayment',
+    type: 'Temporal Activity \u2014 calls payment gateway',
+    body: `
+      <p>Calls the payment gateway to process the transaction. 10% simulated failure rate \u2014 Temporal retries automatically.</p>
+      <p>Only reached if compliance returned <code>approved=true</code>. For TXN-C (HIGH risk), this step is skipped.</p>
+    `
+  },
+  monolithCompliance: {
+    title: 'ComplianceActivity (Monolith)',
+    type: 'Activity \u2014 runs on the SAME worker',
+    body: `
+      <div class="highlight" style="border-left-color: var(--high-risk);">
+        <strong>The problem:</strong> This activity runs on the Payments worker. If the Compliance team deploys a bug, it crashes the Payments worker too.
+      </div>
+      <p>In the monolith, <code>PaymentsWorkerApp</code> registers both <code>PaymentActivityImpl</code> and <code>ComplianceActivityImpl</code>. One process, one failure domain.</p>
+      <p>After decoupling: this activity disappears from the Payments worker entirely. The compliance logic runs on its own worker via Nexus.</p>
+    `
+  },
+  checker: {
+    title: 'ComplianceChecker',
+    type: 'Rule engine \u2014 no AI, no API keys',
+    body: `
+      <p>Deterministic rule-based compliance checker. Zero external dependencies.</p>
+      <div class="highlight">Rules:<br>
+      \u2022 OFAC sanctioned countries \u2192 HIGH risk, blocked<br>
+      \u2022 Amount > $50K \u2192 HIGH risk, blocked<br>
+      \u2022 Amount > $10K or unusual jurisdiction \u2192 MEDIUM, approved<br>
+      \u2022 Everything else \u2192 LOW, approved</div>
+    `
+  },
+  nexusImpl: {
+    title: 'ComplianceNexusServiceImpl',
+    type: 'Nexus service handler \u2014 the key new file',
+    body: `
+      <p>This is the <strong>most important new file</strong> in the exercise.</p>
+      <div class="highlight"><code>@ServiceImpl(service = ComplianceNexusService.class)</code> tells Temporal this class handles Nexus requests for that interface.</div>
+      <p>The <code>@OperationImpl</code> method returns <code>WorkflowClientOperationHandlers.sync(...)</code> \u2014 meaning: run inline, return immediately.</p>
+      <p>For <strong>async</strong> handlers using <code>fromWorkflowMethod()</code>, see the <a href="https://docs.temporal.io/nexus" target="_blank">Nexus docs</a>.</p>
+    `
+  },
+};
+
+function showPanel(key) {
+  const content = panelContent[key];
+  if (!content) return;
+  document.getElementById('sidePanel').innerHTML = `
+    <div class="panel-header">
+      <h3>${content.title}</h3>
+      <div class="panel-type">${content.type}</div>
+    </div>
+    <div class="panel-body">${content.body}</div>
+  `;
+}
+
+// ── Failure simulation ───────────────────────────────────────────
+function killCompliance() {
+  failureActive = true;
+  const killBtn = document.getElementById('btnKill');
+  const restartBtn = document.getElementById('btnRestart');
+  const token = document.getElementById('token');
+  const crashBanner = document.getElementById('crashBanner');
+  const crashTitle = document.getElementById('crashTitle');
+  const crashDetail = document.getElementById('crashDetail');
+  const waitingBanner = document.getElementById('waitingBanner');
+
+  killBtn.classList.remove('visible');
+  token.classList.add('hidden');
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnBack').disabled = true;
+
+  if (!isNexusMode) {
+    // MONOLITH: everything crashes
+    document.getElementById('zonePayments').classList.add('crashed');
+    crashTitle.textContent = 'CRASH \u2014 Both Teams Down';
+    crashDetail.innerHTML = 'The Compliance worker crashed, but it runs on the <strong>same Worker</strong> as Payments. ' +
+      'Both teams are down. No payments can be processed until someone fixes and redeploys the entire monolith.';
+    crashBanner.classList.add('visible');
+
+    // Update step bar
+    document.getElementById('stepTitle').textContent = 'Compliance bug crashes EVERYTHING';
+    document.getElementById('stepTip').textContent = 'One worker, one blast radius. The payment workflow is dead \u2014 not waiting, not retrying. Dead.';
+
+    // Show restart to reset demo
+    setTimeout(function() { restartBtn.classList.add('visible'); }, 1200);
+  } else {
+    // NEXUS: only compliance crashes, payments waits
+    document.getElementById('zoneCompliance').classList.add('crashed');
+    crashTitle.textContent = 'Compliance Worker Down';
+    crashDetail.innerHTML = 'The Compliance worker crashed. But the Payment workflow is <strong>safe</strong> \u2014 ' +
+      'Temporal is retrying the Nexus operation automatically. When the worker comes back, it picks up right where it left off.';
+    crashBanner.classList.add('visible');
+    waitingBanner.classList.add('visible');
+
+    // Payments zone shows waiting state
+    document.getElementById('zonePayments').classList.add('waiting');
+    document.getElementById('compWorkflow').classList.add('waiting-step');
+
+    // Update step bar
+    document.getElementById('stepTitle').textContent = 'Compliance is down \u2014 Payments waits durably';
+    document.getElementById('stepTip').textContent = 'Two blast radii. The payment workflow is alive, just waiting. No crash, no data loss, no retry loops.';
+
+    // Show restart button
+    setTimeout(function() { restartBtn.classList.add('visible'); }, 1200);
+  }
+}
+
+function restartCompliance() {
+  const crashBanner = document.getElementById('crashBanner');
+  const waitingBanner = document.getElementById('waitingBanner');
+  const restartBtn = document.getElementById('btnRestart');
+
+  crashBanner.classList.remove('visible');
+  waitingBanner.classList.remove('visible');
+  restartBtn.classList.remove('visible');
+
+  if (!isNexusMode) {
+    // Monolith: just reset everything
+    document.getElementById('zonePayments').classList.remove('crashed');
+    failureActive = false;
+    reset();
+  } else {
+    // Nexus: compliance recovers, flow resumes
+    var compZone = document.getElementById('zoneCompliance');
+    compZone.classList.remove('crashed');
+    compZone.classList.add('recovering');
+    document.getElementById('zonePayments').classList.remove('waiting');
+    document.getElementById('compWorkflow').classList.remove('waiting-step');
+
+    // Update step bar for recovery
+    document.getElementById('stepTitle').textContent = 'Worker restarted \u2014 resuming automatically';
+    document.getElementById('stepTip').textContent = 'Temporal routes the pending Nexus operation to the recovered worker. The payment workflow resumes exactly where it left off.';
+
+    setTimeout(function() {
+      compZone.classList.remove('recovering');
+      failureActive = false;
+      // Resume from where we were (advance one step to show result)
+      if (currentStep < MAX_STEPS) {
+        currentStep++;
+      }
+      renderStep();
+    }, 1500);
+  }
+}
+
+function clearFailure() {
+  failureActive = false;
+  document.getElementById('zonePayments').classList.remove('crashed', 'waiting');
+  document.getElementById('zoneCompliance').classList.remove('crashed', 'recovering');
+  document.getElementById('compWorkflow').classList.remove('waiting-step');
+  document.getElementById('crashBanner').classList.remove('visible');
+  document.getElementById('waitingBanner').classList.remove('visible');
+  document.getElementById('btnKill').classList.remove('visible');
+  document.getElementById('btnRestart').classList.remove('visible');
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+document.getElementById('canvas').classList.add('monolith');
+renderStep();
+</script>
+</body>
+</html>
