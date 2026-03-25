@@ -76,8 +76,7 @@
   
     <!-- Waiting icon -->
     <text x="552" y="108" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="700">Payment Workflow</text>
-    <text x="552" y="124" text-anchor="middle" fill="#3b82f6" font-size="20">&#x23F8;</text>
-    <text x="552" y="140" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">PAUSED</text>
+    <text x="552" y="140" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">WAITING</text>
   
     <text x="552" y="165" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600">No crash. No timeout.</text>
     <text x="552" y="178" text-anchor="middle" fill="#ffffff" font-size="9">Temporal holds the state durably</text>

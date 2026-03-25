@@ -108,7 +108,7 @@ You could split Payments and Compliance into separate namespaces and use an Acti
 
 |                      | Activity wrapping HTTP call            | Shared Activity (same namespace) | Temporal Nexus                                                                                                     |
 | -------------------- | -------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Worker goes down** | Activity retries the HTTP call         | Same crash domain                | Workflow pauses, auto-resumes                                                                                      |
+| **Worker goes down** | Activity retries the HTTP call         | Same crash domain                | Workflow waits, auto-resumes                                                                                       |
 | **Retry logic**      | Activity retry policy + HTTP errors    | Temporal retries within team     | Built-in across namespace boundary                                                                                 |
 | **Routing**          | You manage service discovery + URLs    | N/A (same namespace)             | Built-in, Temporal routes to target namespace                                                                      |
 | **Permissions**      | Custom auth between services           | Shared namespace access          | Scoped cross-namespace permissions                                                                                 |
@@ -353,12 +353,12 @@ public class ComplianceWorkflowImpl implements ComplianceWorkflow {
 
 Read the code - you'll see the human-in-the-loop pattern you'll wire up through Nexus later. The three methods:
 
-- **`run()`** — Scores risk via Activity, sleeps 10s (for the durability demo), then either auto-decides (LOW/HIGH) or durably pauses for human review (MEDIUM).
+- **`run()`** — Scores risk via Activity, sleeps 10s (for the durability demo), then either auto-decides (LOW/HIGH) or durably waits for human review (MEDIUM).
 - **`review()`** — Receives the reviewer's approve/deny decision, stores it, and unblocks `run()`.
 - **`validateReview()`** — Guards against reviews arriving before the workflow is waiting or after a decision was already made.
 
 :::note
-**Why a workflow, not just an Activity?** Using a workflow unlocks [`@UpdateMethod`](https://www.javadoc.io/doc/io.temporal/temporal-sdk/latest/io/temporal/workflow/UpdateMethod.html) for MEDIUM-risk transactions - the workflow can pause and wait durably for a human reviewer's decision. A plain Activity can't do that. In the future, simple cases might just use an Activity, but a workflow gives you durability and human escalation for free.
+**Why a workflow, not just an Activity?** Using a workflow unlocks [`@UpdateMethod`](https://www.javadoc.io/doc/io.temporal/temporal-sdk/latest/io/temporal/workflow/UpdateMethod.html) for MEDIUM-risk transactions — the workflow can wait durably for a human reviewer's decision. A plain Activity can't do that. In the future, simple cases might just use an Activity, but a workflow gives you durability and human escalation for free.
 :::
 
 > **Your work starts below at TODO 1.**
@@ -734,11 +734,11 @@ mvn compile exec:java@starter
 ```
 
 - **TXN-A and TXN-C** take ~10 seconds each (the compliance workflow includes a durable sleep for the Checkpoint 3 demo).
-- **TXN-B** is MEDIUM risk — its workflow durably pauses (`Workflow.await()`) until a human reviewer submits a decision. It will stay waiting until you complete the human review path after Checkpoint 3.
+- **TXN-B** is MEDIUM risk — its workflow durably waits (`Workflow.await()`) until a human reviewer submits a decision. It will stay waiting until you complete the human review path after Checkpoint 3.
 
 The starter runs transactions in series, so **TXN-B will block the terminal** while it waits for human review. This is expected — TXN-C won't start yet.
 
-![TXN-B human-in-the-loop flow: Payment workflow calls compliance via Nexus, compliance scores MEDIUM and durably pauses, human reviewer approves via Nexus Update, workflow resumes](./ui/human-in-the-loop.svg)
+![TXN-B human-in-the-loop flow: Payment workflow calls compliance via Nexus, compliance scores MEDIUM and durably waits, human reviewer approves via Nexus Update, workflow resumes](./ui/human-in-the-loop.svg)
 
 Verify in the [Temporal UI](http://localhost:8233): switch to **`payments-namespace`** and **`compliance-namespace`** to confirm the following. **Checkpoint 2 passed** if you see:
 
@@ -922,7 +922,7 @@ WorkflowRunOperation.fromWorkflowHandle((ctx, details, input) -> {
 
 Sync handlers should only contain **Temporal primitives** — workflow starts and queries. Running arbitrary Java code (like <code>ComplianceChecker.checkCompliance()</code>) in a handler bypasses Temporal's durability guarantees.
 
-The handler starts a ComplianceWorkflow and waits for its result. The actual business logic runs inside an Activity within the workflow, where it gets retries, timeouts, and heartbeats for free. Plus, the workflow can pause for human review via <code>@UpdateMethod</code> — something a direct call could never support.
+The handler starts a ComplianceWorkflow and waits for its result. The actual business logic runs inside an Activity within the workflow, where it gets retries, timeouts, and heartbeats for free. Plus, the workflow can wait durably for human review via <code>@UpdateMethod</code> — something a direct call could never support.
 
 </details>
 

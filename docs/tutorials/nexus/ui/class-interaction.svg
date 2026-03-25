@@ -170,7 +170,7 @@
   <line x1="830" y1="620" x2="830" y2="640" stroke="#f97316" stroke-width="1" opacity="0.5"/>
   <rect x="720" y="645" width="330" height="62" rx="6" fill="#1c2128" stroke="#f97316" stroke-opacity="0.3"/>
   <text x="885" y="668" text-anchor="middle" fill="#f97316" font-size="13" font-weight="600">MEDIUM: Workflow.await()</text>
-  <text x="885" y="688" text-anchor="middle" fill="#e6edf3" font-size="13">Paused for human review via @UpdateMethod</text>
+  <text x="885" y="688" text-anchor="middle" fill="#e6edf3" font-size="13">Waiting for human review via @UpdateMethod</text>
 
   <!-- Human review command -->
   <rect x="720" y="718" width="330" height="38" rx="5" fill="#1c2128" stroke="#a5d6ff" stroke-opacity="0.4"/>

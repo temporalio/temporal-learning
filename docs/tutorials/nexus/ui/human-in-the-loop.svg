@@ -40,7 +40,7 @@
 
   <!-- Title -->
   <text x="460" y="32" text-anchor="middle" fill="#e6edf3" font-size="16" font-weight="700">TXN-B: Human-in-the-Loop via Nexus</text>
-  <text x="460" y="50" text-anchor="middle" fill="#ffffff" font-size="11">MEDIUM risk — workflow durably pauses for human review</text>
+  <text x="460" y="50" text-anchor="middle" fill="#ffffff" font-size="11">MEDIUM risk — workflow durably waits for human review</text>
 
   <!-- Payments zone -->
   <rect x="30" y="70" width="260" height="300" rx="10" fill="url(#blueZone)" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1"/>
@@ -83,7 +83,7 @@
     <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
   </circle>
   <text x="535" y="218" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">Workflow.await()</text>
-  <text x="535" y="234" text-anchor="middle" fill="#ffffff" font-size="9">durably paused</text>
+  <text x="535" y="234" text-anchor="middle" fill="#ffffff" font-size="9">durably waiting</text>
 
   <!-- Human reviewer box -->
   <rect x="680" y="198" width="180" height="50" rx="8" fill="#1c2128" stroke="#b1bac4" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="4 3"/>
