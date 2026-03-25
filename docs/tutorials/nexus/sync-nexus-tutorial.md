@@ -758,17 +758,23 @@ Two Workers, two blast radii, two independent teams. The automated compliance pa
 
 This is where it gets fun. Let's prove that Nexus is **durable**.
 
-Make sure any previous workflows have completed or been terminated before continuing. Both Workers should still be running from Checkpoint 2. If you stopped them, restart them now:
+:::warning Clean up before starting
+Terminate any running workflows from Checkpoint 2 — including TXN-B, which is still waiting for human review. You must terminate it in **both** `payments-namespace` and `compliance-namespace`. Then stop both Workers (Ctrl+C in Terminals 2 and 3).
+:::
+
+**Read this section fully before starting** — you'll have a ~10-second window to kill a Worker mid-flight, so know the plan before you run the starter.
+
+**The plan:** Start both Workers, run the starter, then kill the compliance Worker during TXN-A's 10-second durable sleep. This proves that Nexus operations survive a Worker outage.
 
 **Terminal 1:** Temporal server (already running)
 
-**Terminal 2 — Compliance Worker**:
+**Terminal 2 — Start the Compliance Worker:**
 
 ```bash
 mvn compile exec:java@compliance-worker
 ```
 
-**Terminal 3 — Payments Worker**:
+**Terminal 3 — Start the Payments Worker:**
 
 ```bash
 mvn compile exec:java@payments-worker
@@ -787,7 +793,7 @@ The starter runs TXN-A first. TXN-A has a 10-second durable sleep in `Compliance
 Now watch what happens:
 
 1. **Terminal 3 (starter)** — hangs. It's waiting for the TXN-A result. No crash, no error.
-2. **Temporal UI** (`http://localhost:8233`) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see the Nexus operation in a **backing off** state. Temporal knows the compliance Worker is gone and is waiting for it to come back.
+2. **Temporal UI** (`http://localhost:8233`) — in **`payments-namespace`**, open the `payment-TXN-A` workflow. You'll see a **Pending Nexus Operation** event with a **Started** badge and an increasing attempt count. Temporal knows the compliance Worker is gone and is retrying until it comes back.
 
 <a href={require('./ui/backing-off-nexus-operation.png').default} target="_blank">
 <img src={require('./ui/backing-off-nexus-operation.png').default} alt="Temporal UI showing Nexus operation in backing off state after compliance Worker is killed" width="100%" />
@@ -819,7 +825,7 @@ You already implemented both handlers in TODO 2 — `checkCompliance` (async, `f
 
 Three pre-provided files work together to send a human review decision through the Nexus boundary:
 
-**[`ReviewStarter.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewStarter.java)** — Client code that starts the review workflow:
+**[`payments/temporal/ReviewStarter.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewStarter.java)** — Client code that starts the review workflow:
 
 ```java
 ReviewRequest request = new ReviewRequest("TXN-B", true, "Approved after manual review");
@@ -827,7 +833,7 @@ ReviewCallerWorkflow workflow = client.newWorkflowStub(ReviewCallerWorkflow.clas
 ComplianceResult result = workflow.submitReview(request);
 ```
 
-**[`ReviewCallerWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewCallerWorkflowImpl.java)** — A thin workflow that calls `submitReview` through the Nexus stub:
+**[`payments/temporal/ReviewCallerWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/ReviewCallerWorkflowImpl.java)** — A thin workflow that calls `submitReview` through the Nexus stub:
 
 ```java
 public ComplianceResult submitReview(ReviewRequest request) {
