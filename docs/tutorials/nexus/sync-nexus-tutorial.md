@@ -52,17 +52,14 @@ Two teams split this work:
 <tr>
 <th>Team</th>
 <th>Owns</th>
-<th>Task Queue</th>
 </tr>
 <tr>
 <td><strong>Payments</strong></td>
 <td>Steps 1 &amp; 3 — validate and execute</td>
-<td><code>payments-processing</code></td>
 </tr>
 <tr>
 <td><strong>Compliance</strong></td>
 <td>Step 2 — risk assessment &amp; regulatory checks</td>
-<td><code>compliance-risk</code></td>
 </tr>
 </table>
 
@@ -84,7 +81,7 @@ The obvious fix is to split into separate namespaces and use an Activity to call
 
 ### The Solution: Temporal Nexus
 
-[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, its own deployment pipeline, its own security perimeter, its own blast radius — while Temporal manages the durable, type-safe calls between them.
+[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, its own deployment pipeline, its own security perimeter, its own blast radius — while Temporal manages the durable, type-safe calls between them. Each Worker runs as its own process — it can be deployed, scaled, and restarted independently.
 
 The Payments workflow calls the Compliance team through a Nexus operation. If the Compliance Worker goes down mid-call, the payment workflow just...waits. When Compliance comes back, it picks up exactly where it left off. No retry logic. No data loss. No 3am page for the Payments team.
 

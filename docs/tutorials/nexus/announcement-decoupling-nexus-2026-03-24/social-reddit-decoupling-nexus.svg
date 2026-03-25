@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0D1117"/>
+
+  <!-- Title area -->
+  <text x="60" y="60" fill="#8B949E" font-family="sans-serif" font-size="18" font-weight="bold" letter-spacing="2">TUTORIAL</text>
+  <text x="60" y="110" fill="#FFFFFF" font-family="sans-serif" font-size="40" font-weight="bold">Decoupling Temporal Services with Nexus</text>
+  <text x="60" y="150" fill="#8B949E" font-family="sans-serif" font-size="22">Monolith to two independent services. Java SDK, ~45-60 min.</text>
+
+  <!-- Code snippet: before/after -->
+  <rect x="60" y="185" width="1080" height="260" rx="10" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+
+  <!-- Before section -->
+  <text x="90" y="220" fill="#8B949E" font-family="monospace" font-size="14">// BEFORE: monolith - direct Activity call on shared Worker</text>
+  <text x="90" y="250" fill="#F0883E" font-family="monospace" font-size="20">ComplianceResult</text>
+  <text x="365" y="250" fill="#FFFFFF" font-family="monospace" font-size="20"> compliance = </text>
+  <text x="90" y="280" fill="#FFFFFF" font-family="monospace" font-size="20">    complianceActivity</text>
+  <text x="385" y="280" fill="#E6EDF3" font-family="monospace" font-size="20">.checkCompliance(req);</text>
+
+  <!-- Divider -->
+  <line x1="90" y1="310" x2="1100" y2="310" stroke="#30363D" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- After section -->
+  <text x="90" y="340" fill="#00C4B4" font-family="monospace" font-size="14">// AFTER: Nexus - durable cross-team call, independent Workers</text>
+  <text x="90" y="370" fill="#F0883E" font-family="monospace" font-size="20">ComplianceResult</text>
+  <text x="365" y="370" fill="#FFFFFF" font-family="monospace" font-size="20"> compliance = </text>
+  <text x="90" y="400" fill="#00C4B4" font-family="monospace" font-size="20">    complianceService</text>
+  <text x="385" y="400" fill="#E6EDF3" font-family="monospace" font-size="20">.checkCompliance(req);</text>
+
+  <!-- Change highlight -->
+  <rect x="82" y="382" width="300" height="26" rx="4" fill="none" stroke="#00C4B4" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="90" y="430" fill="#00C4B4" font-family="monospace" font-size="13">^ one line changed. completely different architecture.</text>
+
+  <!-- Architecture diagram -->
+  <text x="60" y="490" fill="#FFFFFF" font-family="sans-serif" font-size="22" font-weight="bold">What changes under the hood:</text>
+
+  <!-- Payments Worker box -->
+  <rect x="60" y="515" width="320" height="120" rx="8" fill="#1A2332" stroke="#30363D" stroke-width="1.5"/>
+  <text x="80" y="545" fill="#FFFFFF" font-family="monospace" font-size="18" font-weight="bold">Payments Worker</text>
+  <text x="80" y="575" fill="#8B949E" font-family="monospace" font-size="14">PaymentWorkflow</text>
+  <text x="80" y="600" fill="#8B949E" font-family="monospace" font-size="14">ValidateActivity</text>
+  <text x="80" y="620" fill="#8B949E" font-family="monospace" font-size="14">ExecuteActivity</text>
+
+  <!-- Nexus connection -->
+  <line x1="380" y1="575" x2="500" y2="575" stroke="#00C4B4" stroke-width="3"/>
+  <polygon points="500,568 515,575 500,582" fill="#00C4B4"/>
+
+  <rect x="405" y="545" width="80" height="28" rx="14" fill="#00C4B4"/>
+  <text x="419" y="565" fill="#0D1117" font-family="monospace" font-size="14" font-weight="bold">Nexus</text>
+
+  <!-- Nexus Endpoint -->
+  <rect x="520" y="540" width="220" height="70" rx="8" fill="#1A2332" stroke="#00C4B4" stroke-width="1.5"/>
+  <text x="545" y="567" fill="#00C4B4" font-family="monospace" font-size="15" font-weight="bold">Nexus Endpoint</text>
+  <text x="545" y="593" fill="#8B949E" font-family="monospace" font-size="13">compliance-endpoint</text>
+
+  <!-- Arrow to Compliance -->
+  <line x1="740" y1="575" x2="820" y2="575" stroke="#00C4B4" stroke-width="3"/>
+  <polygon points="820,568 835,575 820,582" fill="#00C4B4"/>
+
+  <!-- Compliance Worker box -->
+  <rect x="840" y="515" width="300" height="120" rx="8" fill="#1A2332" stroke="#30363D" stroke-width="1.5"/>
+  <text x="860" y="545" fill="#FFFFFF" font-family="monospace" font-size="18" font-weight="bold">Compliance Worker</text>
+  <text x="860" y="575" fill="#8B949E" font-family="monospace" font-size="14">ComplianceWorkflow</text>
+  <text x="860" y="600" fill="#8B949E" font-family="monospace" font-size="14">RiskCheckActivity</text>
+  <text x="860" y="620" fill="#8B949E" font-family="monospace" font-size="14">SanctionsActivity</text>
+
+  <!-- Durability callout -->
+  <rect x="60" y="665" width="1080" height="55" rx="8" fill="#1A2332" stroke="#00C4B4" stroke-width="1"/>
+  <text x="85" y="698" fill="#00C4B4" font-family="sans-serif" font-size="20" font-weight="bold">Durability demo:</text>
+  <text x="310" y="698" fill="#8B949E" font-family="sans-serif" font-size="20">Kill Compliance Worker mid-operation. Payment Workflow waits. Restart. It resumes.</text>
+
+  <!-- Bottom bar -->
+  <rect x="60" y="745" width="90" height="32" rx="6" fill="#00C4B4"/>
+  <text x="82" y="767" fill="#0D1117" font-family="monospace" font-size="15" font-weight="bold">Java</text>
+  <text x="170" y="767" fill="#8B949E" font-family="sans-serif" font-size="16">learn.temporal.io/tutorials/nexus/nexus-sync-tutorial</text>
+  <text x="1030" y="767" fill="#FFFFFF" font-family="sans-serif" font-size="20" font-weight="bold">temporal</text>
+</svg>
