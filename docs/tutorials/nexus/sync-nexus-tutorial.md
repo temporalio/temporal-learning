@@ -63,15 +63,30 @@ Two teams split this work:
 </tr>
 </table>
 
-:::tip Namespaces and Nexus are architectural decisions
-The decision to create separate namespaces and whether to use Nexus is a decision of architecture and context, not a team decision. Teams may share a namespace, or a single team may use multiple namespaces. Choose based on isolation requirements, blast radius, and security boundaries — not org chart lines.
-
-For production namespace strategies, see [Managing Namespaces Best Practices](https://docs.temporal.io/best-practices/managing-namespace).
-:::
-
 ### The Problem
 
 Right now, **both teams' code runs on the same Worker**. One process. One deployment. One blast radius.
+
+<div style={{textAlign: 'center', marginBottom: '8px'}}>
+  <span style={{
+    display: 'inline-block',
+    background: 'linear-gradient(135deg, #f97316, #fb923c)',
+    color: '#fff',
+    fontWeight: 800,
+    fontSize: '14px',
+    padding: '6px 18px',
+    borderRadius: '20px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2)',
+    animation: 'tryMePulse 2s ease-in-out infinite',
+  }}>🖱️ TRY ME — This diagram is interactive!</span>
+</div>
+<style>{`
+  @keyframes tryMePulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2); }
+    50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4); }
+  }
+`}</style>
 
 <iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
@@ -80,6 +95,10 @@ Compliance isn't optional — every payment must pass risk assessment before exe
 ### The Solution: Temporal Nexus
 
 [**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, deployment pipeline, and security perimeter — while Temporal manages durable, type-safe calls between them through a global gateway that handles discovery and routing. If the Compliance Worker goes down mid-call, the payment workflow just waits. When Compliance comes back, it picks up exactly where it left off — no retry logic, no data loss, no 3 AM page for the Payments team.
+
+:::tip Namespaces and Nexus are architectural decisions
+The decision to create separate namespaces and whether to use Nexus is a decision of architecture and context, not a team decision. Teams may share a namespace, or a single team may use multiple namespaces. Choose based on isolation requirements, blast radius, and security boundaries — not org chart lines. For production namespace strategies, see [Managing Namespaces Best Practices](https://docs.temporal.io/best-practices/managing-namespace).
+:::
 
 The best part? The code change is almost invisible:
 

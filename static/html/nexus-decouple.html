@@ -59,7 +59,7 @@
     font-size: 12px;
     font-weight: 600;
   }
-  header .subtitle { color: var(--text); font-size: 15px; margin-left: auto; line-height: 1.5; }
+  header .subtitle { color: var(--text); font-size: 15px; margin-left: 0; line-height: 1.5; text-align: left; }
 
   /* ── Controls row ────────────────────────────────────── */
   .controls {
@@ -616,7 +616,7 @@
 
 <header>
   <div class="badge">TODO</div>
-  <span class="subtitle">Click <strong>"Next Step"</strong> in <strong>Monolith</strong> mode until <strong>"Kill Compliance Worker"</strong> appears &mdash; click it and watch everything crash. Then switch to <strong>Nexus</strong> and try again &mdash; only Compliance goes down while Payments waits.</span>
+  <span class="subtitle"><strong>1.</strong> Click <strong>"Next Step"</strong> in <strong>Monolith</strong> mode<br><strong>2.</strong> Click <strong>"Kill Compliance Worker"</strong> and watch it crash<br><strong>3.</strong> Switch to <strong>Nexus</strong> and try again</span>
 </header>
 
 <div class="controls">
@@ -641,7 +641,7 @@
   <div class="step-indicator" id="stepIndicator">0</div>
   <div class="step-text">
     <strong id="stepTitle">Ready to start</strong>
-    <div class="tip" id="stepTip">Toggle between Monolith and Nexus, then click "Next Step" to animate the flow</div>
+    <div class="tip" id="stepTip">Toggle between Monolith and Nexus, then click "Next Step" to animate the flow. &#x1F448; <strong>Click any component</strong> to learn what it does.</div>
   </div>
 </div>
 
@@ -735,12 +735,6 @@
 
   <!-- Side panel -->
   <div class="side-panel" id="sidePanel">
-    <div class="panel-placeholder">
-      <div class="icon">&#x1F446;</div>
-      <strong>Click any component</strong> to learn what it does<br><br>
-      Toggle <em>Monolith / Nexus</em> to see the architecture change,<br>
-      then use <em>Next Step</em> to walk through the flow.
-    </div>
   </div>
 </div>
 
