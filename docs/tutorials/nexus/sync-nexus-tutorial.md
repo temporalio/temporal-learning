@@ -43,7 +43,7 @@ Before you begin this walkthrough, ensure you have:
 You work at a bank where every payment flows through **three steps**:
 
 1. **Validate** the payment (amount, accounts)
-2. **Check compliance** (risk assessment, sanctions screening)
+2. **Check compliance** (risk assessment, sanctions screening) — **must pass before payment can execute**
 3. **Execute** the payment (call the gateway)
 
 Two teams split this work:
@@ -75,15 +75,17 @@ Right now, **both teams' code runs on the same Worker**. One process. One deploy
 
 <iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
-Compliance ships a bug at 3 AM. Their code crashes. But it's running on the same namespace — so **Payments goes down too**. Same blast radius. Same 3 AM page. Two teams, one shared fate.
+Compliance isn't optional — regulations require that every payment passes risk assessment *before* execution. This hard dependency makes the coupling especially dangerous: a bug in compliance code blocks *all* payments, not just flagged ones. Compliance ships a bug at 3 AM. Their code crashes. But it's running on the same namespace — so **Payments goes down too**. Same blast radius. Same 3 AM page. Two teams, one shared fate.
 
 The obvious fix is to split into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. You've traded one problem for three.
 
 ### The Solution: Temporal Nexus
 
-[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. Each team gets its own Worker, its own deployment pipeline, its own security perimeter, its own blast radius — while Temporal manages the durable, type-safe calls between them. Each Worker runs as its own process — it can be deployed, scaled, and restarted independently.
+[**Nexus**](https://docs.temporal.io/nexus) gives you team boundaries **with** durability. The primary advantage: **each team can modify, deploy, and version their code independently**. The Compliance team doesn't ship code into the Payments Worker, and the Payments team doesn't need to understand compliance internals. Each team controls its own governance, authentication, and authorization.
 
-The Payments workflow calls the Compliance team through a Nexus operation. If the Compliance Worker goes down mid-call, the payment workflow just...waits. When Compliance comes back, it picks up exactly where it left off. No retry logic. No data loss. No 3am page for the Payments team.
+Each team gets its own Worker process, its own deployment pipeline, its own security perimeter, its own blast radius — while Temporal manages the durable, type-safe calls between them. Nexus provides a **global gateway and directory** that simplifies discovery and routing — callers look up an endpoint by name rather than managing connection details.
+
+The Payments workflow calls the Compliance team through a Nexus operation. If the Compliance Worker goes down mid-call, the payment workflow just...waits. When Compliance comes back, it picks up exactly where it left off. No retry logic. No data loss. No 3am page for the Payments team. In production, you'd run multiple replicas of each Worker — if one host goes down, Temporal routes pending work to the remaining replicas and traffic continues without interruption.
 
 The best part? The code change is almost invisible:
 
@@ -104,16 +106,17 @@ Here's what happens when the Compliance Worker goes down mid-call — and why it
 <details>
 <summary>Why Nexus over an Activity-wrapped HTTP call or a shared Activity?</summary>
 
-You could split Payments and Compliance into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. Think of a Nexus Operation as a built-in system Activity that handles routing, permissions, and efficiently getting responses from long-running operations. Here's how the options compare:
+You could split Payments and Compliance into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself. With a shared Activity, the Compliance team must ship their code into the Payments Worker — creating governance, versioning, and access control challenges. Think of a Nexus Operation as a built-in system Activity that handles routing, permissions, and efficiently getting responses from long-running operations. Here's how the options compare:
 
 |                      | Activity wrapping HTTP call            | Shared Activity (same namespace) | Temporal Nexus                                                                                                     |
 | -------------------- | -------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Worker goes down** | Activity retries the HTTP call         | Same crash domain                | Workflow waits, auto-resumes                                                                                       |
+| **Worker goes down** | Activity retries the HTTP call         | Same crash domain                | Other replicas continue; if all down, workflow pauses and auto-resumes                                             |
 | **Retry logic**      | Activity retry policy + HTTP errors    | Temporal retries within team     | Built-in across namespace boundary                                                                                 |
 | **Routing**          | You manage service discovery + URLs    | N/A (same namespace)             | Built-in, Temporal routes to target namespace                                                                      |
 | **Permissions**      | Custom auth between services           | Shared namespace access          | Scoped cross-namespace permissions                                                                                 |
 | **Type safety**      | OpenAPI + code gen                     | Java interface                   | Shared Java interface                                                                                              |
 | **Human review**     | Custom callback URLs                   | Couples teams together           | `@UpdateMethod` on the underlying workflow (async updates not yet supported across Nexus)                          |
+| **Code independence**| Separate repos, custom contracts       | Must ship code into shared Worker| Components deploy independently with clear separation of concerns                                                  |
 | **Team isolation**   | Separate services, shared API contract | Same namespace, shared access    | Separate namespaces, scoped access                                                                                 |
 | **Code change**      | Update HTTP client + server            | —                                | One-line stub swap, also [nexus-rpc-gen](https://github.com/nexus-rpc/nexus-rpc-gen/) generates code automatically |
 
@@ -284,7 +287,7 @@ Can you match each Nexus concept to what it represents in our payments scenario?
 
 > **Pre-provided:** The [`ComplianceWorkflow`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflow.java) interface and [implementation](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflowImpl.java) are already complete in the exercise. They use Temporal patterns you've already seen — `@WorkflowMethod`, `@UpdateMethod`, and `Workflow.await()`. Your work starts at **TODO 1** — the Nexus-specific parts.
 
-| #     | File                                                                                                                                                                                                                | Action    | Key Concept                                                   |
+| #     | File                                                                                                                                                                                                                | Operation | Key Concept                                                   |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------- |
 | **1** | [`shared/nexus/ComplianceNexusService.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/shared/nexus/ComplianceNexusService.java)                         | Your work | `@Service` + `@Operation` on both operations                  |
 | **2** | [`compliance/temporal/ComplianceNexusServiceImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/ComplianceNexusServiceImpl.java)   | Your work | `fromWorkflowHandle` (async) + `OperationHandler.sync` (sync) |
@@ -556,7 +559,7 @@ Without this, the Payments Worker (TODO 5) won't know where to route `Compliance
 
 **File:** [`payments/temporal/PaymentProcessingWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/payments/temporal/PaymentProcessingWorkflowImpl.java)
 
-You're replacing the Activity stub with a Nexus stub — same method call, but it now crosses a namespace boundary.
+You're replacing the Activity stub with a Nexus stub — same method call, but it now crosses a namespace boundary. The compliance check is a blocking dependency — the workflow cannot proceed to `executePayment` until `checkCompliance` returns a passing result. With Nexus, this dependency is preserved with full durability across the team boundary.
 
 **What to change for TODO 4:**
 
@@ -755,6 +758,8 @@ Two Workers, two blast radii, two independent teams. The automated compliance pa
 
 This is where it gets fun. Let's prove that Nexus is **durable**.
 
+> **Note:** In this tutorial, you run a single Worker replica, so killing it stops all compliance processing. In production, you'd run multiple replicas across hosts — if one goes down, the others keep processing. This checkpoint demonstrates the worst case: *all* replicas are gone. Even then, no data is lost.
+
 :::warning Clean up before starting
 Terminate any running workflows from Checkpoint 2 — including TXN-B, which is still waiting for human review. You must terminate it in **both** `payments-namespace` and `compliance-namespace`. Then stop both Workers (Ctrl+C in Terminals 2 and 3).
 :::
@@ -810,7 +815,7 @@ Now watch:
 
 **Checkpoint 3 passed** if TXN-A completes successfully after you restart the compliance Worker.
 
-**What just happened:** The payment workflow didn't crash. It didn't timeout. It didn't lose data. It didn't need retry logic. It just... waited. When the compliance Worker came back, Temporal automatically routed the pending Nexus operation to it. Durability extends across the team boundary — that's the whole point of Nexus.
+**What just happened:** The payment workflow didn't crash. It didn't timeout. It didn't lose data. It didn't need retry logic. It just... waited. When the compliance Worker came back, Temporal automatically routed the pending Nexus operation to it. Durability extends across the team boundary — that's the whole point of Nexus. With multiple replicas, this scenario would be even smoother — the pending Nexus operation would be picked up by another replica immediately, with no visible interruption.
 
 ---
 
@@ -958,7 +963,7 @@ BEFORE (Monolith):                    AFTER (Nexus Decoupled):
 | `NexusServiceOptions`             | Mapped the service interface to the endpoint in the Worker           |
 | Nexus Endpoint (CLI)              | Registered the routing rule: endpoint name to namespace + task queue |
 
-The fundamental pattern: **same method call, different architecture**. The workflow still calls `checkCompliance()` - but the call now crosses a team boundary with full durability.
+The fundamental pattern: **same method call, different architecture**. The workflow still calls `checkCompliance()` - but the call now crosses a team boundary with full durability. Each team can now modify, test, and deploy their service independently — that's the primary win.
 
 ## What's Next?
 
