@@ -27,7 +27,6 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 14px;
     padding: 20px;
-    min-height: 100vh;
   }
 
   .header {
@@ -264,13 +263,60 @@
     font-size: 11px;
     color: var(--payments-color);
   }
+
+  /* Tap-to-select highlight (mobile) */
+  .drag-item.selected {
+    border-color: var(--nexus-color);
+    box-shadow: 0 0 0 2px var(--nexus-glow);
+    transform: translateY(-2px);
+  }
+
+  /* Touch hint */
+  .touch-hint {
+    display: none;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  @media (pointer: coarse) {
+    .touch-hint { display: block; }
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    body { padding: 8px 4px; }
+    .header { margin-bottom: 12px; }
+    .header p { font-size: 12px; }
+    .game { flex-direction: column; gap: 4px; max-width: none; }
+    .match-row {
+      flex-direction: row;
+      gap: 4px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .monolith-item { font-size: 10px; padding: 6px 5px; flex: 1; min-width: 0; word-break: break-word; }
+    .arrow { font-size: 12px; flex-shrink: 0; }
+    .drop-zone { min-height: 34px; flex: 1; min-width: 0; }
+    .drop-zone .placeholder { font-size: 10px; }
+    .drag-item { font-size: 10px; padding: 5px 6px; }
+    .drag-pool { margin-top: 8px; padding: 6px; gap: 4px; }
+    .drag-pool-label { font-size: 10px; }
+    .controls { flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .btn { padding: 6px 12px; font-size: 12px; }
+    .stayed-same { padding: 8px 10px; margin-top: 10px; max-width: none; }
+    .stayed-same .label { font-size: 11px; margin-bottom: 4px; }
+    .stayed-same li { font-size: 12px; padding: 2px 0; }
+    .column-title { font-size: 11px; margin-bottom: 6px; padding-bottom: 4px; }
+    .result { margin-top: 8px; font-size: 12px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>Match the Change: Monolith to Nexus</h1>
-  <p>Drag each Nexus replacement to its matching monolith API on the right</p>
+  <p>Drag each Nexus replacement to its matching monolith API</p>
+  <p class="touch-hint">Tap an answer, then tap where it goes.</p>
 </div>
 
 <div class="game" id="game">
@@ -384,30 +430,6 @@ function createDragItem(answer) {
     });
   });
 
-  // Touch support
-  el.addEventListener('touchstart', function(e) {
-    dragState = answer.id;
-    el.classList.add('dragging');
-  }, { passive: true });
-
-  el.addEventListener('touchend', function(e) {
-    el.classList.remove('dragging');
-    if (dragState === null) return;
-
-    var touch = e.changedTouches[0];
-    var target = document.elementFromPoint(touch.clientX, touch.clientY);
-    var dropZone = target ? target.closest('.drop-zone') : null;
-
-    if (dropZone) {
-      handleDrop(dropZone, dragState);
-    }
-
-    dragState = null;
-    document.querySelectorAll('.drop-zone').forEach(function(z) {
-      z.classList.remove('drag-over');
-    });
-  });
-
   return el;
 }
 
@@ -430,17 +452,6 @@ function setupDropZones() {
       handleDrop(zone, answerId);
     });
 
-    // Touch hover
-    zone.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-      var touch = e.touches[0];
-      var target = document.elementFromPoint(touch.clientX, touch.clientY);
-      document.querySelectorAll('.drop-zone').forEach(function(z) {
-        z.classList.remove('drag-over');
-      });
-      var dz = target ? target.closest('.drop-zone') : null;
-      if (dz) dz.classList.add('drag-over');
-    });
   });
 }
 
@@ -568,6 +579,88 @@ function resetGame() {
 }
 
 init();
+
+// ── Mobile tap-to-select/tap-to-place ──────────────────────────
+var selectedItem = null;
+
+function deselectItem() {
+  if (selectedItem !== null) {
+    var prev = document.querySelector('.drag-item.selected');
+    if (prev) prev.classList.remove('selected');
+    selectedItem = null;
+  }
+}
+
+if ('ontouchstart' in window) {
+  document.addEventListener('click', function(e) {
+    var dragItem = e.target.closest('.drag-item');
+    var dropZone = e.target.closest('.drop-zone');
+
+    // Tap a drag item in the pool → select it
+    if (dragItem && dragItem.closest('#dragPool')) {
+      e.stopImmediatePropagation();
+      var id = parseInt(dragItem.getAttribute('data-id'));
+      if (selectedItem === id) {
+        deselectItem();
+        return;
+      }
+      deselectItem();
+      selectedItem = id;
+      dragItem.classList.add('selected');
+      return;
+    }
+
+    // Tap a placed item in a drop zone
+    if (dragItem && dragItem.closest('.drop-zone')) {
+      e.stopImmediatePropagation();
+      var zone = dragItem.closest('.drop-zone');
+      var dropId = zone.id;
+      if (selectedItem !== null) {
+        // Swap: place selected here, return existing to pool
+        handleDrop(zone, selectedItem);
+        deselectItem();
+      } else {
+        // Return placed item to pool
+        var answerId = parseInt(dragItem.getAttribute('data-id'));
+        sendToPool(answerId);
+        delete placements[dropId];
+        zone.innerHTML = '<span class="placeholder">drop here</span>';
+        zone.classList.remove('filled', 'correct', 'incorrect');
+        document.getElementById('result').textContent = '';
+        document.getElementById('result').className = 'result';
+      }
+      return;
+    }
+
+    // Tap a drop zone while something is selected → place it
+    if (dropZone && selectedItem !== null) {
+      e.stopImmediatePropagation();
+      handleDrop(dropZone, selectedItem);
+      deselectItem();
+      return;
+    }
+
+    // Tap elsewhere → deselect
+    if (selectedItem !== null) {
+      deselectItem();
+    }
+  }, true);
+}
+
+// ── Auto-resize iframe ──────────────────────────────────────────
+(function() {
+  function notifyHeight() {
+    var h = document.documentElement.scrollHeight;
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'iframeResize', height: h }, '*');
+    }
+  }
+  window.addEventListener('load', notifyHeight);
+  window.addEventListener('resize', notifyHeight);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(notifyHeight).observe(document.documentElement);
+  }
+})();
 </script>
 </body>
 </html>
