@@ -12,6 +12,29 @@ description: Learn how to decouple Temporal services with Nexus and the Java SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {useEffect} from 'react';
+
+export const IframeAutoResize = () => {
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === 'iframeResize' && typeof e.data.height === 'number') {
+        document.querySelectorAll('iframe').forEach(iframe => {
+          try {
+            if (iframe.contentWindow === e.source) {
+              iframe.style.setProperty('height', e.data.height + 'px', 'important');
+            }
+          } catch(err) {}
+        });
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+  return null;
+};
+
+<IframeAutoResize />
+
 # Decoupling Temporal Services with Nexus and the Java SDK
 
 <p style={{fontSize: '14px'}}>
@@ -86,9 +109,13 @@ Right now, **both teams' code runs on the same Worker**. One process. One deploy
     0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2); }
     50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4); }
   }
+  @media (max-width: 768px) {
+    iframe[title*="Match the Change"],
+    iframe[title*="Quick Match"] { display: none !important; }
+  }
 `}</style>
 
-<iframe src="/html/nexus-decouple.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
+<iframe src="/html/nexus-decouple.html" width="100%" height="500" scrolling="no" style={{border: 'none', borderRadius: '8px', overflow: 'hidden'}} title="Interactive: Monolith vs Nexus architecture"></iframe>
 
 Compliance isn't optional — every payment must pass risk assessment before execution. This hard dependency is dangerous: a bug in compliance code at 3 AM crashes payments too, because they share the same namespace and blast radius. The obvious fix is to split into separate namespaces and use an Activity to call across the boundary — wrapping an HTTP client or starting a remote Workflow. But then you're managing HTTP clients, routing, error mapping, and callback infrastructure yourself.
 
@@ -284,7 +311,7 @@ Service    →    Operation    →    Endpoint      →      Registry
 
 Can you match each Nexus concept to what it represents in our payments scenario?
 
-<iframe src="/html/nexus-quick-match.html" width="100%" height="680" style={{border: 'none', borderRadius: '8px'}} title="Nexus Building Blocks — Quick Match"></iframe>
+<iframe src="/html/nexus-quick-match.html" width="100%" height="580" style={{border: 'none', borderRadius: '8px'}} title="Nexus Building Blocks — Quick Match"></iframe>
 
 </details>
 
@@ -614,7 +641,7 @@ ComplianceResult compliance = complianceService.checkCompliance(compReq);
 
 **What changed:** Drag each Nexus replacement to its monolith equivalent:
 
-<iframe src="/html/nexus-match-change.html" width="100%" height="900" style={{border: 'none', borderRadius: '8px'}} title="Match the Change — Monolith to Nexus"></iframe>
+<iframe src="/html/nexus-match-change.html" width="100%" height="680" style={{border: 'none', borderRadius: '8px'}} title="Match the Change — Monolith to Nexus"></iframe>
 
 :::tip
 **Your feedback shapes what we make next**. Use the Feedback widget on the side to tell us what’s working and what’s missing!

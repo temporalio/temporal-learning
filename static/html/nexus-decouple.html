@@ -35,7 +35,6 @@
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 14px;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
@@ -609,6 +608,106 @@
     0% { border-color: var(--high-risk); }
     50% { border-color: var(--compliance-color); box-shadow: 0 0 20px rgba(34,197,94,0.3); }
     100% { border-color: var(--compliance-border); }
+  }
+
+  /* ── Mobile responsive ─────────────────────────────── */
+  @media (max-width: 768px) {
+    header {
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      gap: 8px;
+    }
+    header h1 { font-size: 14px; }
+    header .subtitle { font-size: 12px; }
+
+    .controls {
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .step-dots { margin-left: 0; }
+
+    .step-bar {
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      gap: 8px;
+      min-height: auto;
+    }
+    .step-text strong { font-size: 13px; }
+    .step-text .tip { font-size: 11px; }
+
+    .main {
+      flex: none;
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    .side-panel {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .canvas {
+      flex: none;
+      flex-direction: column;
+      padding: 12px 8px;
+      overflow: visible;
+    }
+
+    .team-zone {
+      padding: 10px;
+    }
+
+    .nexus-boundary {
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      padding: 8px 0;
+    }
+    .nexus-line {
+      width: 100%;
+      height: 3px;
+    }
+
+    /* Monolith overrides for column layout */
+    .canvas.monolith .nexus-boundary {
+      height: 0;
+      padding: 0;
+    }
+    .canvas.monolith .team-zone.compliance {
+      height: 0;
+      flex: 0;
+    }
+
+    .component-title { font-size: 12px; }
+    .component-type { font-size: 10px; }
+    .component { padding: 10px; }
+
+    .nav-btn { padding: 6px 12px; font-size: 12px; }
+    .mode-toggle { padding: 4px 8px; }
+
+    .waiting-banner {
+      position: fixed;
+      bottom: auto;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: normal;
+      font-size: 12px;
+      max-width: 85vw;
+    }
+    .crash-banner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 14px 16px;
+      max-width: 85vw;
+    }
+    .crash-banner .crash-title { font-size: 14px; }
+    .crash-banner .crash-detail { font-size: 12px; }
   }
 </style>
 </head>
@@ -1256,6 +1355,24 @@ function clearFailure() {
 // ── Init ─────────────────────────────────────────────────────────
 document.getElementById('canvas').classList.add('monolith');
 renderStep();
+
+// ── Auto-resize iframe ──────────────────────────────────────────
+(function() {
+  var lastH = 0;
+  function notifyHeight() {
+    var h = document.body.offsetHeight;
+    if (h !== lastH && window.parent && window.parent !== window) {
+      lastH = h;
+      window.parent.postMessage({ type: 'iframeResize', height: h }, '*');
+    }
+  }
+  window.addEventListener('load', notifyHeight);
+  window.addEventListener('resize', notifyHeight);
+  setInterval(notifyHeight, 300);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(notifyHeight).observe(document.body);
+  }
+})();
 </script>
 </body>
 </html>
