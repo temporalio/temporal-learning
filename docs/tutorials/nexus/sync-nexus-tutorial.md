@@ -35,8 +35,6 @@ export const IframeAutoResize = () => {
 
 <IframeAutoResize />
 
-# Decoupling Temporal Services with Nexus and the Java SDK
-
 <p style={{fontSize: '14px'}}>
   <span style={{color: '#fff'}}>Author:</span> <img src="https://cdn-icons-png.flaticon.com/16/3536/3536505.png" alt="LinkedIn" style={{display: 'inline', verticalAlign: 'middle', margin: '0 4px 0 0'}} /><a href="https://www.linkedin.com/in/nikolayadvolodkin/">Nikolay Advolodkin</a>  <span style={{color: '#fff'}}>&nbsp;|&nbsp;</span>  <span style={{color: '#fff'}}>Editor:</span> <img src="https://cdn-icons-png.flaticon.com/16/3536/3536505.png" alt="LinkedIn" style={{display: 'inline', verticalAlign: 'middle', margin: '0 4px 0 0'}} /><a href="https://www.linkedin.com/in/zhoua1115/">Angela Zhou</a>
 </p>
