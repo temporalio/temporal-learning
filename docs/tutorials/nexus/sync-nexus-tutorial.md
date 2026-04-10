@@ -1,5 +1,5 @@
 ---
-id: nexus-sync-tutorial
+id: nexus-sync-tutorial-java
 sidebar_position: 1
 keywords: [nexus, temporal]
 tags: [nexus, temporal]

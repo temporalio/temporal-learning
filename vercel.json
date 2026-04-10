@@ -7,6 +7,11 @@
       "permanent": true
     },
     {
+      "source": "/tutorials/nexus/nexus-sync-tutorial/",
+      "destination": "/tutorials/nexus/nexus-sync-tutorial-java/",
+      "permanent": true
+    },
+    {
       "source": "/tutorials/go/subscriptions/",
       "destination": "/tutorials/go/build-an-email-drip-campaign/",
       "permanent": true
@@ -109,6 +114,11 @@
     {
       "source": "/community_programs/web_dev_challenge/",
       "destination": "https://www.youtube.com/watch?v=XCRLSy5AJPI&embeds_referring_euri=https%3A%2F%2Flearn.temporal.io%2F&source_ve_path=MjM4NTE",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/nexus/nexus-sync-tutorial/",
+      "destination": "/tutorials/nexus/nexus-sync-tutorial-java/",
       "permanent": true
     }
   ]
