@@ -52,6 +52,7 @@ In this course, you will go beyond the basics of Temporal application developmen
 <Link className="button button--primary" to="temporal_102/java">Java</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/dotnet">.NET</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/python">Python</Link>&nbsp;
+<Link className="button button--primary" to="temporal_102/ruby">Ruby</Link>&nbsp;
 <Link className="button button--primary" to="temporal_102/typescript">TypeScript</Link>&nbsp;
 
 -----
