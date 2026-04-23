@@ -214,12 +214,16 @@ Read more about [How the Python Sandbox works](https://docs.temporal.io/encyclop
 Other common ways to introduce non-deterministic issues into a Workflow:
 
 1. **External System Interaction:**
-   - Avoid direct external API calls, file I/O operations, or interactions with other services.
+   - Avoid direct external API calls, file I/O operations, interactions with other services, or LLM and other AI service invocations. The latter are non-deterministic even when the network call succeeds, since the same prompt may return a different response on each call.
    - Utilize Activities for these operations.
 2. **Data Structure Iteration:**
    - Use Python dictionaries as they are deterministically ordered.
 3. **Run Id Usage:**
    - Be cautious with storing or evaluating the run Id.
+
+### Does this mean Temporal can't be used for AI? {#temporal-for-ai}
+
+No — the opposite. Workflow determinism is exactly what makes Temporal a strong fit for AI applications. LLM calls, tool use, and agent steps are non-deterministic by nature, so you place them in Activities. This separation makes the orchestration dependable even though these individual steps are non-deterministic, so your agent can recover from crashes, retry failed LLM calls, and resume long-running tasks without losing state.
 
 ## Non-deterministic code changes {#durability-through-replays}
 

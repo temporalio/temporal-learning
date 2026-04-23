@@ -224,7 +224,7 @@ Here are some common sources of non-determinism:
 
 - **Interacting with External Systems or State**:
 
-  - Directly accessing or mutating external systems or state, such as making API calls, performing file I/O operations, or communicating with other services, should be avoided within the Workflow.
+  - Directly accessing or mutating external systems or state, such as making API calls, performing file I/O operations, communicating with other services, or invoking LLMs and other AI services, should be avoided within the Workflow. LLMs and AI services are non-deterministic even when the network call succeeds, since the same prompt may return a different response on each call.
   - With the TypeScript SDK, this is not the case, again due to the sandbox. The Workflow sandbox cannot import code that makes network requests or nondeterministic modules. As a result, use Activities for such operations. Activities run outside the Workflow's deterministic context and can safely interact with external systems.
 
 - **Working with System Time**:
@@ -427,6 +427,10 @@ You can leverage the Temporal TypeScript VSCode extenstion to debug your Workflo
 Use the [Temporal Debugger for VS Code](https://marketplace.visualstudio.com/items?itemName=temporal-technologies.temporalio).
 
 See the [vscode-debugger-extension README](https://github.com/temporalio/vscode-debugger-extension/blob/main/README.md) for details on how to use it.
+
+### Does this mean Temporal can't be used for AI? {#temporal-for-ai}
+
+No — the opposite. Workflow determinism is exactly what makes Temporal a strong fit for AI applications. LLM calls, tool use, and agent steps are non-deterministic by nature, so you place them in Activities. This separation makes the orchestration dependable even though these individual steps are non-deterministic, so your agent can recover from crashes, retry failed LLM calls, and resume long-running tasks without losing state.
 
 ## Non-deterministic code changes {#durability-through-replays}
 

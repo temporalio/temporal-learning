@@ -183,7 +183,8 @@ The following are some common operations that **can't** be done inside of a Work
 
 - Generate and rely on random numbers (Use Activites instead).
 - Accessing / mutating external systems or state.
-  This includes calling an external API, conducting a file I/O operation, talking to another service, etc. (use Activities instead).
+  This includes calling an external API, conducting a file I/O operation, talking to another service, invoking an LLM or other AI service, etc. (use Activities instead).
+  LLMs and AI services are non-deterministic even when the network call succeeds, since the same prompt may return a different response on each call.
 - Relying on system time.
   - Use `Workflow.currentTimeMillis()` as a replacement for `System.CurrentTimeMillis()`.
   - Use `Workflow.Sleep()` as a replacement for `Thread.Sleep()`.
@@ -244,6 +245,10 @@ public class BackgroundCheckReplayNonDeterministicWorkflowImpl implements Backgr
 ```
 
 <!--SNIPEND-->
+
+### Does this mean Temporal can't be used for AI? {#temporal-for-ai}
+
+No — the opposite. Workflow determinism is exactly what makes Temporal a strong fit for AI applications. LLM calls, tool use, and agent steps are non-deterministic by nature, so you place them in Activities. This separation makes the orchestration dependable even though these individual steps are non-deterministic, so your agent can recover from crashes, retry failed LLM calls, and resume long-running tasks without losing state.
 
 ## Non-deterministic code changes {#durability-through-replays}
 

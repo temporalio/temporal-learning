@@ -693,8 +693,9 @@ As you see, this code reads the source file, creates the temporary file, process
 The function returns the file output path for the generated mp3 results.
 
 [Workflows](https://docs.temporal.io/workflows) coordinate [Activities](https://docs.temporal.io/activities), which are the methods you created in the previous section.
-You use Activities to make API requests, access the file system, or perform other non-deterministic operations.
+You use Activities to make API requests, access the file system, invoke LLMs and other AI services, or perform other non-deterministic operations.
 In contrast, every Workflow [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so you perform all your non-deterministic work in Activities.
+This separation is also what makes Temporal a strong fit for AI applications: LLM calls, tool use, and agent steps are non-deterministic by nature, so you place them in Activities while the Workflow reliably orchestrates the sequence.
 
 This is the complete business logic code for this application:
 
