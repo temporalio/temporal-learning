@@ -15,14 +15,14 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
-  favicon: "img/favicon.svg",
+  favicon: "img/favicon.png",
   headTags: [
     {
       tagName: "link",
       attributes: {
         rel: "icon",
-        type: "image/png",
-        href: "/img/favicon.png",
+        type: "image/svg+xml",
+        href: "/img/favicon.svg",
       },
     },
   ],
