@@ -15,7 +15,17 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
-  favicon: "img/favicon.png",
+  favicon: "img/favicon.svg",
+  headTags: [
+    {
+      tagName: "link",
+      attributes: {
+        rel: "icon",
+        type: "image/png",
+        href: "/img/favicon.png",
+      },
+    },
+  ],
   trailingSlash: true,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -97,7 +107,7 @@ const config = {
     footer: {
       logo: {
         alt: "Temporal logo",
-        src: "img/favicon.png",
+        src: "img/favicon.svg",
         href: "https://temporal.io",
         width: 24,
       },
