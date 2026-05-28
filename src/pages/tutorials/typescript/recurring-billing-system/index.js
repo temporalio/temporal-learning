@@ -557,7 +557,7 @@ export default function RecurringBillingSystemPage() {
               Build a recurring billing subscription system with TypeScript
             </h1>
 
-            <MetaChips items={["~2 hours", "TypeScript", "Intermediate"]} />
+            <MetaChips items={["~2 hours", "TypeScript", "Beginner"]} />
 
             <section className={styles.section} id="introduction">
               <h2 className={styles.sectionTitle}>Introduction</h2>

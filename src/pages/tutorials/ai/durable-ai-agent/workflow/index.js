@@ -1046,7 +1046,7 @@ export default function Chapter3Page() {
 
             <h1 className={styles.title}>Build the agent Workflow and Worker</h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={3} />
 

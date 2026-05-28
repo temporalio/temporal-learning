@@ -71,7 +71,7 @@ export default function BackgroundCheckLanding() {
             </h1>
 
             <MetaChips
-              items={["~90 minutes total", "3 chapters", "TypeScript", "Intermediate"]}
+              items={["~90 minutes total", "3 chapters", "TypeScript", "Beginner"]}
             />
 
             <p className={styles.intro}>

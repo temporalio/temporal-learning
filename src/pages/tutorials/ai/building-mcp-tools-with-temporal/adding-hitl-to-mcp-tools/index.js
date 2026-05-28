@@ -705,7 +705,7 @@ export default function AddingHitlToMcpToolsPage() {
               Building Long-Running MCP Tools with Human-in-the-Loop
             </h1>
 
-            <MetaChips items={["~90 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~90 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

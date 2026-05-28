@@ -244,7 +244,7 @@ export default function BuildRecurringBillingAppPage() {
               Build a recurring billing subscription system with PHP
             </h1>
 
-            <MetaChips items={["~45 minutes", "Intermediate", "PHP"]} />
+            <MetaChips items={["~45 minutes", "Beginner", "PHP"]} />
 
             <p className={styles.intro}>
               In this tutorial you'll build a realistic monthly subscription

@@ -29,16 +29,9 @@ function TutorialCard({ title, summary, href, accent, sdkLanguages }) {
 
 const AI = [
   {
-    title: "Durable AI agent",
-    href: "/tutorials/ai/durable-ai-agent",
-    summary: "Compose Temporal primitives into a long-running agent that picks up where it left off.",
-    sdkLanguages: ["python"],
-    topics: ["ai"],
-  },
-  {
-    title: "Deep research with the OpenAI Agents SDK",
-    href: "/tutorials/ai/deep-research",
-    summary: "Build deep-research agents that run for hours and survive failure.",
+    title: "Building Durable AI Applications",
+    href: "/tutorials/ai/building-durable-ai-applications",
+    summary: "Build a durable AI application backed by Temporal's reliable execution model.",
     sdkLanguages: ["python"],
     topics: ["ai"],
   },
@@ -50,9 +43,16 @@ const AI = [
     topics: ["ai"],
   },
   {
-    title: "Building durable AI applications",
-    href: "/tutorials/ai/building-durable-ai-applications",
-    summary: "Build a durable AI application backed by Temporal's reliable execution model.",
+    title: "Deep research with the OpenAI Agents SDK",
+    href: "/tutorials/ai/deep-research",
+    summary: "Build deep-research agents that run for hours and survive failure.",
+    sdkLanguages: ["python"],
+    topics: ["ai"],
+  },
+  {
+    title: "Durable AI Agent",
+    href: "/tutorials/ai/durable-ai-agent",
+    summary: "Compose Temporal primitives into a long-running agent that picks up where it left off.",
     sdkLanguages: ["python"],
     topics: ["ai"],
   },

@@ -601,7 +601,7 @@ export default function Chapter1Page() {
               repository.
             </p>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={1} />
 

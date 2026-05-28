@@ -146,7 +146,7 @@ export default function Chapter3DurableExecution() {
               Develop code that durably executes
             </h1>
 
-            <MetaChips items={["~25 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~25 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={3} />
 

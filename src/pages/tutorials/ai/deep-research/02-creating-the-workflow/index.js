@@ -666,7 +666,7 @@ export default function Chapter2Page() {
               Part 2: Creating the Workflow for Your Deep Research Agent
             </h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

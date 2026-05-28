@@ -477,7 +477,7 @@ export default function Chapter4Page() {
 
             <h1 className={styles.title}>Run and observe the agent</h1>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={4} />
 

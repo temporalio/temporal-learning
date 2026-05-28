@@ -356,7 +356,7 @@ export default function Chapter2ProjectSetup() {
               Set up a Temporal Application project
             </h1>
 
-            <MetaChips items={["~40 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~40 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

@@ -405,7 +405,7 @@ export default function TripBookingAppPage() {
               Build a trip booking application in Python
             </h1>
 
-            <MetaChips items={["~90 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~90 minutes", "Beginner", "Python"]} />
 
             <p className={styles.intro}>
               When dealing with distributed systems, a failure in one

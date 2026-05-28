@@ -457,7 +457,7 @@ export default function EmailDripCampaignTutorial() {
               Build an email drip campaign with Java and Spring Boot
             </h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Java"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Java"]} />
 
             <p className={styles.intro}>
               Build an email drip campaign and a subscription web application

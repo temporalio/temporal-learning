@@ -527,7 +527,7 @@ export default function AudiobookTutorial() {
               Create audiobooks from text with OpenAI and Java
             </h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Java"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Java"]} />
 
             <p className={styles.intro}>
               Build a robust text-to-speech system with OpenAI APIs and

@@ -72,7 +72,7 @@ export default function BackgroundCheckSeriesLanding() {
             </h1>
 
             <MetaChips
-              items={["3 chapters", "Beginner to Intermediate", "Python"]}
+              items={["3 chapters", "Beginner", "Python"]}
             />
 
             <p className={styles.intro}>

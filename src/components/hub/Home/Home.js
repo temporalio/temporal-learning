@@ -27,8 +27,8 @@ const EXPLORE = [
 
 const PROJECT_TUTORIAL_SLUGS = [
   "building-durable-ai-applications",
-  "order-processing",
   "nexus",
+  "subscription-billing",
 ];
 const FEATURED_SLUGS = ["temporal-101", "temporal-102"];
 const AI_TOPIC = "ai";

@@ -1245,7 +1245,7 @@ export default function Chapter2Page() {
 
             <h1 className={styles.title}>Define the agent's behavior</h1>
 
-            <MetaChips items={["~45 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~45 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

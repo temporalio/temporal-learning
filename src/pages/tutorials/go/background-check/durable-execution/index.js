@@ -242,7 +242,7 @@ export default function DurableExecutionPage() {
               Develop code that durably executes
             </h1>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "Go"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "Go"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={3} />
 

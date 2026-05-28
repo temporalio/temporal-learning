@@ -162,7 +162,7 @@ export default function BuildTripBookingAppPage() {
               Build a trip booking system with PHP
             </h1>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "PHP"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "PHP"]} />
 
             <p className={styles.intro}>
               In this tutorial, you'll explore the different components that

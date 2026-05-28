@@ -617,7 +617,7 @@ export default function ProjectSetupChapter() {
               Set up a Temporal Application project
             </h1>
 
-            <MetaChips items={["~50 minutes", "Intermediate", "Java"]} />
+            <MetaChips items={["~50 minutes", "Beginner", "Java"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

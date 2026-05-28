@@ -562,7 +562,7 @@ export default function DurableAiChapter1Page() {
               Part 1: Adding Durability to AI Applications with Temporal
             </h1>
 
-            <MetaChips items={["~45 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~45 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={1} />
 

@@ -531,7 +531,7 @@ export default function EcommerceTutorialPage() {
 
             <h1 className={styles.title}>Build an eCommerce App With Go</h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Go"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Go"]} />
 
             <section className={styles.section} id="introduction">
               <h2 className={styles.sectionTitle}>Introduction</h2>

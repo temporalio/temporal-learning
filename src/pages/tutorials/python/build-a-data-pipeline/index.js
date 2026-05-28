@@ -280,7 +280,7 @@ export default function BuildADataPipelinePage() {
 
             <h1 className={styles.title}>Build a data pipeline with Python</h1>
 
-            <MetaChips items={["~45 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~45 minutes", "Beginner", "Python"]} />
 
             <section className={styles.section} id="introduction">
               <h2 className={styles.sectionTitle}>Introduction</h2>

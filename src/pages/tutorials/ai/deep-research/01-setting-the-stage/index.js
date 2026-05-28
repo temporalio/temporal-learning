@@ -157,7 +157,7 @@ export default function Chapter1Page() {
               Part 1: Setting the Stage for Your Deep Research Agent
             </h1>
 
-            <MetaChips items={["~20 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~20 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={1} />
 

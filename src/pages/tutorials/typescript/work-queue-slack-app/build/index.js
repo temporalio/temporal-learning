@@ -556,7 +556,7 @@ export default function WorkQueueBuildPage() {
               Build a Work Queue Slack App with TypeScript
             </h1>
 
-            <MetaChips items={["~2 hours", "TypeScript", "Intermediate"]} />
+            <MetaChips items={["~2 hours", "TypeScript", "Beginner"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={1} />
 

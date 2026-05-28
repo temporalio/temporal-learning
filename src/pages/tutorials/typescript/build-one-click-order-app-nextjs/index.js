@@ -331,7 +331,7 @@ export default function OneClickOrderAppNextjsPage() {
               Build a one-click order application with TypeScript and Next.js
             </h1>
 
-            <MetaChips items={["~60 minutes", "TypeScript", "Intermediate"]} />
+            <MetaChips items={["~60 minutes", "TypeScript", "Beginner"]} />
 
             <section className={styles.section} id="introduction">
               <h2 className={styles.sectionTitle}>Introduction</h2>

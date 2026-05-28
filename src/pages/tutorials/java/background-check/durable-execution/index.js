@@ -222,7 +222,7 @@ export default function DurableExecutionChapter() {
               Develop code that durably executes
             </h1>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "Java"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "Java"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={3} />
 

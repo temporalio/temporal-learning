@@ -440,7 +440,7 @@ export default function ProjectSetupPage() {
               Set up a Temporal Application project
             </h1>
 
-            <MetaChips items={["~45 minutes", "Intermediate", "Go"]} />
+            <MetaChips items={["~45 minutes", "Beginner", "Go"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={2} />
 

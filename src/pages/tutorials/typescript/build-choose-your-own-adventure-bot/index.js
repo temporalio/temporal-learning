@@ -53,7 +53,7 @@ export default function ChooseYourOwnAdventureBotPage() {
               Build a Choose Your Own Adventure Bot in TypeScript
             </h1>
 
-            <MetaChips items={["~45 minutes", "TypeScript", "Intermediate"]} />
+            <MetaChips items={["~45 minutes", "TypeScript", "Beginner"]} />
 
             <Admonition type="warning" title="Outdated">
               <p>

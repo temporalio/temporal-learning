@@ -457,7 +457,7 @@ export default function Chapter3Page() {
 
             <h1 className={styles.title}>Part 3: Running Your Deep Agent</h1>
 
-            <MetaChips items={["~30 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~30 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={3} />
 

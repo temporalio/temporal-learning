@@ -63,7 +63,7 @@ export default function WorkQueueSlackAppLanding() {
             </h1>
 
             <MetaChips
-              items={["~3 hours total", "2 chapters", "TypeScript", "Intermediate"]}
+              items={["~3 hours total", "2 chapters", "TypeScript", "Beginner"]}
             />
 
             <p className={styles.intro}>

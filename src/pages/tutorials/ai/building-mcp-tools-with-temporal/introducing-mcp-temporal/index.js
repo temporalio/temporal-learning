@@ -402,7 +402,7 @@ export default function IntroducingMcpTemporalPage() {
               Creating a Durable Weather MCP Server with Temporal
             </h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Python"]} />
 
             <TutorialStepper steps={TUTORIAL_STEPS} currentStep={1} />
 

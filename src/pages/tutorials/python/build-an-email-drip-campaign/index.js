@@ -358,7 +358,7 @@ export default function EmailDripCampaignPage() {
               Build an email drip campaign with Python
             </h1>
 
-            <MetaChips items={["~60 minutes", "Intermediate", "Python"]} />
+            <MetaChips items={["~60 minutes", "Beginner", "Python"]} />
 
             <section className={styles.section} id="introduction">
               <h2 className={styles.sectionTitle}>Introduction</h2>
