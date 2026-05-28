@@ -14,7 +14,7 @@ export default function IntermediatePath() {
       ]}
       completionLink={{
         href: "/paths/intermediate-complete",
-        label: "Already finished the Intermediate path? Mark the milestone",
+        label: "Already finished the Intermediate path?",
       }}
       nextActions={{
         label: "What's next?",

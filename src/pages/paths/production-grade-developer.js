@@ -12,7 +12,7 @@ export default function ProductionGradeDeveloperPath() {
       ]}
       completionLink={{
         href: "/paths/production-grade-developer-complete",
-        label: "Already finished the Production-Grade path? Mark the milestone",
+        label: "Already finished the Production-Grade path?",
       }}
       nextActions={{
         label: "What's next?",
