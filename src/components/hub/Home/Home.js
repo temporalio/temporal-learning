@@ -27,8 +27,8 @@ const EXPLORE = [
 
 const PROJECT_TUTORIAL_SLUGS = [
   "building-durable-ai-applications",
-  "building-mcp-tools-with-temporal",
-  "deep-research",
+  "order-processing",
+  "nexus",
 ];
 const FEATURED_SLUGS = ["temporal-101", "temporal-102"];
 const AI_TOPIC = "ai";

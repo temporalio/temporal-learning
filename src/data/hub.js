@@ -332,6 +332,36 @@ export const COURSES = [
     summary:
       "Compose Temporal primitives into a long-running agent that picks up where it left off.",
   },
+  {
+    slug: "order-processing",
+    title: "Processing Orders with Sagas",
+    label: "ORDER PROCESSING",
+    url: "/tutorials/go/build-an-ecommerce-app",
+    kind: "tutorial",
+    tier: "advanced",
+    topics: ["signals", "queries", "schedules-timers"],
+    sdkLanguages: ["go", "typescript"],
+    level: "practical",
+    durationMinutes: 90,
+    lessonCount: 1,
+    summary:
+      "Charge cards, manage inventory, handle refunds. Sagas that compensate when something goes wrong mid-checkout.",
+  },
+  {
+    slug: "nexus",
+    title: "Connecting Services with Nexus",
+    label: "NEXUS",
+    url: "/tutorials/nexus/nexus-sync-tutorial-java/",
+    kind: "tutorial",
+    tier: "advanced",
+    topics: ["nexus"],
+    sdkLanguages: ["java"],
+    level: "practical",
+    durationMinutes: 60,
+    lessonCount: 1,
+    summary:
+      "Use Nexus to call Workflows that live in different Temporal namespaces or services - clean boundaries between teams.",
+  },
 ];
 
 export const FEATURED_HOME_COURSES = [
