@@ -1,0 +1,99 @@
+.hero {
+  position: relative;
+  padding: 72px 0 56px;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 56px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.heroCompact .heroInner {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  gap: 40px;
+}
+
+.heroCompact {
+  padding: 56px 0 40px;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nd-fg-subtle);
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  font-weight: 700;
+  font-family: var(--nd-font-display);
+  color: var(--nd-fg);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.body {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--nd-fg-muted);
+  margin: 0;
+  max-width: 56ch;
+}
+
+.body a {
+  color: var(--nd-color-lilac);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 140ms ease;
+}
+
+.body a:hover,
+.body a:focus-visible {
+  color: var(--nd-color-magenta);
+}
+
+.searchWrap {
+  margin-top: 12px;
+  max-width: 560px;
+}
+
+.illustrationWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--nd-radius, 0);
+}
+
+@media (max-width: 900px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .illustrationWrap {
+    display: none;
+  }
+}

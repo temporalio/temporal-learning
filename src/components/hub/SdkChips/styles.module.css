@@ -1,0 +1,26 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--nd-font-body);
+  color: var(--nd-fg-muted);
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+a.chip:hover {
+  color: var(--nd-fg);
+  border-color: var(--nd-color-uv);
+  text-decoration: none;
+}

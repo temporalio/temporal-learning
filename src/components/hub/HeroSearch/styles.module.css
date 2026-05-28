@@ -1,0 +1,40 @@
+.form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--nd-bg-input);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  transition: border-color 140ms ease;
+}
+
+.form:focus-within {
+  border-color: var(--nd-color-uv);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  color: var(--nd-fg-subtle);
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.9375rem;
+  font-family: var(--nd-font-body);
+  color: var(--nd-fg);
+  padding: 0;
+}
+
+.input::placeholder {
+  color: var(--nd-fg-subtle);
+}
+
+.input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}

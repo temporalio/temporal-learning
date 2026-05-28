@@ -1,0 +1,79 @@
+.section {
+  padding: 0 24px 64px;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: 28px 32px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 760px) {
+  .inner {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 1.125rem;
+  line-height: 1.3;
+  font-weight: 700;
+  font-family: var(--nd-font-display);
+  margin: 0;
+  color: var(--nd-fg);
+}
+
+.sub {
+  font-size: 0.9375rem;
+  color: var(--nd-fg-muted);
+  margin: 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--nd-color-lilac);
+  border-radius: var(--nd-radius, 0);
+  color: var(--nd-color-lilac);
+  font-family: var(--nd-font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  background: var(--nd-color-magenta);
+  border-color: var(--nd-color-magenta);
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.button:hover .arrow {
+  transform: translateX(3px);
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 140ms ease;
+}

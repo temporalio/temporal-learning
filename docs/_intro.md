@@ -11,9 +11,7 @@ custom_edit_url: null
 image: /img/temporal-logo-twitter-card.png
 ---
 
-<img className="banner" src="/img/banners/learntemporal.png" alt="Learn Temporal" />
+import Home from '@site/src/components/hub/Home/Home'
 
-import Intro from '@site/src/components/Intro'
-
-<Intro/>
+<Home/>
 

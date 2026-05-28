@@ -1,0 +1,259 @@
+.section {
+  padding: 36px 0;
+}
+
+.section:first-of-type {
+  padding-top: 16px;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  font-family: var(--nd-font-display);
+  margin: 0 0 8px;
+  color: var(--nd-fg);
+}
+
+.sectionSub {
+  font-size: 0.9375rem;
+  color: var(--nd-fg-muted);
+  margin: 0 0 24px;
+  max-width: 72ch;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.grid[data-columns="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .grid[data-columns="3"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.archetypeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 760px) {
+  .archetypeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tutorial card (topic sections) */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px 20px;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-top: 3px solid var(--accent-color, var(--nd-color-uv));
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  color: var(--nd-fg);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  height: 100%;
+}
+
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -16px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  color: var(--nd-fg);
+}
+
+.card[data-accent="ai"] { --accent-color: var(--nd-color-magenta); }
+.card[data-accent="infrastructure"] { --accent-color: var(--nd-color-lilac); }
+
+.cardTitle {
+  font-size: 1rem;
+  line-height: 1.3;
+  font-weight: 700;
+  margin: 0;
+  font-family: var(--nd-font-display);
+  color: var(--nd-fg);
+}
+
+.cardSummary {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--nd-fg-muted);
+  margin: 0;
+  flex: 1;
+}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--nd-color-lilac);
+  margin-top: 4px;
+}
+
+.card:hover .cardCta {
+  color: var(--nd-color-magenta);
+}
+
+.cardArrow {
+  display: inline-block;
+  transition: transform 140ms ease;
+}
+
+.card:hover .cardArrow {
+  transform: translateX(3px);
+}
+
+.pageLayout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .pageLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.pageSidebar {
+  position: sticky;
+  top: 80px;
+}
+
+@media (max-width: 900px) {
+  .pageSidebar {
+    position: static;
+  }
+}
+
+.pageMain {
+  min-width: 0;
+}
+
+.breadcrumbWrap {
+  margin-bottom: 8px;
+}
+
+.matchedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .matchedGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .matchedGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.empty {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--nd-fg-muted);
+  margin: 0;
+}
+
+.helpGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .helpGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.helpCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  color: var(--nd-fg);
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.helpCard:hover {
+  border-color: var(--nd-color-magenta);
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: var(--nd-fg);
+}
+
+.helpTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: var(--nd-font-display);
+}
+
+.helpIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+[data-theme='light'] .helpIcon {
+  filter: invert(1);
+}
+
+.helpBody {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--nd-fg-muted);
+  margin: 0;
+}
+
+.bottomCta {
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px 64px;
+}

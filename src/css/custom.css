@@ -8,18 +8,153 @@
 /* You can override the default Infima variables here. */
 
 :root {
-  /* --ifm-color-primary: #f2633f;
-  --ifm-color-primary-dark: #111827; */
-  /* --ifm-color-primary-darker: #093d71;
-  --ifm-color-primary-darkest: #041a31; */
-  /* --ifm-color-primary-light: #1D4ED8;
-  --ifm-color-primary-lighter: #BFDBFE; */
-  /* --ifm-color-primary-lightest: #cae3fb; */
-  --ifm-code-font-size: 95%;
+  /* Brand palette - Pulsar */
+  --nd-color-uv: #444CE7;
+  --nd-color-lilac: #7F86F1;
+  --nd-color-space-black: #141414;
+  --nd-color-off-white: #F8FAFC;
+  --nd-color-magenta: #E0157A;
 
-  /* --doc-sidebar-width: 275px !important;
-  --ifm-link-hover-decoration: none;
-  --ifm-link-hover-color: inherit; */
+  /* Topic accent palette */
+  --nd-color-topic-workflows: #7F86F1;
+  --nd-color-topic-activities: #10B981;
+  --nd-color-topic-signals: #F59E0B;
+  --nd-color-topic-queries: #06B6D4;
+  --nd-color-topic-error-handling: #EF4444;
+  --nd-color-topic-versioning: #8B5CF6;
+  --nd-color-topic-security: #14B8A6;
+  --nd-color-topic-testing: #F97316;
+  --nd-color-topic-cloud: #444CE7;
+  --nd-color-topic-nexus: #EC4899;
+  --nd-color-topic-ai: #E0157A;
+
+  /* Semantic - DARK (canonical) */
+  --nd-bg: var(--nd-color-space-black);
+  --nd-bg-elevated: #1A1A1F;
+  --nd-bg-input: #0F0F12;
+  --nd-fg: var(--nd-color-off-white);
+  --nd-fg-muted: #9CA3AF;
+  --nd-fg-subtle: #6B7280;
+  --nd-accent: var(--nd-color-uv);
+  --nd-accent-hover: var(--nd-color-lilac);
+  --nd-cta: var(--nd-color-magenta);
+  --nd-cta-hover: #F03E94;
+  --nd-border: rgba(248, 250, 252, 0.08);
+  --nd-border-strong: rgba(248, 250, 252, 0.16);
+  --nd-grid: rgba(248, 250, 252, 0.04);
+
+  /* Shape */
+  --nd-radius: 0;
+  --nd-radius-circle: 50%;
+
+  /* Spacing */
+  --nd-space-1: 4px;
+  --nd-space-2: 8px;
+  --nd-space-3: 16px;
+  --nd-space-4: 24px;
+  --nd-space-5: 32px;
+  --nd-space-6: 48px;
+  --nd-space-7: 64px;
+  --nd-space-8: 96px;
+
+  /* Type */
+  --nd-font-display: "Aeonik-Bold", system-ui, sans-serif;
+  --nd-font-body: "Aeonik", system-ui, sans-serif;
+
+  --ifm-code-font-size: 95%;
+}
+
+html[data-theme="light"] {
+  --nd-bg: var(--nd-color-off-white);
+  --nd-bg-elevated: #FFFFFF;
+  --nd-bg-input: #FFFFFF;
+  --nd-fg: var(--nd-color-space-black);
+  --nd-fg-muted: #4B5563;
+  --nd-fg-subtle: #6B7280;
+  --nd-border: rgba(20, 20, 20, 0.08);
+  --nd-border-strong: rgba(20, 20, 20, 0.16);
+  --nd-grid: rgba(20, 20, 20, 0.04);
+}
+
+/* Hub page surface - dark gradient + starfield (matches Pulsar mockup) */
+/* Background and text are theme-locked to dark since this is a designed surface. */
+.nd-hub-page {
+  position: relative;
+  background: linear-gradient(180deg, #06060E 0%, #0C0F22 35%, #1A2356 75%, #243578 100%);
+  color: var(--nd-color-off-white);
+  min-height: 100vh;
+  overflow: hidden;
+  --nd-fg: var(--nd-color-off-white);
+  --nd-fg-muted: #9CA3AF;
+  --nd-fg-subtle: #6B7280;
+  --nd-bg: transparent;
+  --nd-bg-elevated: rgba(255, 255, 255, 0.04);
+  --nd-bg-input: rgba(0, 0, 0, 0.35);
+  --nd-border: rgba(248, 250, 252, 0.08);
+  --nd-border-strong: rgba(248, 250, 252, 0.16);
+}
+
+.nd-hub-page::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 900px;
+  background-image:
+    radial-gradient(1px 1px at 5% 3%, rgba(255, 255, 255, 0.9) 50%, transparent 100%),
+    radial-gradient(1px 1px at 13% 8%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(2px 2px at 24% 14%, rgba(255, 255, 255, 0.9) 50%, transparent 100%),
+    radial-gradient(1px 1px at 35% 4%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 12%, rgba(255, 255, 255, 0.85) 50%, transparent 100%),
+    radial-gradient(1px 1px at 58% 6%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 67% 16%, rgba(255, 255, 255, 0.75) 50%, transparent 100%),
+    radial-gradient(2px 2px at 78% 10%, rgba(255, 255, 255, 0.9) 50%, transparent 100%),
+    radial-gradient(1px 1px at 86% 22%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 5%, rgba(255, 255, 255, 0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 3% 18%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 18% 25%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(2px 2px at 30% 30%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1px 1px at 42% 28%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1px 1px at 54% 32%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 65% 26%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1px 1px at 76% 30%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 85% 36%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 95% 28%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 10% 42%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 22% 48%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 38% 52%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 52% 46%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 68% 50%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 80% 44%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 92% 56%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(1px 1px at 8% 62%, rgba(255, 255, 255, 0.2) 50%, transparent 100%),
+    radial-gradient(1px 1px at 28% 68%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(1px 1px at 60% 64%, rgba(255, 255, 255, 0.22) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 72%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%);
+}
+
+.nd-hub-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-theme="light"] .nd-hub-page {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 45%, #EEF2FF 100%);
+  color: var(--nd-color-space-black);
+  --nd-fg: var(--nd-color-space-black);
+  --nd-fg-muted: #4B5563;
+  --nd-fg-subtle: #6B7280;
+  --nd-bg-elevated: #FFFFFF;
+  --nd-bg-input: #FFFFFF;
+  --nd-border: rgba(20, 20, 20, 0.1);
+  --nd-border-strong: rgba(20, 20, 20, 0.18);
+}
+
+html[data-theme="light"] .nd-hub-page::before {
+  display: none;
 }
 
 html[data-theme="dark"] {

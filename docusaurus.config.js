@@ -47,7 +47,8 @@ const config = {
     //   isCloseable: true,
     // },
     colorMode: {
-      respectPrefersColorScheme: true,
+      defaultMode: "dark",
+      respectPrefersColorScheme: false,
       disableSwitch: false,
       // switchConfig: {
       //   darkIcon: "🌙",
@@ -85,8 +86,10 @@ const config = {
       },
       items: [
         {to: "/", label: "Home", position: "left", activeBasePath: "none"},
-        {to: "/getting_started", label: "Get started", position: "left"},
-        { to: "/courses", label: "Courses", position: "left" },
+        {to: "/start", label: "Get Started", position: "left"},
+        {to: "/courses", label: "Courses", position: "left"},
+        {to: "/tutorials", label: "Tutorials", position: "left"},
+        {to: "/paths", label: "Paths", position: "left"},
         {href: "https://temporal.io/code-exchange", label: "Code Exchange", position: "left"},
         {
           href: "https://docs.temporal.io",

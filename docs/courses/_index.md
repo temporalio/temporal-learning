@@ -5,7 +5,7 @@ sidebar_position: 3
 hide_table_of_contents: true
 custom_edit_url: null
 pagination_prev: getting_started/index
-pagination_next: tutorials/index
+pagination_next: null
 last_update:
   date: 2024-03-28
 keywords: [courses, training, self-paced learning, workshop, class, Temporal]

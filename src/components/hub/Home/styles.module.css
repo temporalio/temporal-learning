@@ -1,0 +1,137 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .stepsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.demoNudge {
+  margin: -8px 0 16px;
+  font-size: 0.875rem;
+  color: var(--nd-fg-muted);
+}
+
+.demoNudgeLink {
+  color: var(--nd-color-lilac);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.demoNudgeLink:hover,
+.demoNudgeLink:focus-visible {
+  color: var(--nd-color-magenta);
+  text-decoration: none;
+}
+
+.ctaWrap {
+  margin-top: 16px;
+}
+
+.exploreSection {
+  padding: 32px 0 16px;
+}
+
+.exploreHeading {
+  font-size: 1.375rem;
+  line-height: 1.2;
+  font-weight: 700;
+  font-family: var(--nd-font-display);
+  margin: 0 0 6px;
+  color: var(--nd-fg);
+}
+
+.exploreSub {
+  font-size: 0.9375rem;
+  color: var(--nd-fg-muted);
+  margin: 0 0 20px;
+  max-width: 64ch;
+}
+
+.exploreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .exploreGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exploreCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 24px 24px;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-left: 3px solid var(--nd-color-lilac);
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  color: var(--nd-fg);
+  transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.exploreCard:hover {
+  border-left-color: var(--nd-color-magenta);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -16px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  color: var(--nd-fg);
+}
+
+.exploreTitle {
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  font-weight: 700;
+  font-family: var(--nd-font-display);
+  margin: 0;
+  color: var(--nd-fg);
+}
+
+.exploreDescription {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--nd-fg-muted);
+  margin: 0;
+  flex: 1;
+}
+
+.exploreCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nd-color-lilac);
+}
+
+.exploreCard:hover .exploreCta {
+  color: var(--nd-color-magenta);
+}
+
+.exploreArrow {
+  display: inline-block;
+  transition: transform 140ms ease;
+}
+
+.exploreCard:hover .exploreArrow {
+  transform: translateX(3px);
+}

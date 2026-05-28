@@ -1,0 +1,120 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: var(--nd-radius, 0);
+  background: var(--topic-bg, rgba(127, 134, 241, 0.12));
+  color: var(--topic-fg, var(--nd-color-lilac, #7F86F1));
+  border: 1px solid var(--topic-border, rgba(127, 134, 241, 0.3));
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.tag[data-size="md"] {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+.tag[data-topic="workflows"] {
+  --topic-bg: rgba(127, 134, 241, 0.12);
+  --topic-fg: #B8BDF4;
+  --topic-border: rgba(127, 134, 241, 0.3);
+}
+
+.tag[data-topic="activities"] {
+  --topic-bg: rgba(16, 185, 129, 0.12);
+  --topic-fg: #6EE7B7;
+  --topic-border: rgba(16, 185, 129, 0.3);
+}
+
+.tag[data-topic="signals"] {
+  --topic-bg: rgba(245, 158, 11, 0.12);
+  --topic-fg: #FCD34D;
+  --topic-border: rgba(245, 158, 11, 0.3);
+}
+
+.tag[data-topic="queries"] {
+  --topic-bg: rgba(6, 182, 212, 0.12);
+  --topic-fg: #67E8F9;
+  --topic-border: rgba(6, 182, 212, 0.3);
+}
+
+.tag[data-topic="error-handling"] {
+  --topic-bg: rgba(239, 68, 68, 0.12);
+  --topic-fg: #FCA5A5;
+  --topic-border: rgba(239, 68, 68, 0.3);
+}
+
+.tag[data-topic="versioning"] {
+  --topic-bg: rgba(139, 92, 246, 0.12);
+  --topic-fg: #C4B5FD;
+  --topic-border: rgba(139, 92, 246, 0.3);
+}
+
+.tag[data-topic="security"] {
+  --topic-bg: rgba(20, 184, 166, 0.12);
+  --topic-fg: #5EEAD4;
+  --topic-border: rgba(20, 184, 166, 0.3);
+}
+
+.tag[data-topic="testing"] {
+  --topic-bg: rgba(249, 115, 22, 0.12);
+  --topic-fg: #FDBA74;
+  --topic-border: rgba(249, 115, 22, 0.3);
+}
+
+.tag[data-topic="cloud"] {
+  --topic-bg: rgba(68, 76, 231, 0.12);
+  --topic-fg: #A5B4FC;
+  --topic-border: rgba(68, 76, 231, 0.3);
+}
+
+.tag[data-topic="nexus"] {
+  --topic-bg: rgba(236, 72, 153, 0.12);
+  --topic-fg: #F9A8D4;
+  --topic-border: rgba(236, 72, 153, 0.3);
+}
+
+.tag[data-topic="ai"] {
+  --topic-bg: rgba(224, 21, 122, 0.14);
+  --topic-fg: #F9A8D4;
+  --topic-border: rgba(224, 21, 122, 0.35);
+}
+
+html[data-theme="light"] .tag[data-topic="workflows"] {
+  --topic-fg: #4338CA;
+}
+html[data-theme="light"] .tag[data-topic="activities"] {
+  --topic-fg: #047857;
+}
+html[data-theme="light"] .tag[data-topic="signals"] {
+  --topic-fg: #B45309;
+}
+html[data-theme="light"] .tag[data-topic="queries"] {
+  --topic-fg: #0E7490;
+}
+html[data-theme="light"] .tag[data-topic="error-handling"] {
+  --topic-fg: #B91C1C;
+}
+html[data-theme="light"] .tag[data-topic="versioning"] {
+  --topic-fg: #6D28D9;
+}
+html[data-theme="light"] .tag[data-topic="security"] {
+  --topic-fg: #0F766E;
+}
+html[data-theme="light"] .tag[data-topic="testing"] {
+  --topic-fg: #C2410C;
+}
+html[data-theme="light"] .tag[data-topic="cloud"] {
+  --topic-fg: #3730A3;
+}
+html[data-theme="light"] .tag[data-topic="nexus"] {
+  --topic-fg: #BE185D;
+}
+html[data-theme="light"] .tag[data-topic="ai"] {
+  --topic-fg: #BE185D;
+}

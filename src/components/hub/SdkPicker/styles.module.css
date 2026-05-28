@@ -1,0 +1,66 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 440px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px 12px 12px;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-left: 3px solid var(--nd-color-lilac);
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  color: var(--nd-fg);
+  font-family: var(--nd-font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  transition: border-color 140ms ease, transform 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: var(--nd-border);
+  border-left-color: var(--nd-color-magenta);
+  color: var(--nd-color-magenta);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+
+.label {
+  letter-spacing: -0.005em;
+}
+
+.arrow {
+  color: var(--nd-color-lilac);
+  font-size: 1.125rem;
+  transition: transform 140ms ease, color 140ms ease;
+}
+
+.card:hover .arrow {
+  color: var(--nd-color-magenta);
+  transform: translateX(4px);
+}

@@ -1,0 +1,111 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  overflow: hidden;
+  transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+  height: 100%;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: var(--accent-color, var(--nd-color-uv));
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -16px rgba(0, 0, 0, 0.4);
+}
+
+.accent {
+  height: 4px;
+  background: var(--accent-color, var(--nd-color-uv));
+}
+
+.card[data-accent="ai"] { --accent-color: var(--nd-color-magenta); }
+.card[data-accent="payments"] { --accent-color: var(--nd-color-uv); }
+.card[data-accent="billing"] { --accent-color: var(--nd-color-lilac); }
+.card[data-accent="email"] { --accent-color: #10B981; }
+.card[data-accent="saga"] { --accent-color: #8B5CF6; }
+.card[data-accent="data"] { --accent-color: #06B6D4; }
+.card[data-accent="media"] { --accent-color: #F59E0B; }
+.card[data-accent="nexus"] { --accent-color: #EC4899; }
+.card[data-accent="durability"] { --accent-color: #14B8A6; }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 22px 16px;
+  flex: 1;
+}
+
+.title {
+  font-size: 1.125rem;
+  line-height: 1.25;
+  font-weight: 700;
+  margin: 0;
+  font-family: var(--nd-font-display);
+  color: var(--nd-fg);
+}
+
+.description {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--nd-fg-muted);
+  margin: 0;
+}
+
+.foot {
+  padding: 14px 22px 22px;
+  border-top: 1px solid var(--nd-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.implsLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nd-fg-subtle);
+  font-family: var(--nd-font-body);
+}
+
+.impls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.impl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--nd-font-body);
+  color: var(--nd-fg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  text-decoration: none;
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+}
+
+.impl:hover,
+.impl:focus-visible {
+  border-color: var(--accent-color, var(--nd-color-uv));
+  color: var(--accent-color, var(--nd-color-lilac));
+  text-decoration: none;
+}
+
+.impl:hover .implArrow {
+  transform: translateX(2px);
+}
+
+.implArrow {
+  display: inline-block;
+  transition: transform 120ms ease;
+}
