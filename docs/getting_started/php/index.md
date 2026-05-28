@@ -11,11 +11,11 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and PHP by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-## [Set up a local development environment for Temporal and PHP](dev_environment/index.md)
+## [Set up a local development environment for Temporal and PHP](dev_environment/)
 
 Make sure you have everything you need to start working with Temporal on your local machine.
 
-## [Run a Temporal Application in PHP](hello_world_in_php/index.md)
+## [Run a Temporal Application in PHP](pathname:///getting_started/php/hello_world_in_php/)
 
 Download and run a small application and explore how Temporal executes Workflows and Activities, and how you can recover from failures.
 

@@ -11,7 +11,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and TypeScript by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-## [Set up a local development environment for Temporal and TypeScript](dev_environment/index.md)
+## [Set up a local development environment for Temporal and TypeScript](dev_environment/)
 
 **Estimated time**: ⏱️ ~5 minutes
 
@@ -19,7 +19,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 
 ----
 
-## [Run your first Temporal application with the TypeScript SDK](first_program_in_typescript/index.md)
+## [Run your first Temporal application with the TypeScript SDK](first_program_in_typescript/)
 
 **Estimated time**: ⏱️ ~10  minutes
 
@@ -27,7 +27,7 @@ Download and run a small application and explore how Temporal executes Workflows
 
 ----
 
-## [Build a Temporal App from Scratch in TypeScript](hello_world_in_typescript/index.md)
+## [Build a Temporal App from Scratch in TypeScript](pathname:///getting_started/typescript/hello_world_in_typescript/)
 
 **Estimated time**: ⏱️ ~20 minutes
 
@@ -35,7 +35,7 @@ Write a program from the ground up with tests.
 
 ----
 
-## [Take Temporal 101 with TypeScript](/courses/temporal_101/typescript.md)
+## [Take Temporal 101 with TypeScript](pathname:///courses/temporal_101/typescript/)
 
 **Estimated time**: ⏱️ ~2 hours, self-paced.
 
@@ -43,7 +43,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 ----
 
-## [Take Temporal 102 with TypeScript](/courses/temporal_102/typescript.md)
+## [Take Temporal 102 with TypeScript](pathname:///courses/temporal_102/typescript/)
 
 **Estimated time**: ⏱️ ~4 hours, self-paced.
 

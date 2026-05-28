@@ -11,13 +11,13 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and Go by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-## [Set up a local development environment for Temporal and Go](dev_environment/index.md)
+## [Set up a local development environment for Temporal and Go](/getting_started/go/dev_environment)
 
 **Estimated time**: ⏱️ ~5 minutes
 
 Make sure you have everything you need to start working with Temporal on your local machine.
 
-## [Run your first Temporal application with the Go SDK](first_program_in_go/index.md)
+## [Run your first Temporal application with the Go SDK](/getting_started/go/first_program_in_go/)
 
 **Estimated time**: ⏱️ ~10 minutes
 
@@ -25,7 +25,7 @@ Download and run a small application and explore how Temporal executes Workflows
 
 ----
 
-## [Build a Temporal App from Scratch in Go](hello_world_in_go/index.md)
+## [Build a Temporal App from Scratch in Go](pathname:///getting_started/go/hello_world_in_go/)
 
 **Estimated time**: ⏱️ ~20 minutes
 
@@ -33,7 +33,7 @@ Write a program from the ground up with tests.
 
 ----
 
-## [Take Temporal 101 with Go](/courses/temporal_101/go.md)
+## [Take Temporal 101 with Go](pathname:///courses/temporal_101/go/)
 
 **Estimated time**: ⏱️ ~2 hours, self-paced.
 
@@ -41,7 +41,7 @@ In this course, you will explore the basic building blocks of Temporal: Workflow
 
 ----
 
-## [Take Temporal 102 with Go](/courses/temporal_102/go.md)
+## [Take Temporal 102 with Go](pathname:///courses/temporal_102/go/)
 
 **Estimated time**: ⏱️ ~4 hours, self-paced.
 

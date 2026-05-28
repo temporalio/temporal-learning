@@ -11,7 +11,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Take your first steps into building apps with Temporal and .NET by setting up your development environment, exploring how Temporal Applications work, and diving into the documentation.
 
-## [Set up a local development environment for Temporal and .NET](dev_environment/index.md)
+## [Set up a local development environment for Temporal and .NET](dev_environment/)
 
 **Estimated time**: ⏱️ ~5 minutes
 
@@ -20,7 +20,7 @@ Make sure you have everything you need to start working with Temporal on your lo
 ---
 
 
-## [Run your first Temporal application with the .NET SDK](first_program_in_dotnet/index.md)
+## [Run your first Temporal application with the .NET SDK](first_program_in_dotnet/)
 
 **Estimated time**: ⏱️ ~10 minutes
 
