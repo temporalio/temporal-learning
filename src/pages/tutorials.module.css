@@ -105,6 +105,10 @@
   flex: 1;
 }
 
+.cardSdks {
+  margin-top: 2px;
+}
+
 .cardCta {
   display: inline-flex;
   align-items: center;
@@ -166,17 +170,11 @@
 
 .matchedGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
-@media (max-width: 900px) {
-  .matchedGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 560px) {
+@media (max-width: 760px) {
   .matchedGrid {
     grid-template-columns: 1fr;
   }

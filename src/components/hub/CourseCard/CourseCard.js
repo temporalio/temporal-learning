@@ -4,9 +4,14 @@ import styles from "./styles.module.css";
 
 export default function CourseCard({ course, size = "md" }) {
   if (!course) return null;
-  const { url, title, thumbnail, topics = [], kind } = course;
+  const { url, title, thumbnail, topics = [], kind, slug } = course;
   const accent = topics[0] ?? "workflows";
-  const ctaLabel = kind === "tutorial" ? "Try the tutorial" : "Take the course";
+  const hasFreePreview = slug === "temporal-101";
+  const ctaLabel = hasFreePreview
+    ? "Start free preview"
+    : kind === "tutorial"
+      ? "Try the tutorial"
+      : "Take the course";
 
   return (
     <article className={styles.card} data-size={size}>
@@ -21,6 +26,9 @@ export default function CourseCard({ course, size = "md" }) {
             />
           ) : (
             <div className={styles.thumbFallback} aria-hidden="true" />
+          )}
+          {hasFreePreview && (
+            <span className={styles.freePreviewBadge}>Free preview</span>
           )}
         </div>
 

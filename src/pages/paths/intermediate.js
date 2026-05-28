@@ -12,6 +12,10 @@ export default function IntermediatePath() {
         "Apply the Saga pattern and idempotence in your code",
         "Version Workflow code safely using the Patched API",
       ]}
+      completionLink={{
+        href: "/paths/intermediate-complete",
+        label: "Already finished the Intermediate path? Mark the milestone",
+      }}
       nextActions={{
         label: "What's next?",
         items: [
@@ -23,11 +27,11 @@ export default function IntermediatePath() {
             href: "/paths/Production-Grade-developer",
           },
           {
-            eyebrow: "Build a project",
-            title: "Pick a tutorial",
-            body: "Apply what you learned with a tutorial. Pick from several use cases including background check, order processing, email drip, AI etc.",
-            cta: "Browse tutorials",
-            href: "/tutorials",
+            eyebrow: "Quiz · 41 questions",
+            title: "Check your understanding",
+            body: "Take a quick quiz across Error Handling, Interacting with Workflows, and Versioning. Miss one and you'll see the reasoning.",
+            cta: "Take the quiz",
+            href: "/paths/intermediate-complete",
           },
         ],
       }}

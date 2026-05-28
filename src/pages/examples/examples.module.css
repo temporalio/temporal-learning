@@ -1,0 +1,133 @@
+.heroBanner {
+  width: 100%;
+  height: 340px;
+  background: #0C0F22;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.heroBannerImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 640px) {
+  .heroBanner {
+    height: 200px;
+  }
+}
+
+.pageInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.breadcrumbWrap {
+  margin: 24px 0 8px;
+}
+
+.intro {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--nd-fg-muted);
+  margin: 12px 0 0;
+  max-width: 64ch;
+}
+
+.section {
+  margin-top: 48px;
+}
+
+.sectionTitle {
+  font-family: var(--nd-font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  color: var(--nd-fg);
+}
+
+.sectionSub {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--nd-fg-muted);
+  margin: 0 0 20px;
+  max-width: 72ch;
+}
+
+.sectionSub a {
+  color: var(--nd-color-lilac);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.sectionSub a:hover,
+.sectionSub a:focus-visible {
+  color: var(--nd-color-magenta);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sampleChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sampleChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  font-family: var(--nd-font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nd-fg);
+  text-decoration: none;
+  transition: border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.sampleChip:hover,
+.sampleChip:focus-visible {
+  border-color: var(--nd-color-lilac);
+  color: var(--nd-color-lilac);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.sampleChipArrow {
+  font-family: var(--nd-font-display);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  transition: transform 140ms ease;
+}
+
+.sampleChip:hover .sampleChipArrow {
+  transform: translate(2px, -2px);
+}
+
+.footnote {
+  margin: 40px 0 0;
+  font-size: 0.875rem;
+  color: var(--nd-fg-muted);
+  text-align: center;
+}

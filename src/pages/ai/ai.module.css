@@ -184,6 +184,10 @@
   flex: 1;
 }
 
+.tutorialCardSdks {
+  margin-top: 2px;
+}
+
 .tutorialCardCta {
   display: inline-flex;
   align-items: center;

@@ -3,17 +3,23 @@ import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import ArchetypeCard from "@site/src/components/hub/ArchetypeCard/ArchetypeCard";
+import SdkChips from "@site/src/components/hub/SdkChips/SdkChips";
 import CategorySidebar from "@site/src/components/hub/CategorySidebar/CategorySidebar";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
 import styles from "./tutorials.module.css";
 
-function TutorialCard({ title, summary, href, accent }) {
+function TutorialCard({ title, summary, href, accent, sdkLanguages }) {
   return (
     <Link to={href} className={styles.card} data-accent={accent}>
       <h3 className={styles.cardTitle}>{title}</h3>
       {summary && <p className={styles.cardSummary}>{summary}</p>}
+      {sdkLanguages && sdkLanguages.length > 0 && (
+        <div className={styles.cardSdks}>
+          <SdkChips sdks={sdkLanguages} />
+        </div>
+      )}
       <div className={styles.cardCta}>
         Read tutorial <span aria-hidden="true" className={styles.cardArrow}>→</span>
       </div>
@@ -179,24 +185,24 @@ const ARCHETYPES = [
       "Use Nexus to call Workflows that live in different Temporal namespaces or services - clean boundaries between teams.",
     implsLabel: "Build it in",
     impls: [
-      { sdk: "java", href: "/tutorials/nexus/sync-nexus-tutorial", label: "Java" },
+      { sdk: "java", href: "/tutorials/nexus/nexus-sync-tutorial-java/", label: "Java" },
     ],
   },
 ];
 
 const ALL_TUTORIALS = [
-  ...AI.map((t) => ({ ...t, topics: t.topics ?? ["ai"], accent: "ai" })),
-  ...INFRA.map((t) => ({ ...t, topics: ["infrastructure"], accent: "infrastructure" })),
-  ...ARCHETYPES.flatMap((a) =>
-    a.impls.map((impl) => ({
-      title: impl.label ? `${a.title} (${impl.label})` : `${a.title} (${impl.sdk})`,
-      href: impl.href,
-      summary: a.description,
-      topics: impl.topics ?? a.topics ?? [],
-      sdkLanguages: impl.sdk ? [impl.sdk] : [],
-      accent: a.accent === "nexus" ? "nexus" : "workflows",
-    }))
-  ),
+  ...AI.map((t) => ({ ...t, type: "single", topics: t.topics ?? ["ai"], accent: "ai" })),
+  ...INFRA.map((t) => ({ ...t, type: "single", topics: ["infrastructure"], accent: "infrastructure" })),
+  ...ARCHETYPES.map((a) => ({
+    type: "archetype",
+    title: a.title,
+    description: a.description,
+    accent: a.accent,
+    impls: a.impls,
+    implsLabel: a.implsLabel,
+    topics: a.topics ?? [...new Set(a.impls.flatMap((i) => i.topics ?? []))],
+    sdkLanguages: [...new Set(a.impls.map((i) => i.sdk).filter(Boolean))],
+  })),
 ];
 
 function matchesFilters(tutorial, filters) {
@@ -259,9 +265,20 @@ export default function TutorialsPage() {
                 </p>
                 {matched.length > 0 ? (
                   <div className={styles.matchedGrid}>
-                    {matched.map((t) => (
-                      <TutorialCard key={t.href} {...t} />
-                    ))}
+                    {matched.map((t) =>
+                      t.type === "archetype" ? (
+                        <ArchetypeCard
+                          key={t.title}
+                          title={t.title}
+                          description={t.description}
+                          accent={t.accent}
+                          impls={t.impls}
+                          implsLabel={t.implsLabel}
+                        />
+                      ) : (
+                        <TutorialCard key={t.href} {...t} />
+                      )
+                    )}
                   </div>
                 ) : (
                   <p className={styles.empty}>
@@ -365,7 +382,7 @@ export default function TutorialsPage() {
             </section>
 
             <div className={styles.bottomCta}>
-              <MagentaCta to="/catalog">Browse the full library</MagentaCta>
+              <MagentaCta to="/courses">Take a free course</MagentaCta>
             </div>
           </main>
         </div>

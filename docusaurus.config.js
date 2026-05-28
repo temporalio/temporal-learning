@@ -17,6 +17,7 @@ const config = {
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.png",
   trailingSlash: true,
+  clientModules: [require.resolve("./src/clientModules/hubStylePages.js")],
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "temporal", // Usually your GitHub org/user name.
@@ -90,7 +91,6 @@ const config = {
         {to: "/courses", label: "Courses", position: "left"},
         {to: "/tutorials", label: "Tutorials", position: "left"},
         {to: "/paths", label: "Paths", position: "left"},
-        {href: "https://temporal.io/code-exchange", label: "Code Exchange", position: "left"},
         {
           href: "https://docs.temporal.io",
           label: "Documentation",
@@ -190,9 +190,6 @@ const config = {
               href: "https://temporal.io/careers",
             },
           ],
-        },
-        {
-          items: [],
         },
       ],
     },

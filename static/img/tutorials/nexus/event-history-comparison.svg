@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 475" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="475" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="460" y="32" text-anchor="middle" fill="#e6edf3" font-size="17" font-weight="700">Event History: Monolith vs Nexus</text>
+
+  <!-- ════════ LEFT: MONOLITH ════════ -->
+  <rect x="30" y="68" width="420" height="28" rx="6" fill="#a78bfa" fill-opacity="0.08" stroke="#a78bfa" stroke-opacity="0.3"/>
+  <text x="240" y="87" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="700" letter-spacing="0.06em">MONOLITH — Checkpoint 0</text>
+
+  <!-- Timeline line -->
+  <line x1="68" y1="110" x2="68" y2="410" stroke="#30363d" stroke-width="2"/>
+
+  <!-- Event 1: WorkflowExecutionStarted -->
+  <circle cx="68" cy="125" r="6" fill="#8b949e"/>
+  <rect x="88" y="112" width="340" height="28" rx="6" fill="#1c2128" stroke="#30363d"/>
+  <text x="100" y="131" fill="#8b949e" font-size="12" font-weight="600">WorkflowExecutionStarted</text>
+
+  <!-- Event 2: ActivityTaskScheduled (validate) -->
+  <circle cx="68" cy="160" r="6" fill="#3b82f6"/>
+  <rect x="88" y="147" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="100" y="166" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskScheduled</text>
+  <text x="360" y="166" text-anchor="end" fill="#8b949e" font-size="11">validatePayment</text>
+
+  <!-- Event 3: ActivityTaskCompleted (validate) -->
+  <circle cx="68" cy="195" r="6" fill="#3b82f6"/>
+  <rect x="88" y="182" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="100" y="201" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskCompleted</text>
+  <text x="360" y="201" text-anchor="end" fill="#8b949e" font-size="11">validatePayment</text>
+
+  <!-- Event 4: ActivityTaskScheduled (compliance) -->
+  <circle cx="68" cy="230" r="6" fill="#a78bfa"/>
+  <rect x="88" y="217" width="340" height="28" rx="6" fill="#a78bfa" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.3"/>
+  <text x="100" y="236" fill="#a78bfa" font-size="12" font-weight="600">ActivityTaskScheduled</text>
+  <text x="360" y="236" text-anchor="end" fill="#a78bfa" font-size="11">checkCompliance</text>
+
+  <!-- Event 5: ActivityTaskCompleted (compliance) -->
+  <circle cx="68" cy="265" r="6" fill="#a78bfa"/>
+  <rect x="88" y="252" width="340" height="28" rx="6" fill="#a78bfa" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.3"/>
+  <text x="100" y="271" fill="#a78bfa" font-size="12" font-weight="600">ActivityTaskCompleted</text>
+  <text x="360" y="271" text-anchor="end" fill="#a78bfa" font-size="11">checkCompliance</text>
+
+  <!-- Event 6: ActivityTaskScheduled (execute) -->
+  <circle cx="68" cy="300" r="6" fill="#3b82f6"/>
+  <rect x="88" y="287" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="100" y="306" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskScheduled</text>
+  <text x="360" y="306" text-anchor="end" fill="#8b949e" font-size="11">executePayment</text>
+
+  <!-- Event 7: ActivityTaskCompleted (execute) -->
+  <circle cx="68" cy="335" r="6" fill="#3b82f6"/>
+  <rect x="88" y="322" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="100" y="341" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskCompleted</text>
+  <text x="360" y="341" text-anchor="end" fill="#8b949e" font-size="11">executePayment</text>
+
+  <!-- Event 8: WorkflowExecutionCompleted -->
+  <circle cx="68" cy="370" r="6" fill="#22c55e"/>
+  <rect x="88" y="357" width="340" height="28" rx="6" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.3"/>
+  <text x="100" y="376" fill="#22c55e" font-size="12" font-weight="600">WorkflowExecutionCompleted</text>
+
+  <!-- Annotation: "All Activity events" -->
+  <text x="240" y="406" text-anchor="middle" fill="#8b949e" font-size="10" font-style="italic">Every step is an Activity — compliance has no special events</text>
+
+  <!-- ════════ RIGHT: NEXUS ════════ -->
+  <rect x="470" y="68" width="420" height="28" rx="6" fill="#f97316" fill-opacity="0.08" stroke="#f97316" stroke-opacity="0.3"/>
+  <text x="680" y="87" text-anchor="middle" fill="#f97316" font-size="12" font-weight="700" letter-spacing="0.06em">NEXUS DECOUPLED — Checkpoint 2</text>
+
+  <!-- Timeline line -->
+  <line x1="508" y1="110" x2="508" y2="410" stroke="#30363d" stroke-width="2"/>
+
+  <!-- Event 1: WorkflowExecutionStarted -->
+  <circle cx="508" cy="125" r="6" fill="#8b949e"/>
+  <rect x="528" y="112" width="340" height="28" rx="6" fill="#1c2128" stroke="#30363d"/>
+  <text x="540" y="131" fill="#8b949e" font-size="12" font-weight="600">WorkflowExecutionStarted</text>
+
+  <!-- Event 2: ActivityTaskScheduled (validate) -->
+  <circle cx="508" cy="160" r="6" fill="#3b82f6"/>
+  <rect x="528" y="147" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="540" y="166" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskScheduled</text>
+  <text x="800" y="166" text-anchor="end" fill="#8b949e" font-size="11">validatePayment</text>
+
+  <!-- Event 3: ActivityTaskCompleted (validate) -->
+  <circle cx="508" cy="195" r="6" fill="#3b82f6"/>
+  <rect x="528" y="182" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="540" y="201" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskCompleted</text>
+  <text x="800" y="201" text-anchor="end" fill="#8b949e" font-size="11">validatePayment</text>
+
+  <!-- Event 4: NexusOperationScheduled ← NEW -->
+  <circle cx="508" cy="230" r="7" fill="#f97316" filter="url(#glow)">
+    <animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="528" y="217" width="340" height="38" rx="6" fill="#f97316" fill-opacity="0.1" stroke="#f97316" stroke-opacity="0.6" stroke-width="1.5"/>
+  <text x="540" y="234" fill="#f97316" font-size="12" font-weight="700">NexusOperationScheduled</text>
+  <text x="540" y="250" fill="#8b949e" font-size="11">checkCompliance</text>
+
+  <!-- NEW badge -->
+  <rect x="870" y="226" width="36" height="18" rx="4" fill="#f97316">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+  </rect>
+  <text x="888" y="239" text-anchor="middle" fill="#0f1117" font-size="9" font-weight="800">NEW</text>
+
+  <!-- Event 5: NexusOperationCompleted ← NEW -->
+  <circle cx="508" cy="280" r="7" fill="#f97316" filter="url(#glow)">
+    <animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="528" y="267" width="340" height="38" rx="6" fill="#f97316" fill-opacity="0.1" stroke="#f97316" stroke-opacity="0.6" stroke-width="1.5"/>
+  <text x="540" y="284" fill="#f97316" font-size="12" font-weight="700">NexusOperationCompleted</text>
+  <text x="540" y="300" fill="#8b949e" font-size="11">checkCompliance</text>
+
+  <!-- NEW badge -->
+  <rect x="870" y="276" width="36" height="18" rx="4" fill="#f97316">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+  </rect>
+  <text x="888" y="289" text-anchor="middle" fill="#0f1117" font-size="9" font-weight="800">NEW</text>
+
+  <!-- Annotation: no NexusOperationStarted -->
+  <rect x="528" y="312" width="340" height="22" rx="4" fill="#1c2128" stroke="#484f58" stroke-dasharray="4 3"/>
+  <text x="698" y="327" text-anchor="middle" fill="#484f58" font-size="10" font-style="italic">No NexusOperationStarted — sync runs inline</text>
+
+  <!-- Event 6: ActivityTaskScheduled (execute) -->
+  <circle cx="508" cy="355" r="6" fill="#3b82f6"/>
+  <rect x="528" y="342" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="540" y="361" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskScheduled</text>
+  <text x="800" y="361" text-anchor="end" fill="#8b949e" font-size="11">executePayment</text>
+
+  <!-- Event 7: ActivityTaskCompleted (execute) -->
+  <circle cx="508" cy="390" r="6" fill="#3b82f6"/>
+  <rect x="528" y="377" width="340" height="28" rx="6" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <text x="540" y="396" fill="#3b82f6" font-size="12" font-weight="600">ActivityTaskCompleted</text>
+  <text x="800" y="396" text-anchor="end" fill="#8b949e" font-size="11">executePayment</text>
+
+  <!-- Event 8: WorkflowExecutionCompleted -->
+  <circle cx="508" cy="425" r="6" fill="#22c55e"/>
+  <rect x="528" y="412" width="340" height="28" rx="6" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.3"/>
+  <text x="540" y="431" fill="#22c55e" font-size="12" font-weight="600">WorkflowExecutionCompleted</text>
+
+  <!-- Annotation -->
+  <text x="680" y="460" text-anchor="middle" fill="#f97316" font-size="10" font-weight="600">Nexus events replace Activity events for cross-team calls</text>
+
+  <!-- Center divider -->
+  <line x1="460" y1="100" x2="460" y2="450" stroke="#30363d" stroke-width="1" stroke-dasharray="6 4"/>
+
+  <!-- VS label -->
+  <rect x="443" y="260" width="34" height="22" rx="11" fill="#1c2128" stroke="#30363d"/>
+  <text x="460" y="276" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="700">vs</text>
+</svg>

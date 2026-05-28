@@ -21,6 +21,16 @@
   color: var(--nd-fg);
 }
 
+/* Quiz intro copy */
+
+.quizIntro {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: -10px 0 18px;
+  color: var(--nd-fg-muted);
+  max-width: 720px;
+}
+
 /* What you now understand */
 
 .knowGrid {
@@ -285,6 +295,18 @@
   background: var(--nd-cta-hover);
   color: #FFFFFF;
   text-decoration: none;
+}
+
+.swagBtn[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.85;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swagBtn[aria-disabled="true"]:hover,
+.swagBtn[aria-disabled="true"]:focus-visible {
+  background: var(--nd-color-magenta);
 }
 
 /* What's next */

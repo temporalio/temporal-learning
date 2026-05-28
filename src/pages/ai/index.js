@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
+import SdkChips from "@site/src/components/hub/SdkChips/SdkChips";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
@@ -12,11 +13,16 @@ const AI_TUTORIALS = COURSES.filter(
   (c) => c.kind === "tutorial" && (c.topics ?? []).includes("ai")
 );
 
-function TutorialCard({ title, summary, href }) {
+function TutorialCard({ title, summary, href, sdkLanguages }) {
   return (
     <Link to={href} className={styles.tutorialCard}>
       <h3 className={styles.tutorialCardTitle}>{title}</h3>
       {summary && <p className={styles.tutorialCardSummary}>{summary}</p>}
+      {sdkLanguages && sdkLanguages.length > 0 && (
+        <div className={styles.tutorialCardSdks}>
+          <SdkChips sdks={sdkLanguages} />
+        </div>
+      )}
       <div className={styles.tutorialCardCta}>
         Read tutorial <span aria-hidden="true" className={styles.tutorialCardArrow}>→</span>
       </div>
@@ -322,6 +328,7 @@ export default function AiPage() {
                     title={course.title}
                     summary={course.summary}
                     href={course.url}
+                    sdkLanguages={course.sdkLanguages}
                   />
                 ))}
               </div>
@@ -396,8 +403,8 @@ export default function AiPage() {
         </section>
 
             <div className={styles.bottomCta}>
-              <MagentaCta to="/paths/ai">
-                Take the AI Developer path
+              <MagentaCta href="https://temporal.io/solutions/ai">
+                Explore Temporal for AI
               </MagentaCta>
             </div>
           </main>

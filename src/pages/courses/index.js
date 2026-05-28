@@ -11,9 +11,13 @@ import { COURSES } from "@site/src/data/hub";
 import styles from "./courses.module.css";
 
 function CourseCard({ course }) {
-  const { url, title, summary, sdkLanguages, tier } = course;
+  const { url, title, summary, sdkLanguages, tier, slug } = course;
+  const hasFreePreview = slug === "temporal-101";
   return (
     <Link to={url} className={styles.card} data-tier={tier}>
+      {hasFreePreview && (
+        <span className={styles.freePreviewBadge}>Free preview</span>
+      )}
       <h3 className={styles.cardTitle}>{title}</h3>
       {summary && <p className={styles.cardSummary}>{summary}</p>}
       {sdkLanguages && sdkLanguages.length > 0 && (
@@ -22,7 +26,8 @@ function CourseCard({ course }) {
         </div>
       )}
       <div className={styles.cardCta}>
-        Take the course <span aria-hidden="true" className={styles.cardArrow}>→</span>
+        {hasFreePreview ? "Start the free preview or free course" : "Take the course"}{" "}
+        <span aria-hidden="true" className={styles.cardArrow}>→</span>
       </div>
     </Link>
   );
@@ -127,9 +132,7 @@ export default function CoursesPage() {
                     Find your learning path
                   </h2>
                   <p className={styles.pathsTeaserBody}>
-                    Curated journeys through the courses. Pick by tier -
-                    Foundation, Intermediate, Advanced - or by role for the
-                    advanced track.
+                  Three sequenced tracks - from your first Workflow through running Temporal in production. Pick one and follow it through, or jump straight to the level that matches where you are.
                   </p>
                   <span className={styles.pathsTeaserCta}>
                     Browse all paths
@@ -155,7 +158,7 @@ export default function CoursesPage() {
                       className={`${styles.pathStepDot} ${styles.pathStepDotMid}`}
                     />
                     <div className={styles.pathStepBody}>
-                      <span className={styles.pathStepLabel}>Intermediate</span>
+                      <span className={styles.pathStepLabel}>Building</span>
                       <span className={styles.pathStepMeta}>
                         Practical · 18 lessons
                       </span>
@@ -166,9 +169,9 @@ export default function CoursesPage() {
                       className={`${styles.pathStepDot} ${styles.pathStepDotBack}`}
                     />
                     <div className={styles.pathStepBody}>
-                      <span className={styles.pathStepLabel}>Advanced</span>
+                      <span className={styles.pathStepLabel}>Production</span>
                       <span className={styles.pathStepMeta}>
-                        Production · 3 tracks
+                        Advanced · 3 tracks
                       </span>
                     </div>
                   </div>

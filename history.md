@@ -373,3 +373,302 @@ Still open in `plan.md §10`:
 - **Multi-SDK reach vs implementation cost** in the carousel: kept all 6 SDKs in the language picker by writing per-SDK code for each beat (workflow + activities-bug + activities-fix = 18 constants). The user repeatedly nudged toward "use real code" so the source matches `edu-get-started-flow` line-for-line.
 - **Jargon-free teaching vs Temporal vocabulary**: defined Workflow / Activity inline in Step 1 (with docs links). Stripped Worker from Step 4 explicitly because users haven't met it yet at this point in the onboarding.
 - **Carousel UX**: flex track + translateX gave a nice slide animation but stretched all slides to the tallest's height. Single-slide render + fade animation lost the horizontal slide motion but eliminated trailing blank space. Chose the latter on user feedback.
+
+---
+
+# Session 2 — 2026-05-27 (Hub style rollout: paths, /examples, /zines, dev_environment + first_program for all SDKs)
+
+Continuing the brand redesign. Most of this session was about converting MDX content pages to React pages so they pick up the `nd-hub-page` styling (dark gradient + starfield + brand vars) that the homepage uses, plus building a few new shared components for tutorial layouts.
+
+## TL;DR of what changed
+
+1. **Tweaked path data + nav** in `src/data/hub.js` and the path detail pages.
+2. **Renamed `/paths/advanced-ai/` → `/paths/ai/`.**
+3. **Flattened `/paths/` index** into a single "All paths" grid (removed split + "Pick your role" section).
+4. **Rewrote `/courses/`** to a flat grid with SDK chips + tier-colored top borders (was grouped by skill).
+5. **Converted `/zines/` and `/examples/` to React pages** under `src/pages/`.
+6. **Converted all 7 SDK `dev_environment` pages** to React with shared layout components + a "What's next?" card linking to each SDK's `first_program`.
+7. **Converted 6 SDK `first_program_in_<sdk>` pages** to React, **split into 3 chapters each** connected by a `TutorialStepper` component.
+
+## New shared components
+
+All under `src/components/`:
+
+- **`DevEnvironment/Toc.js`** — sticky left-rail TOC, takes `items=[{id,label}]` prop, uses `IntersectionObserver` to highlight active section, click scrolls with **88px offset** (clears the sticky navbar).
+- **`DevEnvironment/MetaChips.js`** — pill row beneath the H1 (e.g. `~10 minutes · Hands-on tutorial · Beginner`). Takes `items` string array.
+- **`DevEnvironment/VerifyCard.js`** — lilac-tinted "Verify your setup" card with 3 numbered steps. Used on every `dev_environment` page.
+- **`DevEnvironment/TutorialStepper.js`** — horizontal numbered progress row used at the top of multi-chapter tutorials. Takes `steps=[{n,label,href}]` + `currentStep`. Past steps get a checkmark, current step is lilac-highlighted, future steps muted. All non-current items are `Link`s.
+- **`DevEnvironment/styles.module.css`** — shared CSS for everything above plus `.pageLayout`, `.pageSidebar`, `.pageMain`, `.title`, `.intro`, `.section`, `.sectionTitle`, `.subsectionTitle`, `.diagramImage`, `.chapterNav*`, `.nextSection`/`.nextCard*` ("What's next?" 2-card grid), `.heroBanner`/`.heroBannerImg` (280px tall, object-fit cover).
+- **`TemporalServiceSetup/TemporalServiceSetup.js`** — shared React component that replaces `docs/getting_started/_temporal_service.md` (which was imported into every SDK dev_environment MDX). Renders the macOS/Windows/Linux Tabs + `temporal server start-dev` content + `--ui-port` admonition + `--db-filename` note. Used by every SDK's dev_environment page.
+
+## Pages converted from MDX → React in this session
+
+Each follows the same skeleton: `<Layout>` → `<div className="nd-hub-page">` → full-width hero banner → `pageLayout` grid with `DevEnvironmentToc` on the left + `pageMain` on the right → breadcrumb → title → meta chips → (stepper if multi-chapter) → content sections → "What's next?" card / chapter nav → `NotifyBanner`.
+
+| Old MDX (deleted) | New React (created) |
+| --- | --- |
+| `docs/zines/index.md` | `src/pages/zines/index.js` + `zines.module.css` |
+| `docs/examples/index.md` | `src/pages/examples/index.js` + `examples.module.css` |
+| `docs/getting_started/go/dev_environment/index.md` | `src/pages/getting_started/go/dev_environment/index.js` |
+| `docs/getting_started/java/dev_environment/index.md` | `src/pages/getting_started/java/dev_environment/index.js` |
+| `docs/getting_started/python/dev_environment/index.md` | `src/pages/getting_started/python/dev_environment/index.js` |
+| `docs/getting_started/ruby/dev_environment/index.md` | `src/pages/getting_started/ruby/dev_environment/index.js` |
+| `docs/getting_started/typescript/dev_environment/index.md` | `src/pages/getting_started/typescript/dev_environment/index.js` |
+| `docs/getting_started/dotnet/dev_environment/index.md` | `src/pages/getting_started/dotnet/dev_environment/index.js` |
+| `docs/getting_started/php/dev_environment/index.md` | `src/pages/getting_started/php/dev_environment/index.js` |
+| `docs/getting_started/_temporal_service.md` | replaced by `src/components/TemporalServiceSetup/` |
+| `docs/getting_started/go/first_program_in_go/` | `src/pages/getting_started/go/first_program_in_go/{index,run,simulate-failures}.js` |
+| `docs/getting_started/java/first_program_in_java/` | `src/pages/getting_started/java/first_program_in_java/{index,run,simulate-failures}.js` |
+| `docs/getting_started/python/first_program_in_python/` | `src/pages/getting_started/python/first_program_in_python/{index,run,simulate-failures}.js` |
+| `docs/getting_started/ruby/first_program_in_ruby/` | `src/pages/getting_started/ruby/first_program_in_ruby/{index,run,simulate-failures}.js` |
+| `docs/getting_started/typescript/first_program_in_typescript/` | `src/pages/getting_started/typescript/first_program_in_typescript/{index,run,simulate-failures}.js` |
+| `docs/getting_started/dotnet/first_program_in_dotnet/` | `src/pages/getting_started/dotnet/first_program_in_dotnet/{index,run,simulate-failures}.js` |
+
+For each first_program SDK, images moved from `docs/getting_started/<sdk>/first_program_in_<sdk>/images/` → `static/img/getting_started/<sdk>/first_program_in_<sdk>/`. Referenced via absolute URL in JSX.
+
+**PHP exception:** PHP only has `hello_world_in_php` (no `first_program_in_php`), so first_program conversion skipped it. PHP's dev_environment's "What's next?" points to `hello_world_in_php` instead of a first_program.
+
+## Three-chapter split structure (TutorialStepper)
+
+Used for every `first_program_in_<sdk>`. URL pattern:
+
+- Chapter 1: `/getting_started/<sdk>/first_program_in_<sdk>/` (`index.js`) — Understand the application
+- Chapter 2: `/getting_started/<sdk>/first_program_in_<sdk>/run/` (`run.js`) — Run the application
+- Chapter 3: `/getting_started/<sdk>/first_program_in_<sdk>/simulate-failures/` (`simulate-failures.js`) — Simulate failures
+
+Each file: own `TOC_ITEMS`, own `TUTORIAL_STEPS` (identical except `currentStep`), per-chapter time on `MetaChips` (`~15 minutes total` on ch1, `~5 minutes` on ch2/ch3). Bottom of each chapter has a `chapterNav` 2-card prev/next grid. Chapter 3 also has the "What's next?" 2-card grid (build-from-scratch + Temporal 101).
+
+**Ruby is structured differently from the others:** its tutorial doesn't use uncomment-to-fail, so chapter 3 covers three distinct failure modes (insufficient funds non-retryable, invalid account saga refund, manually-injected bug) instead of the generic 2-section split. Same chapter URLs, same TutorialStepper.
+
+## Snipsync tradeoff
+
+The MDX files used `<!--SNIPSTART ... -->` markers that pull current code from upstream `temporalio/money-transfer-project-template-<sdk>` repos at build time via `yarn getsnips`. **The React conversions inline the snapshots as JavaScript string constants** (named `WORKFLOW_GO`, `ACTIVITY_DEPOSIT`, etc., declared at the top of each chapter file). They no longer auto-refresh — each file has a header comment pointing to the canonical GitHub repo so maintainers know to refresh manually if upstream changes.
+
+## Other tweaks in this session
+
+- **`src/data/hub.js`:** `lessonCount` for production-grade-developer fixed (9 → 8); `slug` for that path was edited by user/linter from `production-grade-developer` → `Production-Grade-developer` (case-sensitive; the file route `production-grade-developer.js` is lowercase, so the URL may not resolve cleanly — flagged but not fixed); `slug: "advanced-ai"` renamed to `slug: "ai"`; `PERSONAS.ai.pathSlug` updated to match; `intermediate` path title also changed to `"Building Resilient Applications"` by linter; non-Foundation paths had `thumbnail` removed (Foundation kept `getstarted.png` — user said other banners didn't match).
+- **`/paths/` index** (`src/pages/paths/index.js`): collapsed two grids into one "All paths" grid, removed `RoleSelector`/"Pick your role" section.
+- **`/paths/foundation/` and `/paths/intermediate/`** (`src/pages/paths/{foundation,intermediate}.js`): added `nextActions` props pointing to the next path. (Originally had both Intermediate path + Pick-a-tutorial cards; user trimmed to just the path card.)
+- **`/paths/production-grade-developer.js`**: removed Pick-a-tutorial card; kept only the Temporal Cloud card.
+- **Renamed** `src/pages/paths/advanced-ai.js` → `src/pages/paths/ai.js`, updated slug references in `hub.js` and one ref in `src/pages/ai/index.js:399` (MagentaCta href).
+- **`/paths/ai/`** has a 2-card "What's next?": `/ai` (Explore more AI on Temporal) + external `https://temporal.io/solutions/ai`.
+- **`/paths/foundation/` + `/paths/intermediate/` styling**: switched `PathDetail` wrapper to `nd-hub-page` so they pick up the gradient.
+- **`CourseCard`** (`src/components/hub/CourseCard/CourseCard.js`): CTA reads "Try the tutorial" when `course.kind === "tutorial"`, "Take the course" otherwise. Used on `/paths/ai/` card list to match the page being tutorials, not courses.
+- **`/start/` FAQ** (`src/pages/start.js`): removed "How is Temporal different from a job queue or cron?" + "Will my Workflows be slow?" + the "the SDK code stays identical" trailing clause; added a "What is durable execution?" Q/A using copy the user provided (the Temporal-product description, not the technical definition).
+- **`/courses/` index** (`src/pages/courses/index.js`): removed `BY_SKILL` grouping → flat 3-col grid. Each card now shows title + summary + `SdkChips` + CTA. Cards have a tier-colored top border (`foundation`=green, `intermediate`=orange, `advanced`=magenta). Removed "Do I get a certificate?" FAQ; made "learning paths" linkable to `/paths/` in the remaining "in order?" FAQ.
+- **`/examples/` SDK samples row**: each chip uses `SdkLogo` to show the per-SDK branded tile + label + external-link arrow, matching the `/start/dev-environment/` pattern.
+
+## Things I tried that didn't work (worth not repeating)
+
+- **HubPageStyle client module to apply `nd-hub-page` to MDX doc pages.** Lived in `src/components/HubPageStyle/HubPageStyle.js` + `src/clientModules/hubStylePages.js` (registered in `docusaurus.config.js`). It does add the body class, but doc primitives (sidebar, TOC, breadcrumb, pagination, code-block surfaces) need substantial per-element CSS work to look right on the gradient. User got frustrated with the incremental fixing; we switched to React-page conversion instead. **Files are still in place** in case someone wants to revisit the body-class approach for long MDX content (like `/tutorials/<sdk>/<archetype>/`). `HUB_PREFIXES` in the client module is currently empty.
+- **CSS already in `custom.css` for `body.nd-hub-page`** that supports doc pages: hides sidebar/TOC/breadcrumb/pagination, makes wrappers transparent, full-width `.banner`, lilac pagination cards. Around line 160 in `src/css/custom.css`. Still live for any future MDX page that opts in via the client module.
+
+## Known TODOs / things flagged but not resolved
+
+- **The `Production-Grade-developer` slug case-sensitivity.** The file is `src/pages/paths/production-grade-developer.js` but the slug in `hub.js` is now mixed-case (`Production-Grade-developer`). Internal links go to `/paths/Production-Grade-developer` which **may or may not** resolve in production depending on host case-sensitivity. Currently 200 locally but worth resolving.
+- **Snipsync drift:** the inlined code constants in every chapter 1 + chapter 2 of `first_program_in_<sdk>` will go stale if upstream repos change. Worth a periodic re-sync pass or a build script that pulls from the repos.
+- **`/tutorials/<sdk>/<archetype>/` pages** are still MDX docs with the default theme — same treatment could be applied, but volume is much higher (~25 tutorials).
+- **AI tutor / quiz / replay debugger** were discussed in an ultrathink turn as next-step ideas but **none were built**. The user liked the AI tutor (`mcp__temporal-docs__search_temporal_knowledge_sources` powered) + replay debugger + lightweight inline quizzes as ideas worth pursuing.
+- **Verify Card content** is the same on every dev_environment page. Could be SDK-customized later (e.g., "your SDK is in your `package.json` / `Gemfile` / `pom.xml`").
+- **Path slug normalization in `hub.js`** — `Production-Grade-developer` is mixed case, all others are lowercase. The component reads `path.slug` directly and constructs URLs from it, so this leaks into hrefs everywhere the path appears on `/paths/`, in the homepage, etc.
+
+## Server state when handing off
+
+- Dev server running on port 3000 (background tasks I started earlier). Port 3001 may have a separate user-owned instance running.
+- All 7 dev_environment routes serve 200.
+- All 18 first_program routes (6 SDKs × 3 chapters) serve 200.
+- `yarn build` not run in this session — only dev-mode compile verified.
+
+## Files modified or referenced for context (not exhaustive)
+
+- `src/data/hub.js` — paths data, course data, personas, topics
+- `src/components/hub/PathDetail/PathDetail.js` — uses `nd-hub-page` wrapper
+- `src/components/hub/CourseCard/CourseCard.js` — CTA varies by `kind`
+- `src/components/hub/RoleSelector/RoleSelector.js` — no longer used on `/paths/` but still exists
+- `src/css/custom.css` — extensive `body.nd-hub-page` overrides (lines 160+)
+- `docusaurus.config.js` — `clientModules: [require.resolve("./src/clientModules/hubStylePages.js")]` registered
+
+---
+
+# Session 3 — 2026-05-27/28 (hello_world conversions, full tutorial rollout, course conversions, Temporal 101 free preview)
+
+This session was the long tail of the MDX-to-React conversion: hello_world for every SDK, every project tutorial, every course landing + per-SDK course page, the Nexus tutorial that got missed on the first pass, and shipping a free in-browser preview of Temporal 101's "Understanding Workflow Execution" module.
+
+## hello_world conversions (6 SDKs, 3 chapters each except PHP)
+
+Same pattern as first_program. For each SDK, dispatched a subagent to port the MDX into 3 React chapter pages with `TutorialStepper`, sticky TOC sidebar, breadcrumb, MetaChips, chapterNav cards, and NotifyBanner. Source MDX deleted, images moved to `static/img/getting_started/<sdk>/hello_world_in_<sdk>/`.
+
+- **Go, TypeScript, Ruby**: 3 chapters each (Build the app / Test and run a Worker / Run and observe retries). All three are the IP-geolocation pattern with Web UI screenshots in chapter 3.
+- **Python, Java**: 3 chapters each (Build / Test+Worker / Run). Hello-world style content, shorter chapter 3 (no Web UI / Observe Retries).
+- **PHP**: single page — it's the "downloaded sample" walkthrough rather than from-scratch, doesn't fit the 3-chapter arc.
+
+URL pattern: `/getting_started/<sdk>/hello_world_in_<sdk>/{,worker-and-test,run}/`.
+
+Wave-of-subagent dispatch worked well — one subagent per SDK, ran 3-4 min each in parallel. Go was done myself first as the template.
+
+### Broken link cleanup after hello_world
+
+Build surfaced markdown links pointing at the now-deleted MDX paths (`(hello_world_in_X/index.md)` and `(/getting_started/X/hello_world_in_X/index.md)`). Bulk-rewrote them to `pathname:///getting_started/<sdk>/hello_world_in_<sdk>/` via sed in `docs/getting_started/*/index.md` and `docs/tutorials/<sdk>/*/index.md`.
+
+## Infrastructure tutorials
+
+3 tutorials sharing ~70% identical content (Introduction, Prerequisites, Obtain binaries, Configure binaries, Register systemd). Built the baseline (`configuring-sqlite-binary`) myself as the template, then dispatched 2 subagents in parallel for `nginx-sqlite-binary` and `envoy-sqlite-binary` (the Envoy YAML is ~130 lines, escaped into a JS template-literal constant).
+
+- `/tutorials/infrastructure/` — landing with 3-card grid + infra banner
+- `/tutorials/infrastructure/configuring-sqlite-binary/` — baseline (no proxy)
+- `/tutorials/infrastructure/nginx-sqlite-binary/` — Nginx reverse proxy
+- `/tutorials/infrastructure/envoy-sqlite-binary/` — Envoy edge proxy
+
+Decision: did NOT deduplicate the shared sections across the three pages, even though the user asked about it. Sectional TOC already serves the linear reading, and these are reference-style docs (people jump to YAML blocks) rather than read-it-once tutorials.
+
+## AI tutorials (4 series, ~12,000 lines of MDX → 15 React pages)
+
+Survey first: 3 of 4 AI tutorials were already physically multi-chapter (`01-`, `02-`, `03-` subdirs); `durable-ai-agent` was a single 6132-line MDX that needed splitting.
+
+Dispatched 4 parallel subagents (one per series). The `durable-ai-agent` subagent got a 4-chapter split spec with exact line ranges:
+- Ch1: Setup + toolkit (lines 15-1124)
+- Ch2: Define agent behavior (lines 1125-2954)
+- Ch3: Workflow & Worker (lines 2955-5089)
+- Ch4: Run and observe (lines 5090-6132)
+
+Output:
+- `/tutorials/ai/` — landing with 4-card grid for the series
+- `/tutorials/ai/building-durable-ai-applications/` — series landing + 2 chapter pages
+- `/tutorials/ai/building-mcp-tools-with-temporal/` — series landing + 2 chapter pages
+- `/tutorials/ai/deep-research/` — series landing + 3 chapter pages
+- `/tutorials/ai/durable-ai-agent/{,agent-behavior,workflow,run}/` — 4 chapter pages from the original monolith
+
+Images moved to `static/img/tutorials/ai/durable-ai-agent/`. AI banner reused across all chapters: `/img/banners/ai-tutorials-banner.png`.
+
+## All other SDK + Nexus tutorials (~20 tutorials)
+
+Survey:
+- 5 SDKs (Go/Java/Python/TypeScript/PHP) with project tutorials + Nexus
+- 5 multi-chapter tutorials (background-check in 4 SDKs + typescript/work-queue-slack-app)
+- 14 single-page tutorials
+- 1 missed Nexus tutorial (caught after the first sweep)
+
+Approach: I converted all 6 SDK landing pages myself (small ~80-line React pages each with card grids), then dispatched 5 parallel subagents (one per SDK) for the tutorials. Each subagent handled all its SDK's tutorials including multi-chapter splits.
+
+Per-SDK output:
+- Go: landing + 3 single-pages (audiobook, build-an-ecommerce-app, build-an-email-drip-campaign) + multi-chapter background-check (landing + introduction/project-setup/durable-execution)
+- Java: landing + 2 single (audiobook, build-an-email-drip-campaign) + multi-chapter background-check
+- Python: landing + 4 single (geocoding-app, build-a-data-pipeline, build-an-email-drip-campaign, trip-booking-app) + multi-chapter background-check
+- TypeScript: landing + 3 single (build-choose-your-own-adventure-bot, build-one-click-order-app-nextjs, recurring-billing-system) + 2 multi-chapter (background-check, work-queue-slack-app)
+- PHP: landing + 2 single (build_a_trip_booking_app, build-a-recurring-billing-app)
+- Nexus: landing + the missed sync-nexus-tutorial (1014 lines)
+
+Total: ~58 tutorial React pages across all SDKs.
+
+### Nexus tutorial gotcha
+
+First sweep missed `docs/tutorials/nexus/sync-nexus-tutorial.md` because the initial survey only listed directories — the file was a flat MDX at the same level as `nexus/ui/`. URL slug is `nexus-sync-tutorial-java` (from frontmatter `id`), not `sync-nexus-tutorial`. Special considerations on the port:
+- `IframeAutoResize` MDX export → ported as an in-file React component using `useEffect`
+- Author / editor byline `<p>` preserved
+- Interactive iframes at `static/html/nexus-decouple.html` etc.
+- 11 SVG/PNG diagrams from `docs/tutorials/nexus/ui/` moved to `static/img/tutorials/nexus/`
+- `tutorials.js` archetype link updated from the placeholder `/tutorials/nexus/` to `/tutorials/nexus/nexus-sync-tutorial-java/`
+
+## Course conversions
+
+Inventory: 8 courses total — 6 multi-SDK + 2 single-page.
+
+Built `src/components/hub/CourseLandingPage/CourseLandingPage.js` as the reusable component (variant of `StepPage`: HubHero + duration line + SdkPicker + outcomes + audience + NotifyBanner). One subagent then converted all 38 course pages:
+
+- 6 multi-SDK course landings (using `CourseLandingPage` with `sdkTargets`)
+- 2 single-page courses (worker_versioning, intro_to_temporal_cloud — standalone pages mimicking CourseLandingPage but with a centered `MagentaCta` to TalentLMS instead of a SdkPicker)
+- 29 per-SDK course detail pages (`/courses/<course>/<sdk>.js`) — each is a hub-styled enrollment page with SDK banner, MetaChips (duration · Free · SDK), Description, Outcomes, Prerequisites, and a magenta "Go to course" CTA to the per-SDK TalentLMS course ID
+
+All TalentLMS enrollment URLs preserved. Source `docs/courses/` deleted. The existing `/src/pages/courses/index.js` was left untouched.
+
+### Course `topics` updates
+
+User asked to expand category coverage on `/courses/` sidebar. Updated `COURSES` entries in `src/data/hub.js`:
+- `temporal-102` topics: added `"resetting-workflow"` + `"testing"`
+- `versioning` topics: added `"deployment"` + `"determinism"`
+- `worker-versioning` topics: added `"determinism"`
+
+## Misc UI fixes
+
+- **Category sidebar count alignment** — `.optionLabel { flex: 1 }` was pushing counts to the far right; changed to `flex: 0 1 auto; min-width: 0` so the count sits next to the label with the existing 10px gap. Fixes the visual gap on long labels like "Workflow Cancellations".
+- **Removed Code Exchange link** from the navbar in `docusaurus.config.js` per user request.
+- **Renamed `Foundation / Intermediate / Advanced` → `Foundation / Building / Production`** in the "Find your learning path" teaser on `/courses/`. Also reworded `/paths/` hero body + section subtitle to use the new vocab.
+- **Removed Build Durable AI Agents path** from `/paths/`:
+  - Deleted `src/pages/paths/ai.js`
+  - Removed the AI path entry from `PATHS` in `src/data/hub.js`
+  - Repointed stale `/paths/ai` references in `src/pages/ai/index.js` and `src/pages/tutorials/ai/durable-ai-agent/run/index.js` to `/tutorials/ai`
+- **`/ai/` magenta CTA**: changed from "Take the AI Developer path" → "Explore Temporal for AI", URL flipped from `/tutorials/ai` to `https://temporal.io/solutions/ai`.
+- **Coming soon button** on `/paths/foundation-complete/` "Claim a Temporal shirt" — converted the `<a>` to a `<span>` with `aria-disabled="true"` and a `[aria-disabled]` CSS rule (uppercase letter-spacing, no hover state). Same pink box, just non-clickable.
+- **Federated search idea** — user wanted to make the hero search meaningful by searching across learn.temporal.io + YouTube (Temporalio) + temporal.io/blog + docs (via Algolia). I drafted an architecture (build-time JSON index + client-side Fuse.js fuzzy search, with each source pulled at build time). User shared a **Gemini API key in chat** — I flagged it as compromised and recommended rotation. User then said "just scrap it, remove the search bar entirely." Final fix: pass `showSearch={false}` to `HubHero` in `src/components/hub/Home/Home.js`. No federation built.
+
+## Temporal 101 free preview (the big new feature)
+
+Goal: ungate the "Understanding Workflow Execution" module from Temporal 101 — first dose on learn.temporal.io with no signup, rest stays on TalentLMS. Source content lives in `temporalio/edu-101-<sdk>-content` repos (public). User scoped to 2 lessons: `about-this-example` + `code-walkthrough`.
+
+### Implementation
+
+**6 parallel subagents**, one per SDK. Each:
+1. Used `gh api` to fetch `understanding-workflow-execution/about-this-example.md` + `code-walkthrough.md` from `edu-101-<sdk>-content`
+2. Moved `src/pages/courses/temporal_101/<sdk>.js` → `src/pages/courses/temporal_101/<sdk>/index.js` (must restructure because we're nesting lesson routes underneath)
+3. Updated the moved file: added a lilac "Free preview available" pill above the `<h1>`, swapped the primary CTA to `<MagentaCta to=".../about-this-example/">Start the free preview</MagentaCta>`, demoted the TalentLMS link to a small text link below
+4. Created 2 lesson pages at `understanding-workflow-execution/about-this-example/index.js` and `understanding-workflow-execution/code-walkthrough/index.js`
+
+Lesson page structure: `nd-hub-page` wrapper, SDK banner, sticky TOC sidebar, breadcrumb, h1, MetaChips (`["Free preview", "Temporal 101", <SDK>]`), `TutorialStepper` showing the 2 lessons, content sections, chapterNav at bottom. The last free lesson (code-walkthrough) ends with a full-width "You've finished the free preview" magenta CTA card linking out to the per-SDK TalentLMS course.
+
+**Code-walkthrough lesson**: the source MDX has a YouTube `<iframe>` + a `<details><summary>` transcript block. Both ported into JSX (camelCase attrs, `wmode=transparent` stripped, wrapped in `<div style={{ maxWidth: "1040px", aspectRatio: "1040/585", margin: "24px auto" }}>` for responsive sizing).
+
+### Free Preview discovery surfaces
+
+- **`/courses/`** — `CourseCard` for Temporal 101 gets a lilac "Free preview" badge in the top-left of the thumbnail; CTA reads "Start the free premium or free course" (user's literal phrasing — flagged as possibly meaning "preview" but they confirmed the wording). Badge styles added to `src/pages/courses/courses.module.css`.
+- **`/paths/foundation/`** — same badge via the shared `src/components/hub/CourseCard/CourseCard.js` (extended with `hasFreePreview` logic based on `slug === "temporal-101"`).
+- **`/courses/temporal_101/`** — added `badge` prop to `CourseLandingPage` (forwarded to `HubHero`'s existing `eyebrow` prop) so the hero shows "FREE PREVIEW AVAILABLE". Picker subtitle updated to "The first module - Understanding Workflow Execution - is free in your browser. The rest of the course runs on TalentLMS. Pick your SDK to start the free preview."
+
+### Per-SDK CTA layout
+
+After ship, user asked to convert the secondary "Or go directly to the full course on TalentLMS →" text link into a second magenta button reading "Start Free Course". Both buttons now sit side-by-side in a flex container (`gap: 12px`, `flexWrap: "wrap"`) on all 6 per-SDK course detail pages. Python's layout was slightly different (the link `<p>` lived outside the `<div>` wrapper instead of inside) and needed a separate edit.
+
+### Image path fix
+
+The lesson pages initially referenced images via absolute URLs like `https://learn.temporal.io/courses/temporal-101/go/chapter_09/...`. In local dev this hits prod CDN. Plus Go's images actually live at `understanding-workflow-execution/` locally (newer naming convention), not `chapter_09/`. Fixed all 6:
+- Go: `IMG_BASE = "/courses/temporal-101/go/understanding-workflow-execution"` (the actual local path)
+- Java/Python/TypeScript/.NET: `IMG_BASE = "/courses/temporal-101/<sdk>/chapter_09"` (where their images already live)
+- Ruby: `IMG_BASE = "/courses/temporal-101"` with the references nested into `common/chapter_09/` and `ruby/chapter_09/`
+
+All images verified to exist locally. Build passes.
+
+### Known bug in Ruby source
+
+`edu-101-ruby-content/understanding-workflow-execution/about-this-example.md` references `ruby/chapter_09/workers-and-tasks.png` for the third image (where it should be a Ruby-specific Commands diagram). The source markdown is wrong — flagged but not fixed (would need a fix in the upstream content repo).
+
+## Files added in this session
+
+**Reusable components:**
+- `src/components/hub/CourseLandingPage/CourseLandingPage.js` — SDK-picker landing for courses with optional `badge` prop forwarded to HubHero `eyebrow`
+
+**Routes added:**
+- All `/getting_started/<sdk>/hello_world_in_<sdk>/{,worker-and-test,run}/` (5 SDKs × 3 chapters + PHP single page = 16)
+- `/tutorials/infrastructure/{,configuring-sqlite-binary,nginx-sqlite-binary,envoy-sqlite-binary}/` (4)
+- `/tutorials/ai/` + all 4 series with their chapter pages (15)
+- `/tutorials/{go,java,python,typescript,php,nexus}/` landings + all SDK-tutorial chapter pages (~58)
+- `/tutorials/nexus/nexus-sync-tutorial-java/` (1)
+- `/courses/<course>/` landings (8) + per-SDK detail pages (29)
+- `/courses/temporal_101/<sdk>/understanding-workflow-execution/{about-this-example,code-walkthrough}/` (12)
+
+Total: ~145 new React routes.
+
+## Key strategic decisions
+
+- **Multi-chapter splits**: only when the underlying content has a natural arc (hello_world IP-geo, AI series), or the page is genuinely too long (durable-ai-agent at 6132 lines). Infra tutorials stayed single-page because they're reference-oriented.
+- **Federated hero search**: scrapped after the user pointed out that the existing top-right search + bottom-right Ask AI chat icon already covered keyword search and conversational search. Removing the hero input entirely was the cleanest move.
+- **Free preview scope**: 2 lessons × 6 SDKs = 12 pages. Keeps TalentLMS for the deeper material + certificate, but eliminates the signup wall on the first dose.
+- **No quizzes/analytics in free preview**: per user instruction; they said TalentLMS account creation is the only conversion step they care about.
+- **Source content sync**: free preview lesson pages are frozen snapshots of `edu-101-<sdk>-content` markdown. No live include. If upstream content changes, need to re-port. Noted as a TODO.
+
+## Known TODOs from this session
+
+- **Ruby source bug**: third image in Ruby's `about-this-example` is wrong (duplicates the second). Needs upstream fix in `edu-101-ruby-content`.
+- **Free preview content sync**: 12 lesson pages are frozen at the moment of porting. Periodic re-sync needed.
+- **CTA wording**: `/courses/` Temporal 101 card says "Start the free premium or free course" — flagged that "premium" probably should be "preview" but the user confirmed the wording.
+- **`/tutorials/nexus/`** has the placeholder nexus.ui/ asset folder that may be re-added in `docs/` if a future Nexus tutorial gets imported. Currently `docs/tutorials/` is empty except for `_index.md`.
+- **Source MDX entirely deleted** from `docs/tutorials/`, `docs/courses/`, `docs/getting_started/<sdk>/{first_program,dev_environment,hello_world}/`. Anyone editing content needs to know it lives in `src/pages/` now.
+- **Several pre-existing slug case-sensitivity issue** with `Production-Grade-developer` from the earlier session still unresolved.

@@ -51,6 +51,7 @@ export default function Home() {
             <a href="https://temporal.io/">Temporal</a> is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with free, hands-on tutorials and courses.
           </>
         }
+        showSearch={false}
       />
 
       <section>
@@ -106,7 +107,7 @@ export default function Home() {
           <section className={styles.exploreSection}>
             <h2 className={styles.exploreHeading}>More to explore</h2>
             <p className={styles.exploreSub}>
-              Other ways to dig in - reference code and visual concept primers.
+              Other ways to dig in - reference code and fun comics!
             </p>
             <div className={styles.exploreGrid}>
               {EXPLORE.map((item) => (

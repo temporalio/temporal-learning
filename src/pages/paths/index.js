@@ -14,7 +14,7 @@ export default function PathsLanding() {
         <HubHero
           eyebrow="Learn Temporal / Paths"
           title="Find your path."
-          body="Pick the journey that matches what you're building. Foundation gets you durable; Intermediate makes you resilient; Advanced branches by role."
+          body="Three sequenced tracks - from your first Workflow through running Temporal in production. Pick one and follow it through, or jump straight to the level that matches where you are."
           showSearch={false}
         />
 
@@ -26,11 +26,6 @@ export default function PathsLanding() {
                 { label: "Paths" },
               ]}
             />
-
-            <h2 className={styles.sectionTitle}>All paths</h2>
-            <p className={styles.sectionSub}>
-              Foundation gets you durable, Intermediate makes you resilient, Advanced branches by role.
-            </p>
             <div className={styles.grid3}>
               {PATHS.map((path) => (
                 <PathCard

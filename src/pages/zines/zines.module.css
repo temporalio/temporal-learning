@@ -1,0 +1,186 @@
+.heroBanner {
+  width: 100%;
+  height: 340px;
+  background: #0C0F22;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.heroBannerImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 640px) {
+  .heroBanner {
+    height: 200px;
+  }
+}
+
+.pageInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.breadcrumbWrap {
+  margin: 24px 0 8px;
+}
+
+.intro {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--nd-fg-muted);
+  margin: 12px 0 0;
+  max-width: 64ch;
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 0;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-top: 3px solid var(--nd-color-magenta);
+  border-radius: var(--nd-radius, 0);
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+}
+
+.coverLink {
+  display: block;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.coverLink:hover {
+  text-decoration: none;
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 220ms ease;
+}
+
+.coverLink:hover .cover {
+  transform: scale(1.03);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 32px 28px;
+}
+
+.title {
+  font-family: var(--nd-font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.title a {
+  color: var(--nd-fg);
+  text-decoration: none;
+}
+
+.title a:hover,
+.title a:focus-visible {
+  color: var(--nd-color-lilac);
+  text-decoration: none;
+}
+
+.description {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--nd-fg-muted);
+  margin: 0;
+}
+
+.credits {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.creditRow {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.creditRow dt {
+  font-family: var(--nd-font-display);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nd-color-lilac);
+  margin: 0;
+}
+
+.creditRow dd {
+  font-size: 0.9375rem;
+  color: var(--nd-fg);
+  margin: 0;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  align-self: flex-start;
+  font-family: var(--nd-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  background: var(--nd-color-magenta);
+  border: 1px solid var(--nd-color-magenta);
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: background 140ms ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background: var(--nd-cta-hover);
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.footnote {
+  margin: 32px 0 0;
+  font-size: 0.875rem;
+  color: var(--nd-fg-muted);
+  text-align: center;
+}

@@ -465,6 +465,142 @@ function LangPicker({ value, onChange }) {
   );
 }
 
+const WITHOUT_TEMPORAL_BY_LANG = {
+  python: `def withdraw_money(account, amount):
+    attempt, interval = 0, 1.0
+    while attempt < 100:
+        attempt += 1
+        try:
+            return external_api.withdraw(account, amount)
+        except Exception:
+            if attempt == 100:
+                raise  # Manual recovery, alerting, persistence...
+            time.sleep(min(interval * (2 ** (attempt - 1)), 100.0))`,
+  go: `func WithdrawMoney(ctx context.Context, account string, amount float64) error {
+    interval := time.Second
+    for attempt := 1; attempt <= 100; attempt++ {
+        err := externalAPI.Withdraw(ctx, account, amount)
+        if err == nil {
+            return nil
+        }
+        if attempt == 100 {
+            return err // Manual recovery, alerting, persistence...
+        }
+        time.Sleep(interval)
+        if interval < 100*time.Second {
+            interval *= 2
+        }
+    }
+    return errors.New("max attempts reached")
+}`,
+  java: `public void withdrawMoney(String account, double amount) throws Exception {
+    long interval = 1000;
+    for (int attempt = 1; attempt <= 100; attempt++) {
+        try {
+            externalApi.withdraw(account, amount);
+            return;
+        } catch (Exception e) {
+            if (attempt == 100) throw e; // Manual recovery, alerting...
+            Thread.sleep(interval);
+            interval = Math.min(interval * 2, 100_000);
+        }
+    }
+}`,
+  dotnet: `public async Task WithdrawMoneyAsync(string account, decimal amount)
+{
+    var interval = TimeSpan.FromSeconds(1);
+    for (int attempt = 1; attempt <= 100; attempt++)
+    {
+        try
+        {
+            await externalApi.WithdrawAsync(account, amount);
+            return;
+        }
+        catch (Exception)
+        {
+            if (attempt == 100) throw; // Manual recovery, alerting...
+            await Task.Delay(interval);
+            interval = TimeSpan.FromMilliseconds(
+                Math.Min(interval.TotalMilliseconds * 2, 100_000));
+        }
+    }
+}`,
+  ruby: `def withdraw_money(account, amount)
+  interval = 1.0
+  (1..100).each do |attempt|
+    begin
+      return external_api.withdraw(account, amount)
+    rescue StandardError => e
+      raise if attempt == 100 # Manual recovery, alerting, persistence...
+      sleep([interval, 100.0].min)
+      interval *= 2
+    end
+  end
+end`,
+  typescript: `async function withdrawMoney(account: string, amount: number) {
+  let interval = 1000;
+  for (let attempt = 1; attempt <= 100; attempt++) {
+    try {
+      await externalApi.withdraw(account, amount);
+      return;
+    } catch (err) {
+      if (attempt === 100) throw err; // Manual recovery, alerting...
+      await new Promise(r => setTimeout(r, interval));
+      interval = Math.min(interval * 2, 100_000);
+    }
+  }
+}`,
+};
+
+function TermTooltip({ term, definition, href, children }) {
+  return (
+    <span className={styles.termWrap}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.termLink}
+      >
+        {children}
+      </a>
+      <span className={styles.tooltip} role="tooltip">
+        <span className={styles.tooltipEyebrow}>{term}</span>
+        <span className={styles.tooltipBody}>{definition}</span>
+        <span className={styles.tooltipFooter}>
+          Read the docs <span aria-hidden="true">→</span>
+        </span>
+      </span>
+    </span>
+  );
+}
+
+function WithoutTemporalPanel({ lang, langInfo }) {
+  return (
+    <details className={styles.withoutPanel}>
+      <summary className={styles.withoutSummary}>
+        <span className={styles.withoutEyebrow}>Compare</span>
+        <span className={styles.withoutTitle}>
+          What you'd write without Temporal
+        </span>
+        <span aria-hidden="true" className={styles.withoutChevron}>
+          ▾
+        </span>
+      </summary>
+      <div className={styles.withoutBody}>
+        <CodeBlock language={langInfo.codeLang}>
+          {WITHOUT_TEMPORAL_BY_LANG[lang]}
+        </CodeBlock>
+        <p className={styles.withoutNote}>
+          And this still doesn't survive a process crash - the loop state lives in
+          memory. Add persistence between attempts, distributed coordination,
+          idempotency keys, and an observability layer, and you've reinvented part
+          of Temporal. Temporal hands all of it to you as a Retry Policy.
+        </p>
+      </div>
+    </details>
+  );
+}
+
 function CodeSlide({ lang, code, sourceUrl, highlight }) {
   return (
     <SourceCodeBlock
@@ -493,10 +629,26 @@ export function ReimbursementCarousel() {
   const [lang, setLang] = useState("go");
   const [index, setIndex] = useState(0);
   const langInfo = LANGUAGES.find((l) => l.id === lang);
+  const stepperRef = useRef(null);
   const total = 5;
   const last = total - 1;
-  const goPrev = () => setIndex((i) => (i === 0 ? last : i - 1));
-  const goNext = () => setIndex((i) => (i === last ? 0 : i + 1));
+  const scrollToStepper = () => {
+    if (stepperRef.current) {
+      stepperRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+  const goPrev = () => {
+    setIndex((i) => (i === 0 ? last : i - 1));
+    scrollToStepper();
+  };
+  const goNext = () => {
+    setIndex((i) => (i === last ? 0 : i + 1));
+    scrollToStepper();
+  };
+  const jumpTo = (i) => {
+    setIndex(i);
+    scrollToStepper();
+  };
 
   const slides = [
     {
@@ -506,24 +658,24 @@ export function ReimbursementCarousel() {
         <>
           <p>
             An{" "}
-            <a
+            <TermTooltip
+              term="Activity"
+              definition="A unit of work called from a Workflow. Activities can talk to the outside world (APIs, databases, anything that might fail) and are automatically retried on failure."
               href="https://docs.temporal.io/activities"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Activity
-            </a>{" "}
+            </TermTooltip>{" "}
             is a function for a single fallible operation - an API call, database write, network request. Temporal retries failed Activities automatically.
           </p>
           <p>
             A{" "}
-            <a
+            <TermTooltip
+              term="Workflow"
+              definition="A function that orchestrates work. Workflows run durably: if a process crashes, Temporal restores its state and resumes exactly where it left off."
               href="https://docs.temporal.io/workflows"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Workflow
-            </a>{" "}
+            </TermTooltip>{" "}
             orchestrates Activities and runs durably: if the application crashes, Temporal recreates its pre-failure state and continues right where it left off. The Workflow below orchestrates two Activities: withdraw, then deposit.
           </p>
         </>
@@ -547,12 +699,15 @@ export function ReimbursementCarousel() {
         </>
       ),
       content: (
-        <CodeSlide
-          lang={langInfo}
-          code={ACTIVITIES_BUG_BY_LANG[lang]}
-          sourceUrl={`${SOURCE_BASE}/${langInfo.folder}`}
-          highlight={EXCEPTION_LINE_HIGHLIGHTS[lang]}
-        />
+        <>
+          <CodeSlide
+            lang={langInfo}
+            code={ACTIVITIES_BUG_BY_LANG[lang]}
+            sourceUrl={`${SOURCE_BASE}/${langInfo.folder}`}
+            highlight={EXCEPTION_LINE_HIGHLIGHTS[lang]}
+          />
+          <WithoutTemporalPanel lang={lang} langInfo={langInfo} />
+        </>
       ),
     },
     {
@@ -597,6 +752,19 @@ export function ReimbursementCarousel() {
           <div className={styles.callout}>
             <strong>This is the power of Temporal:</strong> your critical business processes are guaranteed to complete - even across crashes, restarts, and network outages. You write the business logic; Temporal handles the durability.
           </div>
+          <figure className={styles.videoCard}>
+            <div className={styles.videoEmbed}>
+              <iframe
+                src="https://www.youtube.com/embed/dNVmRfWsNkM"
+                title="Temporal Live Coding Demo: Handling Failures & Human Interaction"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+            <figcaption className={styles.videoCaption}>
+              Watch the live coding demo on YouTube
+            </figcaption>
+          </figure>
         </>
       ),
       content: (
@@ -613,6 +781,36 @@ export function ReimbursementCarousel() {
   return (
     <div className={styles.carouselWrapper}>
       <LangPicker value={lang} onChange={setLang} />
+      <div
+        ref={stepperRef}
+        className={styles.stepperBar}
+        role="tablist"
+        aria-label="Demo steps"
+      >
+        {slides.map((s, i) => {
+          const cls =
+            i === index
+              ? styles.stepperPillCurrent
+              : i < index
+              ? styles.stepperPillDone
+              : styles.stepperPill;
+          return (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              className={cls}
+              onClick={() => jumpTo(i)}
+            >
+              <span className={styles.stepperNum}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className={styles.stepperLabel}>{s.heading}</span>
+            </button>
+          );
+        })}
+      </div>
       <div className={styles.carousel}>
         <div className={styles.carouselSlide} key={index}>
           <div className={styles.slideHeader}>
@@ -624,35 +822,40 @@ export function ReimbursementCarousel() {
           <div className={styles.slideBody}>{slide.content}</div>
           <div className={styles.slideCaption}>{slide.body}</div>
         </div>
+      </div>
+      <div className={styles.carouselNav}>
         <button
           type="button"
-          className={`${styles.carouselArrow} ${styles.carouselArrowPrev}`}
+          className={styles.navBtn}
           onClick={goPrev}
+          disabled={index === 0}
           aria-label="Previous slide"
         >
-          <span aria-hidden="true">‹</span>
+          <span className={styles.navDir} aria-hidden="true">
+            ← Previous
+          </span>
+          {index > 0 && (
+            <span className={styles.navHeading}>
+              {String(index).padStart(2, "0")} · {slides[index - 1].heading}
+            </span>
+          )}
         </button>
         <button
           type="button"
-          className={`${styles.carouselArrow} ${styles.carouselArrowNext}`}
+          className={styles.navBtnNext}
           onClick={goNext}
+          disabled={index === last}
           aria-label="Next slide"
         >
-          <span aria-hidden="true">›</span>
+          <span className={styles.navDir} aria-hidden="true">
+            Next →
+          </span>
+          {index < last && (
+            <span className={styles.navHeading}>
+              {String(index + 2).padStart(2, "0")} · {slides[index + 1].heading}
+            </span>
+          )}
         </button>
-      </div>
-      <div className={styles.carouselDots} role="tablist" aria-label="Demo steps">
-        {Array.from({ length: total }).map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            role="tab"
-            aria-selected={i === index}
-            aria-label={`Step ${i + 1} of ${total}`}
-            className={i === index ? styles.dotActive : styles.dot}
-            onClick={() => setIndex(i)}
-          />
-        ))}
       </div>
     </div>
   );
@@ -716,7 +919,7 @@ const CONCEPTS = [
 
 const FAQ = [
   {
-    q: "What is Durable Execution?",
+    q: "What is Durable ERxecution?",
     a: "Temporal makes it easier for developers to build and operate reliable, scalable applications without sacrificing productivity. The design of the system ensures that, once started, an application's main function executes to completion - whether that takes minutes, hours, days, weeks, or even years.",
   },
   {

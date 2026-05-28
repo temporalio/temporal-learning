@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 270" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="270" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="460" y="28" text-anchor="middle" fill="#e6edf3" font-size="15" font-weight="700">Three Transactions, Three Risk Decisions</text>
+  <text x="460" y="46" text-anchor="middle" fill="#e6edf3" font-size="11">The compliance engine evaluates OFAC sanctions, amount thresholds, and jurisdiction risk</text>
+
+  <!-- TXN-A -->
+  <rect x="30" y="63" width="275" height="185" rx="10" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.4"/>
+  <rect x="30" y="63" width="275" height="32" rx="10" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.15"/>
+  <circle cx="52" cy="79" r="10" fill="#22c55e" opacity="0.2"/>
+  <text x="52" y="83" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="700">A</text>
+  <text x="72" y="84" fill="#e6edf3" font-size="13" font-weight="600">TXN-A</text>
+  <text x="210" y="84" text-anchor="middle" fill="#e6edf3" font-size="11">$250 &#x00B7; US &#x2192; US</text>
+
+  <text x="48" y="115" fill="#e6edf3" font-size="10">Risk Level</text>
+  <rect x="48" y="121" width="38" height="18" rx="4" fill="#22c55e" opacity="0.15"/>
+  <text x="67" y="134" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="700">LOW</text>
+  <text x="100" y="115" fill="#e6edf3" font-size="10">Decision</text>
+  <text x="100" y="134" fill="#22c55e" font-size="11" font-weight="600">APPROVED</text>
+
+  <text x="48" y="161" fill="#e6edf3" font-size="10">Reason</text>
+  <text x="48" y="177" fill="#e6edf3" font-size="10">Routine domestic transfer.</text>
+  <text x="48" y="191" fill="#e6edf3" font-size="10">No regulatory concerns.</text>
+
+  <text x="48" y="215" fill="#e6edf3" font-size="10">Outcome</text>
+  <text x="48" y="231" fill="#22c55e" font-size="12" font-weight="700">COMPLETED</text>
+
+
+  <!-- TXN-B -->
+  <rect x="322" y="63" width="275" height="185" rx="10" fill="#1c2128" stroke="#f97316" stroke-opacity="0.4"/>
+  <rect x="322" y="63" width="275" height="32" rx="10" fill="#1c2128" stroke="#f97316" stroke-opacity="0.15"/>
+  <circle cx="344" cy="79" r="10" fill="#f97316" opacity="0.2"/>
+  <text x="344" y="83" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">B</text>
+  <text x="364" y="84" fill="#e6edf3" font-size="13" font-weight="600">TXN-B</text>
+  <text x="498" y="84" text-anchor="middle" fill="#e6edf3" font-size="11">$12,000 &#x00B7; US &#x2192; UK</text>
+
+  <text x="340" y="115" fill="#e6edf3" font-size="10">Risk Level</text>
+  <rect x="340" y="121" width="58" height="18" rx="4" fill="#f97316" opacity="0.15"/>
+  <text x="369" y="134" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">MEDIUM</text>
+  <text x="412" y="115" fill="#e6edf3" font-size="10">Decision</text>
+  <text x="412" y="134" fill="#22c55e" font-size="11" font-weight="600">APPROVED</text>
+
+  <text x="340" y="161" fill="#e6edf3" font-size="10">Reason</text>
+  <text x="340" y="177" fill="#e6edf3" font-size="10">International transfer above $10K.</text>
+  <text x="340" y="191" fill="#e6edf3" font-size="10">Approved with AML monitoring note.</text>
+
+  <text x="340" y="215" fill="#e6edf3" font-size="10">Outcome</text>
+  <text x="340" y="231" fill="#22c55e" font-size="12" font-weight="700">COMPLETED</text>
+
+
+  <!-- TXN-C -->
+  <rect x="614" y="63" width="275" height="185" rx="10" fill="#1c2128" stroke="#ef4444" stroke-opacity="0.5"/>
+  <rect x="614" y="63" width="275" height="32" rx="10" fill="#1c2128" stroke="#ef4444" stroke-opacity="0.15"/>
+  <circle cx="636" cy="79" r="10" fill="#ef4444" opacity="0.2"/>
+  <text x="636" y="83" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">C</text>
+  <text x="656" y="84" fill="#e6edf3" font-size="13" font-weight="600">TXN-C</text>
+  <text x="798" y="84" text-anchor="middle" fill="#e6edf3" font-size="11">$75,000 &#x00B7; US &#x2192; N. Korea</text>
+
+  <text x="632" y="115" fill="#e6edf3" font-size="10">Risk Level</text>
+  <rect x="632" y="121" width="42" height="18" rx="4" fill="#ef4444" opacity="0.15"/>
+  <text x="653" y="134" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">HIGH</text>
+  <text x="688" y="115" fill="#e6edf3" font-size="10">Decision</text>
+  <text x="688" y="134" fill="#ef4444" font-size="11" font-weight="600">BLOCKED</text>
+
+  <text x="632" y="161" fill="#e6edf3" font-size="10">Reason</text>
+  <text x="632" y="177" fill="#e6edf3" font-size="10">OFAC-sanctioned destination.</text>
+  <text x="632" y="191" fill="#e6edf3" font-size="10">Transaction blocked per regulation.</text>
+
+  <text x="632" y="215" fill="#e6edf3" font-size="10">Outcome</text>
+  <text x="632" y="231" fill="#ef4444" font-size="12" font-weight="700">DECLINED</text>
+
+  <!-- Pulsing X on TXN-C -->
+  <text x="860" y="233" text-anchor="middle" fill="#ef4444" font-size="20" font-weight="700">
+    &#x2715;
+    <animate attributeName="opacity" values="0.15;0.5;0.15" dur="2s" repeatCount="indefinite"/>
+  </text>
+</svg>

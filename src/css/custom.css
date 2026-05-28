@@ -157,6 +157,213 @@ html[data-theme="light"] .nd-hub-page::before {
   display: none;
 }
 
+/* When .nd-hub-page is applied to <body> (via HubPageStyle on doc pages),
+   restore scroll and make Docusaurus's own wrappers transparent so the
+   body gradient + starfield show through. Also remap infima color
+   variables to the brand palette so doc content blends with the hub style. */
+body.nd-hub-page {
+  overflow: visible;
+  --ifm-background-color: transparent;
+  --ifm-background-surface-color: transparent;
+  --ifm-color-content: var(--nd-fg);
+  --ifm-heading-color: var(--nd-fg);
+  --ifm-color-content-secondary: var(--nd-fg-muted);
+  --ifm-link-color: var(--nd-color-lilac);
+  --ifm-link-hover-color: var(--nd-color-magenta);
+  --ifm-code-background: var(--nd-bg-elevated);
+  --ifm-code-color: var(--nd-fg);
+  --ifm-color-emphasis-100: var(--nd-bg-elevated);
+  --ifm-color-emphasis-200: var(--nd-bg-elevated);
+  --ifm-color-emphasis-300: var(--nd-border-strong);
+  --ifm-color-emphasis-700: var(--nd-fg-muted);
+  --ifm-pre-background: rgba(0, 0, 0, 0.35);
+  --ifm-table-stripe-background: rgba(255, 255, 255, 0.02);
+  --ifm-table-border-color: var(--nd-border);
+}
+
+body.nd-hub-page #__docusaurus,
+body.nd-hub-page .main-wrapper,
+body.nd-hub-page main,
+body.nd-hub-page .container,
+body.nd-hub-page .row,
+body.nd-hub-page article,
+body.nd-hub-page .markdown,
+body.nd-hub-page [class*="docItemCol"],
+body.nd-hub-page [class*="docMainContainer"],
+body.nd-hub-page [class*="docItemContainer"],
+body.nd-hub-page [class*="docPage"],
+body.nd-hub-page [class*="docRoot"],
+body.nd-hub-page .footer,
+body.nd-hub-page footer {
+  background: transparent !important;
+  border-top-color: var(--nd-border);
+}
+
+/* Let the banner break out of the constrained content column.
+   Overflow must be visible on every parent between body and the banner img. */
+body.nd-hub-page .container,
+body.nd-hub-page .row,
+body.nd-hub-page article,
+body.nd-hub-page .markdown,
+body.nd-hub-page [class*="docItemCol"],
+body.nd-hub-page [class*="docMainContainer"],
+body.nd-hub-page [class*="docItemContainer"] {
+  overflow: visible !important;
+}
+
+/* Prevent the 100vw breakout from creating a horizontal scrollbar */
+html:has(body.nd-hub-page) {
+  overflow-x: hidden;
+}
+
+/* Hide doc-page chrome (sidebar, right TOC, breadcrumbs, prev/next nav,
+   and the publish-info metadata strip at top) on hub-style doc pages */
+body.nd-hub-page .theme-doc-sidebar-container,
+body.nd-hub-page .theme-doc-toc-desktop,
+body.nd-hub-page .theme-doc-toc-mobile,
+body.nd-hub-page .theme-doc-breadcrumbs,
+body.nd-hub-page nav[aria-label="Breadcrumbs"],
+body.nd-hub-page .pagination-nav,
+body.nd-hub-page nav[aria-label="Docs pages"],
+body.nd-hub-page .docPublishInfo,
+body.nd-hub-page .theme-doc-footer-tags-row,
+body.nd-hub-page .theme-doc-footer-edit-meta-row,
+body.nd-hub-page .theme-last-updated {
+  display: none !important;
+}
+
+/* Hero-style typography on doc pages in hub mode. */
+body.nd-hub-page article > header,
+body.nd-hub-page .markdown > header,
+body.nd-hub-page [class*="docMainContainer"] header {
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+body.nd-hub-page article > header h1,
+body.nd-hub-page .markdown > header h1,
+body.nd-hub-page [class*="docItemContainer"] header h1 {
+  font-family: var(--nd-font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 8px 0 16px;
+  color: var(--nd-fg);
+}
+
+body.nd-hub-page .markdown h2 {
+  font-family: var(--nd-font-display);
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-top: 48px;
+  margin-bottom: 16px;
+  color: var(--nd-fg);
+}
+
+body.nd-hub-page .markdown h3 {
+  font-family: var(--nd-font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  color: var(--nd-fg);
+}
+
+body.nd-hub-page .markdown p,
+body.nd-hub-page .markdown li {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--nd-fg);
+}
+
+/* Code blocks: branded dark surface */
+body.nd-hub-page [class*="codeBlockContainer"],
+body.nd-hub-page pre {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid var(--nd-border) !important;
+  border-radius: var(--nd-radius, 0) !important;
+}
+
+body.nd-hub-page [class*="codeBlockTitle"] {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-bottom: 1px solid var(--nd-border) !important;
+  color: var(--nd-fg-muted) !important;
+}
+
+/* Sidebar is gone - let the main column fill the row, then constrain the
+   reading content to a comfortable max-width so line lengths stay sane. */
+body.nd-hub-page [class*="docMainContainer"] {
+  max-width: none;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  flex: 1 1 100%;
+}
+
+body.nd-hub-page [class*="docItemCol"],
+body.nd-hub-page [class*="docItemContainer"] {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Style the Previous / Next pagination cards at the bottom of doc pages */
+body.nd-hub-page .pagination-nav__link {
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius, 0);
+  color: var(--nd-fg);
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+body.nd-hub-page .pagination-nav__link:hover,
+body.nd-hub-page .pagination-nav__link:focus-visible {
+  border-color: var(--nd-color-lilac);
+  color: var(--nd-fg);
+  transform: translateY(-2px);
+}
+
+body.nd-hub-page .pagination-nav__sublabel {
+  color: var(--nd-fg-muted);
+}
+
+body.nd-hub-page .pagination-nav__label {
+  color: var(--nd-fg);
+}
+
+/* Inline code chips need a visible surface on the dark gradient */
+body.nd-hub-page :not(pre) > code {
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  color: var(--nd-fg);
+}
+
+/* Full-width banner image (used in dev_environment MDX pages).
+   Breaks out of the constrained content column via the classic
+   calc(50% - 50vw) negative-margin trick. !important is needed to defeat
+   the base `.banner { width: 100% }` rule defined later in this file. */
+body.nd-hub-page .banner {
+  display: block !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 280px;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  margin-top: 0;
+  margin-bottom: 32px;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 640px) {
+  body.nd-hub-page .banner {
+    height: 180px;
+  }
+}
+
 html[data-theme="dark"] {
   --ifm-color-primary: #bfdbfe;
   --ifm-background-color: #141414;

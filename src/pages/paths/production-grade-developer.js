@@ -10,9 +10,20 @@ export default function ProductionGradeDeveloperPath() {
         "Operate your application against Temporal Cloud",
         "Manage namespaces, RBAC, and observability for your team",
       ]}
+      completionLink={{
+        href: "/paths/production-grade-developer-complete",
+        label: "Already finished the Production-Grade path? Mark the milestone",
+      }}
       nextActions={{
         label: "What's next?",
         items: [
+          {
+            eyebrow: "Quiz · 9 questions",
+            title: "Check your understanding",
+            body: "Take a quick quiz on Intro to Temporal Cloud. Miss one and you'll see the reasoning.",
+            cta: "Take the quiz",
+            href: "/paths/production-grade-developer-complete",
+          },
           {
             eyebrow: "Temporal Cloud",
             title: "Run on Temporal Cloud",

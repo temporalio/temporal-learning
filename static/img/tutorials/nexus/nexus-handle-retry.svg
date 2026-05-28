@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="460" fill="url(#bg)" rx="12"/>
+
+  <!-- ===== SCENARIO 1: First Call ===== -->
+  <text x="30" y="72" fill="#22c55e" font-size="14" font-weight="700">FIRST CALL</text>
+  <line x1="30" y1="80" x2="870" y2="80" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Payments box -->
+  <rect x="30" y="95" width="180" height="50" rx="8" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.5"/>
+  <text x="120" y="118" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="600">Payments Workflow</text>
+  <text x="120" y="135" text-anchor="middle" fill="#e6edf3" font-size="12">checkCompliance()</text>
+
+  <!-- Arrow 1 -->
+  <line x1="210" y1="120" x2="280" y2="120" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="277,115 287,120 277,125" fill="#f97316"/>
+  <text x="245" y="112" text-anchor="middle" fill="#f97316" font-size="11">Nexus</text>
+
+  <!-- Handler box -->
+  <rect x="290" y="95" width="220" height="50" rx="8" fill="#1c2128" stroke="#f97316" stroke-opacity="0.5"/>
+  <text x="400" y="118" text-anchor="middle" fill="#f97316" font-size="13" font-weight="600">NexusServiceImpl</text>
+  <text x="400" y="135" text-anchor="middle" fill="#e6edf3" font-size="12">fromWorkflowHandle()</text>
+
+  <!-- Arrow 2: starts workflow -->
+  <line x1="510" y1="120" x2="580" y2="120" stroke="#22c55e" stroke-width="1.5"/>
+  <polygon points="577,115 587,120 577,125" fill="#22c55e"/>
+  <text x="545" y="112" text-anchor="middle" fill="#22c55e" font-size="11">starts</text>
+
+  <!-- Workflow box -->
+  <rect x="590" y="95" width="275" height="50" rx="8" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.5"/>
+  <text x="727" y="118" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="600">ComplianceWorkflow</text>
+  <text x="727" y="135" text-anchor="middle" fill="#e6edf3" font-size="12">compliance-TXN-A (running)</text>
+
+  <!-- Return handle -->
+  <path d="M 400,145 L 400,170 L 120,170 L 120,148" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <polygon points="116,151 120,143 124,151" fill="#22c55e"/>
+  <text x="260" y="165" text-anchor="middle" fill="#22c55e" font-size="11">returns handle (workflow ID: compliance-TXN-A)</text>
+
+  <!-- ===== SCENARIO 2: Retry ===== -->
+  <text x="30" y="220" fill="#f97316" font-size="14" font-weight="700">RETRY (transient failure, network blip, etc.)</text>
+  <line x1="30" y1="228" x2="870" y2="228" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Payments box -->
+  <rect x="30" y="243" width="180" height="50" rx="8" fill="#1c2128" stroke="#3b82f6" stroke-opacity="0.5"/>
+  <text x="120" y="266" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="600">Payments Workflow</text>
+  <text x="120" y="283" text-anchor="middle" fill="#e6edf3" font-size="12">checkCompliance()</text>
+
+  <!-- Arrow 1 -->
+  <line x1="210" y1="268" x2="280" y2="268" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="277,263 287,268 277,273" fill="#f97316"/>
+  <text x="245" y="260" text-anchor="middle" fill="#f97316" font-size="11">Nexus</text>
+
+  <!-- Handler box -->
+  <rect x="290" y="243" width="220" height="50" rx="8" fill="#1c2128" stroke="#f97316" stroke-opacity="0.5"/>
+  <text x="400" y="266" text-anchor="middle" fill="#f97316" font-size="13" font-weight="600">NexusServiceImpl</text>
+  <text x="400" y="283" text-anchor="middle" fill="#e6edf3" font-size="12">fromWorkflowHandle()</text>
+
+  <!-- Arrow 2: reuses -->
+  <line x1="510" y1="268" x2="580" y2="268" stroke="#22c55e" stroke-width="1.5"/>
+  <polygon points="577,263 587,268 577,273" fill="#22c55e"/>
+  <text x="545" y="260" text-anchor="middle" fill="#22c55e" font-size="11">reuses</text>
+
+  <!-- Same workflow box -->
+  <rect x="590" y="243" width="275" height="50" rx="8" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.5"/>
+  <text x="727" y="266" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="600">ComplianceWorkflow</text>
+  <text x="727" y="283" text-anchor="middle" fill="#e6edf3" font-size="12">compliance-TXN-A (same instance!)</text>
+
+  <!-- No duplicate callout -->
+  <rect x="608" y="300" width="240" height="30" rx="6" fill="#22c55e" fill-opacity="0.1" stroke="#22c55e" stroke-opacity="0.3"/>
+  <text x="728" y="320" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="600">No duplicate workflow created</text>
+
+  <!-- ===== Bottom comparison ===== -->
+  <line x1="30" y1="355" x2="870" y2="355" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Bad pattern -->
+  <rect x="30" y="370" width="410" height="70" rx="8" fill="#1c2128" stroke="#f44336" stroke-opacity="0.4"/>
+  <text x="40" y="392" fill="#f44336" font-size="13" font-weight="600">OperationHandler.sync() + start workflow</text>
+  <text x="40" y="412" fill="#e6edf3" font-size="12">Each retry starts a NEW workflow</text>
+  <text x="40" y="430" fill="#e6edf3" font-size="12">3 retries = 3 duplicate compliance checks</text>
+
+  <!-- Good pattern -->
+  <rect x="460" y="370" width="410" height="70" rx="8" fill="#1c2128" stroke="#22c55e" stroke-opacity="0.4"/>
+  <text x="470" y="392" fill="#22c55e" font-size="13" font-weight="600">WorkflowRunOperation.fromWorkflowHandle()</text>
+  <text x="470" y="412" fill="#e6edf3" font-size="12">Handle binds Nexus op to the workflow ID</text>
+  <text x="470" y="430" fill="#e6edf3" font-size="12">3 retries = 1 workflow, reused each time</text>
+</svg>
