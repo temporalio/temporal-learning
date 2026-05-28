@@ -919,7 +919,7 @@ const CONCEPTS = [
 
 const FAQ = [
   {
-    q: "What is Durable ERxecution?",
+    q: "What is Durable Execution?",
     a: "Temporal makes it easier for developers to build and operate reliable, scalable applications without sacrificing productivity. The design of the system ensures that, once started, an application's main function executes to completion - whether that takes minutes, hours, days, weeks, or even years.",
   },
   {
