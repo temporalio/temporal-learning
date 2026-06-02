@@ -17,7 +17,7 @@ export default function PathHero({
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
         <div className={styles.metaRow}>
-          {level && <LevelBadge level={level} count={lessonCount} unit="lessons" />}
+          {level && <LevelBadge level={level} count={lessonCount} unit="tracks" />}
         </div>
         {outcomes && outcomes.length > 0 && (
           <div className={styles.outcomes}>

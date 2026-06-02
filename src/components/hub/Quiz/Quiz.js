@@ -4,13 +4,20 @@ import styles from "./Quiz.module.css";
 export default function Quiz({ questions }) {
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState({});
+  const [reasonOpen, setReasonOpen] = useState({});
   const total = questions.length;
   const q = questions[index];
   const qAttempts = attempts[index] || [];
   const correctIdx = q.correctIndex;
   const solved = qAttempts.includes(correctIdx);
   const wasWrong = qAttempts.some((a) => a !== correctIdx);
-  const showReason = solved && wasWrong;
+  const userOpened = !!reasonOpen[index];
+  const showReason = solved && (wasWrong || userOpened);
+  const showReasonToggle = solved && !wasWrong;
+
+  function toggleReason() {
+    setReasonOpen((prev) => ({ ...prev, [index]: !prev[index] }));
+  }
 
   const goPrev = () => setIndex((i) => (i === 0 ? total - 1 : i - 1));
   const goNext = () => setIndex((i) => (i === total - 1 ? 0 : i + 1));
@@ -90,6 +97,19 @@ export default function Quiz({ questions }) {
             <div className={styles.tryAgain}>
               Not quite - try another answer.
             </div>
+          )}
+          {showReasonToggle && (
+            <button
+              type="button"
+              className={styles.reasonToggle}
+              onClick={toggleReason}
+              aria-expanded={userOpened}
+            >
+              {userOpened ? "Hide reasoning" : "See reasoning"}
+              <span aria-hidden="true" className={styles.reasonToggleArrow}>
+                {userOpened ? "▲" : "▼"}
+              </span>
+            </button>
           )}
           {showReason && (
             <div className={styles.reason}>

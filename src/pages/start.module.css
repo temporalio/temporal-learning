@@ -258,6 +258,9 @@
 
 .demoIntro {
   max-width: none;
+  color: var(--nd-fg);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .demoBreak {
@@ -332,6 +335,9 @@
 .langTab,
 .langTabActive {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 1px solid var(--nd-border);
   background: var(--nd-bg-elevated);
   color: var(--nd-fg-muted);
@@ -464,9 +470,12 @@
 .carouselImg {
   display: block;
   width: 100%;
+  max-width: 920px;
   height: auto;
+  margin: 0 auto;
   border: 1px solid var(--nd-border);
   border-radius: var(--nd-radius, 0);
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .videoCard {

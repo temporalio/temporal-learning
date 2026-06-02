@@ -209,7 +209,7 @@ export default function ProductionGradeDeveloperCompletePage() {
                 <span className={styles.nextEyebrow}>Temporal Cloud</span>
                 <h3 className={styles.nextTitle}>Run on Temporal Cloud</h3>
                 <p className={styles.nextBody}>
-                  Stop running your own Temporal Service. Spin up a managed Namespace and
+                  Skip the infrastructure work. Spin up a managed Namespace and
                   start moving Workflows over in minutes.
                 </p>
                 <span className={styles.nextCta}>

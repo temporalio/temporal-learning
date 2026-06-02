@@ -27,7 +27,7 @@ export default function ProductionGradeDeveloperPath() {
           {
             eyebrow: "Temporal Cloud",
             title: "Run on Temporal Cloud",
-            body: "Stop running your own Temporal Service. Spin up a managed namespace and start moving Workflows over in minutes.",
+            body: "Skip the infrastructure work. Spin up a managed Namespace and start moving Workflows over in minutes.",
             cta: "Get Temporal Cloud",
             href: "https://temporal.io/get-cloud",
           },

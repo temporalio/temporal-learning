@@ -149,7 +149,7 @@ export default function CoursesPage() {
                     <div className={styles.pathStepBody}>
                       <span className={styles.pathStepLabel}>Foundation</span>
                       <span className={styles.pathStepMeta}>
-                        Essential · 15 lessons
+                        Essential · 2 tracks
                       </span>
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function CoursesPage() {
                     <div className={styles.pathStepBody}>
                       <span className={styles.pathStepLabel}>Building</span>
                       <span className={styles.pathStepMeta}>
-                        Practical · 18 lessons
+                        Practical · 4 tracks
                       </span>
                     </div>
                   </div>
@@ -171,7 +171,7 @@ export default function CoursesPage() {
                     <div className={styles.pathStepBody}>
                       <span className={styles.pathStepLabel}>Production</span>
                       <span className={styles.pathStepMeta}>
-                        Advanced · 3 tracks
+                        Advanced · 2 tracks
                       </span>
                     </div>
                   </div>

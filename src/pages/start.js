@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import CodeBlock from "@theme/CodeBlock";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import CourseCard from "@site/src/components/hub/CourseCard/CourseCard";
+import SdkLogo from "@site/src/components/hub/SdkLogo/SdkLogo";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
@@ -458,6 +459,7 @@ function LangPicker({ value, onChange }) {
           onClick={() => onChange(l.id)}
           className={value === l.id ? styles.langTabActive : styles.langTab}
         >
+          <SdkLogo sdk={l.id} size={18} />
           {l.label}
         </button>
       ))}
@@ -665,7 +667,7 @@ export function ReimbursementCarousel() {
             >
               Activity
             </TermTooltip>{" "}
-            is a function for a single fallible operation - an API call, database write, network request. Temporal retries failed Activities automatically.
+            is a function for a single fallible operation - an API call, a database write, a network request. Temporal retries failed Activities automatically.
           </p>
           <p>
             A{" "}
@@ -676,7 +678,13 @@ export function ReimbursementCarousel() {
             >
               Workflow
             </TermTooltip>{" "}
-            orchestrates Activities and runs durably: if the application crashes, Temporal recreates its pre-failure state and continues right where it left off. The Workflow below orchestrates two Activities: withdraw, then deposit.
+            orchestrates Activities. Workflows are resilient - they can run for hours, days, even years, through infrastructure failures. If the application itself crashes, Temporal automatically recreates the Workflow's pre-failure state so it continues right where it left off.
+          </p>
+          <p>
+            In our reimbursement example, if the network drops right after the withdrawal but before the deposit, Temporal recreates the Workflow from its last known state and continues as if no failure ever occurred.
+          </p>
+          <p>
+            <strong>This Workflow orchestrates our two Activities: withdraw, then deposit.</strong>
           </p>
         </>
       ),
@@ -780,7 +788,13 @@ export function ReimbursementCarousel() {
 
   return (
     <div className={styles.carouselWrapper}>
-      <LangPicker value={lang} onChange={setLang} />
+      <LangPicker
+        value={lang}
+        onChange={(newLang) => {
+          setLang(newLang);
+          setIndex(0);
+        }}
+      />
       <div
         ref={stepperRef}
         className={styles.stepperBar}
@@ -1101,7 +1115,7 @@ export default function StartPage() {
               Once your first Workflow is running, take one of our free, foundational courses.
             </p>
             <div className={styles.grid2}>
-              <CourseCard course={t101} size="lg" />
+              <CourseCard course={t101} size="lg" ctaLabel="Start preview or take the free course" />
               <CourseCard course={t102} size="lg" />
             </div>
           </div>

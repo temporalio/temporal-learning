@@ -291,7 +291,7 @@ export default function TutorialsPage() {
                 <section className={styles.section}>
                   <h2 className={styles.sectionTitle}>Build AI agents</h2>
                   <p className={styles.sectionSub}>
-                    Build long-running agents that maintain state, handle tool calls, and survive the messy middle of an LLM conversation.
+                  Long-running agents need durable state, tool-call retries, and the ability to resume mid-conversation when a Worker crashes. Follow these tutorials to learn how to add Temporal to your applications.
                   </p>
                   <div className={styles.grid} data-columns={3}>
                     {AI.map((item) => (

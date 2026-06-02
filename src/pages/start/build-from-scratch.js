@@ -20,7 +20,7 @@ export default function BuildFromScratchPage() {
     <StepPage
       step={3}
       title="Build one from scratch."
-      body="Write your first Workflow and Activity from the ground up. Hello world, but reliable."
+      body="Write your first Workflow and Activity from the ground up."
       pickerSubtitle="Available in five SDKs - pick yours and follow the build."
       sdkTargets={SDK_TARGETS}
       outcomes={OUTCOMES}

@@ -46,7 +46,7 @@ export default function InActionPage() {
               Take a reimbursement: withdraw from one account, deposit into another. What if the withdrawal succeeds but the network drops before the deposit?
             </p>
             <p className={`${styles.sectionSub} ${styles.demoIntro}`}>
-              Walk through it in five steps below. Inject a failure, Temporal retries, fix the bug, the Workflow completes.
+              Walk through it in five steps below. See the Workflow, inject a failure, watch Temporal retry, fix the bug, and the Workflow completes.
             </p>
 
             <ReimbursementCarousel />

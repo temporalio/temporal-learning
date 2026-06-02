@@ -509,7 +509,7 @@ export default function FoundationCompletePage() {
             <div className={styles.shareContent}>
               <h2 className={styles.sectionTitle}>Share the milestone</h2>
               <p className={styles.shareBody}>
-                Tell your team, add it to your LinkedIn profile, or grab the link.
+                Tell your team or add your certificate to your LinkedIn profile.
               </p>
               <div className={styles.shareButtons}>
                 <button

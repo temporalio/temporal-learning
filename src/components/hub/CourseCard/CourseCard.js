@@ -2,16 +2,16 @@ import React from "react";
 import Link from "@docusaurus/Link";
 import styles from "./styles.module.css";
 
-export default function CourseCard({ course, size = "md" }) {
+export default function CourseCard({ course, size = "md", ctaLabel: ctaLabelOverride }) {
   if (!course) return null;
   const { url, title, thumbnail, topics = [], kind, slug } = course;
   const accent = topics[0] ?? "workflows";
   const hasFreePreview = slug === "temporal-101";
-  const ctaLabel = hasFreePreview
+  const ctaLabel = ctaLabelOverride ?? (hasFreePreview
     ? "Start free preview"
     : kind === "tutorial"
       ? "Try the tutorial"
-      : "Take the course";
+      : "Take the course");
 
   return (
     <article className={styles.card} data-size={size}>

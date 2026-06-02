@@ -76,7 +76,7 @@ export const PATHS = [
     description:
       "Understand durable execution, write your first Workflow and Activity, and explore the Temporal Web UI and CLI.",
     level: "essential",
-    lessonCount: 15,
+    lessonCount: 2,
     thumbnail: "/img/banners/getstarted.png",
     courses: ["temporal-101", "temporal-102"],
   },
@@ -87,7 +87,7 @@ export const PATHS = [
     description:
       "Handle errors with confidence, interact with running Workflows, secure your payloads end-to-end, and safely evolve Workflows in production.",
     level: "practical",
-    lessonCount: 17,
+    lessonCount: 4,
     courses: ["errstrat", "interacting-with-workflows", "appdatasec", "versioning"],
   },
   {
@@ -98,7 +98,7 @@ export const PATHS = [
     description:
       "Roll out Worker versions safely and operate your application against Temporal Cloud.",
     level: "production",
-    lessonCount: 8,
+    lessonCount: 2,
     courses: ["worker-versioning", "intro-to-temporal-cloud"],
   },
 ];

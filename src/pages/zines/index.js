@@ -42,7 +42,7 @@ export default function ZinesPage() {
           </div>
 
           <p className={styles.intro}>
-            Comic-style explainers for visual learners. Short, fun, and informative.
+            Comic-style explainers for visual learners or someone without a technical background. Short, fun, and informative.
           </p>
 
           <section className={styles.section}>
