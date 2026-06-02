@@ -6,6 +6,7 @@ export default function HubHero({
   eyebrow,
   title,
   body,
+  freeBadge = false,
   showSearch = true,
   compact = false,
   illustration = "/img/hero/learn-hero.png",
@@ -18,6 +19,7 @@ export default function HubHero({
       <div className={styles.heroInner}>
         <div className={styles.copy}>
           {eyebrow && <div className={styles.eyebrow}>{eyebrow}</div>}
+          {freeBadge && <span className={styles.freeBadge}>100% Free</span>}
           <h1 className={styles.title}>{title}</h1>
           {body && <p className={styles.body}>{body}</p>}
           {showSearch && (

@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import ArchetypeCard from "@site/src/components/hub/ArchetypeCard/ArchetypeCard";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
+import GetHelp from "@site/src/components/hub/GetHelp/GetHelp";
 import SdkLogo from "@site/src/components/hub/SdkLogo/SdkLogo";
 import styles from "./examples.module.css";
 
@@ -192,7 +193,7 @@ export default function ExamplesPage() {
           <div className={styles.breadcrumbWrap}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Examples" },
               ]}
             />
@@ -284,6 +285,8 @@ export default function ExamplesPage() {
 
           <p className={styles.footnote}>More examples coming soon.</p>
         </div>
+
+        <GetHelp tight />
 
         <NotifyBanner />
       </div>

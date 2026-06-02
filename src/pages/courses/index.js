@@ -104,7 +104,7 @@ export default function CoursesPage() {
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / Courses"
+          eyebrow="Temporal University / Courses"
           title="Free, self-paced courses."
           body="Concept-focused, hands-on Temporal courses you can complete in an afternoon. Pick by skill area below, or follow one of the learning paths."
           showSearch={false}
@@ -123,7 +123,7 @@ export default function CoursesPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses" },
                 ]}
               />

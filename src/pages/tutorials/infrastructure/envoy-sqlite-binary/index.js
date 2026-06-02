@@ -308,7 +308,7 @@ export default function EnvoySqliteBinaryPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "Infrastructure", href: "/tutorials/infrastructure" },
                   { label: "Deploy with Envoy" },

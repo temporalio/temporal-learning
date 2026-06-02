@@ -37,7 +37,7 @@ export default function VersioningJavaPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Versioning Workflows", href: "/courses/versioning/" },
                   { label: "Java" },

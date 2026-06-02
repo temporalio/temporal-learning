@@ -37,7 +37,7 @@ export default function AppdatasecPythonPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Securing Application Data", href: "/courses/appdatasec/" },
                   { label: "Python" },

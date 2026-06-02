@@ -8,11 +8,13 @@ export default function PathHero({
   level,
   lessonCount,
   outcomes,
+  freeBadge = false,
 }) {
   return (
     <section className={styles.hero}>
       <div className={styles.inner}>
         {eyebrow && <div className={styles.eyebrow}>{eyebrow}</div>}
+        {freeBadge && <span className={styles.freeBadge}>100% Free</span>}
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
         {outcomes && outcomes.length > 0 && (

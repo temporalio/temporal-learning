@@ -171,7 +171,7 @@ export default function Chapter1Page() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: ".NET", href: "/getting_started/dotnet" },
                   { label: "First program", href: "/getting_started/dotnet/first_program_in_dotnet/" },

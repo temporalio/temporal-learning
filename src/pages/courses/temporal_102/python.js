@@ -37,7 +37,7 @@ export default function Temporal102PythonPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Temporal 102", href: "/courses/temporal_102/" },
                   { label: "Python" },

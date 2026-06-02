@@ -42,7 +42,7 @@ export default function PythonDevEnvironmentPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: "Python", href: "/getting_started/python" },
                   { label: "Dev environment" },

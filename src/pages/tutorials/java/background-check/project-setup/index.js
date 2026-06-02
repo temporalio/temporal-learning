@@ -601,7 +601,7 @@ export default function ProjectSetupChapter() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "Java", href: "/tutorials/java" },
                   {

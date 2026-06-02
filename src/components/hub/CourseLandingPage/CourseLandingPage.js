@@ -31,7 +31,7 @@ export default function CourseLandingPage({
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Courses", href: "/courses" },
                 { label: title },
               ]}

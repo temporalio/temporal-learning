@@ -12,7 +12,7 @@ export default function AdvancedPath() {
       ]}
       completionLink={{
         href: "/paths/advanced-complete",
-        label: "Already finished the Advanced path? Jump to the recap and quiz",
+        label: "Already finished the Advanced path? Jump to the recap and quiz.",
       }}
       bottomCta={{
         href: "https://temporal.io/get-cloud",

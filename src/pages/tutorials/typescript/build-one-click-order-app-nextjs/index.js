@@ -319,7 +319,7 @@ export default function OneClickOrderAppNextjsPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "TypeScript", href: "/tutorials/typescript" },
                   { label: "One-click order app with Next.js" },

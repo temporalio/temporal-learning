@@ -185,7 +185,7 @@ export default function Chapter2Page() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: "Ruby", href: "/getting_started/ruby" },
                   {

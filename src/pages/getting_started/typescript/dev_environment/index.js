@@ -40,7 +40,7 @@ export default function TypeScriptDevEnvironmentPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: "TypeScript", href: "/getting_started/typescript" },
                   { label: "Dev environment" },

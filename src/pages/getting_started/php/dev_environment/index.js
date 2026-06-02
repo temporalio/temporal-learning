@@ -52,7 +52,7 @@ export default function PhpDevEnvironmentPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: "PHP", href: "/getting_started/php" },
                   { label: "Dev environment" },

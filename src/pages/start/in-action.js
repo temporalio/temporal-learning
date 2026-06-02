@@ -23,7 +23,7 @@ export default function InActionPage() {
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / Start here / In action"
+          eyebrow="Temporal University / Start here / In action"
           title="See Temporal in Action."
           body="Walk through a Workflow that breaks on purpose and recovers automatically. Five steps with real code and the Temporal Web UI - pick your language at the top."
           showSearch={false}
@@ -33,7 +33,7 @@ export default function InActionPage() {
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Start here", href: "/start" },
                 { label: "In action" },
               ]}

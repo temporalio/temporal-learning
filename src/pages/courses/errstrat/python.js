@@ -37,7 +37,7 @@ export default function ErrstratPythonPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Crafting an Error Handling Strategy", href: "/courses/errstrat/" },
                   { label: "Python" },

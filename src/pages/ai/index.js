@@ -295,7 +295,7 @@ export default function AiPage() {
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / AI"
+          eyebrow="Temporal University / AI"
           title="Temporal + AI."
           body="Build Durable AI Agents that survive failures mid-conversation, or hand your AI coding assistant deep Temporal expertise."
           showSearch={false}
@@ -311,7 +311,7 @@ export default function AiPage() {
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "AI" },
               ]}
             />

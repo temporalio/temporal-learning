@@ -4,6 +4,7 @@ import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import PathCard from "@site/src/components/hub/PathCard/PathCard";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
+import GetHelp from "@site/src/components/hub/GetHelp/GetHelp";
 import { PATHS } from "@site/src/data/hub";
 import styles from "./paths.module.css";
 
@@ -12,9 +13,10 @@ export default function PathsLanding() {
     <Layout title="Learning paths" description="Find your Temporal learning path">
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / Paths"
+          eyebrow="Temporal University / Paths"
           title="Find your path."
           body="Three sequenced tracks - from your first Workflow through running Temporal in production. Pick one and follow it through, or jump straight to the level that matches where you are."
+          freeBadge
           showSearch={false}
         />
 
@@ -22,7 +24,7 @@ export default function PathsLanding() {
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Paths" },
               ]}
             />
@@ -42,6 +44,8 @@ export default function PathsLanding() {
             </div>
           </div>
         </section>
+
+        <GetHelp />
 
         <NotifyBanner />
       </div>

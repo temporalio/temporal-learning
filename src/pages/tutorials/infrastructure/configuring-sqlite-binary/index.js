@@ -171,7 +171,7 @@ export default function ConfiguringSqliteBinaryPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "Infrastructure", href: "/tutorials/infrastructure" },
                   { label: "Configure without a proxy" },

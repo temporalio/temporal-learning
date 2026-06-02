@@ -156,7 +156,7 @@ export default function Chapter1Page() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: "Python", href: "/getting_started/python" },
                   { label: "First program", href: "/getting_started/python/first_program_in_python/" },

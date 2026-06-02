@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
+import GetHelp from "@site/src/components/hub/GetHelp/GetHelp";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
 import Quiz from "@site/src/components/hub/Quiz/Quiz";
 import styles from "./foundation-complete.module.css";
@@ -165,7 +166,7 @@ export default function AdvancedCompletePage() {
           <div className={styles.breadcrumbWrap}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Paths", href: "/paths" },
                 {
                   label: "Advanced",
@@ -202,6 +203,8 @@ export default function AdvancedCompletePage() {
             <MagentaCta to="https://temporal.io/get-cloud">Get Temporal Cloud</MagentaCta>
           </div>
         </div>
+
+        <GetHelp />
 
         <NotifyBanner />
       </div>

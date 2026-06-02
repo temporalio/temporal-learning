@@ -471,7 +471,7 @@ export default function EmailDripCampaignPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "Go", href: "/tutorials/go" },
                   { label: "Build an email drip campaign" },

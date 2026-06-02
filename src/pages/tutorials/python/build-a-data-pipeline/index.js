@@ -270,7 +270,7 @@ export default function BuildADataPipelinePage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "Python", href: "/tutorials/python" },
                   { label: "Build a data pipeline" },

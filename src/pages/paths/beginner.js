@@ -13,7 +13,7 @@ export default function BeginnerPath() {
       ]}
       completionLink={{
         href: "/paths/beginner-complete",
-        label: "Already finished Temporal 101 + 102? Jump to the recap and quiz",
+        label: "Already finished Temporal 101 + 102? Jump to the recap and quiz.",
       }}
       bottomCta={{
         href: "/paths/intermediate",

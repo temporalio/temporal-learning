@@ -34,7 +34,7 @@ export default function StepPage({
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Start here", href: "/start" },
                 { label: stepData ? stepData.title : `Step 0${step}` },
               ]}

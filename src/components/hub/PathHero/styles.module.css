@@ -22,6 +22,19 @@
   color: var(--nd-fg-subtle);
 }
 
+.freeBadge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: var(--nd-color-lilac);
+  color: var(--nd-color-space-black, #141414);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
 .title {
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   line-height: 1.15;

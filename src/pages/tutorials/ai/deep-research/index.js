@@ -57,7 +57,7 @@ export default function DeepResearchLandingPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "AI", href: "/tutorials/ai" },
                   { label: "Deep Research" },

@@ -5,7 +5,7 @@ import Home from "@site/src/components/hub/Home/Home";
 export default function HomePage() {
   return (
     <Layout
-      title="Learn Temporal"
+      title="Temporal University"
       description="Build invincible applications with Temporal through hands-on tutorials and courses."
     >
       <Home />

@@ -2,6 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import NotifyBanner from "@site/src/components/hub/NotifyBanner/NotifyBanner";
 import PathBreadcrumb from "@site/src/components/hub/PathBreadcrumb/PathBreadcrumb";
+import GetHelp from "@site/src/components/hub/GetHelp/GetHelp";
 import styles from "./zines.module.css";
 
 const ZINES = [
@@ -35,7 +36,7 @@ export default function ZinesPage() {
           <div className={styles.breadcrumbWrap}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Zines" },
               ]}
             />
@@ -100,6 +101,8 @@ export default function ZinesPage() {
             <p className={styles.footnote}>More zines coming soon.</p>
           </section>
         </div>
+
+        <GetHelp tight />
 
         <NotifyBanner />
       </div>

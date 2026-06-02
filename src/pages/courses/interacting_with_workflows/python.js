@@ -38,7 +38,7 @@ export default function InteractingPythonPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Interacting with Workflows", href: "/courses/interacting_with_workflows/" },
                   { label: "Python" },

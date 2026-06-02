@@ -257,7 +257,7 @@ export default function TutorialsPage() {
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / Tutorials"
+          eyebrow="Temporal University / Tutorials"
           title="Project-based tutorials."
           body="Concept courses teach you the primitives. Tutorials teach you how the primitives compose into something real - an e-commerce checkout, an AI agent, a trip-booking saga."
           showSearch={false}
@@ -276,7 +276,7 @@ export default function TutorialsPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials" },
                 ]}
               />

@@ -40,7 +40,7 @@ export default function DotnetDevEnvironmentPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Get Started", href: "/getting_started" },
                   { label: ".NET", href: "/getting_started/dotnet" },
                   { label: "Dev environment" },

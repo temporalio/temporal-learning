@@ -6,6 +6,7 @@ import CourseCard from "../CourseCard/CourseCard";
 import PathBreadcrumb from "../PathBreadcrumb/PathBreadcrumb";
 import MagentaCta from "../MagentaCta/MagentaCta";
 import NotifyBanner from "../NotifyBanner/NotifyBanner";
+import GetHelp from "../GetHelp/GetHelp";
 import {
   getPathBySlug,
   getCoursesForPath,
@@ -46,19 +47,20 @@ export default function PathDetail({ slug, outcomes, completionLink, nextActions
     <Layout title={path.title} description={path.description}>
       <div className="nd-hub-page">
         <PathHero
-          eyebrow={`Learn Temporal / Paths / ${TIER_LABEL[path.tier] ?? path.tier}`}
+          eyebrow={`Temporal University / Paths / ${TIER_LABEL[path.tier] ?? path.tier}`}
           title={path.title}
           description={path.description}
           level={path.level}
           lessonCount={path.lessonCount}
           outcomes={outcomes}
+          freeBadge
         />
 
         <section className={styles.section}>
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Paths", href: "/paths" },
                 { label: path.title },
               ]}
@@ -123,6 +125,8 @@ export default function PathDetail({ slug, outcomes, completionLink, nextActions
             ) : null}
           </div>
         </section>
+
+        <GetHelp />
 
         <NotifyBanner />
       </div>

@@ -14,7 +14,7 @@ export default function IntermediatePath() {
       ]}
       completionLink={{
         href: "/paths/intermediate-complete",
-        label: "Already finished the Intermediate path? Jump to the recap and quiz",
+        label: "Already finished the Intermediate path? Jump to the recap and quiz.",
       }}
       bottomCta={{
         href: "/paths/advanced",

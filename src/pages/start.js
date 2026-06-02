@@ -1041,7 +1041,7 @@ export default function StartPage() {
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Learn Temporal / Start here"
+          eyebrow="Temporal University / Start here"
           title="New to Temporal? Start here."
           body="Temporal makes long-running, multi-step work reliable - even when servers crash, networks blink, or downstream services time out. In about an hour you can have your first Workflow running, then go deeper through the courses."
           showSearch={false}
@@ -1057,7 +1057,7 @@ export default function StartPage() {
           <div className={styles.inner}>
             <PathBreadcrumb
               items={[
-                { label: "Learn Temporal", href: "/" },
+                { label: "Temporal University", href: "/" },
                 { label: "Start here" },
               ]}
             />

@@ -56,7 +56,7 @@ export default function CodeWalkthroughPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Courses", href: "/courses" },
                   { label: "Temporal 101", href: "/courses/temporal_101" },
                   {

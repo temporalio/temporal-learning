@@ -45,7 +45,7 @@ export default function Home() {
   return (
     <div className="nd-hub-page">
       <HubHero
-        title="Learn Temporal"
+        title="Temporal University"
         body={
           <>
             Temporal is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with free, hands-on tutorials and courses.

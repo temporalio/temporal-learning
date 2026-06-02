@@ -150,7 +150,7 @@ export default function BuildTripBookingAppPage() {
             <div className={styles.breadcrumbWrap}>
               <PathBreadcrumb
                 items={[
-                  { label: "Learn Temporal", href: "/" },
+                  { label: "Temporal University", href: "/" },
                   { label: "Tutorials", href: "/tutorials" },
                   { label: "PHP", href: "/tutorials/php" },
                   { label: "Build a trip booking system" },
