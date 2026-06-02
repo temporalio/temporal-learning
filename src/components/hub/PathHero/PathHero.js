@@ -1,5 +1,4 @@
 import React from "react";
-import LevelBadge from "../LevelBadge/LevelBadge";
 import styles from "./styles.module.css";
 
 export default function PathHero({
@@ -16,9 +15,6 @@ export default function PathHero({
         {eyebrow && <div className={styles.eyebrow}>{eyebrow}</div>}
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
-        <div className={styles.metaRow}>
-          {level && <LevelBadge level={level} count={lessonCount} unit="tracks" showLabel={false} />}
-        </div>
         {outcomes && outcomes.length > 0 && (
           <div className={styles.outcomes}>
             <div className={styles.outcomesLabel}>You will be able to</div>
