@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
@@ -148,17 +147,17 @@ const QUIZ_QUESTIONS = [
   },
 ];
 
-export default function ProductionGradeDeveloperCompletePage() {
+export default function AdvancedCompletePage() {
   return (
     <Layout
-      title="Production-Grade path complete"
-      description="You've finished the Production-Grade developer path on learn.temporal.io."
+      title="Advanced path complete"
+      description="You've finished the Advanced path on learn.temporal.io."
     >
       <div className="nd-hub-page">
         <HubHero
-          eyebrow="Production-Grade complete"
-          title="You run Temporal in production now."
-          body="You've finished the Production-Grade developer path. You can operate against Temporal Cloud, lock down access with API Keys and certificate filters, design Multi-Region Namespaces for resilience, and shape the Search Attributes your team queries every day."
+          eyebrow="Advanced complete"
+          title="You can run Temporal in production."
+          body="You've finished the Advanced path. You can operate against Temporal Cloud, lock down access with API Keys and certificate filters, design Multi-Region Namespaces for resilience, and shape the Search Attributes your team queries every day."
           showSearch={false}
         />
 
@@ -169,8 +168,8 @@ export default function ProductionGradeDeveloperCompletePage() {
                 { label: "Learn Temporal", href: "/" },
                 { label: "Paths", href: "/paths" },
                 {
-                  label: "Production-Grade",
-                  href: "/paths/Production-Grade-developer",
+                  label: "Advanced",
+                  href: "/paths/advanced",
                 },
                 { label: "Complete" },
               ]}
@@ -197,37 +196,6 @@ export default function ProductionGradeDeveloperCompletePage() {
               one.
             </p>
             <Quiz questions={QUIZ_QUESTIONS} />
-          </section>
-
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>What's next</h2>
-            <div className={styles.nextGrid}>
-              <Link
-                to="https://temporal.io/get-cloud"
-                className={styles.nextCard}
-              >
-                <span className={styles.nextEyebrow}>Temporal Cloud</span>
-                <h3 className={styles.nextTitle}>Run on Temporal Cloud</h3>
-                <p className={styles.nextBody}>
-                  Skip the infrastructure work. Spin up a managed Namespace and
-                  start moving Workflows over in minutes.
-                </p>
-                <span className={styles.nextCta}>
-                  Get Temporal Cloud <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-              <Link to="/tutorials" className={styles.nextCard}>
-                <span className={styles.nextEyebrow}>Build a project</span>
-                <h3 className={styles.nextTitle}>Pick a tutorial</h3>
-                <p className={styles.nextBody}>
-                  Apply what you learned with a tutorial. Pick from background checks,
-                  order processing, email drip, AI, and more.
-                </p>
-                <span className={styles.nextCta}>
-                  Browse tutorials <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-            </div>
           </section>
 
           <div className={styles.bottomCta}>

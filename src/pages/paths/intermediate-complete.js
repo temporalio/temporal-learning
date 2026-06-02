@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
 import HubHero from "@site/src/components/hub/HubHero/HubHero";
 import MagentaCta from "@site/src/components/hub/MagentaCta/MagentaCta";
@@ -526,7 +525,7 @@ export default function IntermediateCompletePage() {
       <div className="nd-hub-page">
         <HubHero
           eyebrow="Intermediate complete"
-          title="You build resilient Temporal applications now."
+          title="You build resilient Temporal applications."
           body="You've finished the Intermediate path. You can design error-handling strategies, interact with running Workflows with Signals, Queries, and Updates, secure payloads end-to-end, and version your Workflow code safely - everything you need to ship Temporal applications that survive real production."
           showSearch={false}
         />
@@ -565,37 +564,9 @@ export default function IntermediateCompletePage() {
             <Quiz questions={QUIZ_QUESTIONS} />
           </section>
 
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>What's next</h2>
-            <div className={styles.nextGrid}>
-              <Link to="/paths/Production-Grade-developer" className={styles.nextCard}>
-                <span className={styles.nextEyebrow}>Path · Production</span>
-                <h3 className={styles.nextTitle}>Production-Grade Temporal</h3>
-                <p className={styles.nextBody}>
-                  Roll out Worker versions safely and operate your application against
-                  Temporal Cloud.
-                </p>
-                <span className={styles.nextCta}>
-                  Start the Production-Grade path <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-              <Link to="/tutorials" className={styles.nextCard}>
-                <span className={styles.nextEyebrow}>Build a project</span>
-                <h3 className={styles.nextTitle}>Pick a tutorial</h3>
-                <p className={styles.nextBody}>
-                  Apply what you learned with a tutorial. Pick from background checks,
-                  order processing, email drip, AI, and more.
-                </p>
-                <span className={styles.nextCta}>
-                  Browse tutorials <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-            </div>
-          </section>
-
           <div className={styles.bottomCta}>
-            <MagentaCta to="/paths/Production-Grade-developer">
-              Continue to Production-Grade
+            <MagentaCta to="/paths/advanced">
+              Continue to the Advanced Learning Path
             </MagentaCta>
           </div>
         </div>

@@ -14,7 +14,7 @@ import {
 import styles from "./styles.module.css";
 
 const TIER_LABEL = {
-  foundation: "Foundation",
+  foundation: "Beginner",
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
@@ -25,7 +25,7 @@ function nextPath(currentSlug) {
   return PATHS[idx + 1];
 }
 
-export default function PathDetail({ slug, outcomes, completionLink, nextActions }) {
+export default function PathDetail({ slug, outcomes, completionLink, nextActions, bottomCta }) {
   const path = getPathBySlug(slug);
   if (!path) {
     return (
@@ -83,7 +83,11 @@ export default function PathDetail({ slug, outcomes, completionLink, nextActions
               ))}
             </ol>
 
-            {nextActions ? (
+            {bottomCta ? (
+              <div className={styles.bottomCta}>
+                <MagentaCta to={bottomCta.href}>{bottomCta.label}</MagentaCta>
+              </div>
+            ) : nextActions ? (
               <div className={styles.nextSection}>
                 <h2 className={styles.sectionTitle}>{nextActions.label ?? "What's next?"}</h2>
                 <div className={styles.nextGrid}>

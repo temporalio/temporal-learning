@@ -18,11 +18,13 @@
 }
 
 .completionLink {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
   margin: 20px 0 32px;
-  padding: 12px 18px;
+  padding: 16px 22px;
   background: var(--nd-bg-elevated);
   border: 1px solid var(--nd-border);
   border-left: 3px solid var(--nd-color-lilac);
@@ -96,6 +98,12 @@
   margin-top: 48px;
   padding-top: 32px;
   border-top: 1px solid var(--nd-border);
+}
+
+.bottomCta {
+  margin-top: 56px;
+  display: flex;
+  justify-content: center;
 }
 
 .nextLabel {

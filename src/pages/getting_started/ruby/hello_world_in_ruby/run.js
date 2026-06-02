@@ -387,15 +387,15 @@ export default function Chapter3Page() {
                     Start Temporal 101 <span aria-hidden="true">→</span>
                   </span>
                 </Link>
-                <Link to="/paths/foundation" className={styles.nextCard}>
+                <Link to="/paths/beginner" className={styles.nextCard}>
                   <span className={styles.nextEyebrow}>Keep building</span>
-                  <h3 className={styles.nextTitle}>Explore the Foundation path</h3>
+                  <h3 className={styles.nextTitle}>Explore the Beginner path</h3>
                   <p className={styles.nextBody}>
-                    Continue along the Foundation learning path with more
+                    Continue along the Beginner learning path with more
                     tutorials and courses.
                   </p>
                   <span className={styles.nextCta}>
-                    Browse Foundation <span aria-hidden="true">→</span>
+                    Browse Beginner <span aria-hidden="true">→</span>
                   </span>
                 </Link>
               </div>

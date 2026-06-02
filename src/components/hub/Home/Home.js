@@ -48,7 +48,7 @@ export default function Home() {
         title="Learn Temporal"
         body={
           <>
-            <a href="https://temporal.io/">Temporal</a> is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with free, hands-on tutorials and courses.
+            Temporal is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with free, hands-on tutorials and courses.
           </>
         }
         showSearch={false}

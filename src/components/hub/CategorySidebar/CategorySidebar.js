@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { TOPICS, PERSONAS } from "@site/src/data/hub";
+import { TOPICS, PERSONAS, USE_CASES } from "@site/src/data/hub";
 import styles from "./styles.module.css";
 
 const SDK_LABELS = {
@@ -49,7 +49,7 @@ function FilterGroup({ title, options, selected, onToggle }) {
 }
 
 export default function CategorySidebar({ items, filters, onChange }) {
-  const { topics, sdks, personas } = filters;
+  const { topics, sdks, personas, useCases } = filters;
 
   const toggle = (group) => (value) => {
     const set = new Set(filters[group]);
@@ -58,9 +58,15 @@ export default function CategorySidebar({ items, filters, onChange }) {
     onChange({ ...filters, [group]: set });
   };
 
-  const totalSelected = topics.size + sdks.size + personas.size;
+  const totalSelected =
+    topics.size + sdks.size + personas.size + useCases.size;
   const clearAll = () =>
-    onChange({ topics: new Set(), sdks: new Set(), personas: new Set() });
+    onChange({
+      topics: new Set(),
+      sdks: new Set(),
+      personas: new Set(),
+      useCases: new Set(),
+    });
 
   const topicCounts = useMemo(
     () => countBy(items, (i) => i.topics ?? []),
@@ -74,7 +80,19 @@ export default function CategorySidebar({ items, filters, onChange }) {
     () => countBy(items, (i) => (i.persona ? [i.persona] : [])),
     [items]
   );
+  const useCaseCounts = useMemo(
+    () => countBy(items, (i) => i.useCases ?? []),
+    [items]
+  );
 
+  const useCaseOptions = Object.keys(USE_CASES)
+    .filter((u) => useCaseCounts.has(u))
+    .map((u) => ({
+      value: u,
+      label: USE_CASES[u].label,
+      count: useCaseCounts.get(u),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
   const topicOptions = Object.keys(TOPICS)
     .filter((t) => topicCounts.has(t))
     .map((t) => ({
@@ -106,6 +124,12 @@ export default function CategorySidebar({ items, filters, onChange }) {
         options={sdkOptions}
         selected={sdks}
         onToggle={toggle("sdks")}
+      />
+      <FilterGroup
+        title="Use Case"
+        options={useCaseOptions}
+        selected={useCases}
+        onToggle={toggle("useCases")}
       />
       <FilterGroup
         title="Persona"

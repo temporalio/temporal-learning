@@ -34,55 +34,63 @@ const AI = [
     summary: "Build a durable AI application backed by Temporal's reliable execution model.",
     sdkLanguages: ["python"],
     topics: ["ai"],
+    useCases: ["ai", "ai-agents", "human-in-the-loop"],
   },
   {
-    title: "MCP tools with Temporal",
+    title: "Building MCP Tools with Temporal",
     href: "/tutorials/ai/building-mcp-tools-with-temporal",
     summary: "Wrap Temporal Workflows as MCP tools so LLM agents can call them durably.",
     sdkLanguages: ["python"],
     topics: ["ai"],
+    useCases: ["ai", "human-in-the-loop"],
   },
   {
-    title: "Deep research with the OpenAI Agents SDK",
+    title: "Building Deep Research Agents with the OpenAI Agents SDK",
     href: "/tutorials/ai/deep-research",
     summary: "Build deep-research agents that run for hours and survive failure.",
     sdkLanguages: ["python"],
     topics: ["ai"],
+    useCases: ["ai", "ai-agents", "ai-deep-research", "human-in-the-loop"],
   },
   {
-    title: "Durable AI Agent",
+    title: "Building a Durable AI Agent",
     href: "/tutorials/ai/durable-ai-agent",
     summary: "Compose Temporal primitives into a long-running agent that picks up where it left off.",
     sdkLanguages: ["python"],
     topics: ["ai"],
+    useCases: ["ai", "ai-agents", "human-in-the-loop"],
   },
 ];
 
 const INFRA = [
   {
-    title: "Configure the Temporal CLI with SQLite",
+    title: "Configuring the Temporal CLI with SQLite",
     href: "/tutorials/infrastructure/configuring-sqlite-binary",
     summary: "Run the Temporal Service against a SQLite backend for development and lightweight production.",
     sdkLanguages: [],
+    useCases: ["infrastructure"],
   },
   {
-    title: "Run Temporal behind Envoy",
+    title: "Running Temporal Behind Envoy",
     href: "/tutorials/infrastructure/envoy-sqlite-binary",
     summary: "Deploy the Temporal Service behind an Envoy reverse proxy with SQLite storage.",
     sdkLanguages: [],
+    useCases: ["infrastructure"],
   },
   {
-    title: "Run Temporal behind nginx",
+    title: "Running Temporal Behind NGINX",
     href: "/tutorials/infrastructure/nginx-sqlite-binary",
     summary: "Deploy the Temporal Service behind an nginx reverse proxy with SQLite storage.",
     sdkLanguages: [],
+    useCases: ["infrastructure"],
   },
 ];
 
 const ARCHETYPES = [
   {
-    title: "Background check application",
+    title: "Building a Background Check Application",
     accent: "durability",
+    useCases: ["customer-onboarding", "human-in-the-loop"],
     description:
       "Build a long-running, human-in-the-loop application that survives restarts - a hands-on intro to durable execution.",
     impls: [
@@ -93,8 +101,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Order processing",
+    title: "Processing Orders",
     accent: "payments",
+    useCases: ["order-management", "payment-processing"],
     description:
       "Charge cards, manage inventory, handle refunds. Sagas that compensate when something goes wrong mid-checkout.",
     impls: [
@@ -103,8 +112,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Subscription billing",
+    title: "Building Subscription Billing",
     accent: "billing",
+    useCases: ["payment-processing"],
     topics: ["signals", "schedules-timers"],
     description:
       "Recurring charges, retries, dunning, and graceful cancellation - durable across restarts and deploys.",
@@ -114,8 +124,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Email drip campaigns",
+    title: "Building Email Drip Campaigns",
     accent: "email",
+    useCases: ["communications-marketing"],
     topics: ["queries", "schedules-timers"],
     description:
       "Multi-message sequences scheduled over hours, days, or weeks. Each step survives Worker restarts.",
@@ -126,8 +137,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Trip booking sagas",
+    title: "Building Trip Booking Sagas",
     accent: "saga",
+    useCases: ["order-management"],
     topics: ["sagas"],
     description:
       "Compose flights, hotels, and cars into one Workflow that rolls back cleanly when any step fails.",
@@ -137,18 +149,27 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Data pipelines & APIs",
+    title: "Building a Data Pipeline",
     accent: "data",
+    useCases: ["data-pipelines"],
     description:
-      "Move data through extract / transform / load steps. Wrap third-party APIs in durable Workflows with caching and retries.",
-    implsLabel: "Python tutorials",
+      "Move data through extract / transform / load steps in a durable Workflow that survives restarts.",
     impls: [
-      { sdk: "python", href: "/tutorials/python/build-a-data-pipeline", label: "Data pipeline", topics: ["schedules-timers"] },
-      { sdk: "python", href: "/tutorials/python/geocoding-app", label: "Geocoding API", topics: [] },
+      { sdk: "python", href: "/tutorials/python/build-a-data-pipeline", topics: ["schedules-timers"] },
     ],
   },
   {
-    title: "Generative media",
+    title: "Building a Geocoding API",
+    accent: "data",
+    useCases: ["data-pipelines"],
+    description:
+      "Wrap a third-party API in a durable Workflow with caching and retries.",
+    impls: [
+      { sdk: "python", href: "/tutorials/python/geocoding-app", topics: [] },
+    ],
+  },
+  {
+    title: "Generating Media",
     accent: "media",
     description:
       "Generate audiobooks, branching narratives, and other long-running media workflows that combine LLMs with reliable execution.",
@@ -158,7 +179,7 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Choose-your-own-adventure bot",
+    title: "Building a Choose-Your-Own-Adventure Bot",
     accent: "ai",
     topics: ["ai", "signals", "schedules-timers"],
     description:
@@ -168,8 +189,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Slack work queue app",
+    title: "Building a Slack Work Queue App",
     accent: "data",
+    useCases: ["communications-marketing"],
     topics: ["web-integration", "cloud"],
     description:
       "Build a Slack app that turns slash commands into durable Workflows, then deploy the whole thing to DigitalOcean with Temporal Cloud.",
@@ -178,8 +200,9 @@ const ARCHETYPES = [
     ],
   },
   {
-    title: "Cross-service Workflows with Nexus",
+    title: "Connecting Services with Nexus",
     accent: "nexus",
+    useCases: ["financial-services", "payment-processing", "human-in-the-loop"],
     topics: ["nexus"],
     description:
       "Use Nexus to call Workflows that live in different Temporal namespaces or services - clean boundaries between teams.",
@@ -201,14 +224,16 @@ const ALL_TUTORIALS = [
     impls: a.impls,
     implsLabel: a.implsLabel,
     topics: a.topics ?? [...new Set(a.impls.flatMap((i) => i.topics ?? []))],
+    useCases: a.useCases ?? [],
     sdkLanguages: [...new Set(a.impls.map((i) => i.sdk).filter(Boolean))],
   })),
 ];
 
 function matchesFilters(tutorial, filters) {
-  const { topics, sdks, personas } = filters;
+  const { topics, sdks, personas, useCases } = filters;
   if (topics.size > 0 && !(tutorial.topics ?? []).some((t) => topics.has(t))) return false;
   if (sdks.size > 0 && !(tutorial.sdkLanguages ?? []).some((s) => sdks.has(s))) return false;
+  if (useCases.size > 0 && !(tutorial.useCases ?? []).some((u) => useCases.has(u))) return false;
   if (personas.size > 0) return false;
   return true;
 }
@@ -218,9 +243,11 @@ export default function TutorialsPage() {
     topics: new Set(),
     sdks: new Set(),
     personas: new Set(),
+    useCases: new Set(),
   });
 
-  const hasFilters = filters.topics.size + filters.sdks.size > 0;
+  const hasFilters =
+    filters.topics.size + filters.sdks.size + filters.useCases.size > 0;
   const matched = ALL_TUTORIALS.filter((t) => matchesFilters(t, filters));
 
   return (
@@ -289,7 +316,7 @@ export default function TutorialsPage() {
             ) : (
               <>
                 <section className={styles.section}>
-                  <h2 className={styles.sectionTitle}>Build AI agents</h2>
+                  <h2 className={styles.sectionTitle}>Build AI Agents</h2>
                   <p className={styles.sectionSub}>
                   Long-running agents need durable state, tool-call retries, and the ability to resume mid-conversation when a Worker crashes. Follow these tutorials to learn how to add Temporal to your applications.
                   </p>

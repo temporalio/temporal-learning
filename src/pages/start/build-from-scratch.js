@@ -24,8 +24,8 @@ export default function BuildFromScratchPage() {
       pickerSubtitle="Available in five SDKs - pick yours and follow the build."
       sdkTargets={SDK_TARGETS}
       outcomes={OUTCOMES}
-      nextHref="/paths/foundation"
-      nextLabel="Done — take the Foundation path"
+      nextHref="/paths/beginner"
+      nextLabel="Done - take the Beginner path"
     />
   );
 }

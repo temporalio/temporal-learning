@@ -14,26 +14,11 @@ export default function IntermediatePath() {
       ]}
       completionLink={{
         href: "/paths/intermediate-complete",
-        label: "Already finished the Intermediate path?",
+        label: "Already finished the Intermediate path? Jump to the recap and quiz",
       }}
-      nextActions={{
-        label: "What's next?",
-        items: [
-          {
-            eyebrow: "Path · Production",
-            title: "Production-Grade Temporal",
-            body: "Roll out Worker versions safely and operate your application against Temporal Cloud.",
-            cta: "Start the Production-Grade path",
-            href: "/paths/Production-Grade-developer",
-          },
-          {
-            eyebrow: "Quiz · 41 questions",
-            title: "Check your understanding",
-            body: "Take a quick quiz across Error Handling, Interacting with Workflows, and Versioning. Miss one and you'll see the reasoning.",
-            cta: "Take the quiz",
-            href: "/paths/intermediate-complete",
-          },
-        ],
+      bottomCta={{
+        href: "/paths/advanced",
+        label: "Continue to the Advanced Learning Path",
       }}
     />
   );

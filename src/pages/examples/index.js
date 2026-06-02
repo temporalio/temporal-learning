@@ -89,7 +89,7 @@ const USE_CASES = [
 
 const DESIGN_PATTERNS = [
   {
-    title: "Entity Workflow demo",
+    title: "Entity Workflow Demo",
     accent: "durability",
     description: (
       <>
@@ -112,7 +112,7 @@ const DESIGN_PATTERNS = [
     ],
   },
   {
-    title: "Order Saga sample",
+    title: "Order Saga Sample",
     accent: "saga",
     description: (
       <>
@@ -138,7 +138,7 @@ const DESIGN_PATTERNS = [
 
 const DATA_ENCRYPTION = [
   {
-    title: "Codec Server with JWT validation",
+    title: "Codec Server with JWT Validation",
     accent: "data",
     description:
       "Uses JSON Web Tokens (JWT) to confirm the authenticity of JWTs issued by Temporal Cloud.",
@@ -150,7 +150,7 @@ const DATA_ENCRYPTION = [
     ],
   },
   {
-    title: "Codec CORS credentials",
+    title: "Codec CORS Credentials",
     accent: "data",
     description:
       "A Codec Server that supports Cross-Origin Resource Sharing (CORS), including requests with credentials.",

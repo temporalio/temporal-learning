@@ -53,12 +53,47 @@ export const TOPICS = {
   },
 };
 
+export const USE_CASES = {
+  "ai-agents": { label: "AI - Agents", slug: "ai-agents" },
+  "ai-deep-research": { label: "AI - Deep Research", slug: "ai-deep-research" },
+  ai: { label: "AI", slug: "ai" },
+  "order-management": {
+    label: "Order Management & Fulfillment",
+    slug: "order-management",
+  },
+  "data-pipelines": {
+    label: "Data Pipelines & ETL",
+    slug: "data-pipelines",
+  },
+  "communications-marketing": {
+    label: "Communications & Marketing Platform",
+    slug: "communications-marketing",
+  },
+  "payment-processing": {
+    label: "Payment Processing",
+    slug: "payment-processing",
+  },
+  "financial-services": {
+    label: "Financial Services & Lending",
+    slug: "financial-services",
+  },
+  infrastructure: { label: "Infrastructure", slug: "infrastructure" },
+  "customer-onboarding": {
+    label: "Customer Onboarding & Identity Verification",
+    slug: "customer-onboarding",
+  },
+  "human-in-the-loop": {
+    label: "Human-in-the-loop approval workflows",
+    slug: "human-in-the-loop",
+  },
+};
+
 export const PERSONAS = [
   {
     slug: "developer",
     title: "Software Developer",
     description: "Build, ship, and evolve production Temporal apps.",
-    pathSlug: "Production-Grade-developer",
+    pathSlug: "advanced",
   },
   {
     slug: "ai",
@@ -70,9 +105,9 @@ export const PERSONAS = [
 
 export const PATHS = [
   {
-    slug: "foundation",
+    slug: "beginner",
     tier: "foundation",
-    title: "Foundation",
+    title: "The Beginner Learning Path",
     description:
       "Understand durable execution, write your first Workflow and Activity, and explore the Temporal Web UI and CLI.",
     level: "essential",
@@ -83,7 +118,7 @@ export const PATHS = [
   {
     slug: "intermediate",
     tier: "intermediate",
-    title: "Building Resilient Applications",
+    title: "The Intermediate Learning Path",
     description:
       "Handle errors with confidence, interact with running Workflows, secure your payloads end-to-end, and safely evolve Workflows in production.",
     level: "practical",
@@ -91,10 +126,10 @@ export const PATHS = [
     courses: ["errstrat", "interacting-with-workflows", "appdatasec", "versioning"],
   },
   {
-    slug: "Production-Grade-developer",
+    slug: "advanced",
     tier: "advanced",
+    title: "The Advanced Learning Path",
     persona: "developer",
-    title: "Production-Grade Temporal",
     description:
       "Roll out Worker versions safely and operate your application against Temporal Cloud.",
     level: "production",

@@ -1209,8 +1209,8 @@ export default function StartPage() {
         </section>
 
             <div className={styles.bottomCta}>
-              <MagentaCta to="/paths/foundation">
-                Take the Foundation path
+              <MagentaCta to="/paths/beginner">
+                Take the Beginner path
               </MagentaCta>
             </div>
           </main>

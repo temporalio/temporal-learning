@@ -485,17 +485,17 @@ export default function HelloWorldInPhpPage() {
             <div className={styles.nextSection}>
               <h2 className={styles.nextHeading}>What's next?</h2>
               <div className={styles.nextGrid}>
-                <Link to="/paths/foundation" className={styles.nextCard}>
+                <Link to="/paths/beginner" className={styles.nextCard}>
                   <span className={styles.nextEyebrow}>Next step</span>
                   <h3 className={styles.nextTitle}>
-                    Explore the Foundation path
+                    Explore the Beginner path
                   </h3>
                   <p className={styles.nextBody}>
                     Go deeper into Temporal fundamentals - Workflows,
                     Activities, Workers, and more.
                   </p>
                   <span className={styles.nextCta}>
-                    Foundation path <span aria-hidden="true">→</span>
+                    Beginner path <span aria-hidden="true">→</span>
                   </span>
                 </Link>
               </div>

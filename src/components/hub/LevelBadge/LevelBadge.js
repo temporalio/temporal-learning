@@ -7,14 +7,25 @@ const LEVEL_LABELS = {
   production: "Production",
 };
 
-export default function LevelBadge({ level, count, unit = "lessons" }) {
+export default function LevelBadge({
+  level,
+  count,
+  unit = "lessons",
+  showLabel = true,
+}) {
   const label = LEVEL_LABELS[level] ?? level;
-  const countText = count != null ? ` · ${count} ${unit}` : "";
+  const countText = count != null ? `${count} ${unit}` : "";
 
   return (
     <span className={styles.badge} data-level={level}>
-      {label}
-      {countText}
+      {showLabel ? (
+        <>
+          {label}
+          {countText && ` · ${countText}`}
+        </>
+      ) : (
+        countText
+      )}
     </span>
   );
 }

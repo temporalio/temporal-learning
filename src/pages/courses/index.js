@@ -72,10 +72,11 @@ const FAQ = [
 const ALL_COURSES = COURSES.filter((c) => c.kind === "course");
 
 function matchesFilters(course, filters) {
-  const { topics, sdks, personas } = filters;
+  const { topics, sdks, personas, useCases } = filters;
   if (topics.size > 0 && !(course.topics ?? []).some((t) => topics.has(t))) return false;
   if (sdks.size > 0 && !(course.sdkLanguages ?? []).some((s) => sdks.has(s))) return false;
   if (personas.size > 0 && !(course.persona && personas.has(course.persona))) return false;
+  if (useCases.size > 0 && !(course.useCases ?? []).some((u) => useCases.has(u))) return false;
   return true;
 }
 
@@ -84,10 +85,15 @@ export default function CoursesPage() {
     topics: new Set(),
     sdks: new Set(),
     personas: new Set(),
+    useCases: new Set(),
   });
 
   const hasFilters =
-    filters.topics.size + filters.sdks.size + filters.personas.size > 0;
+    filters.topics.size +
+      filters.sdks.size +
+      filters.personas.size +
+      filters.useCases.size >
+    0;
 
   const matchedCourses = ALL_COURSES.filter((c) => matchesFilters(c, filters));
 
@@ -147,9 +153,9 @@ export default function CoursesPage() {
                       className={`${styles.pathStepDot} ${styles.pathStepDotFront}`}
                     />
                     <div className={styles.pathStepBody}>
-                      <span className={styles.pathStepLabel}>Foundation</span>
+                      <span className={styles.pathStepLabel}>Beginner</span>
                       <span className={styles.pathStepMeta}>
-                        Essential · 2 tracks
+                        2 tracks
                       </span>
                     </div>
                   </div>
@@ -158,9 +164,9 @@ export default function CoursesPage() {
                       className={`${styles.pathStepDot} ${styles.pathStepDotMid}`}
                     />
                     <div className={styles.pathStepBody}>
-                      <span className={styles.pathStepLabel}>Building</span>
+                      <span className={styles.pathStepLabel}>Intermediate</span>
                       <span className={styles.pathStepMeta}>
-                        Practical · 4 tracks
+                        4 tracks
                       </span>
                     </div>
                   </div>
@@ -169,9 +175,9 @@ export default function CoursesPage() {
                       className={`${styles.pathStepDot} ${styles.pathStepDotBack}`}
                     />
                     <div className={styles.pathStepBody}>
-                      <span className={styles.pathStepLabel}>Production</span>
+                      <span className={styles.pathStepLabel}>Advanced</span>
                       <span className={styles.pathStepMeta}>
-                        Advanced · 2 tracks
+                        2 tracks
                       </span>
                     </div>
                   </div>

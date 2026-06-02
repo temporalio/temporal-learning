@@ -10,7 +10,7 @@ export default function Intro() {
     <div className="row">
       <div className="col col--12">
         <p>
-          <a href="https://temporal.io/">Temporal</a> is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with hands-on tutorials and courses.
+          Temporal is a developer-first, open source platform that ensures the successful execution of services and applications. Build your next application with Temporal with hands-on tutorials and courses.
         </p>
       </div>
     </div>

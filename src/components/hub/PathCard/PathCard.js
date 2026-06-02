@@ -42,7 +42,12 @@ export default function PathCard({
 
         {level && (
           <div className={styles.badgeRow}>
-            <LevelBadge level={level} count={lessonCount} unit="tracks" />
+            <LevelBadge
+              level={level}
+              count={lessonCount}
+              unit="tracks"
+              showLabel={false}
+            />
           </div>
         )}
 
