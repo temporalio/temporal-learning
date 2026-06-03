@@ -1,0 +1,31 @@
+.infoBox {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: start;
+  background: var(--nd-bg-elevated);
+  border: 1px solid var(--nd-border);
+  border-left: 3px solid var(--nd-color-lilac);
+  border-radius: var(--nd-radius, 0);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.infoIcon {
+  color: var(--nd-color-lilac);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: var(--nd-fg);
+}
+
+.content p {
+  margin: 0;
+  color: var(--nd-fg-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

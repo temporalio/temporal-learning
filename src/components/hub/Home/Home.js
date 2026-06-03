@@ -60,12 +60,6 @@ export default function Home() {
             title="New to Temporal? Start here"
             titleHref="/start"
           >
-            <p className={styles.demoNudge}>
-              Want to see the power of Temporal in action first?{" "}
-              <Link to="/start/in-action" className={styles.demoNudgeLink}>
-                Try the walkthrough <span aria-hidden="true">→</span>
-              </Link>
-            </p>
             <div className={styles.stepsGrid}>
               {FIRST_STEPS.map((step) => (
                 <StepCard

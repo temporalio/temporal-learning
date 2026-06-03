@@ -19,25 +19,6 @@
   }
 }
 
-.demoNudge {
-  margin: -8px 0 16px;
-  font-size: 0.875rem;
-  color: var(--nd-fg-muted);
-}
-
-.demoNudgeLink {
-  color: var(--nd-color-lilac);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 140ms ease;
-}
-
-.demoNudgeLink:hover,
-.demoNudgeLink:focus-visible {
-  color: var(--nd-color-magenta);
-  text-decoration: none;
-}
-
 .ctaWrap {
   margin-top: 16px;
 }

@@ -8,6 +8,7 @@ const LOGO_FILES = {
   php: "php.jpg",
   python: "python.jpg",
   ruby: "ruby.jpg",
+  rust: "rust.png",
   typescript: "typescript.jpg",
 };
 

@@ -19,8 +19,8 @@ export default function BuildFromScratchPage() {
   return (
     <StepPage
       step={3}
-      title="Build one from scratch."
-      body="Write your first Workflow and Activity from the ground up."
+      title="Build an application from scratch."
+      body="Write and run your first Temporal application from scratch, step by step in your language. You'll build it piece by piece and see it execute end to end."
       pickerSubtitle="Available in five SDKs - pick yours and follow the build."
       sdkTargets={SDK_TARGETS}
       outcomes={OUTCOMES}

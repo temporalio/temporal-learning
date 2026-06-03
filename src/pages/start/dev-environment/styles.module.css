@@ -1,0 +1,11 @@
+.cloudLink {
+  color: var(--nd-color-lilac);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cloudLink:hover {
+  color: var(--nd-color-uv);
+  text-decoration: underline;
+}
