@@ -496,7 +496,7 @@ Initiating transfer of $62 from [Account 249946050] to [Account 591856595].
 ```
 
 
-To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
+To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/task-queue#task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
 
 
 In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL.
@@ -858,7 +858,7 @@ You can view more information about the process in the [Temporal Web UI](http://
 :::note
 Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options.
 
-Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout). By default the code will be retried forever, unless a Schedule-To-Close Timeout or Start-To-Close Timeout is specified.
+Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#heartbeat-timeout). By default the code will be retried forever, unless a Schedule-To-Close Timeout or Start-To-Close Timeout is specified.
 
 :::
 
