@@ -327,7 +327,7 @@ python run_workflow.py
 
 The Workflow is now running. Leave the program running.
 
-To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
+To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/task-queue#task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
 
 In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL.
 
@@ -477,7 +477,7 @@ After a Workflow completes, the full history persists for a set retention period
 
 :::note
 
-You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
+You can set up [the Archival feature](https://docs.temporal.io/temporal-service/archival) to send these entries to long-term storage for compliance or audit needs.
 
 :::
 
@@ -588,7 +588,7 @@ You can view more information about the process in the [Temporal Web UI](http://
 5. Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
 This lets you explore the location and reason for failed Activity Tasks.
 
-Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
+Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#heartbeat-timeout).
 
 In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, along with the Retry Policy shown earlier. Because that policy doesn't set a `maximum_attempts`, the server will keep retrying the Activity until it succeeds or hits one of the non-retryable error types:
 
