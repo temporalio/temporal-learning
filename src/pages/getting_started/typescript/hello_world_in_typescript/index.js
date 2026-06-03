@@ -184,7 +184,7 @@ export default function Chapter1Page() {
               <PathBreadcrumb
                 items={[
                   { label: "Temporal University", href: "/" },
-                  { label: "Get Started", href: "/getting_started" },
+                  { label: "Get Started", href: "/start" },
                   { label: "TypeScript", href: "/getting_started/typescript" },
                   {
                     label: "Build from scratch",

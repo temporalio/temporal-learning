@@ -315,8 +315,8 @@ export default function CodeWalkthroughPage() {
                   color: "var(--nd-fg-muted)",
                 }}
               >
-                Continue on TalentLMS to unlock the rest of Temporal 101 -
-                including quizzes, the certificate, and the deeper material on
+                Continue on TalentLMS to unlock the rest of Temporal 101 for free -
+                including quizzes, exercises, and the deeper material on
                 Workflow Execution, Event History, failure handling, and more.
               </p>
               <div

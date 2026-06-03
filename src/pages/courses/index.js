@@ -133,7 +133,6 @@ export default function CoursesPage() {
               <Link to="/paths" className={styles.pathsTeaser}>
                 <span className={styles.pathsTeaserStripe} aria-hidden="true" />
                 <div className={styles.pathsTeaserCopy}>
-                  <span className={styles.pathsTeaserEyebrow}>Paths</span>
                   <h2 className={styles.pathsTeaserTitle}>
                     Find your learning path
                   </h2>

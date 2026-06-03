@@ -146,7 +146,7 @@ export default function AboutThisExamplePage() {
             <TutorialStepper steps={LESSONS} currentStep={1} />
 
             <p className={styles.intro}>
-              During the previous exercise, you executed a Workflow that
+              During the <a href="https://github.com/temporalio/edu-101-ruby-code/blob/main/exercises/farewell-workflow/README.md" target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>previous exercise</a>, you executed a Workflow that
               included two Activities, both of which made a call to a
               microservice that provided a customized message in Spanish. That
               exercise demonstrates many of the key concepts you've learned

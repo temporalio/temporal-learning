@@ -341,8 +341,8 @@ export default function CodeWalkthroughPage() {
                 You've finished the free preview
               </h2>
               <p style={{ marginBottom: "16px", color: "var(--nd-fg-muted)" }}>
-                Continue on TalentLMS to unlock the rest of Temporal 101 -
-                including quizzes, the certificate, and the deeper material on
+                Continue on TalentLMS to unlock the rest of Temporal 101 for free -
+                including quizzes, exercises, and the deeper material on
                 Workflow Execution, Event History, failure handling, and more.
               </p>
               <div style={{ display: "flex", justifyContent: "center" }}>

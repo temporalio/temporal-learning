@@ -175,7 +175,7 @@ export default function AboutThisExamplePage() {
             <TutorialStepper steps={LESSONS} currentStep={1} />
 
             <p className={styles.intro}>
-              In a previous exercise, you executed a Workflow with two
+              In a <a href="https://github.com/temporalio/edu-101-java-code/blob/main/exercises/farewell-workflow/README.md" target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>previous exercise</a>, you executed a Workflow with two
               Activities that each called a microservice to provide a
               customized message in Spanish. That exercise demonstrated many of
               the key concepts in this course. Now that you have first-hand

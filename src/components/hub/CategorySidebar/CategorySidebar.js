@@ -114,10 +114,10 @@ export default function CategorySidebar({ items, filters, onChange }) {
   return (
     <aside className={styles.sidebar}>
       <FilterGroup
-        title="Categories"
-        options={topicOptions}
-        selected={topics}
-        onToggle={toggle("topics")}
+        title="Use Case"
+        options={useCaseOptions}
+        selected={useCases}
+        onToggle={toggle("useCases")}
       />
       <FilterGroup
         title="SDK"
@@ -126,10 +126,10 @@ export default function CategorySidebar({ items, filters, onChange }) {
         onToggle={toggle("sdks")}
       />
       <FilterGroup
-        title="Use Case"
-        options={useCaseOptions}
-        selected={useCases}
-        onToggle={toggle("useCases")}
+        title="Categories"
+        options={topicOptions}
+        selected={topics}
+        onToggle={toggle("topics")}
       />
       <FilterGroup
         title="Persona"

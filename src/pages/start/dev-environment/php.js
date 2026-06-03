@@ -3,5 +3,11 @@ import SetupContentPage from "@site/src/components/hub/setup/SetupContentPage";
 import PhpSetup from "../_setup/php.mdx";
 
 export default function PhpSetupPage() {
-  return <SetupContentPage label="PHP" Content={PhpSetup} />;
+  return (
+    <SetupContentPage
+      label="PHP"
+      Content={PhpSetup}
+      nextHref="/getting_started/php/hello_world_in_php/"
+    />
+  );
 }

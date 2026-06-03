@@ -366,10 +366,9 @@ export default function CodeWalkthroughPage() {
                   color: "var(--nd-fg-muted)",
                 }}
               >
-                Continue on TalentLMS to unlock the rest of Temporal 101 -
-                including quizzes, the certificate, and the deeper material
-                on Workflow Execution, Event History, failure handling, and
-                more.
+                Continue on TalentLMS to unlock the rest of Temporal 101 for free -
+                including quizzes, exercises, and the deeper material on
+                Workflow Execution, Event History, failure handling, and more.
               </p>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <MagentaCta href="https://temporal.talentlms.com/catalog/info/id:135">

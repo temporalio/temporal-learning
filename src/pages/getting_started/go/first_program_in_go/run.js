@@ -147,7 +147,7 @@ export default function Chapter2Page() {
               <PathBreadcrumb
                 items={[
                   { label: "Temporal University", href: "/" },
-                  { label: "Get Started", href: "/getting_started" },
+                  { label: "Get Started", href: "/start" },
                   { label: "Go", href: "/getting_started/go" },
                   {
                     label: "First program",

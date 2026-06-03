@@ -88,7 +88,7 @@ export default function Chapter3Page() {
               <PathBreadcrumb
                 items={[
                   { label: "Temporal University", href: "/" },
-                  { label: "Get Started", href: "/getting_started" },
+                  { label: "Get Started", href: "/start" },
                   { label: "Python", href: "/getting_started/python" },
                   {
                     label: "Build from scratch",
