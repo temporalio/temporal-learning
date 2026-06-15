@@ -13,6 +13,7 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 import {useEffect} from 'react';
+import Link from '@docusaurus/Link';
 
 export const IframeAutoResize = () => {
   useEffect(() => {
@@ -42,6 +43,14 @@ export const IframeAutoResize = () => {
 In this walkthrough, you'll take a monolithic Temporal application — where Payments and Compliance share a single namespace — and split it into two independently deployable services connected through [Temporal Nexus](https://docs.temporal.io/nexus).
 
 You'll define a shared service contract, implement a synchronous Nexus handler, and rewire the caller — all while keeping the exact same business logic and workflow behavior. By the end, you'll understand how Nexus lets teams decouple without sacrificing durability.
+
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+</div>
 
 ## What you'll learn
 
@@ -569,9 +578,6 @@ Compliance Worker started on: compliance-risk
 
 > **Keep the compliance Worker running** — you'll need it for Checkpoint 2.
 
-:::tip
-** Are you enjoying this tutorial?** [Sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!
-:::
 ---
 
 ## Checkpoint 1.5: Create the Nexus Endpoint
@@ -1010,5 +1016,3 @@ The fundamental pattern: **same method call, different architecture**. The workf
 ## What's Next?
 
 From here you can explore more advanced patterns - multi-step compliance pipelines, async human escalation chains, or cross-namespace Nexus operations. See the [Nexus documentation](https://docs.temporal.io/nexus) to learn more.
-
-Don't forget to [sign up here](https://pages.temporal.io/get-updates-education) to get notified when we drop new educational content!

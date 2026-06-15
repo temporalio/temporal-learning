@@ -13,6 +13,8 @@ last_update:
 
 ![Temporal Python SDK](/img/sdk_banners/banner_python.png)
 
+import Link from '@docusaurus/Link';
+
 ### Introduction
 
 When it comes to building business process applications, coordinating
@@ -25,6 +27,14 @@ In this tutorial, you'll build an application
 that does standard business tasks, such as getting input from a user and querying an API.
 Specifically, the application will ask the user for an API key and an address, then
 it will geocode the address using Geoapify.
+
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+</div>
 
 ## Prerequisites
 

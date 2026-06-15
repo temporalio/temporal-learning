@@ -11,6 +11,8 @@ description: Build a durable AI agent from scratch using the Temporal Python SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import Link from '@docusaurus/Link';
+
 
 ## Introduction
 
@@ -21,6 +23,14 @@ Network failures, long-running workflows, observability challenges, and more mak
 
 Temporal orchestrates long-running workflows, automatically handles failure cases from network outages to server crashes, provides insights into your running applications, and more.
 These features provide the resiliency and durability necessary to build reliable agents that users can rely on.
+
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+</div>
 
 In this tutorial you'll build an AI agent using Temporal that searches for events in a given city, helps you book a plane ticket, and creates an invoice for the trip. 
 The user will interact with this application through a chatbot interface, communicating with the agent using natural language.

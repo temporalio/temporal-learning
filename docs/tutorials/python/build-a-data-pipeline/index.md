@@ -13,12 +13,22 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
+import Link from '@docusaurus/Link';
+
 ### Introduction
 
 When it comes to building data pipelines, choosing the right workflow model is crucial for achieving reliability, scalability, and maintainability.
 Temporal makes writing data pipelines less complex  with Workflows and Activities.
 
 With Temporal, you can retrieve data from a source, process the information with steps, and output the flow of information to a destination, all using code. This means you can implement, test, and execute all your developer best practices as required. Furthermore, Temporal offers built-in resilience and fault tolerance features that can handle unexpected failures and issues seamlessly.
+
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+</div>
 
 In this tutorial you'll build a data pipeline with Temporal, where you'll leverage its features to build robust, scalable, and maintainable pipelines, by retrieving the latest [Temporal Community](https://community.temporal.io) posts, processing them based on their post identifier, and then return a list of the top 10 most recently viewed posts.
 

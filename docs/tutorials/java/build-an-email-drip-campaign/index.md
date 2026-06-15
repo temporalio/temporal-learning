@@ -12,6 +12,8 @@ image: /img/temporal-logo-twitter-card.png
 
 <img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
+import Link from '@docusaurus/Link';
+
 ### Introduction
 
 In this tutorial, you'll build an email drip campaign and a subscription web application in Java.
@@ -24,6 +26,14 @@ You'll create an endpoint for users to give their email address, and then create
 The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution.
 You can view the user's entire process through Temporal's Web UI.
 For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
+
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+</div>
 
 By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 
