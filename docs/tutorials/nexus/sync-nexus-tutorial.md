@@ -12,8 +12,9 @@ description: Learn how to decouple Temporal services with Nexus and the Java SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 import {useEffect} from 'react';
-import Link from '@docusaurus/Link';
 
 export const IframeAutoResize = () => {
   useEffect(() => {
@@ -44,13 +45,7 @@ In this walkthrough, you'll take a monolithic Temporal application — where Pay
 
 You'll define a shared service contract, implement a synchronous Nexus handler, and rewire the caller — all while keeping the exact same business logic and workflow behavior. By the end, you'll understand how Nexus lets teams decouple without sacrificing durability.
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 ## What you'll learn
 

@@ -13,8 +13,7 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
-import { OutdatedNotice } from '@site/src/components'
-import Link from '@docusaurus/Link';
+import {OutdatedNotice, TutorialCta} from '@site/src/components'
 
 <OutdatedNotice />
 
@@ -24,13 +23,7 @@ In this tutorial, we'll integrate all the knowledge gained from Core and Logging
 
 This project will integrate and give context to your understanding of [Temporal SDK APIs](https://docs.temporal.io/dev-guide/typescript/foundations//#develop-workflows): logging with Sinks, Activity dependency injection, Timer and Promise.race design patterns, Signals (and HTTP Servers for them), Polling patterns, and `continueAsNew` for indefinitely long running Workflows.
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 :::tip Skip ahead
 

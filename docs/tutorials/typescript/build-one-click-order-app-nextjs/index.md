@@ -12,9 +12,10 @@ last_update:
   date: 2024-06-28
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 <img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
-import Link from '@docusaurus/Link';
 
 ### Introduction
 
@@ -24,13 +25,7 @@ You also need to make sure that any calls to external services, like databases, 
 [Next.js](https://nextjs.org/) is a popular choice for building full-stack web applications using Node.js and React. You can deliver a great experience across the stack by integrating a Temporal Workflow with Next.js.
 Temporal provides fault tolerance and ensures that long-running processes and background tasks complete successfully, even in the event of failures. This is ideal for critical business operations and transactions.
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 In this tutorial you'll build a back-end API using Next API Routes that starts a Temporal Workflow.
 Then you'll build a quick user interface with React and Tailwind to call that API.

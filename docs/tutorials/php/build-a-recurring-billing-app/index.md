@@ -13,8 +13,7 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
-import { OutdatedNotice } from '@site/src/components'
-import Link from '@docusaurus/Link';
+import {OutdatedNotice, TutorialCta} from '@site/src/components'
 
 <OutdatedNotice />
 
@@ -24,13 +23,7 @@ In this tutorial you'll build a realistic monthly subscription payments workflow
 
 Our task is to write a Workflow for a limited time Subscription (eg a 12-month Phone plan) that satisfies the following conditions:
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 1. When the user signs up, **send a welcome email** and start a free trial for `TrialPeriod`.
 2. When the `TrialPeriod` expires: charge a monthly fee.

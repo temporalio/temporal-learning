@@ -10,9 +10,10 @@ description: Implement the Saga Pattern in Python using Temporal.
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 <img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
 
-import Link from '@docusaurus/Link';
 
 When dealing with distributed systems, a failure in one service can lead to a domino effect, compromising the entire transaction.
 The Saga pattern offers a solution to this problem by allowing distributed transactions to be broken into smaller, manageable transactions, each with its own compensation logic in case of failure.
@@ -20,13 +21,7 @@ The Saga pattern offers a solution to this problem by allowing distributed trans
 The Saga pattern is a design pattern that provides a mechanism to manage long-running transactions and ensure data consistency across multiple services.
 Instead of a single monolithic transaction, the Saga pattern breaks the transaction into smaller, manageable steps (Activities), each step is executed sequentially, and if a step fails, previous steps are undone with a compensating step.
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 Temporal orchestrates long-running transactions, automatically compensating for failures.
 The compensation, combined with the guarantee that the method will complete execution, makes this method a reliable, long-running transaction.

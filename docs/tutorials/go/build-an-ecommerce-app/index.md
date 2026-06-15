@@ -14,20 +14,13 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
 
-import Link from '@docusaurus/Link';
 
 ## Introduction
 
 In this tutorial, you'll implement a web shopping cart using Temporal Workflows and Signals. 
 The example patterns here use the [Mailgun](https://www.mailgun.com/) and [Stripe](https://stripe.com/) APIs, so you will need a developer account on both platforms to follow along.
 
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>
+<TutorialCta />
 
 ### Prerequisites
 
@@ -501,7 +494,7 @@ Temporal's testing environment also provides utilities for mocking Activities an
 
 To learn how to implement tests for this application, you can refer to [workflow_test.go](https://github.com/temporalio/temporal-ecommerce/blob/main/workflow_test.go) and [Notes on Testing](https://github.com/temporalio/temporal-ecommerce?tab=readme-ov-file#notes-on-testing) in the Github repo for this tutorial, or watch this walkthrough video:
 
-import { ResponsivePlayer } from '@site/src/components'
+import {ResponsivePlayer, TutorialCta} from '@site/src/components'
 
 <ResponsivePlayer url='https://www.youtube.com/watch?v=-GKxFDQSlEU' />
 
