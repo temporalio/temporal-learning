@@ -376,6 +376,22 @@ feedback-button::part(button) {
   50%      { transform: translateY(-22%) rotate(11deg) scale(1.18); }
 }
 
+/* Excited variant: Ziggy can't contain himself and shakes intensely.
+   More specific than the idle/hover rules so it wins in both states. */
+.ziggy-cta--excited .ziggy-cta__mascot,
+.ziggy-cta--excited:hover .ziggy-cta__mascot {
+  animation: ziggy-shake 0.22s linear infinite;
+}
+
+@keyframes ziggy-shake {
+  0%   { transform: translate(0, 0) rotate(-13deg) scale(1.12); }
+  20%  { transform: translate(-3px, 2px) rotate(13deg) scale(1.16); }
+  40%  { transform: translate(3px, -3px) rotate(-15deg) scale(1.12); }
+  60%  { transform: translate(-3px, -2px) rotate(15deg) scale(1.17); }
+  80%  { transform: translate(3px, 2px) rotate(-12deg) scale(1.13); }
+  100% { transform: translate(0, 0) rotate(-13deg) scale(1.12); }
+}
+
 /* Respect users who prefer no motion */
 @media (prefers-reduced-motion: reduce) {
   .ziggy-cta__mascot { animation: none !important; }

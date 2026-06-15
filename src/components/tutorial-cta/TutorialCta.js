@@ -10,13 +10,16 @@ export default function TutorialCta({
   heading = "Never miss a new tutorial",
   children = "Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.",
   cta = "Join the Temporal education list →",
+  // `excited` swaps the gentle idle float for an intense, can't-contain-it shake.
+  excited = false,
 }) {
   const ziggy = useBaseUrl("/img/ziggy.png");
+  const ctaClass = "button button--primary button--lg ziggy-cta" + (excited ? " ziggy-cta--excited" : "");
   return (
     <div className="card padding--lg margin-vert--lg" style={{textAlign: "center"}}>
       <h2 className="margin-bottom--sm">{heading}</h2>
       <p className="margin-bottom--md">{children}</p>
-      <Link className="button button--primary button--lg ziggy-cta" to={to}>
+      <Link className={ctaClass} to={to}>
         <img src={ziggy} alt="" aria-hidden="true" className="ziggy-cta__mascot" />
         {cta}
       </Link>

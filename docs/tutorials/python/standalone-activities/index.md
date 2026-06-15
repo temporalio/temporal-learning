@@ -271,4 +271,4 @@ Ready to build it for real? Launch the hands-on lab using the sign-up form at th
 
 📝 **Feedback on this tutorial?** [Share your thoughts in our quick form](https://forms.gle/hbTUjkHB6dkucEg27). It helps us improve.
 
-<TutorialCta />
+<TutorialCta excited />
