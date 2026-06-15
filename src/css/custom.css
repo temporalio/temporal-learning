@@ -347,8 +347,9 @@ feedback-button::part(button) {
 
 /* Tutorial sign-up CTA: button with an animated Ziggy mascot */
 .ziggy-cta {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
 }
 
