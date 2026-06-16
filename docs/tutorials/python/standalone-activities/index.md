@@ -113,9 +113,11 @@ You may hit environment setup issues (Python version, dependencies, port conflic
 Most job queues make you operate the hard parts yourself: a broker, a result store, a scheduler, retry logic re-implemented per service, and a Tier-0 system nobody wants to own. A Standalone Activity is just a regular `@activity.defn` you submit with one call:
 
 ```py
-response = httpx.post(req.url, json=req.payload, timeout=5.0)
-response.raise_for_status()  # a 4xx/5xx raises, so Temporal retries
-return response.status_code
+@activity.defn  # a regular Activity; nothing here marks it "standalone"
+def deliver_webhook(req: WebhookDelivery) -> int:
+    response = httpx.post(req.url, json=req.payload, timeout=5.0)
+    response.raise_for_status()  # a 4xx/5xx raises, so Temporal retries
+    return response.status_code
 ```
 
 ```py
@@ -200,7 +202,13 @@ By default the Worker executes Activities as fast as it can process them, which 
 Retrying harder can't solve a whole-fleet throughput problem; you have to pace the *dispatch*. One keyword on the Worker does it:
 
 ```py
-max_activities_per_second=2.0,
+worker = Worker(
+    client,
+    task_queue=TASK_QUEUE,
+    activities=[deliver_webhook],
+    activity_executor=executor,
+    max_activities_per_second=2.0,  # cap how fast this Worker starts Activities
+)
 ```
 
 Excess work waits in the Task Queue on the server, dispatched at the configured rate. Nothing is dropped. The companion control is `Priority(priority_key, fairness_key, fairness_weight)`: a lower `priority_key` jumps urgent work ahead of a backlog, and the fairness fields stop one busy tenant from starving the rest. See [Task Queue Priority and Fairness](https://docs.temporal.io/develop/task-queue-priority-fairness).
