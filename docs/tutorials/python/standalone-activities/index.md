@@ -52,7 +52,7 @@ By the end you'll be able to:
 
 ## Run the lab in your browser (recommended)
 
-This tutorial is built as a hands-on Instruqt lab. Nothing to install: the Temporal Service, the Web UI, and a webhook receiver all boot with the sandbox, so you start writing code immediately. The modules below are the concept walkthrough; do the actual building in the lab.
+This tutorial is built as a hands-on Instruqt lab. Nothing to install: the Temporal Service, the Web UI, and a webhook receiver all boot with the sandbox, so you start writing code immediately. The modules below are the concept walkthrough; we recommend doing the actual building in the lab, but you can also [run the code locally](#run-the-code-locally-optional) if you prefer.
 
 Sign up to launch the lab:
 
