@@ -14,7 +14,7 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_php.png" alt="Temporal PHP SDK" />
 
-import { OutdatedNotice } from '@site/src/components'
+import {OutdatedNotice, TutorialCta} from '@site/src/components'
 
 <OutdatedNotice />
 
@@ -27,6 +27,8 @@ Imagine that we provide a service where people can book a trip. Booking a regula
 - Booking a flight.
 
 The customer either wants everything to be booked or nothing at all.  There is no sense in booking a hotel without booking a plane.  Also, imagine that each booking step in this transaction is represented via a dedicated service or microservice.
+
+<TutorialCta />
 
 All of these steps together make up a  **distributed transaction** that crosses multiple services and databases.  To ensure a successful booking, all three microservices must complete the individual local transactions.  If any of the steps fail, all the completed preceding transactions should be reversed accordingly.  We cannot simply "delete" the prior transactions or "go back in time" - Particularly where money and bookings are concerned, it is important to have an immutable record of attempts and failures. Therefore, we should accumulate a list of compensating actions to execute when failure occurs.
 

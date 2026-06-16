@@ -13,7 +13,7 @@ last_update:
 
 <img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
 
-import { OutdatedNotice } from '@site/src/components'
+import {OutdatedNotice, TutorialCta} from '@site/src/components'
 
 <OutdatedNotice />
 
@@ -22,6 +22,8 @@ import { OutdatedNotice } from '@site/src/components'
 In this tutorial, we'll integrate all the knowledge gained from Core and Logging APIs in an end-to-end, complete demo application - which happens to be a Choose Your Own Adventure game that you can play on Discord or Slack!
 
 This project will integrate and give context to your understanding of [Temporal SDK APIs](https://docs.temporal.io/dev-guide/typescript/foundations//#develop-workflows): logging with Sinks, Activity dependency injection, Timer and Promise.race design patterns, Signals (and HTTP Servers for them), Polling patterns, and `continueAsNew` for indefinitely long running Workflows.
+
+<TutorialCta />
 
 :::tip Skip ahead
 

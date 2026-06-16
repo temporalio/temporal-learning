@@ -11,7 +11,10 @@ last_update:
   date: 2025-01-28
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 ![Temporal Python SDK](/img/sdk_banners/banner_python.png)
+
 
 ### Introduction
 
@@ -25,6 +28,8 @@ In this tutorial, you'll build an application
 that does standard business tasks, such as getting input from a user and querying an API.
 Specifically, the application will ask the user for an API key and an address, then
 it will geocode the address using Geoapify.
+
+<TutorialCta />
 
 ## Prerequisites
 

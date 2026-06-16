@@ -12,13 +12,18 @@ description: Implement an email subscription application with Temporal's Workflo
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 <img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
+
 
 ### Introduction
 
 In this tutorial, you'll build an email subscription web application using Temporal and Python. You'll create a web server using the [Flask](https://flask.palletsprojects.com/) framework to handle requests and use Temporal Workflows, Activities, and Queries to build the core of the application. Your web server will handle requests from the end user and interact with a Temporal Workflow to manage the email subscription process. Since you're building the business logic with Temporal's Workflows and Activities, you'll be able to use Temporal to manage each subscription rather than relying on a separate database or task queue. This reduces the complexity of the code you have to write and support.
 
 You'll create an endpoint for users to give their email address, and then create a new Workflow execution using that email address which will simulate sending an email message at certain intervals. The user can check on the status of their subscription, which you'll handle using a Query, and they can end the subscription at any time by unsubscribing, which you'll handle by cancelling the Workflow Execution. You can view the user's entire process through Temporal's Web UI. For this tutorial, you'll simulate sending emails, but you can adapt this example to call a live email service in the future.
+
+<TutorialCta />
 
 By the end of this tutorial, you'll have a clear understand how to use Temporal to create and manage long-running Workflows within a web application.
 

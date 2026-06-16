@@ -10,13 +10,18 @@ description: Implement a subscription application using Temporal's Workflows, Ac
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 <img className="banner" src="/img/sdk_banners/banner_typescript.png" alt="Temporal TypeScript SDK" />
+
 
 ## Introduction
 
 Managing subscription-based services requires precision and fault tolerance at every step. You need to reliably handle processes like user sign-ups, trial periods, billing cycles, and cancellations. This often involves making durable calls to external services such as databases, email servers, and payment gateways. These interactions need to be fault-tolerant to prevent data loss, ensure seamless user experiences, and support the integrity of your subscription management system, regardless of any failures or network issues.
 
 In this tutorial, you'll build the backend processes of a phone subscription management application using TypeScript. You'll handle the entire subscription lifecycle, from welcoming new users to managing billing and cancellations through command-line programs. You will not be building a web app or API; instead, your focus will be on interacting with Temporal through command-line scripts that you will develop. While using command-line scripts for this tutorial simplifies the demonstration, note that in a real-world scenario, you would likely build a web interface or API to manage these interactions.
+
+<TutorialCta />
 
 To achieve this, you will leverage Temporal, an open source platform that ensures the successful completion of long-running processes despite failures or network issues. Temporal provides fault tolerance by automatically retrying failed tasks, and ensures durability by persisting Workflow states, allowing them to resume from the last known state after a failure like a power outage. It offers scalability to handle high volumes of Workflows concurrently, making it ideal for cases like the subscription service that may have thousands of customers.
 

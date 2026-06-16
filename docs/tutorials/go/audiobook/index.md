@@ -10,7 +10,10 @@ sidebar_label: Create audiobooks from text with OpenAI and Go
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
 <img className="banner" src="/img/sdk_banners/banner_go.png" alt="Temporal Go SDK" />
+
 
 ## Introduction
 
@@ -27,6 +30,8 @@ Now, companies like [OpenAI](https://openai.com/api/) have revolutionized speech
 They created voices that sound like humans and not androids and released affordable APIs.
 Using these large language models (LLMs), you can enjoy warm, nuanced narration.
 So, wouldn't it be great to use this kind of tech to transform any text into an audiobook?
+
+<TutorialCta />
 
 In this tutorial, you'll use LLM voices to transform any text into audiobooks.
 You'll build a robust text-to-speech system with OpenAI APIs and Temporal Technology's error mitigation.

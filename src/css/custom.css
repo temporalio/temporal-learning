@@ -345,6 +345,58 @@ feedback-button::part(button) {
   min-width: 50px;
 }
 
+/* Tutorial sign-up CTA: button with an animated Ziggy mascot */
+.ziggy-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.ziggy-cta__mascot {
+  height: 1.9em;
+  width: auto;
+  transform-origin: bottom center;
+  /* Gentle idle float so Ziggy looks alive before you hover */
+  animation: ziggy-float 2.8s ease-in-out infinite;
+}
+
+@keyframes ziggy-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-16%) rotate(4deg); }
+}
+
+/* On hover, Ziggy gets excited and wiggles */
+.ziggy-cta:hover .ziggy-cta__mascot {
+  animation: ziggy-wiggle 0.5s ease-in-out infinite;
+}
+
+@keyframes ziggy-wiggle {
+  0%, 100% { transform: translateY(0) rotate(-11deg) scale(1.12); }
+  50%      { transform: translateY(-22%) rotate(11deg) scale(1.18); }
+}
+
+/* Excited variant: Ziggy can't contain himself and shakes intensely.
+   More specific than the idle/hover rules so it wins in both states. */
+.ziggy-cta--excited .ziggy-cta__mascot,
+.ziggy-cta--excited:hover .ziggy-cta__mascot {
+  animation: ziggy-shake 0.22s linear infinite;
+}
+
+@keyframes ziggy-shake {
+  0%   { transform: translate(0, 0) rotate(-13deg) scale(1.12); }
+  20%  { transform: translate(-3px, 2px) rotate(13deg) scale(1.16); }
+  40%  { transform: translate(3px, -3px) rotate(-15deg) scale(1.12); }
+  60%  { transform: translate(-3px, -2px) rotate(15deg) scale(1.17); }
+  80%  { transform: translate(3px, 2px) rotate(-12deg) scale(1.13); }
+  100% { transform: translate(0, 0) rotate(-13deg) scale(1.12); }
+}
+
+/* Respect users who prefer no motion */
+@media (prefers-reduced-motion: reduce) {
+  .ziggy-cta__mascot { animation: none !important; }
+}
+
 feedback-button {
   --feedback-button-background: #1a1a1a;
   --feedback-button-color: #ffffff;

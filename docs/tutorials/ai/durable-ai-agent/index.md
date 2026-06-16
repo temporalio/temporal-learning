@@ -11,6 +11,9 @@ description: Build a durable AI agent from scratch using the Temporal Python SDK
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import {TutorialCta} from '@site/src/components';
+
+
 
 ## Introduction
 
@@ -21,6 +24,8 @@ Network failures, long-running workflows, observability challenges, and more mak
 
 Temporal orchestrates long-running workflows, automatically handles failure cases from network outages to server crashes, provides insights into your running applications, and more.
 These features provide the resiliency and durability necessary to build reliable agents that users can rely on.
+
+<TutorialCta />
 
 In this tutorial you'll build an AI agent using Temporal that searches for events in a given city, helps you book a plane ticket, and creates an invoice for the trip. 
 The user will interact with this application through a chatbot interface, communicating with the agent using natural language.
