@@ -21,7 +21,7 @@ _By [Nikolay Advolodkin](https://www.linkedin.com/in/nikolayadvolodkin/), Staff 
 
 You're going to build a durable webhook delivery service.
 
-When something happens in your application, such as a payment clearing, an order shipping, or a user signing up, you POST to a URL another team gave you. Doing it durably means: if the network fails, retry. If the receiver returns 500, retry. If your service crashes mid-send, the retry does not double-deliver.
+When something happens in your application, such as a payment clearing, an order shipping, or a user signing up, you POST to a URL another team gave you. Doing it durably means three things: retry if the network fails, retry if the receiver returns a 500, and never double-deliver if your service crashes mid-send.
 
 The same `deliver_webhook` Activity runs through every module of this tutorial:
 
@@ -222,7 +222,7 @@ Excess work waits in the Task Queue on the server, dispatched at the configured 
 <details>
 <summary>Answer</summary>
 
-Safe but probably underutilizing, only 10% of the headroom. `max_activities_per_second` is *per Worker*, so N Workers aggregate to N × the cap. For a hard, queue-wide cap regardless of Worker count, use `max_task_queue_activities_per_second`.
+For this exact setup, one Worker, yes, but you're only using 10% of the downstream's 100 req/sec headroom. The catch: `max_activities_per_second` is *per Worker*, not global. Add a second Worker and you're at 20/sec; run 11 and you're at 110/sec, past the limit. So "safe" only holds while the Worker count stays fixed. For a cap that holds no matter how many Workers poll the queue, use `max_task_queue_activities_per_second`.
 
 </details>
 
