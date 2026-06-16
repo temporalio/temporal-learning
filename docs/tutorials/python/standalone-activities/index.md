@@ -201,7 +201,7 @@ By default the Worker executes Activities as fast as it can process them, which 
 
 ![A rate-limited Standalone Activity in the Temporal UI: status Running, attempt count climbing, last failure HTTP 429](https://raw.githubusercontent.com/temporalio/edu-standalone-activities/main/python/diagrams/rate-limited-activity-running.png)
 
-Retrying harder can't solve a whole-fleet throughput problem; you have to pace the *dispatch*. One keyword on the Worker does it:
+The problem here isn't one slow job; it's the *combined* request rate of every delivery hitting a receiver that only allows so many per second. Temporal retries each Activity on its own, which fixes a one-off failure but can't fix a total-rate problem: every retry is just another request piling onto an already-overloaded receiver. The fix is to slow how fast the work goes out. One keyword on the Worker does it:
 
 ```py
 worker = Worker(
