@@ -266,7 +266,7 @@ class WebhookWorkflow:
         )
 ```
 
-The Activity doesn't know whether it was invoked as a Standalone Activity or a Workflow step. That's the differentiator: one tool for jobs and orchestration. A traditional queue runs jobs. The moment "one durable POST" grows into "charge the card, reserve inventory, then notify ops," you reach for a separate orchestrator to coordinate the steps, with its own retry semantics, failure model, and observability to operate. With Temporal the same Activity becomes a step in a Workflow on the same platform: same retries, timeouts, and visibility, and no second system to run.
+The Activity doesn't know whether it was invoked as a Standalone Activity or a Workflow step. That's the differentiator: one tool for jobs and orchestration. With Temporal the same Activity becomes a step in a Workflow on the same platform: same retries, timeouts, and visibility, and no second system to run.
 
 At Replay 2026, Coinbase described migrating their custom Background Jobs Service, which handles 200–600 million jobs per day across 186 namespaces, onto Standalone Activities, letting one platform replace a separate job queue and orchestrator. ([Watch the talk](https://www.youtube.com/watch?v=zsF5Y-IOMOw).)
 
