@@ -331,6 +331,11 @@ const config = {
       defer: true,
     },
     {
+      src: "/scripts/amplitude-cta-tracking.js",
+      async: true,
+      defer: true,
+    },
+    {
       src: "https://widget.kapa.ai/kapa-widget.bundle.js",
       "data-website-id": "13e12f4a-b295-4cb5-9470-783dc6b98f68",
       "data-project-name": "Temporal",
