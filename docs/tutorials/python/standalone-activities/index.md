@@ -186,7 +186,7 @@ A **new** execution starts. `id_conflict_policy` only governs duplicates while t
 
 ## Module 4: Cap throughput and prioritize urgent jobs
 
-By default the Worker dispatches Activities as fast as it can pull them, which is often faster than the downstream service allows. Fan out 60 deliveries at a rate-limited receiver and you get a flood of 429s and climbing retry counts:
+By default the Worker executes Activities as fast as it can process them, which may be faster than the downstream service allows. If the receiver is rate-limited, you will get a flood of "Too Many Requests" errors and climbing retry counts:
 
 ![A rate-limited Standalone Activity in the Temporal UI: status Running, attempt count climbing, last failure HTTP 429](https://raw.githubusercontent.com/temporalio/edu-standalone-activities/main/python/diagrams/rate-limited-activity-running.png)
 
