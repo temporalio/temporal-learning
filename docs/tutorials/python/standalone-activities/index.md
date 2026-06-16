@@ -69,6 +69,13 @@ Sign up to launch the lab:
 
 Prefer to run it yourself? Clone the course repo and start the pieces the sandbox normally boots for you:
 
+You'll need a few things installed first:
+
+- [Git](https://git-scm.com/downloads).
+- [Python](https://www.python.org/downloads/) 3.11 or newer.
+- [uv](https://docs.astral.sh/uv/getting-started/installation/), the Python package manager the course repo uses.
+- The [Temporal CLI](https://docs.temporal.io/cli#install), which provides the local dev server. Use a recent version so the Standalone Activities features (the `Standalone Activities` UI tab, `temporal activity` commands, conflict policies) are available.
+
 ```bash
 git clone https://github.com/temporalio/edu-standalone-activities.git
 cd edu-standalone-activities/python/course-repo
