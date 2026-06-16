@@ -13,7 +13,7 @@ last_update:
 
 import Link from '@docusaurus/Link';
 
-<img className="banner" src="/img/sdk_banners/banner_python.png" alt="Temporal Python SDK" />
+<img className="banner" src="/img/banners/standalone-activities-banner.png" alt="Build a Job Queue with Standalone Activities in Python" />
 
 ### Introduction
 
