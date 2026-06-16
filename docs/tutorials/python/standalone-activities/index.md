@@ -110,7 +110,7 @@ You may hit environment setup issues (Python version, dependencies, port conflic
 
 ## Module 1: Submit a durable job with one API call
 
-Running background jobs the traditional way means wiring up several moving parts yourself: a **broker** to hold the jobs until something runs them, a **scheduler** to decide when they run, and **retry logic** re-written in every service. Glue those together and you've built a **Tier-0 system** — one everything depends on, so it can never go down — that someone has to keep alive. Temporal doesn't make those concerns disappear, but it **consolidates** them onto one platform instead of four systems you stitch together. You write a regular `@activity.defn` and submit it with a single call; Temporal holds the job, schedules it, and retries it for you:
+Running background jobs the traditional way means wiring up several moving parts yourself: a **broker** to hold the jobs until something runs them, a **scheduler** to decide when they run, and **retry logic** re-written in every service. Glue those together and you've built a **Tier-0 system** (one everything depends on, so it can never go down) that someone has to keep alive. Temporal doesn't make those concerns disappear, but it **consolidates** them onto one platform instead of four systems you stitch together. You write a regular `@activity.defn` and submit it with a single call; Temporal holds the job, schedules it, and retries it for you:
 
 ```py
 @activity.defn  # a regular Activity; nothing here marks it "standalone"
