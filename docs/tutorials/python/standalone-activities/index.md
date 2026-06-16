@@ -17,7 +17,7 @@ import Link from '@docusaurus/Link';
 
 ### Introduction
 
-_By Nikolay Advolodkin, Staff Developer Advocate at Temporal_
+_By [Nikolay Advolodkin](https://www.linkedin.com/in/nikolayadvolodkin/), Staff Developer Advocate at Temporal_
 
 You're going to build a durable webhook delivery service.
 
