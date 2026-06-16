@@ -110,7 +110,7 @@ You may hit environment setup issues (Python version, dependencies, port conflic
 
 ## Module 1: Submit a durable job with one API call
 
-Most job queues make you operate the hard parts yourself: a broker, a result store, a scheduler, retry logic re-implemented per service, and a Tier-0 system nobody wants to own. A Standalone Activity is just a regular `@activity.defn` you submit with one call:
+Running background jobs the traditional way means wiring up several moving parts yourself: a **broker** to hold the jobs until something runs them, a **scheduler** to decide when they run, and **retry logic** re-written in every service. Glue those together and you've built a **Tier-0 system** — one everything depends on, so it can never go down — that someone has to keep alive. Temporal doesn't make those concerns disappear, but it **consolidates** them onto one platform instead of four systems you stitch together. You write a regular `@activity.defn` and submit it with a single call; Temporal holds the job, schedules it, and retries it for you:
 
 ```py
 @activity.defn  # a regular Activity; nothing here marks it "standalone"
@@ -133,6 +133,8 @@ await client.execute_activity(
 There's no "standalone" decorator and no Workflow class. Standalone versus inside-a-Workflow is decided by *how* the Activity is called, not how it's defined. The job is **addressable** (a stable ID you can query, cancel, or terminate), **durable** (persisted before your Worker sees it), and **observable** in the Temporal UI under the **Standalone Activities** tab:
 
 ![Temporal UI showing a completed Standalone Activity in the Standalone Activities tab](https://raw.githubusercontent.com/temporalio/edu-standalone-activities/main/python/diagrams/standalone-activity-ui.png)
+
+To be clear about what *doesn't* change: your application's own data still lives in your database, and someone still operates Temporal (your team, or Temporal Cloud). What you stop doing is running a separate broker, scheduler, and retry layer and wiring them together.
 
 > **Check your understanding:** your job hits a transient 503 on attempt 1. With Temporal's default retry policy, what happens?
 
