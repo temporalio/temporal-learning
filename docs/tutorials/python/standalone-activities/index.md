@@ -54,7 +54,26 @@ By the end you'll be able to:
 
 This tutorial is built as a hands-on Instruqt lab. Nothing to install: the Temporal Service, the Web UI, and a webhook receiver all boot with the sandbox, so you start writing code immediately. The modules below are the concept walkthrough; we recommend doing the actual building in the lab, but you can also [run the code locally](#run-the-code-locally-optional) if you prefer.
 
-Sign up to launch the lab:
+<div style={{textAlign: 'center', marginBottom: '8px'}}>
+  <span style={{
+    display: 'inline-block',
+    background: 'linear-gradient(135deg, #f97316, #fb923c)',
+    color: '#fff',
+    fontWeight: 800,
+    fontSize: '14px',
+    padding: '6px 18px',
+    borderRadius: '20px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2)',
+    animation: 'tryMePulse 2s ease-in-out infinite',
+  }}>👇 Try the Interactive Lab. No setup.</span>
+</div>
+<style>{`
+  @keyframes tryMePulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2); }
+    50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4); }
+  }
+`}</style>
 
 <iframe
     width="804"
