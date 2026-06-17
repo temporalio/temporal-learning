@@ -514,7 +514,7 @@ You have a working application and a test to ensure the Workflow executes as exp
 
 ## Configure a Worker
 
-A [Worker](https://docs.temporal.io/concepts/what-is-a-worker) hosts Workflow and Activity methods and executes the code in the Workflow Definition. The Temporal Service orchestrates the execution of code in a Workflow Definition or Activity Definition by adding Tasks to a [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), which Workers poll. When a Worker accepts a Task, it will execute the necessary code, and report the result (or error) back to the Temporal Service. After the Worker runs the code, it communicates the results back to the Temporal Server.
+A [Worker](https://docs.temporal.io/workers) hosts Workflow and Activity methods and executes the code in the Workflow Definition. The Temporal Service orchestrates the execution of code in a Workflow Definition or Activity Definition by adding Tasks to a [Task Queue](https://docs.temporal.io/task-queue#task-queue), which Workers poll. When a Worker accepts a Task, it will execute the necessary code, and report the result (or error) back to the Temporal Service. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
 When you start a Workflow, you specify which Task Queue the Workflow uses. A Worker listens and polls on the Task Queue, looking for work to do.
 

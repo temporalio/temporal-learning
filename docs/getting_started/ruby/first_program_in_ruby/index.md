@@ -451,7 +451,7 @@ and Activity code.
 
 A Worker:
 
-- polls a specific [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue)
+- polls a specific [Task Queue](https://docs.temporal.io/task-queue#task-queue)
   within the Temporal Service
 - accepts Tasks that correspond to the Workflow and Activity
   Types that it has been configured to support

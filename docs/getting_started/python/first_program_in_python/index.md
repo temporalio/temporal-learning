@@ -281,12 +281,11 @@ If an Activity fails, Temporal Workflows automatically retries the failed Activi
 
 At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 
-<!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["16-20"]} -->
+<!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["17-20"]} -->
 [workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
 ```py
 # ...
         retry_policy = RetryPolicy(
-            maximum_attempts=3,
             maximum_interval=timedelta(seconds=2),
             non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
         )
@@ -294,7 +293,7 @@ At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy
 <!--SNIPEND-->
 
 
-By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
+By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, the Activity will keep retrying indefinitely on transient failures, but if it raises an `InvalidAccountError` or `InsufficientFundsError` the Workflow will stop retrying and refund the money to the sender's account.
 
 In the case of an error with the `deposit()` Activity, the Workflow will attempt to put the money back.
 
@@ -328,7 +327,7 @@ python run_workflow.py
 
 The Workflow is now running. Leave the program running.
 
-To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/concepts/what-is-a-task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
+To start a Workflow, you connect to the Temporal Cluster, specify the [Task Queue](https://docs.temporal.io/task-queue#task-queue), the Workflow should use, and Activities it expects in your code. In this tutorial, this is a small command-line program that starts the Workflow Execution.
 
 In a real application, you may invoke this code when someone submits a form, presses a button, or visits a certain URL.
 
@@ -478,7 +477,7 @@ After a Workflow completes, the full history persists for a set retention period
 
 :::note
 
-You can set up [the Archival feature](https://docs.temporal.io/concepts/what-is-archival) to send these entries to long-term storage for compliance or audit needs.
+You can set up [the Archival feature](https://docs.temporal.io/temporal-service/archival) to send these entries to long-term storage for compliance or audit needs.
 
 :::
 
@@ -589,49 +588,21 @@ You can view more information about the process in the [Temporal Web UI](http://
 5. Click any `ActivityTaskFailed` event link to see the Failure details and call stack.
 This lets you explore the location and reason for failed Activity Tasks.
 
-Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/concepts/what-is-a-start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/concepts/what-is-a-heartbeat-timeout).
+Traditionally, you're forced to implement timeout and retry logic within the service code itself. This is repetitive and prone to errors. With Temporal, you can specify timeout configurations in the Workflow code as Activity options. Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-start-timeout), [Schedule-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#schedule-to-close-timeout), [Start-To-Close Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#start-to-close-timeout), and [Heartbeat Timeout](https://docs.temporal.io/encyclopedia/detecting-activity-failures#heartbeat-timeout).
 
-In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 500 times:
+In `workflows.py`, you can see that a `StartToCloseTimeout` is specified for the Activities, along with the Retry Policy shown earlier. Because that policy doesn't set a `maximum_attempts`, the server will keep retrying the Activity until it succeeds or hits one of the non-retryable error types:
 
-<!--SNIPSTART python-project-template-run-workflow-->
-[run_workflow.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/run_workflow.py)
+<!--SNIPSTART python-money-transfer-project-template-workflows {"selectedLines": ["22-28"]} -->
+[workflows.py](https://github.com/temporalio/money-transfer-project-template-python/blob/main/workflows.py)
 ```py
-import asyncio
-import traceback
-
-from temporalio.client import Client, WorkflowFailureError
-
-from shared import MONEY_TRANSFER_TASK_QUEUE_NAME, PaymentDetails
-from workflows import MoneyTransfer
-
-
-async def main() -> None:
-    # Create client connected to server at the given address
-    client: Client = await Client.connect("localhost:7233")
-
-    data: PaymentDetails = PaymentDetails(
-        source_account="85-150",
-        target_account="43-812",
-        amount=250,
-        reference_id="12345",
-    )
-
-    try:
-        result = await client.execute_workflow(
-            MoneyTransfer.run,
-            data,
-            id="pay-invoice-701",
-            task_queue=MONEY_TRANSFER_TASK_QUEUE_NAME,
+# ...
+        # Withdraw money
+        withdraw_output = await workflow.execute_activity_method(
+            BankingActivities.withdraw,
+            payment_details,
+            start_to_close_timeout=timedelta(seconds=5),
+            retry_policy=retry_policy,
         )
-
-        print(f"Result: {result}")
-
-    except WorkflowFailureError:
-        print("Got expected exception: ", traceback.format_exc())
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
 ```
 <!--SNIPEND-->
 

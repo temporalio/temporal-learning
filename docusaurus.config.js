@@ -16,6 +16,16 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.png",
+  headTags: [
+    {
+      tagName: "link",
+      attributes: {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "/img/favicon.svg",
+      },
+    },
+  ],
   trailingSlash: true,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -97,7 +107,7 @@ const config = {
     footer: {
       logo: {
         alt: "Temporal logo",
-        src: "img/favicon.png",
+        src: "img/favicon.svg",
         href: "https://temporal.io",
         width: 24,
       },
@@ -317,6 +327,11 @@ const config = {
   scripts: [
     {
       src: "/scripts/googletag.js",
+      async: true,
+      defer: true,
+    },
+    {
+      src: "/scripts/amplitude-cta-tracking.js",
       async: true,
       defer: true,
     },
