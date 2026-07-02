@@ -438,7 +438,7 @@ A few more things about this code:
 
 - As a standalone application, this Worker has a `main` method.
 - The app starts by checking for an OpenAI bearer token and stores it as a static variable in the `app` package.
-- Next, it builds a [Client](https://docs.temporal.io/develop/go/temporal-clients), a class that can communicate with the Temporal service.
+- Next, it builds a [Client](https://docs.temporal.io/develop/go/client/temporal-client), a class that can communicate with the Temporal service.
 - It uses the client and the Task Queue to create a new Worker, which registers the Workflow and Activities it can manage.
 - Finally, it runs the Worker, which starts polling for Tasks.
 

@@ -829,7 +829,7 @@ A few more things about this code:
 - The app starts by checking for an OpenAI bearer token and stores it as a static member of the `TTSActivitiesImpl` class.
 - Next, it creates and runs a Worker by calling `runWorker`, relaying its arguments.
   This method centralizes Worker-specific code for clarity but your code could live in `main` if you needed it to.
-- The `runWorker` method builds a [Client](https://docs.temporal.io/develop/java/temporal-clients), a class that can communicate with the Temporal service, and passes it to a Java `[WorkerFactory](https://docs.temporal.io/develop/java/core-application#run-a-dev-worker)`.
+- The `runWorker` method builds a [Client](https://docs.temporal.io/develop/java/client/temporal-client), a class that can communicate with the Temporal service, and passes it to a Java `[WorkerFactory](https://docs.temporal.io/develop/java/workers/run-worker-process#run-a-dev-worker)`.
   The factory builds a Worker and the code runs the factory, bringing the Worker online and ready to start processing Tasks.
 
 Your complete project structure will now look like this:

@@ -215,7 +215,7 @@ report = await Runner.run(writer, results.final_output)
 
 The OpenAI Agents SDK has a **built-in Temporal integration** via the [`OpenAIAgentsPlugin`](https://python.temporal.io/temporalio.contrib.openai_agents.OpenAIAgentsPlugin.html).
 
-Without the plugin, `Runner.run()` calls the LLM directly—if it fails or your app crashes, the work is lost. With the plugin, each `Runner.run()` call is recorded in Temporal's [event history](https://docs.temporal.io/encyclopedia/event-history/). This means:
+Without the plugin, `Runner.run()` calls the LLM directly—if it fails or your app crashes, the work is lost. With the plugin, each `Runner.run()` call is recorded in Temporal's [event history](https://docs.temporal.io/encyclopedia/event-history). This means:
 
 - **If an LLM call fails**, Temporal automatically retries it (with backoff you configure)
 - **If your Worker crashes mid-research**, Temporal knows which `Runner.run()` calls already completed and skips them on restart—you don't pay for the same LLM calls twice

@@ -219,7 +219,7 @@ So, let's continue and finally implement subscription workflow.
 
 :::info Why not use a Signal?
 
-Another way to cancel the subscription is to send a [signal](https://docs.temporal.io/dev-guide/php/features#signals) to the workflow. For example, we
+Another way to cancel the subscription is to send a [signal](https://docs.temporal.io/develop/php/message-passing#send-signal-from-client) to the workflow. For example, we
 can wait with condition:
 
 ```php
@@ -242,7 +242,7 @@ At this moment we have a working trial period that can be cancelled. To finish o
 - send monthly charged email
 - process subscription cancellation
 
-If we assume that the subscription period is 30 days, and it should last until it is manually cancelled, then we can use an infinite loop here (subject to [Event History Limits](https://docs.temporal.io/workflows/#event-history), but don't worry about that for a monthly workflow).
+If we assume that the subscription period is 30 days, and it should last until it is manually cancelled, then we can use an infinite loop here (subject to [Event History Limits](https://docs.temporal.io/workflow-execution/event#event-history-limits), but don't worry about that for a monthly workflow).
 We "endlessly" wait for 30 days and charge monthly fee.
 Also, don't forget about the trial period at the beginning.
 
