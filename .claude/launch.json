@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "temporal-learning-dev",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["start"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "temporal-learning-serve",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["serve"],
+      "port": 3001,
+      "autoPort": true
+    }
+  ]
+}

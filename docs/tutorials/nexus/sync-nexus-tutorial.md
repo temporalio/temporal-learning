@@ -172,7 +172,8 @@ Try the [Nexus Quick Start](https://docs.temporal.io/nexus) for a faster path. C
 
 _The Payments team owns validation and execution (left). The Compliance team owns risk assessment, isolated behind a Nexus boundary (right). Data flows left-to-right — and if the Compliance side goes down mid-check, the payment resumes when it comes back._
 
-<details><summary>What You'll Build</summary>
+<details>
+<summary>What You'll Build</summary>
 
 You'll start with a monolith where everything — the payment workflow, payment activities, and compliance checks — runs on a single Worker. By the end, you'll have two independent Workers: one for Payments and one for Compliance, communicating through a Nexus boundary.
 
@@ -344,7 +345,8 @@ You'll work through these files in order: define the service interface (1), impl
 
 **Files:** [`compliance/temporal/workflow/ComplianceWorkflow.java` ](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflow.java) and [`ComplianceWorkflowImpl.java`](https://github.com/temporalio/edu-nexus-code/blob/main/java/decouple-monolith/exercise/src/main/java/compliance/temporal/workflow/ComplianceWorkflowImpl.java)
 
-<details><summary><code>ComplianceWorkflowImpl</code> (condensed)</summary>
+<details>
+<summary><code>ComplianceWorkflowImpl</code> (condensed)</summary>
 
 ```java
 public class ComplianceWorkflowImpl implements ComplianceWorkflow {
@@ -450,7 +452,8 @@ Just like the interface needs `@Operation` on every method, the handler class ne
 1. `@ServiceImpl(service = ComplianceNexusService.class)` on the class — this links the handler to its service interface so Temporal can route incoming Nexus operations to the correct implementation.
 2. `@OperationImpl` on each handler method — this marks the method as the handler for a specific Nexus operation. Without it, Temporal won't know which method handles which operation.
 
-<details><summary>Complete implementation of <code>ComplianceNexusServiceImpl.java</code></summary>
+<details>
+<summary>Complete implementation of <code>ComplianceNexusServiceImpl.java</code></summary>
 
 ```java
 @ServiceImpl(service = ComplianceNexusService.class)
@@ -499,7 +502,8 @@ However, an `@UpdateMethod` requires the Worker to be running at the time of the
 
 ![Nexus handle retry diagram: first call starts a workflow and returns a handle, retries reuse the same workflow instead of creating duplicates](./ui/nexus-handle-retry.svg)
 
-<details><summary>Key differences between the two handlers:</summary>
+<details>
+<summary>Key differences between the two handlers:</summary>
 
 |                | `checkCompliance`                   | `submitReview`                                |
 | -------------- | ----------------------------------- | --------------------------------------------- |
@@ -514,11 +518,17 @@ However, an `@UpdateMethod` requires the Worker to be running at the time of the
 
 <details>
 <summary>Q1: What does <code>@ServiceImpl(service = ComplianceNexusService.class)</code> tell Temporal?</summary>
+
 <code>@ServiceImpl</code> links the handler class to its Nexus service interface. Temporal uses this to route incoming Nexus operations to the correct handler.
+
 </details>
 
-<details><summary>Q2: Why does the handler start a workflow instead of calling <code>ComplianceChecker.checkCompliance()</code> directly?</summary>
-Handlers should only use Temporal primitives (workflow starts, queries, updates). Business logic belongs in activities, which are invoked by workflows. This keeps the handler thin and the architecture consistent.</details>
+<details>
+<summary>Q2: Why does the handler start a workflow instead of calling <code>ComplianceChecker.checkCompliance()</code> directly?</summary>
+
+Handlers should only use Temporal primitives (workflow starts, queries, updates). Business logic belongs in activities, which are invoked by workflows. This keeps the handler thin and the architecture consistent.
+
+</details>
 
 ---
 
@@ -683,7 +693,8 @@ worker.registerActivitiesImplementations(new ComplianceActivityImpl(checker));
 
 > **Analogy:** You're removing the compliance department from your building and adding a phone extension to their new office. The workflow dials the same number (`checkCompliance`), but the call now routes across the street.
 
-<details><summary>New <code>PaymentsWorkerApp.java</code> Code</summary>
+<details>
+<summary>New <code>PaymentsWorkerApp.java</code> Code</summary>
 
 ```java
 package payments.temporal;
@@ -917,12 +928,19 @@ You should see the review result returned in Terminal 4, and back in Terminal 3,
 
 Test your understanding before moving on:
 
-<details><summary>Q1: Where is the Nexus endpoint name (<code>compliance-endpoint</code>) configured?</summary>
+<details>
+<summary>Q1: Where is the Nexus endpoint name (<code>compliance-endpoint</code>) configured?</summary>
+
 In <code>PaymentsWorkerApp</code>, via <code>NexusServiceOptions</code> → <code>setEndpoint("compliance-endpoint")</code>. The workflow only knows the service interface. The Worker knows the endpoint. This separation keeps the workflow portable.
+
 </details>
 
-<details><summary>Q2: What happens if the Compliance Worker is down when the Payments workflow calls <code>checkCompliance()</code>?</summary>
-The Nexus operation will be retried by Temporal until the <code>scheduleToCloseTimeout</code> expires (10 minutes in our case). If the Compliance Worker comes back within that window, the operation completes successfully. The Payment workflow just waits — no crash, no data loss.</details>
+<details>
+<summary>Q2: What happens if the Compliance Worker is down when the Payments workflow calls <code>checkCompliance()</code>?</summary>
+
+The Nexus operation will be retried by Temporal until the <code>scheduleToCloseTimeout</code> expires (10 minutes in our case). If the Compliance Worker comes back within that window, the operation completes successfully. The Payment workflow just waits — no crash, no data loss.
+
+</details>
 
 <details>
 <summary>Q3: What's the difference between <code>@Service</code><code>/</code><code>@Operation</code> and <code>@ServiceImpl</code><code>/</code><code>@OperationImpl</code>?</summary>
@@ -936,7 +954,8 @@ Think of it as: the interface is the menu (shared), the handler is the kitchen (
 
 </details>
 
-<details><summary>Q4: What's wrong with using <code>OperationHandler.sync()</code> to back a Nexus operation with a long-running workflow?</summary>
+<details>
+<summary>Q4: What's wrong with using <code>OperationHandler.sync()</code> to back a Nexus operation with a long-running workflow?</summary>
 
 <code>sync()</code> starts a workflow and blocks for its result in a single handler call. If the Nexus operation retries (which happens during timeouts or transient failures), the handler runs again from scratch — starting a duplicate workflow each time.
 
@@ -965,7 +984,8 @@ WorkflowRunOperation.fromWorkflowHandle((ctx, details, input) -> {
 
 </details>
 
-<details><summary>Q5: Why does the handler start a workflow instead of calling <code>ComplianceChecker.checkCompliance()</code> directly?</summary>
+<details>
+<summary>Q5: Why does the handler start a workflow instead of calling <code>ComplianceChecker.checkCompliance()</code> directly?</summary>
 
 Sync handlers should only contain **Temporal primitives** — workflow starts and queries. Running arbitrary Java code (like <code>ComplianceChecker.checkCompliance()</code>) in a handler bypasses Temporal's durability guarantees.
 
