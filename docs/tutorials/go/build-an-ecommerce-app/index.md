@@ -1,7 +1,7 @@
 ---
 id: build-ecommerce-app
 title: "Build an eCommerce App With Go"
-sidebar_position: 1
+sidebar_position: 2
 description: "Four-part tutorial series on building an eCommerce application with Temporal and Go."
 keywords: [Go,tutorial,temporal,workflows, sending email,testing]
 tags:
