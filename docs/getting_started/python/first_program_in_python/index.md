@@ -205,7 +205,7 @@ Notice that the `PaymentDetails` includes a `reference_id` field. Some APIs let 
 
 In the Temporal Python SDK, you define an Activity by decorating a method with **`@activity.defn`**.
 
-[Activities](https://docs.temporal.io/application-development/foundations/?lang=python#develop-activities) are where you perform the business logic for your application. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
+[Activities](https://docs.temporal.io/develop/python/activities/basics) are where you perform the business logic for your application. In the money transfer application, you have three Activity methods, `withdraw()`, `deposit()`, and `refund()`. The Workflow Definition calls the Activities `withdraw()` and `deposit()` to handle the money transfers.
 
 First, the `withdraw()` Activity takes the details about the transfer and calls a service to process the withdrawal:
 
@@ -277,7 +277,7 @@ Use Activities for your business logic, and use Workflows to coordinate the Acti
 
 Temporal makes your software durable and fault tolerant by default which allows you to code more reliable systems.
 
-If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the [Retry Policy](https://docs.temporal.io/dev-guide/python/features#activity-retries).
+If an Activity fails, Temporal Workflows automatically retries the failed Activity by default. You can also customize how those retries happen through the [Retry Policy](https://docs.temporal.io/develop/python/best-practices/error-handling#configure-custom-retry-policies).
 
 At the top of the `MoneyTransfer` Workflow Definition, you'll see a Retry Policy defined that looks like this:
 

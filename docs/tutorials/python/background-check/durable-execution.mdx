@@ -59,7 +59,7 @@ The information in this chapter is also available in the [Temporal 102 course](h
 
 :::
 
-This chapter builds on the [Construct a new Temporal Application project](https://docs.temporal.io/dev-guide/python/project-setup) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
+This chapter builds on the [Construct a new Temporal Application project](/tutorials/python/background-check/project-setup.mdx) chapter and relies on the Background Check use case and sample applications as a means to contextualize the information.
 
 This chapter walks through the following sequence:
 
@@ -209,7 +209,7 @@ Developers are encouraged to use the SDK’s APIs when possible and avoid potent
   - Use `workflow.now()` instead of `datetime.now()` or `workflow.time()` instead `time.time()` for current time.
   - Leverage the custom `asyncio` event loop in Workflows; use `asyncio.sleep()` as needed.
 
-Read more about [How the Python Sandbox works](https://docs.temporal.io/encyclopedia/python-sdk-sandbox) for details.
+Read more about [How the Python Sandbox works](https://docs.temporal.io/develop/python/best-practices/python-sdk-sandbox#how-it-works) for details.
 
 Other common ways to introduce non-deterministic issues into a Workflow:
 
@@ -337,7 +337,7 @@ You should expect to see the `TestReplayWorkflowHistoryFromFile` test fail.
 This is because the code we added creates new Events and alters the Event History sequence.
 
 To get this test to pass, we must get an updated Event History JSON file.
-[Start a new Workflow](https://docs.temporal.io/dev-guide/python/project-setup#start-workflow) and after it is complete [download the Event History as a JSON object](#retrieve-event-history).
+[Start a new Workflow](/tutorials/python/background-check/project-setup.mdx#start-workflow) and after it is complete [download the Event History as a JSON object](#retrieve-event-history).
 
 :::info Double check Task Queue names
 
