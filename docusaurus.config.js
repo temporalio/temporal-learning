@@ -1,11 +1,31 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const path = require("path");
-const visit = require("unist-util-visit");
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-const FontPreloadPlugin = require("webpack-font-preload-plugin");
+const { themes: prismThemes } = require("prism-react-renderer");
+const lightCodeTheme = prismThemes.github;
+const darkCodeTheme = prismThemes.dracula;
+const {
+  AEONIK_REGULAR_FILENAME,
+  AEONIK_BOLD_FILENAME,
+  AEONIK_LIGHT_FILENAME,
+  POPPINS_REGULAR_FILENAME,
+  POPPINS_MEDIUM_FILENAME,
+  POPPINS_SEMIBOLD_FILENAME,
+  POPPINS_BOLD_FILENAME,
+} = require("./src/constants/preloadFonts");
+
+function fontPreloadTag(filename, type) {
+  return {
+    tagName: "link",
+    attributes: {
+      rel: "preload",
+      href: `/assets/fonts/${filename}`,
+      as: "font",
+      type,
+      crossorigin: "anonymous",
+    },
+  };
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -25,6 +45,19 @@ const config = {
         href: "/img/favicon.svg",
       },
     },
+    // webpack-font-preload-plugin used to inject these automatically, but it
+    // silently no-ops under Docusaurus 3's SSG build (it patches a webpack
+    // HtmlWebpackPlugin asset that the per-page static renderer no longer
+    // consumes). Preloading these fonts explicitly here preserves prior
+    // behavior. bin/check-font-preload-hash.js fails the build if these
+    // filenames drift from what the build actually produces.
+    fontPreloadTag(AEONIK_REGULAR_FILENAME, "font/woff"),
+    fontPreloadTag(AEONIK_BOLD_FILENAME, "font/woff"),
+    fontPreloadTag(AEONIK_LIGHT_FILENAME, "font/woff"),
+    fontPreloadTag(POPPINS_REGULAR_FILENAME, "font/ttf"),
+    fontPreloadTag(POPPINS_MEDIUM_FILENAME, "font/ttf"),
+    fontPreloadTag(POPPINS_SEMIBOLD_FILENAME, "font/ttf"),
+    fontPreloadTag(POPPINS_BOLD_FILENAME, "font/ttf"),
   ],
   trailingSlash: true,
   // GitHub pages deployment config.
@@ -35,18 +68,6 @@ const config = {
     defaultLocale: "en",
     locales: ["en"],
   },
-  plugins: [
-    function preloadFontPlugin() {
-      return {
-        name: "preload-font-plugin",
-        configureWebpack() {
-          return {
-            plugins: [new FontPreloadPlugin()],
-          };
-        },
-      };
-    },
-  ],
   themeConfig: {
     // announcementBar: {
     //   id: "replay_announcement",
@@ -75,8 +96,8 @@ const config = {
     },
     image: "/img/open-graph-shiny.png",
     prism: {
-      theme: require("prism-react-renderer/themes/nightOwlLight"),
-      darkTheme: require("prism-react-renderer/themes/dracula"),
+      theme: prismThemes.nightOwlLight,
+      darkTheme: prismThemes.dracula,
       additionalLanguages: ["java", "ruby", "php", "csharp"],
     },
     docs: {
@@ -111,7 +132,7 @@ const config = {
         href: "https://temporal.io",
         width: 24,
       },
-      copyright: `Copyright © ${new Date().getFullYear()}</span> Temporal Technologies Inc.</div><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSXFPF2"
+      copyright: `Copyright © ${new Date().getFullYear()} Temporal Technologies Inc.<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSXFPF2"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`,
       links: [
         {
@@ -245,66 +266,6 @@ const config = {
            * Whether to display the last date the doc was updated.
            */
           showLastUpdateTime: true,
-          // // below remark plugin disabled until we can figure out why it is not transpiling to ESNext properly - swyx
-          // // original PR https://github.com/temporalio/documentation/pull/496/files
-          remarkPlugins: [
-            [
-              () =>
-                function addTSNoCheck(tree) {
-                  // Disable TS type checking for any TypeScript code blocks.
-                  // This is because imports are messy with snipsync: we don't
-                  // have a way to pull in a separate config for every example
-                  // snipsync pulls from.
-                  function visitor(node) {
-                    if (!/^ts$/.test(node.lang)) {
-                      return;
-                    }
-                    node.value = "// @ts-nocheck\n" + node.value.trim();
-                  }
-
-                  visit(tree, "code", visitor);
-                },
-              {},
-            ],
-            [
-              require("remark-typescript-tools").transpileCodeblocks,
-              {
-                compilerSettings: {
-                  tsconfig: path.join(__dirname, "docs", "tsconfig.json"),
-                  externalResolutions: {},
-                },
-                fileExtensions: [".md", ".mdx"],
-                // remark-typescript-tools automatically running prettier with a custom config that doesn't
-                // line up with ours. This disables any post processing, including the default prettier step.
-                postProcessTs: (files) => files,
-                postProcessTranspiledJs: (files) => files,
-              },
-            ],
-            [
-              () =>
-                function removeTSNoCheck(tree) {
-                  function visitor(node) {
-                    if (!/^ts$/.test(node.lang) && !/^js$/.test(node.lang)) {
-                      return;
-                    }
-                    if (node.value.startsWith("// @ts-nocheck\n")) {
-                      node.value = node.value.slice("// @ts-nocheck\n".length);
-                    }
-                    // If TS compiled output is empty, replace it with a more helpful comment
-                    if (
-                      node.lang === "js" &&
-                      node.value.trim() === "export {};"
-                    ) {
-                      node.value = "// Not required in JavaScript";
-                    } else if (node.lang === "js") {
-                      node.value = convertIndent4ToIndent2(node.value).trim();
-                    }
-                  }
-                  visit(tree, "code", visitor);
-                },
-              {},
-            ],
-          ],
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -366,14 +327,22 @@ const config = {
     //   defer: true,
     // },
   ],
+  markdown: {
+    mdx1Compat: {
+      // Required for snipsync HTML comment markers (<!--SNIPSTART-->, <!--SNIPEND-->)
+      comments: true,
+      admonitions: true,
+      // Required: this repo (unlike ../documentation) uses Docusaurus's
+      // legacy `## Heading {#custom-id}` syntax in ~13 files. Under MDX v3 +
+      // future.v4 (which disables mdx1Compat by default), the `{#custom-id}`
+      // gets parsed as an MDX/JS expression by acorn and fails to build.
+      headingIds: true,
+    },
+  },
+  future: {
+    v4: true,
+    faster: true,
+  },
 };
 
 module.exports = config;
-
-function convertIndent4ToIndent2(code) {
-  // TypeScript always outputs 4 space indent. This is a workaround.
-  // See https://github.com/microsoft/TypeScript/issues/4042
-  return code.replace(/^( {4})+/gm, (match) => {
-    return "  ".repeat(match.length / 4);
-  });
-}

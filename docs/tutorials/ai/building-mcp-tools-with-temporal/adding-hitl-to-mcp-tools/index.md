@@ -1478,14 +1478,19 @@ Let's demonstrate Temporal's durability. We'll show that Workflows continue runn
 
 #### Step 1: Process a New Invoice
 
-1. In Claude Desktop, ask something like: `Process this invoice:
-{
-  "id": "INV-002",
-  "lines": [
-    {"item": "Web Development", "amount": 3000.00, "description": "Frontend work"},
-    {"item": "Design Services", "amount": 2000.00, "description": "UI/UX design"}
-  ]
-}`.
+1. In Claude Desktop, ask something like:
+
+   ```text
+   Process this invoice:
+   {
+     "id": "INV-002",
+     "lines": [
+       {"item": "Web Development", "amount": 3000.00, "description": "Frontend work"},
+       {"item": "Design Services", "amount": 2000.00, "description": "UI/UX design"}
+     ]
+   }
+   ```
+
 2. Click **"Allow"** when prompted to use the tool
 3. Claude will show that it's waiting for the tool response
 

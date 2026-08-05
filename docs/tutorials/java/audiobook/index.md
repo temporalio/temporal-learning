@@ -10,6 +10,9 @@ sidebar_label: Create audiobooks from text with OpenAI and Java
 image: /img/temporal-logo-twitter-card.png
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 <img className="banner" src="/img/sdk_banners/banner_java.png" alt="Temporal Java SDK" />
 
 ## Introduction

@@ -582,7 +582,7 @@ end
 result = client.execute_workflow(
   IPGeolocate::GetAddressFromIPWorkflow,
   name, # This is the input to the workflow
-  id: 'my-workflow-id',
+  id: "workflow-ip-geolocate-#{SecureRandom.uuid}",
   task_queue: IPGeolocate::TASK_QUEUE_NAME,
 )
 
