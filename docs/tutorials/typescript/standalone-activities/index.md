@@ -19,11 +19,9 @@ import Link from '@docusaurus/Link';
 
 _By [Nikolay Advolodkin](https://www.linkedin.com/in/nikolayadvolodkin/), Staff Developer Advocate at Temporal_
 
-You're going to build a durable webhook delivery service.
+**Standalone Activities are Temporal's durable job queue.** You write a regular Activity function and submit it with one API call. Temporal persists it, retries it on failure, and makes it visible in the UI, with no broker, scheduler, or result store for you to operate.
 
 When something happens in your application, such as a payment clearing, an order shipping, or a user signing up, you POST to a URL another team gave you. Doing it durably means three things: retry if the network fails, retry if the receiver returns a 500, and never double-deliver if your service crashes mid-send.
-
-**Standalone Activities are Temporal's durable job queue.** You write a regular Activity function and submit it with one API call. Temporal persists it, retries it on failure, and makes it visible in the UI, with no broker, scheduler, or result store for you to operate.
 
 ### What you'll learn
 
