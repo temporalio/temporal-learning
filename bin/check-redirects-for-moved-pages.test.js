@@ -71,6 +71,13 @@ describe('resolveOldUrl against real repo pages', () => {
     const url = resolveOldUrl('docs/intro.md', 'HEAD');
     assert.strictEqual(url, '/');
   });
+
+  it('page-to-folder rename resolves to same URL', () => {
+    const oldUrl = filePathToUrlPath('docs/tutorials/go/build-an-ecommerce-app.md');
+    const newUrl = filePathToUrlPath('docs/tutorials/go/build-an-ecommerce-app/index.md');
+    assert.strictEqual(oldUrl, newUrl);
+    assert.strictEqual(oldUrl, '/tutorials/go/build-an-ecommerce-app');
+  });
 });
 
 describe('vercelPatternToRegex', () => {
