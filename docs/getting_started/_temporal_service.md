@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 The fastest way to get a development version of the Temporal Service running on your local machine is to use [Temporal CLI](https://docs.temporal.io/cli).
 
 Temporal CLI is a tool for interacting with the Temporal Service from the command-line interface. It includes a self-contained distribution of the Temporal Service and [Web UI](https://docs.temporal.io/web-ui) as well which you can use for local development.

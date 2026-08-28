@@ -244,7 +244,7 @@ Workflows are where you configure and organize the execution of Activities.  You
 
 In the Temporal Java SDK, a Workflow Definition is made of two parts:
 
-* A [Workflow Interface](https://docs.temporal.io/dev-guide/java/foundations#develop-workflows), which is an interface annotated with `@WorkflowInterface`. This interface contains a single method signature annotated with `@WorkflowMethod`. 
+* A [Workflow Interface](https://docs.temporal.io/develop/java/workflows/basics#develop-workflows), which is an interface annotated with `@WorkflowInterface`. This interface contains a single method signature annotated with `@WorkflowMethod`. 
 * A class that implements the interface, providing the code that runs when the Workflow is executed
 
 Create `HelloWorldWorkflow.java` in the source code location of your project at `app/src/main/java/helloworldapp/` and add the following code to create a `HelloWorldWorkflow` interface that defines the expected functionality of your workflow:
@@ -379,7 +379,7 @@ public class HelloWorldActivitiesImpl implements HelloWorldActivities {
 
 This class implements the single method from the interface named `composeGreeting` to compose a String that returns a standard "Hello World!" message using the passed in parameter. 
 
-Your [Activity Definition](https://docs.temporal.io/activities#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/dev-guide/java/foundations#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+Your [Activity Definition](https://docs.temporal.io/activity-definition#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/develop/java/activities/basics#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on to configuring your Worker, you'll write a unit test for your Workflow.
 
@@ -679,7 +679,7 @@ public class InitiateHelloWorld {
 ```
 <!--SNIPEND-->
 
-Like the Worker you created, this program uses stubs and a client to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/dev-guide/java/foundations/#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
+Like the Worker you created, this program uses stubs and a client to connect to the Temporal server. It then specifies a [Workflow ID](https://docs.temporal.io/develop/java/client/temporal-client#workflow-id) for the Workflow, as well as the Task Queue. The Worker you configured is looking for tasks on that Task Queue.
 
 :::tip Specify a Workflow ID
 
@@ -694,7 +694,7 @@ Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow 
 
 :::
 
-You can [get the results](https://docs.temporal.io/dev-guide/java/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation stores the results in the `greeting` variable after the `getGreeting()` method is called, which blocks the program's execution until the Workflow Execution completes.
+You can [get the results](https://docs.temporal.io/develop/java/client/temporal-client#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation stores the results in the `greeting` variable after the `getGreeting()` method is called, which blocks the program's execution until the Workflow Execution completes.
 
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
 

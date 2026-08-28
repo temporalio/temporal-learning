@@ -212,7 +212,7 @@ export async function oneClickBuy(id: string): Promise<string> {
 This Workflow calls the `purchase` Activity and then uses `await sleep()` to create an artificial delay in the Workflow. A more complex Workflow would call more Activities.
 
 [Workflows must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints), so you perform non-deterministic work in Activities.
-The TypeScript SDK bundles Workflow code and runs it inside a [deterministic sandbox](https://docs.temporal.io/develop/typescript/core-application#workflow-logic-requirements). This sandbox can help detect if you're using nondeterministic code.
+The TypeScript SDK bundles Workflow code and runs it inside a [deterministic sandbox](https://docs.temporal.io/develop/typescript/workflows/basics#workflow-logic-requirements). This sandbox can help detect if you're using nondeterministic code.
 This is why you must separate Workflow code from Activity code, and why you have to use the `proxyActivities` function to load your Activity functions instead of directly importing them. The Activities will be nondeterministic, so you can't run in the same sandbox as the Workflow code.
 
 With your Workflows and Activities in place, you can now write a [Worker Program](https://docs.temporal.io/workers#worker-program).
@@ -639,7 +639,7 @@ At this point, you have a working full stack example of a Temporal Workflow runn
 From here you can add more Activities to the Workflow, or use this project as the basis for a different kind of application that needs long-running processes.
 
 As you build out more features, you may find you need to change the state of an in-progress Workflow, or retrieve information from that Workflow.
-You can use [Signals](https://docs.temporal.io/develop/typescript#signals) to send asynchronous data to running Workflows, and you can use [Queries](https://docs.temporal.io/develop/typescript#queries) to check the state of a Workflow. You can map Signals and Queries to new Next.js API routes using the Temporal Client.
+You can use [Signals](https://docs.temporal.io/develop/typescript/workflows/message-passing#signals) to send asynchronous data to running Workflows, and you can use [Queries](https://docs.temporal.io/develop/typescript/workflows/message-passing#queries) to check the state of a Workflow. You can map Signals and Queries to new Next.js API routes using the Temporal Client.
 
 For a more detailed example, look at the Next.js E-Commerce One-Click example in the [samples-TypeScript repository](https://github.com/temporalio/samples-typescript/tree/main/nextjs-ecommerce-oneclick).
 
@@ -647,8 +647,8 @@ You can deploy your Next.js app, including Next.js API Routes with Temporal Clie
 
 As you move into production with your app, you'll find the following documentation topics helpful:
 
-- [Securing your data](https://docs.temporal.io/develop/typescript/data-encryption)
-- [Testing your Workflows](https://docs.temporal.io/develop/typescript/testing-suite)
-- [Versioning your Workflows](https://docs.temporal.io/develop/typescript/versioning)
-- [Observability](https://docs.temporal.io/develop/typescript/observability)
+- [Securing your data](https://docs.temporal.io/develop/typescript/converters-and-encryption#encryption)
+- [Testing your Workflows](https://docs.temporal.io/develop/typescript/best-practices/testing-suite)
+- [Versioning your Workflows](https://docs.temporal.io/develop/typescript/workflows/versioning)
+- [Observability](https://docs.temporal.io/develop/typescript/platform/observability)
 - [Production Deployment](https://docs.temporal.io/production-deployment)
