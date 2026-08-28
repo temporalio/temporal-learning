@@ -207,7 +207,7 @@ func (i *IPActivities) GetLocationInfo(ctx context.Context, ip string) (string, 
 
 This Activity follows the same pattern as the `getIP` Activity.  This time, the service returns JSON data rather than text, so you have to define a type to unmarshal the data.
 
-While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. This is because later revisions to your Workflows and Activities that change the number of arguments sent to them can otherwise introduce the need for versioning. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details.
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. This is because later revisions to your Workflows and Activities that change the number of arguments sent to them can otherwise introduce the need for versioning. Review the [Activity parameters](https://docs.temporal.io/develop/go/activities/basics#activity-parameters) section of the Temporal documentation for more details.
 
 You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
 
@@ -215,9 +215,9 @@ You've created your two Activities. Now you'll coordinate them using a Temporal 
 
 Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs.
 
-In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. Review the [Develop Workflows](https://docs.temporal.io/develop/go/core-application#develop-workflows) section of the Temporal documentation for more about Workflows in Go.
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. Review the [Develop Workflows](https://docs.temporal.io/develop/go/workflows/basics#develop-workflows) section of the Temporal documentation for more about Workflows in Go.
 
-Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
+Temporal Workflows [must be deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
 
 Create the file `workflows.go` in the root of your project:
 
@@ -246,7 +246,7 @@ import (
 
 With the imports and options in place, you can define the Workflow itself.
 
-In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/dev-guide/go/foundations#workflow-parameters) section of the Temporal documentation.
+In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/develop/go/workflows/basics#workflow-parameters) section of the Temporal documentation.
 
 Add the following code to define the `GetAddressFromIP` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
@@ -740,7 +740,7 @@ A Workflow ID is unique in a Namespace and identifies a Workflow Execution. Usin
 In this tutorial you're generating a UUID and appending it to a string that identifies the Workflow.
 :::
 
-You can [get the results](https://docs.temporal.io/dev-guide/go/foundations/#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling `we.Get`, which blocks the program's execution until the Workflow Execution completes.
+You can [get the results](https://docs.temporal.io/develop/go/client/temporal-client#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation attempts to get the results immediately by calling `we.Get`, which blocks the program's execution until the Workflow Execution completes.
 
 Now you can run your Workflow. First, ensure that your local Temporal Service is running, and that your Worker program is running also.
 

@@ -77,7 +77,7 @@ Additionally, this tutorial assumes you have basic familiarity with:
 
 #### Programming Concepts
 
-* Temporal fundamentals such as [Workflows](https://docs.temporal.io/develop/python/core-application#develop-workflows), [Activities](https://docs.temporal.io/develop/python/core-application#develop-activities), [Workers](https://docs.temporal.io/develop/python/core-application#run-a-dev-worker), [Signals](https://docs.temporal.io/develop/python/message-passing#signals), and [Queries](https://docs.temporal.io/develop/python/message-passing#queries)
+* Temporal fundamentals such as [Workflows](https://docs.temporal.io/develop/python/workflows/basics), [Activities](https://docs.temporal.io/develop/python/activities/basics), [Workers](https://docs.temporal.io/develop/python/workers/run-worker-process#run-a-worker-process), [Signals](https://docs.temporal.io/develop/python/workflows/message-passing#signal-handlers), and [Queries](https://docs.temporal.io/develop/python/workflows/message-passing#query-handlers)
 * Python fundamentals such as functions, classes, [async/await syntax](https://docs.python.org/3/library/asyncio.html), and virtual environments
 * Command line interface and running commands in a terminal or command prompt  
 * REST API concepts including HTTP requests and JSON responses
@@ -4984,7 +4984,7 @@ if __name__ == "__main__":
 
 The code creates a `ThreadPoolExecutor` for the Worker to use as the `activity_executor`.
 Since an agent's tools can be either `async` or not, you must use one of the synchronous safe methods for Activity execution.
-You can read more about this in [the Python SDK documentation](https://docs.temporal.io/develop/python/python-sdk-sync-vs-async).
+You can read more about this in [the Python SDK documentation](https://docs.temporal.io/develop/python/best-practices/python-sdk-sync-vs-async).
 
 
 Next, the Worker object is created, passing in the `client`, the `task_queue`, the `activity_executor`, and then registering the individual Workflows and Activities the Worker can execute.

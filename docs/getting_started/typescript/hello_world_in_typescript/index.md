@@ -234,13 +234,13 @@ export async function getLocationInfo(ip: string): Promise<string> {
 
 This Activity follows the same pattern as the `getIP` Activity. It's an exported async function that uses `fetch` to call a remote service. This time, the service returns JSON data rather than text.
 
-While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/dev-guide/typescript/foundations/#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of in more complex applications.
+While Activities can accept input arguments, it's a best practice to send a single argument rather than multiple arguments. In this case you only have a single String. If you have more than one argument, you should bundle them up in a serializable object. Review the [Activity parameters](https://docs.temporal.io/develop/typescript/activities/basics#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of in more complex applications.
 
 You've created your two Activities. Now you'll coordinate them using a Temporal Workflow.
 
 ## Control application logic with a Workflow
 
-Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. Review the [Develop Workflows](https://docs.temporal.io/develop/typescript/core-application#develop-workflows) section of the Temporal documentation for more about Workflows in TypeScript.
+Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs. Review the [Develop Workflows](https://docs.temporal.io/develop/typescript/workflows/basics#develop-workflows) section of the Temporal documentation for more about Workflows in TypeScript.
 
 Open the file `src/workflows.ts` and remove the code in the file since you'll add your own. Then add the following code to import the Activities and configure how the Workflow should handle failures with a [Retry Policy](https://docs.temporal.io/encyclopedia/retry-policies).
 
