@@ -96,7 +96,7 @@ Try entering a research query like _"what is the best spaghetti recipe?"_ The ag
 Before adding Temporal, review the existing structure:
 
 ```
-├── run_server.py              # FastAPI server (entry point)
+├── run_server.py              # Backend API for the chat interface
 ├── ui/                        # Browser-based chat interface
 └── deep_research/
     ├── agents/                # Individual AI agents (OpenAI Agents SDK)
