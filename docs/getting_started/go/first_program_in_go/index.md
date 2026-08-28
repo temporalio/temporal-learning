@@ -44,7 +44,7 @@ Before starting this tutorial:
 
 ## ![](images/workflow.png) Application overview
 
-The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/dev-guide/go/foundations/#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/dev-guide/go/foundations/#activity-definition).
+The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/develop/go/workflows/basics#develop-workflows) that orchestrates the execution of `Withdraw()` and `Deposit()` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/develop/go/activities/basics#activity-definition).
 
 To run the application, you do the following:
 
@@ -363,7 +363,7 @@ This tutorial uses a separate program to start the Workflow, but you don't have 
 
 :::
 
-You can make the call [synchronously or asynchronously](https://docs.temporal.io/go/workflows/#how-to-start-a-workflow). Here we do it synchronously by fetching the return value of the Workflow execution with `we.Get`.  This call waits for the Workflow execution to complete before continuing.
+You can make the call [synchronously or asynchronously](https://docs.temporal.io/develop/go/client/temporal-client#get-workflow-results). Here we do it synchronously by fetching the return value of the Workflow execution with `we.Get`.  This call waits for the Workflow execution to complete before continuing.
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 

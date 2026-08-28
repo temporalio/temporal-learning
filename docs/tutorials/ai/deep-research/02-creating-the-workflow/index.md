@@ -623,7 +623,7 @@ Before adding the handlers that modify state, let's add a method to read state. 
 1. **As a Query handler** — Clients can call it directly to check the Workflow's current state
 2. **As a helper** — The Update handlers (which we'll add next) call it to return status after modifying state
 
-[Queries](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-queries) are read-only—they can inspect Workflow state but cannot modify it. The server's `/api/status` endpoint calls this Query to get the current state: What's the original query? Are there clarification questions? How many have been answered?
+[Queries](https://docs.temporal.io/sending-messages#sending-queries) are read-only—they can inspect Workflow state but cannot modify it. The server's `/api/status` endpoint calls this Query to get the current state: What's the original query? Are there clarification questions? How many have been answered?
 
 ```python
     @workflow.query
@@ -648,7 +648,7 @@ Before adding the handlers that modify state, let's add a method to read state. 
 
 ### Add the Update Handlers
 
-Now let's add the handlers that receive input and modify state. That's where [Updates](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-updates) come in.
+Now let's add the handlers that receive input and modify state. That's where [Updates](https://docs.temporal.io/sending-messages#sending-updates) come in.
 
 <details>
 <summary>What is an Update?</summary>
@@ -661,7 +661,7 @@ Temporal provides three ways to communicate with a running Workflow:
 | **[Signal](https://docs.temporal.io/develop/python/message-passing#send-signal-from-client)** | Client → Workflow | Yes | No |
 | **[Update](https://docs.temporal.io/sending-messages#sending-updates)** | Client → Workflow | Yes | Yes |
 
-An [Update](https://docs.temporal.io/encyclopedia/workflow-message-passing#sending-updates) combines the best of both: it can modify Workflow state like a Signal, but also returns a response like a Query. This makes it perfect for our use case—the UI sends a research query and immediately gets back the status (including any clarification questions).
+An [Update](https://docs.temporal.io/sending-messages#sending-updates) combines the best of both: it can modify Workflow state like a Signal, but also returns a response like a Query. This makes it perfect for our use case—the UI sends a research query and immediately gets back the status (including any clarification questions).
 
 </details>
 

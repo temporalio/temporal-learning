@@ -44,7 +44,7 @@ Before starting this tutorial:
 
 ## ![](images/workflow.png) Application overview
 
-The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/dev-guide/typescript/foundations#develop-workflows) that orchestrates the execution of `withdraw` and `deposit` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/dev-guide/typescript/foundations#develop-activities).
+The project in this tutorial mimics a "money transfer" application that has a single [Workflow function](https://docs.temporal.io/develop/typescript/workflows/basics#how-to-develop-a-workflow) that orchestrates the execution of `withdraw` and `deposit` functions, representing a transfer of money from one account to another. Temporal calls these particular functions [Activity functions](https://docs.temporal.io/develop/typescript/activities/basics#how-to-develop-an-activity).
 
 To run the application, you do the following:
 
@@ -353,7 +353,7 @@ This tutorial uses a separate program to start the Workflow, but you don't have 
 
 :::
 
-You can make the call [synchronously or asynchronously](https://docs.temporal.io/dev-guide/typescript/foundations#start-workflow-execution). Here we do it synchronously by fetching the return value of the Workflow execution with `await handle.result()`.  This call waits for the Workflow execution to complete before continuing.
+You can make the call [synchronously or asynchronously](https://docs.temporal.io/develop/typescript/client/temporal-client#get-workflow-results). Here we do it synchronously by fetching the return value of the Workflow execution with `await handle.result()`.  This call waits for the Workflow execution to complete before continuing.
 
 Now that you've seen how to use the SDK to start a Workflow Execution, try running the program yourself.
 

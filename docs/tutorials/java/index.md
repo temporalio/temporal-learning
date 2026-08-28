@@ -10,7 +10,7 @@ image: /img/temporal-logo-twitter-card.png
 
 Java is a high-level, object-oriented programming language known for its platform independence, robustness, and extensive ecosystem. 
 
-Temporal's [Java SDK](https://docs.temporal.io/dev-guide/java/foundations#add-your-sdk) lets you use Java to build applications that take advantage of Temporal's features.
+Temporal's [Java SDK](https://docs.temporal.io/develop/java#install-and-get-started) lets you use Java to build applications that take advantage of Temporal's features.
 
 These tutorials will walk you through building Temporal applications using Java.
 

@@ -5,7 +5,7 @@ sidebar_position: 1
 description: Build a durable webhook delivery service in Python using Temporal's Standalone Activities, Temporal's durable job queue, then run it hands-on in an Instruqt lab.
 keywords: [Python, temporal, sdk, tutorial, standalone activities, job queue]
 tags:
-- Python
+  - Python
 image: /img/temporal-logo-twitter-card.png
 last_update:
   date: 2026-06-15
@@ -19,20 +19,9 @@ import Link from '@docusaurus/Link';
 
 _By [Nikolay Advolodkin](https://www.linkedin.com/in/nikolayadvolodkin/), Staff Developer Advocate at Temporal_
 
-You're going to build a durable webhook delivery service.
+**Standalone Activities are Temporal's durable job queue.** You write a regular `@activity.defn` and submit it with one API call. Temporal persists it, retries it on failure, and makes it visible in the UI, with no broker, scheduler, or result store for you to operate.
 
 When something happens in your application, such as a payment clearing, an order shipping, or a user signing up, you POST to a URL another team gave you. Doing it durably means three things: retry if the network fails, retry if the receiver returns a 500, and never double-deliver if your service crashes mid-send.
-
-The same `deliver_webhook` Activity runs through every module of this tutorial:
-
-- **Module 1**: Run the Activity directly from a client. Inspect it in the Temporal UI.
-- **Module 2**: Make retries safe with an idempotency key.
-- **Module 3**: Reject duplicate jobs at the platform level.
-- **Module 4**: Cap throughput and prioritize urgent jobs.
-- **Module 5**: Long-running jobs that heartbeat progress and resume after a crash.
-- **Module 6**: The same Activity, called from a Workflow. Same code, two job types.
-
-**Standalone Activities are Temporal's durable job queue.** You write a regular `@activity.defn` and submit it with one API call. Temporal persists it, retries it on failure, and makes it visible in the UI, with no broker, scheduler, or result store for you to operate.
 
 ### What you'll learn
 
@@ -47,21 +36,39 @@ By the end you'll be able to:
 
 ### Prerequisites
 
-- Comfortable reading and writing Python (functions, classes, imports).
-- Familiar with Temporal Activities and Workers at the level [Temporal 101 in Python](https://learn.temporal.io/courses/temporal_101/python/) covers. If those words are new, take that course first and come back.
+- Familiar with Temporal Activities and Workers at the level [Temporal 101 in Python](https://learn.temporal.io/courses/temporal_101/python/) covers.
 
 ## Run the lab in your browser (recommended)
 
-This tutorial is built as a hands-on Instruqt lab. Nothing to install: the Temporal Service, the Web UI, and a webhook receiver all boot with the sandbox, so you start writing code immediately. The modules below are the concept walkthrough; we recommend doing the actual building in the lab, but you can also [run the code locally](#run-the-code-locally-optional) if you prefer.
+This tutorial is built as a Free, hands-on Instruqt lab. Nothing to install: the Temporal Service, the Web UI, and a webhook receiver all boot with the sandbox, so you start writing code immediately.
 
-Sign up to launch the lab:
+<div style={{textAlign: 'center', marginBottom: '8px'}}>
+  <span style={{
+    display: 'inline-block',
+    background: 'linear-gradient(135deg, #f97316, #fb923c)',
+    color: '#fff',
+    fontWeight: 800,
+    fontSize: '14px',
+    padding: '6px 18px',
+    borderRadius: '20px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2)',
+    animation: 'tryMePulse 2s ease-in-out infinite',
+  }}>👇 Try the Free Interactive Lab. No setup.</span>
+</div>
+<style>{`
+  @keyframes tryMePulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(249,115,22,0.5), 0 0 24px rgba(249,115,22,0.2); }
+    50% { box-shadow: 0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4); }
+  }
+`}</style>
 
 <iframe
-    width="804"
+    width="100%"
     height="472"
     sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts allow-popups-to-escape-sandbox"
     src="https://play.instruqt.com/embed/temporal/invite/tkjhxj0w55uz"
-    style={{border: 0, maxWidth: '100%'}}
+    style={{border: 0}}
     allowFullScreen
 ></iframe>
 
@@ -130,11 +137,11 @@ await client.execute_activity(
 )
 ```
 
-There's no "standalone" decorator and no Workflow class. Standalone versus inside-a-Workflow is decided by *how* the Activity is called, not how it's defined. The job is **addressable** (a stable ID you can query, cancel, or terminate), **durable** (persisted before your Worker sees it), and **observable** in the Temporal UI under the **Standalone Activities** tab:
+There's no "standalone" decorator and no Workflow class. Standalone versus inside-a-Workflow is decided by _how_ the Activity is called, not how it's defined. The job is **addressable** (a stable ID you can query, cancel, or terminate), **durable** (persisted before your Worker sees it), and **observable** in the Temporal UI under the **Standalone Activities** tab:
 
 ![Temporal UI showing a completed Standalone Activity in the Standalone Activities tab](https://raw.githubusercontent.com/temporalio/edu-standalone-activities/main/python/diagrams/standalone-activity-ui.png)
 
-To be clear about what *doesn't* change: your application's own data still lives in your database, and someone still operates Temporal (your team, or Temporal Cloud). What you stop doing is running a separate broker, scheduler, and retry layer and wiring them together.
+To be clear about what _doesn't_ change: your application's own data still lives in your database, and someone still operates Temporal (your team, or Temporal Cloud). What you stop doing is running a separate broker, scheduler, and retry layer and wiring them together.
 
 > **Check your understanding:** your job hits a transient 503 on attempt 1. With Temporal's default retry policy, what happens?
 
@@ -145,9 +152,18 @@ Temporal sees the exception, waits the initial retry interval (1s by default), a
 
 </details>
 
+<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
+  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
+  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
+  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
+    Join the Temporal education list →
+  </Link>
+    <p className="margin-bottom--md">No spam, unsubscribe anytime.</p>
+</div>
+
 ## Module 2: Make retries safe with idempotency
 
-Temporal guarantees your Activity runs to completion *at least once*, not exactly once. If the POST lands and then the attempt errors (a 500, a dropped network, a Worker crash after the POST), Temporal retries the whole Activity body and the receiver gets the same delivery twice. The fix is a **stable** idempotency key the receiver dedupes on:
+Temporal guarantees your Activity runs to completion _at least once_, not exactly once. If the POST lands and then the attempt errors (a 500, a dropped network, a Worker crash after the POST), Temporal retries the whole Activity body and the receiver gets the same delivery twice. The fix is a **stable** idempotency key the receiver dedupes on:
 
 ```py
 headers = {"Idempotency-Key": f"webhook:{req.event_id}"}
@@ -164,13 +180,13 @@ Step through the with/without comparison:
 <details>
 <summary>Answer</summary>
 
-Each retry generates a *different* random code, so the key changes per attempt and the receiver accepts every one. Make the key deterministic across retries: derive it from input the caller chose (`req.event_id`), or for workflow-bound Activities use `workflow_run_id + activity_id`. If you need the random value as part of the side effect, generate it in the caller and pass it in as input.
+Each retry generates a _different_ random code, so the key changes per attempt and the receiver accepts every one. Make the key deterministic across retries: derive it from input the caller chose (`req.event_id`), or for workflow-bound Activities use `workflow_run_id + activity_id`. If you need the random value as part of the side effect, generate it in the caller and pass it in as input.
 
 </details>
 
 ## Module 3: Reject duplicate jobs at the platform
 
-Module 2 handled Temporal's *own* retries. This module handles a different duplicate: your upstream (Stripe, GitHub, a customer's service) sends the same event twice and you call `start_activity` twice. By default the second call raises `ActivityAlreadyStartedError`. One keyword makes the server return the existing handle instead:
+Module 2 handled Temporal's _own_ retries. This module handles a different duplicate: your upstream (Stripe, GitHub, a customer's service) sends the same event twice and you call `start_activity` twice. By default the second call raises `ActivityAlreadyStartedError`. One keyword makes the server return the existing handle instead:
 
 ```py
 from temporalio.common import ActivityIDConflictPolicy
@@ -184,14 +200,14 @@ await client.start_activity(
 
 Both calls now succeed with the **same `run_id`**, and the duplicate never reaches a Worker. This is scheduling-layer dedup; it composes with the receiver-side idempotency key from Module 2.
 
-<iframe src="https://raw.githack.com/temporalio/edu-standalone-activities/main/docs/conflict-policy-demo/index.html" width="100%" height="520" frameBorder="0" style={{border: 0, borderRadius: '8px'}}></iframe>
+<iframe src="https://raw.githack.com/temporalio/edu-standalone-activities/main/docs/conflict-policy-demo/index.html" width="100%" frameBorder="0" style={{border: 0, borderRadius: '8px', height: 'calc(100vh - 120px)', minHeight: '520px'}}></iframe>
 
-> **Check your understanding:** with `USE_EXISTING` set, you call `start_activity(id="evt_001")` twice, but the second call arrives 60 seconds *after* the first one already completed. What happens?
+> **Check your understanding:** with `USE_EXISTING` set, you call `start_activity(id="evt_001")` twice, but the second call arrives 60 seconds _after_ the first one already completed. What happens?
 
 <details>
 <summary>Answer</summary>
 
-A **new** execution starts. `id_conflict_policy` only governs duplicates while the original is *in flight*. Once it completes, `id_reuse_policy` takes over, and its default (`ALLOW_DUPLICATE`) accepts a fresh run. For dedup across both windows, also set `id_reuse_policy=ActivityIDReusePolicy.REJECT_DUPLICATE`.
+A **new** execution starts. `id_conflict_policy` only governs duplicates while the original is _in flight_. Once it completes, `id_reuse_policy` takes over, and its default (`ALLOW_DUPLICATE`) accepts a fresh run. For dedup across both windows, also set `id_reuse_policy=ActivityIDReusePolicy.REJECT_DUPLICATE`.
 
 </details>
 
@@ -201,7 +217,7 @@ By default the Worker executes Activities as fast as it can process them, which 
 
 ![A rate-limited Standalone Activity in the Temporal UI: status Running, attempt count climbing, last failure HTTP 429](https://raw.githubusercontent.com/temporalio/edu-standalone-activities/main/python/diagrams/rate-limited-activity-running.png)
 
-The problem here isn't one slow job; it's the *combined* request rate of every delivery hitting a receiver that only allows so many per second. Temporal retries each Activity on its own, which fixes a one-off failure but can't fix a total-rate problem: every retry is just another request piling onto an already-overloaded receiver. The fix is to slow how fast the work goes out. One keyword on the Worker does it:
+The problem here isn't one slow job; it's the _combined_ request rate of every delivery hitting a receiver that only allows so many per second. Temporal retries each Activity on its own, which fixes a one-off failure but can't fix a total-rate problem: every retry is just another request piling onto an already-overloaded receiver. The fix is to slow how fast the work goes out. One keyword on the Worker does it:
 
 ```py
 worker = Worker(
@@ -215,14 +231,14 @@ worker = Worker(
 
 Excess work waits in the Task Queue on the server, dispatched at the configured rate. Nothing is dropped. The companion control is `Priority(priority_key, fairness_key, fairness_weight)`: a lower `priority_key` jumps urgent work ahead of a backlog, and the fairness fields stop one busy tenant from starving the rest. See [Task Queue Priority and Fairness](https://docs.temporal.io/develop/task-queue-priority-fairness).
 
-<iframe src="https://raw.githack.com/temporalio/edu-standalone-activities/main/docs/rate-limit-priority-demo/index.html" width="100%" height="430" frameBorder="0" style={{border: 0, borderRadius: '8px'}}></iframe>
+<iframe src="https://raw.githack.com/temporalio/edu-standalone-activities/main/docs/rate-limit-priority-demo/index.html" width="100%" height="540" frameBorder="0" style={{border: 0, borderRadius: '8px'}}></iframe>
 
 > **Check your understanding:** your downstream API allows 100 req/sec. You set `max_activities_per_second=10` on one Worker. Are you safe?
 
 <details>
 <summary>Answer</summary>
 
-For this exact setup, one Worker, yes, but you're only using 10% of the downstream's 100 req/sec headroom. The catch: `max_activities_per_second` is *per Worker*, not global. Add a second Worker and you're at 20/sec; run 11 and you're at 110/sec, past the limit. So "safe" only holds while the Worker count stays fixed. For a cap that holds no matter how many Workers poll the queue, use `max_task_queue_activities_per_second`.
+For this exact setup, one Worker, yes, but you're only using 10% of the downstream's 100 req/sec headroom. The catch: `max_activities_per_second` is _per Worker_, not global. Add a second Worker and you're at 20/sec; run 11 and you're at 110/sec, past the limit. So "safe" only holds while the Worker count stays fixed. For a cap that holds no matter how many Workers poll the queue, use `max_task_queue_activities_per_second`.
 
 </details>
 
@@ -238,7 +254,7 @@ if info.heartbeat_details:
 
 Pair it with `heartbeat_timeout` so the server detects a dead or stuck attempt in seconds instead of waiting out the full `start_to_close_timeout`. Heartbeating is also how cancellation reaches a running Activity. No side database required.
 
-> **Check your understanding:** your batch Activity has `heartbeat_timeout=5s` and processes one item per second. Mid-batch the Worker *hangs* (a deadlock, not a crash) and stops heartbeating. What does Temporal do?
+> **Check your understanding:** your batch Activity has `heartbeat_timeout=5s` and processes one item per second. Mid-batch the Worker _hangs_ (a deadlock, not a crash) and stops heartbeating. What does Temporal do?
 
 <details>
 <summary>Answer</summary>
@@ -249,7 +265,7 @@ After 5 seconds with no heartbeat, Temporal treats the attempt as dead, the same
 
 ## Module 6: Same code runs anywhere
 
-Traditional job queues paint you into a corner: the queue runs jobs, orchestration lives elsewhere, and code gets rewritten when a job becomes multi-step. With Temporal, the exact same Activity runs both ways. Submit `deliver_webhook` directly *or* call it as a step inside a Workflow:
+Traditional job queues paint you into a corner: the queue runs jobs, orchestration lives elsewhere, and code gets rewritten when a job becomes multi-step. With Temporal, the exact same Activity runs both ways. Submit `deliver_webhook` directly _or_ call it as a step inside a Workflow:
 
 ```py
 with workflow.unsafe.imports_passed_through():
@@ -286,11 +302,3 @@ Temporal lets you start with a job and move to a Workflow when the work grows, a
 Ready to build it for real? Launch the hands-on lab using the sign-up form at the [top of this page](#run-the-lab-in-your-browser-recommended).
 
 📝 **Feedback on this tutorial?** [Share your thoughts in our quick form](https://forms.gle/hbTUjkHB6dkucEg27). It helps us improve.
-
-<div className="card padding--lg margin-vert--lg" style={{textAlign: 'center'}}>
-  <h2 className="margin-bottom--sm">Never miss a new tutorial</h2>
-  <p className="margin-bottom--md">Be the first to know when we ship new tutorials, courses, and hands-on guides. No spam, unsubscribe anytime.</p>
-  <Link className="button button--primary button--lg" to="https://pages.temporal.io/get-updates-education">
-    Join the Temporal education list →
-  </Link>
-</div>

@@ -307,7 +307,7 @@ const {
 });
 ```
 
-Using `proxyActivities`, imported from the Temporal TypeScript SDK, you can create a proxy object that allows users to call the Activity from within the Workflow as if it's a local function. For example, when you call the `sendWelcomeEmail` Activity now, you aren't calling the Activity directly. You are calling the proxy, which takes care of executing the Activity, managing automatic retries and other configurations you have made with the Activity. This abstraction allows the developer to focus on business logic without having to worry about the intricacies of distributed computing such as retries. You used `startToCloseTimeout` here to indicate the maximum time it should take for an Activity to execute, including retries. There are [other retry configurations](https://docs.temporal.io/develop/typescript/failure-detection#activity-timeouts) that you can add to your proxy object.
+Using `proxyActivities`, imported from the Temporal TypeScript SDK, you can create a proxy object that allows users to call the Activity from within the Workflow as if it's a local function. For example, when you call the `sendWelcomeEmail` Activity now, you aren't calling the Activity directly. You are calling the proxy, which takes care of executing the Activity, managing automatic retries and other configurations you have made with the Activity. This abstraction allows the developer to focus on business logic without having to worry about the intricacies of distributed computing such as retries. You used `startToCloseTimeout` here to indicate the maximum time it should take for an Activity to execute, including retries. There are [other retry configurations](https://docs.temporal.io/develop/typescript/activities/timeouts#activity-retries) that you can add to your proxy object.
 
 Now that you have configured retries with your Activities, you can move onto writing the `subscriptionWorkflow`. The `subscriptionWorkflow` needs to include the following steps:
 
@@ -434,7 +434,7 @@ You should now see your Worker program running. However, note that if you change
 npm run start.watch
 ```
 
-However, while the Worker runs, it won't have any tasks to perform because you haven't started a Workflow yet. This is where the [Temporal Client](https://docs.temporal.io/evaluate/development-production-features/temporal-client) will come in. Recall that a Temporal Client is a part available in each Temporal SDK that provides a set of APIs to communicate with a Temporal Service. You can use a Temporal Client in your application to perform various operations such as:
+However, while the Worker runs, it won't have any tasks to perform because you haven't started a Workflow yet. This is where the [Temporal Client](https://docs.temporal.io/develop/typescript/client/temporal-client) will come in. Recall that a Temporal Client is a part available in each Temporal SDK that provides a set of APIs to communicate with a Temporal Service. You can use a Temporal Client in your application to perform various operations such as:
   - Start a subscription trial.
   - List ongoing subscription trials.
   - Query the state of a customer's subscription details.

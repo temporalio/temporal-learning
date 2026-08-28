@@ -63,7 +63,7 @@ This chapter walks through the following sequence:
 
 ## Retrieve a Workflow Execution's Event History {#retrieve-event-history}
 
-There are a few ways to view and download a Workflow Execution's [Event History](https://docs.temporal.io/workflows#event-history).
+There are a few ways to view and download a Workflow Execution's [Event History](https://docs.temporal.io/encyclopedia/event-history).
 We recommend starting off by using either the Temporal CLI or the Web UI to access it.
 
 ### Using the Temporal CLI
@@ -204,8 +204,8 @@ The Replay test executes the same steps as the SDK and verifies compatibility.
 
 Workflow code becomes non-deterministic primarily through two main avenues:
 
-1. **[Intrinsic non-deterministic logic](https://docs.temporal.io/dev-guide/go/durable-execution#intrinsic-non-deterministic-logic):** This occurs when Workflow state or branching logic within the Workflow gets determined by factors beyond the SDK's control.
-2. **[Non-deterministic code changes](https://docs.temporal.io/dev-guide/go/durable-execution#durability-through-replays):** When you change your Workflow code and deploy those changes while there are still active Workflow Executions relying on older code versions.
+1. **[Intrinsic non-deterministic logic](https://docs.temporal.io/workflow-definition#intrinsic-nondeterministic-logic):** This occurs when Workflow state or branching logic within the Workflow gets determined by factors beyond the SDK's control.
+2. **[Non-deterministic code changes](https://docs.temporal.io/workflow-definition#non-deterministic-change):** When you change your Workflow code and deploy those changes while there are still active Workflow Executions relying on older code versions.
 
 ## Intrinsic non-deterministic logic {#intrinsic-non-deterministic-logic}
 
@@ -473,7 +473,7 @@ Result:
 ```
 
 The preceding output shows eleven Events in the Event History ordered in a particular sequence.
-All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](https://docs.temporal.io/workflows#command) coming from the Worker.
+All Events are created by the Temporal Server in response to either a request coming from a Temporal Client, or a [Command](https://docs.temporal.io/workflows) coming from the Worker.
 
 Let's take a closer look:
 

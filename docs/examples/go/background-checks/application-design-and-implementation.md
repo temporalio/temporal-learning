@@ -93,16 +93,16 @@ However, in real life,the application could use as many Worker Processes (each w
 
 ## How do you ensure PII is encrypted in the Temporal Platform?
 
-To ensure data is encrypted while in the Temporal Platform, you use a customized [Data Converter](https://docs.temporal.io/security/#custom-data-converter).
+To ensure data is encrypted while in the Temporal Platform, you use a customized [Data Converter](https://docs.temporal.io/default-custom-data-converters#custom-data-converter).
 
 ## How do you know what the status of a Background Check is
 
 The status refers to the whether a Background Check is Open or Closed.
 
-You can use the Temporal Platform's [Visibility APIs](https://docs.temporal.io/visibility/#advanced-visibility) to see the status of any oftheWorkflow Executions.
+You can use the Temporal Platform's [Visibility APIs](https://docs.temporal.io/visibility#advanced-visibility) to see the status of any oftheWorkflow Executions.
 In this application you wrapped the `bgc-company list` command around these Visibility APIs.
 You also make sure to add custom Search Attributes totheBackground Check Workflows.
-When you run `bgc-company list` you are using the Visibility APIs and passing a [List Filter](https://docs.temporal.io/visibility/#list-filter) that gives us back only the Background Check Workflow Executions.
+When you run `bgc-company list` you are using the Visibility APIs and passing a [List Filter](https://docs.temporal.io/list-filter#list-filter) that gives us back only the Background Check Workflow Executions.
 
 ## How do you know what the state of a Background Check is?
 

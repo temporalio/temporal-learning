@@ -1,5 +1,16 @@
 {
   "trailingSlash": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "</assets/fonts/Aeonik-Regular-339030ba4308b7630f2de14a0ef43399.woff>; rel=preload; as=font; type=\"font/woff\"; crossorigin, </assets/fonts/Aeonik-Bold-87b0696142a6e3256f4879e1709cdc43.woff>; rel=preload; as=font; type=\"font/woff\"; crossorigin, </assets/fonts/Aeonik-Light-bf57c30caa36476cc75784f0f05c6433.woff>; rel=preload; as=font; type=\"font/woff\"; crossorigin, </assets/fonts/Poppins-Regular-35d26b781dc5fda684cce6ea04a41a75.ttf>; rel=preload; as=font; type=\"font/ttf\"; crossorigin, </assets/fonts/Poppins-Medium-673ed42382ab264e0bf5b33f3579568c.ttf>; rel=preload; as=font; type=\"font/ttf\"; crossorigin, </assets/fonts/Poppins-SemiBold-ac8d04b620e54be9b0f0f4851d56e4dd.ttf>; rel=preload; as=font; type=\"font/ttf\"; crossorigin, </assets/fonts/Poppins-Bold-cdb29a5d7ccf57ff05a3fd9216d11771.ttf>; rel=preload; as=font; type=\"font/ttf\"; crossorigin"
+        }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/tutorials/go/ecommerce/",
