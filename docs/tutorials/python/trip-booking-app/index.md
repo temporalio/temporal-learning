@@ -114,48 +114,24 @@ async def book_flight(book_input: BookVacationInput) -> str:
 ```
 <!--SNIPEND-->
 
-The `book_car` and `book_flight` functions follow a similar structure:
+The `book_car` function follows a similar structure:
 
-<!--SNIPSTART saga-py-activities-book-hotel-->
+<!--SNIPSTART saga-py-activities-book-car-->
 [docs/tutorials/python/trip-booking-app/code/activities.py](https://github.com/temporalio/temporal-learning/blob/main/docs/tutorials/python/trip-booking-app/code/activities.py)
 ```py
 @activity.defn
-async def book_hotel(book_input: BookVacationInput) -> str:
+async def book_car(book_input: BookVacationInput) -> str:
     """
-    Books a hotel.
+    Books a car.
 
     Args:
-        book_input (BookVacationInput): Input data for booking the hotel.
+        book_input (BookVacationInput): Input data for booking the car.
 
     Returns:
         str: Confirmation message.
     """
-    await asyncio.sleep(1)
-    attempt_info = f"Invoking activity, attempt number {activity.info().attempt}"
-    if activity.info().attempt < 2:
-        activity.heartbeat(attempt_info)
-        await asyncio.sleep(1)
-        raise RuntimeError("Hotel service is down. Retrying...")
-
-    if "invalid" in book_input.book_hotel_id:
-        raise ValueError("Invalid hotel booking, rolling back!")
-
-    print(f"Booking hotel: {book_input.book_hotel_id}")
-    return f"{book_input.book_hotel_id}"
-
-@activity.defn
-async def book_flight(book_input: BookVacationInput) -> str:
-    """
-    Books a flight.
-
-    Args:
-        book_input (BookVacationInput): Input data for booking the flight.
-
-    Returns:
-        str: Confirmation message.
-    """
-    print(f"Booking flight: {book_input.book_flight_id}")
-    return f"{book_input.book_flight_id}"
+    print(f"Booking car: {book_input.book_car_id}")
+    return f"{book_input.book_car_id}"
 
 
 ```
