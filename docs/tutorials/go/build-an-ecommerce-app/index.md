@@ -104,6 +104,7 @@ selector.AddReceive(channel, func(c workflow.ReceiveChannel, _ bool) {
 			return
 		}
 		RemoveFromCart(&state, message.Item)
+	}
 })
 
 // Stop blocking once one condition is satisfied
