@@ -791,7 +791,7 @@ Unlike many modern applications that require complex processes and external data
 Try it out by following these steps:
 
 
-1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
+1. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. Stopping the Worker before you proceed ensures your Workflow doesn't finish.
 2. Verify the Workflow is running in the [Web UI](http://localhost:8080). If finished, restart it using the Maven command.
 3. Shut down the Temporal Server with `CTRL+C` in the terminal window running the server.
 4. After the Temporal Cluster has stopped, restart it and visit the UI. This can be done by running `temporal server start-dev` in the terminal window and navigating to [localhost:8080](http://localhost:8080/).
@@ -816,7 +816,7 @@ To test this out and see how Temporal responds, you'll simulate a bug in the `de
 
 Try it out by following these steps:
 
-1. Make sure your Worker is stopped before proceeding, so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`.
+1. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. Stopping the Worker before you proceed ensures your Workflow doesn't finish.
 
 2. Open the `AccountActivityImpl` file and modify the `deposit` method so `activityShouldSucceed` is set to false.
 

@@ -529,7 +529,7 @@ Unlike many modern applications that require complex leader election processes a
 
 Try it out by following these steps:
 
-1. Make sure your Worker is stopped before proceeding so your Workflow doesn't finish. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. 
+1. Switch to the terminal that's running your Worker and stop it by pressing `CTRL+C`. Stopping the Worker before you proceed ensures your Workflow doesn't finish. 
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `go run start/main.go`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server or via the Docker dashboard.
