@@ -246,8 +246,6 @@ import (
 
 With the imports and options in place, you can define the Workflow itself.
 
-In the Temporal Go SDK, a Workflow Definition is an [exported function](https://go.dev/tour/basics/3) with two additional requirements: it must accept `workflow.Context` as the first input parameter, and it must return `error`. Your Workflow function can optionally return another value, which you'll use to return the result of the Workflow Execution. You can learn more in the [Workflow parameters](https://docs.temporal.io/develop/go/workflows/basics#workflow-parameters) section of the Temporal documentation.
-
 Add the following code to define the `GetAddressFromIP` Workflow, which will call both Activities, using the value of the first as the input to the second:
 
 <!--SNIPSTART go-ipgeo-workflow-code-->

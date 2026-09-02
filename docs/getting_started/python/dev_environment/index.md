@@ -45,7 +45,7 @@ python3 -V
 You'll see the version printed to the screen:
 
 ```
-Python 3.10.9
+Python 3.13.2
 ```
 
 
