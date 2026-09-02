@@ -434,7 +434,7 @@ You'll see a **Retry Policy** defined that looks like this:
 <!--SNIPEND-->
 
 
-By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 3 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
+By default, Temporal retries failed Activities forever, but you can specify some errors that Temporal should not attempt to retry. In this example, it'll retry the failed Activity for 5000 attempts, but if the Workflow encounters an error, it will refund money to the sender's account.
 
 
 In the case of an error with the `deposit` Activity, the Workflow will attempt to put the money back.
