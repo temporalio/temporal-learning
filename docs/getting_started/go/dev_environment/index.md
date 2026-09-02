@@ -16,7 +16,7 @@ To follow the Go SDK tutorials we recommend that you have the following environm
 
 ## Install Go
 
-Make sure you have [Go](https://golang.org/doc/install) installed. These tutorials were produced using Go 1.18.
+Make sure you have [Go](https://golang.org/doc/install) installed. We recommend using a recent version of Go.
 
 Check your version of Go with the following command:
 
@@ -27,7 +27,7 @@ go version
 This will return your installed Go version:
 
 ```
-go version go1.18.1 darwin/amd64
+go version go1.27.1 darwin/arm64
 ```
 
 ## Install the Temporal Go SDK

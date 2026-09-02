@@ -676,7 +676,7 @@ You now know how to run a Temporal Workflow and understand some of the value Tem
 Try the following things before moving on to get more practice working with a Temporal application:
 
 1. Verify that the Workflow fails with insufficient funds. Open `client.ts` and change the `Amount` to  `1000000`. Run `npm run client` and see the `withdraw` Activity fail. Since this is a non-retryable error, the Workflow does not retry the Activity. The Workflow stops because the logic returns right away and doesn't attempt to run the `deposit` Activity.
-2. Verify that the Workflow fails with an invalid account number. Open `npm run client` and change the `targetAccount` number to an empty string. Run `npm run client` and see the Activity fail and that it puts the money back in the original account.
+2. Verify that the Workflow fails with an invalid account number. Open `client.ts` and change the `targetAccount` number to an empty string. Run `npm run client` and see the Activity fail and that it puts the money back in the original account.
 3. Change the retry policy in `workflows.ts` so it only retries 3 times. Then change the `deposit` Activity in `activities.ts` so it uses the `depositThatFails` function. Does the Workflow place the money back into the original account?
 
 ### Review
