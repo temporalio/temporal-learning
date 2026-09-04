@@ -73,7 +73,7 @@ This tutorial is built as a Free, hands-on Instruqt lab. Nothing to install: the
     width="100%"
     height="472"
     sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts allow-popups-to-escape-sandbox"
-    src="https://play.instruqt.com/embed/temporal/tracks/standalone-activities-java"
+    src="https://play.instruqt.com/embed/temporal/tracks/standalone-activities-java?token=em_ya7eA-2RxusUYiLn"
     style={{border: 0}}
     allowFullScreen
 ></iframe>
