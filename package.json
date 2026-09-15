@@ -28,6 +28,7 @@
     "@docusaurus/plugin-content-docs": "^3.10.1",
     "@docusaurus/preset-classic": "^3.10.1",
     "@mdx-js/react": "^3.0.0",
+    "@temporalio-web/consent-banner": "^1.0.1",
     "algoliasearch": "^5.49.2",
     "chart.js": "3.7.1",
     "clsx": "^1.1.1",

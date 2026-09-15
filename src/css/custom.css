@@ -7,6 +7,32 @@
 
 /* You can override the default Infima variables here. */
 
+temporal-consent-banner:not(:defined) {
+  display: none;
+}
+
+.footer__copyright {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 2rem;
+}
+
+.footer__privacy-choices {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  color: var(--ifm-footer-link-color);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
 :root {
   /* --ifm-color-primary: #f2633f;
   --ifm-color-primary-dark: #111827; */
@@ -165,11 +191,9 @@ h1 {
   }
 }
 
-
 .navbar__logo img {
   height: 35px;
 }
-
 
 .header-link {
   text-decoration: none;
@@ -296,8 +320,9 @@ h1 {
 }
 
 /* Buttons should not have underlined text. */
-a.button { text-decoration: none; }
-
+a.button {
+  text-decoration: none;
+}
 
 /* light theme buttons are somewhat harsh - soften the colors */
 html[data-theme="light"] a.button--primary {
@@ -310,11 +335,11 @@ html[data-theme="light"] a.button--primary:hover {
   border: 1px solid var(--ifm-link-color);
 }
 
- /* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
- pre.prism-code.language-command > code::before {
-   content: "$ ";
-   font-weight: bolder;
- }
+/* adds unselectable prompt to CLI commands - use ```command   instead of ```bash */
+pre.prism-code.language-command > code::before {
+  content: "$ ";
+  font-weight: bolder;
+}
 
 @media only screen and (min-width: 1400px) {
   .navbar__items--right {
