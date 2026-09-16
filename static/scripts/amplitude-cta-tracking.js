@@ -15,6 +15,17 @@
   // if the `amplitude` global is ever unavailable.
   var CTA_URL_FRAGMENT = "pages.temporal.io/get-updates-education";
 
+  function hasAnalyticsConsent() {
+    var match = document.cookie.match(/(?:^|;\s*)consent=([^;]*)/);
+    if (!match) return false;
+
+    try {
+      return JSON.parse(decodeURIComponent(match[1])).analytics === true;
+    } catch {
+      return false;
+    }
+  }
+
   document.addEventListener(
     "click",
     function (event) {
@@ -25,6 +36,7 @@
       if (!link) return;
 
       if (
+        !hasAnalyticsConsent() ||
         typeof window.amplitude === "undefined" ||
         !window.amplitude ||
         typeof window.amplitude.track !== "function"
