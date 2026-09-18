@@ -490,7 +490,7 @@ You'll complete those in the rest of this tutorial.
 Temporal Workflows also make your code easier to test. Temporal provides testing utilities that help you stub out external services and programmatically advance time, which lets you unit test your Workflows. For an example, take a look at how [Descript uses Temporal](https://temporal.io/case-studies/descript-case-study).
 Temporal's testing environment also provides utilities for mocking Activities and testing logic that executes after a delay. That makes it less complicated to unit test Workflows that depend on external services or Workflows that involve long timeouts.
 
-To learn how to implement tests for this application, you can refer to [workflow_test.go](https://github.com/temporalio/temporal-ecommerce/blob/main/workflow_test.go) and [Notes on Testing](https://github.com/temporalio/temporal-ecommerce?tab=readme-ov-file#notes-on-testing) in the Github repo for this tutorial, or watch this walkthrough video:
+To learn how to implement tests for this application, you can refer to [workflow_test.go](https://github.com/temporalio/temporal-ecommerce/blob/main/workflow_test.go) and [Notes on Testing](https://github.com/temporalio/temporal-ecommerce?tab=readme-ov-file#notes-on-testing) in the GitHub repo for this tutorial, or watch this walkthrough video:
 
 import { ResponsivePlayer } from '@site/src/components'
 
@@ -689,7 +689,7 @@ func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
 
 With that, you should have a complete REST API interface to your eCommerce application.
 From here, you can build a user-friendly frontend, or continue to add features.
-The [Github repo](https://github.com/temporalio/temporal-ecommerce/tree/main/frontend) for this tutorial contains an example of a frontend that you can take from here.
+The [GitHub repo](https://github.com/temporalio/temporal-ecommerce/tree/main/frontend) for this tutorial contains an example of a frontend that you can take from here.
 
 ![An example frontend for this application](images/frontend.png)
 
