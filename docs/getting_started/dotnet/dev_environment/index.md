@@ -12,7 +12,7 @@ image: /img/temporal-logo-twitter-card.png
 
 <img className="banner" src="/img/sdk_banners/banner_dotnet.png" alt="Temporal Dotnet SDK" />
 
-To follow the .NET SDK tutorials and build your own Temporal applications, you'll need the [.NET SDK](https://github.com/temporalio/sdk-dotnet?tab=readme-ov-file#installation) and a Temporal Server.
+To follow the .NET SDK tutorials and build your own Temporal applications, you'll need the [.NET SDK](https://github.com/temporalio/sdk-dotnet/blob/main/src/Temporalio/README.md#implementing-a-workflow-and-activity) and a Temporal Server.
 
 ## Install .NET
 
