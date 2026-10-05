@@ -16,7 +16,6 @@ keywords:
   - tests
   - typescript
   - typescript sdk
-  - vscode debugger extension
 tags:
   - determinism
   - durable-execution
@@ -28,7 +27,6 @@ tags:
   - tests
   - typescript
   - typescript-sdk
-  - vscode-debugger-extension
 ---
 
 When it comes to the Temporal Platform's ability to durably execute code, the SDK's ability to [Replay](https://docs.temporal.io/encyclopedia/temporal-sdks#replays) a Workflow Execution is a major aspect of that.
@@ -419,14 +417,6 @@ Progress:
                                                         Identity:89476@flossypurse-macbook-pro.local@, ForkEventVersion:0,
                                                         BinaryChecksum:da7cae1f96abf543ca8b6e7c3f3ab072}
 ```
-
-### VSCode Debugger extension {#static-analysis}
-
-Non-deterministic code can be hard to catch while developing Workflows.
-You can leverage the Temporal TypeScript VSCode extenstion to debug your Workflows by their ID or Workflow Event History file.
-Use the [Temporal Debugger for VS Code](https://marketplace.visualstudio.com/items?itemName=temporal-technologies.temporalio).
-
-See the [vscode-debugger-extension README](https://github.com/temporalio/vscode-debugger-extension/blob/main/README.md) for details on how to use it.
 
 ### Does this mean Temporal can't be used for AI? {#temporal-for-ai}
 
