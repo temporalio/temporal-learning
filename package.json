@@ -2,6 +2,9 @@
   "name": "temporal-learning",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "docusaurus": "docusaurus",
     "format": "dprint fmt",
