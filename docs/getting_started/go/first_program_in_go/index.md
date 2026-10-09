@@ -253,7 +253,7 @@ This Activity function is almost identical to the `Deposit` function, except tha
 
 :::tip Why you use Activities
 
-At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflows#deterministic-constraints). For example, they need to be replayable, and making changes to the Workflow code makes it much harder to replay. 
+At first glance, you might think you can incorporate your logic into the Workflow Definition. However, Temporal Workflows have certain [deterministic constraints](https://docs.temporal.io/workflow-definition#deterministic-constraints). For example, they need to be replayable, and making changes to the Workflow code makes it much harder to replay. 
 
 In addition, by using Activities, you can take advantage of Temporal's ability to retry Activities indefinitely, which you'll explore later in this tutorial.
 

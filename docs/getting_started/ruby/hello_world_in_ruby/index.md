@@ -108,7 +108,7 @@ With the project created, you'll create the application's core logic.
 
 Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information.
 
-You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
+You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
 
 If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
 
@@ -209,7 +209,7 @@ You've created your two Activities. Now you'll coordinate them using a Temporal 
 
 Workflows are where you configure and organize the execution of Activities. You define a Workflow by writing a *Workflow Definition* using one of the Temporal SDKs.
 
-Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
+Temporal Workflows [must be deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash. That's why you call Activities from your Workflow code. Activities don't have the same determinism constraints that Workflows have.
 
 Create the file `get_address_from_ip_workflow.rb` in the `ip_geolocate` folder:
 
