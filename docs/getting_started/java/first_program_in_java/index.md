@@ -213,7 +213,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
         .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
         .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
         .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
-        .setMaximumAttempts(5000) // Fail after 5000 attempts
+        .setMaximumAttempts(3) // Fail after 3 attempts
         .build();
 
     // ActivityOptions specify the limits on how long an Activity can execute before
@@ -428,7 +428,7 @@ You'll see a **Retry Policy** defined that looks like this:
         .setInitialInterval(Duration.ofSeconds(1)) // Wait 1 second before first retry
         .setMaximumInterval(Duration.ofSeconds(20)) // Do not exceed 20 seconds between retries
         .setBackoffCoefficient(2) // Wait 1 second, then 2, then 4, etc
-        .setMaximumAttempts(5000) // Fail after 5000 attempts
+        .setMaximumAttempts(3) // Fail after 3 attempts
         .build();
 ```
 <!--SNIPEND-->
@@ -862,7 +862,7 @@ Temporal offers multiple ways to specify timeouts, including [Schedule-To-Start 
 
 :::
 
-In the Workflow Definition, you can see that a **`StartToCloseTimeout`** is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 5000 times.
+In the Workflow Definition, you can see that a **`StartToCloseTimeout`** is specified for the Activities, and a Retry Policy tells the server to retry the Activities up to 3 times.
 
 You can read more about [Retries](https://docs.temporal.io/retry-policies) in the documentation.
 
