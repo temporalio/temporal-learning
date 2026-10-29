@@ -314,15 +314,10 @@ Let's see that in action.
 
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/encyclopedia/temporal-sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
-If the Temporal Server from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/) is still running, stop it by pressing `CTRL+C` in its terminal.
-Then open a terminal in the project root and start the local [Temporal Cluster](https://docs.temporal.io/clusters) with persistent storage:
-
+First, start the local [Temporal Cluster](https://docs.temporal.io/clusters) with persistent storage. If the server from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/) is still running, stop it with `CTRL+C` and restart it with the following command:
 ```command
 temporal server start-dev --db-filename temporal.db
 ```
-
-The `--db-filename` option saves Workflow state in a local SQLite file so it survives the server restart later in this tutorial.
-Use the same database file each time you restart the server.
 
 To start the Workflow, run `run_workflow.py` from the project root using the following command:
 
@@ -494,13 +489,6 @@ Despite your best efforts, there's going to be a time when something goes wrong 
 
 ### Recover from a server crash
 
-:::note Persistent storage required
-
-Start the server with `--db-filename temporal.db` as shown in [Start the Workflow](#start-the-workflow).
-If you started it without this option, restart it with persistent storage and start a new Workflow before proceeding. Existing in-memory state is lost when the server stops.
-
-:::
-
 Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
 
 Try it out by following these steps:
@@ -509,13 +497,7 @@ Try it out by following these steps:
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python run_workflow.py`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
-5. Restart the Temporal Server from the same project directory, using the same database file:
-
-   ```command
-   temporal server start-dev --db-filename temporal.db
-   ```
-
-6. Visit the UI.
+5. After the Temporal Cluster has stopped, restart it with `temporal server start-dev --db-filename temporal.db` from the same directory to reuse the database, and visit the UI.
 
 Your Workflow is still listed:
 
