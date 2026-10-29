@@ -314,9 +314,9 @@ Let's see that in action.
 
 You have two ways to start a Workflow with Temporal, either through the [Temporal command-line tool](https://docs.temporal.io/cli) or the [SDK](https://docs.temporal.io/encyclopedia/temporal-sdks). In this tutorial, you use the SDK to start the Workflow, which is how most Workflows get started in a live environment.
 
-First, make sure the local [Temporal Cluster](https://docs.temporal.io/clusters) is running in a terminal from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/). This is done by opening a new terminal window and running the following command:
+First, start the local [Temporal Cluster](https://docs.temporal.io/clusters) with persistent storage. If the server from the [previous tutorial](https://learn.temporal.io/getting_started/python/dev_environment/) is still running, stop it with `CTRL+C` and restart it with the following command:
 ```command
-temporal server start-dev
+temporal server start-dev --db-filename temporal.db
 ```
 
 To start the Workflow, run `run_workflow.py` from the project root using the following command:
@@ -497,7 +497,7 @@ Try it out by following these steps:
 2. Switch back to the terminal where your Workflow ran. Start the Workflow again with `python run_workflow.py`.
 3. Verify the Workflow is running in the UI.
 4. Shut down the Temporal Server by either using `CTRL+C` in the terminal window running the server.
-5. After the Temporal Cluster has stopped, restart it and visit the UI.
+5. After the Temporal Cluster has stopped, restart it with `temporal server start-dev --db-filename temporal.db` from the same directory to reuse the database, and visit the UI.
 
 Your Workflow is still listed:
 
