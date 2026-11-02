@@ -1,9 +1,19 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+const fs = require("fs");
+const path = require("path");
 const { themes: prismThemes } = require("prism-react-renderer");
 const lightCodeTheme = prismThemes.github;
 const darkCodeTheme = prismThemes.dracula;
+
+// Google Consent Mode bootstrap. Injected as a synchronous inline <head> script
+// (below) so it registers the denied consent default before the GTM container
+// loads. See static/scripts/googletag.js for why the ordering matters.
+const googleTagBootstrap = fs.readFileSync(
+  path.join(__dirname, "static/scripts/googletag.js"),
+  "utf8",
+);
 const {
   AEONIK_REGULAR_FILENAME,
   AEONIK_BOLD_FILENAME,
@@ -37,6 +47,11 @@ const config = {
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.png",
   headTags: [
+    {
+      tagName: "script",
+      attributes: {},
+      innerHTML: googleTagBootstrap,
+    },
     {
       tagName: "link",
       attributes: {
@@ -286,11 +301,6 @@ const config = {
     ],
   ],
   scripts: [
-    {
-      src: "/scripts/googletag.js",
-      async: true,
-      defer: true,
-    },
     {
       src: "/scripts/amplitude-cta-tracking.js",
       async: true,
