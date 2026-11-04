@@ -121,7 +121,6 @@ class MoneyTransfer:
     @workflow.run
     async def run(self, payment_details: PaymentDetails) -> str:
         retry_policy = RetryPolicy(
-            maximum_attempts=3,
             maximum_interval=timedelta(seconds=2),
             non_retryable_error_types=["InvalidAccountError", "InsufficientFundsError"],
         )
@@ -159,10 +158,12 @@ class MoneyTransfer:
                 workflow.logger.info(
                     f"Refund successful. Confirmation ID: {refund_output}"
                 )
-                raise deposit_err
             except ActivityError as refund_error:
                 workflow.logger.error(f"Refund failed: {refund_error}")
-                raise refund_error
+                raise refund_error from deposit_err
+
+            # Re-raise deposit error if refund was successful
+            raise deposit_err
 
 
 ```
