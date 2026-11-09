@@ -330,6 +330,24 @@ Finally `HelloWorldWorkflowImpl` implements the `getGreeting` Workflow Method fr
 
 With your Workflow Definition created, you're ready to create the `composeGreeting` Activity.
 
+### Why Workflow code must be deterministic
+
+Temporal recovers a Workflow by replaying its Event History through your Workflow code. For the replay to rebuild the same state, the Workflow must make the same decisions every time. That means Workflow code can't read the clock, generate random values, or do I/O directly. Activity code has no such limit, because Activity results are recorded once and read back during replay rather than re-run.
+
+Most Java habits that break determinism have a Temporal replacement:
+
+| Don't do this in Workflow code | Do this instead |
+| --- | --- |
+| `Thread.sleep(...)` | `Workflow.sleep(Duration)` |
+| `System.currentTimeMillis()`, `Instant.now()` | `Workflow.currentTimeMillis()` |
+| `UUID.randomUUID()`, `new Random()` | `Workflow.randomUUID()`, `Workflow.newRandom()` |
+| `new Thread`, `ExecutorService`, `CompletableFuture.supplyAsync` | `Async.function(...)` returning a `Promise` |
+| HTTP, JDBC, file I/O, reading env vars or config | Move it into an Activity |
+| Mutable static state | Instance fields on the Workflow implementation |
+| `LoggerFactory.getLogger` (SLF4J) | `Workflow.getLogger(...)`, which suppresses duplicate lines during replay |
+
+Temporal detects many of these at runtime and fails the Workflow Task with a non-determinism error, rather than silently corrupting state.
+
 ## Create an Activity
 
 In a Temporal Application, Activities are where you execute any operation that is prone to failure or access external services or systems, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
@@ -380,6 +398,14 @@ public class HelloWorldActivitiesImpl implements HelloWorldActivities {
 This class implements the single method from the interface named `composeGreeting` to compose a String that returns a standard "Hello World!" message using the passed in parameter. 
 
 Your [Activity Definition](https://docs.temporal.io/activity-definition#activity-definition) can accept input parameters just like Workflow Definitions. Review the [Activity parameters](https://docs.temporal.io/develop/java/activities/basics#activity-parameters) section of the Temporal documentation for more details, as there are some limitations you'll want to be aware of when running more complex applications.
+
+Activities use timeouts to decide when an attempt has failed:
+
+- **Start-to-Close** is the maximum time for a single attempt, measured from when a Worker picks it up. Always set it, because it's how Temporal detects a Worker that crashed mid-Activity. This tutorial sets it to one minute.
+- **Schedule-to-Close** caps the total time across all attempts, including retries and backoff.
+- **Schedule-to-Start** is how long a task may wait in the queue for a Worker. You rarely need it.
+
+By default, Temporal retries a failed Activity indefinitely, so set a timeout or a maximum number of attempts to bound it.
 
 You've completed the logic for the application; you have a Workflow and an Activity defined. Before moving on to configuring your Worker, you'll write a unit test for your Workflow.
 
@@ -457,6 +483,8 @@ public class HelloWorldWorkflowTest {
 <!--SNIPEND-->
 
 The first test, `testIntegrationGetGreeting`, creates a test execution environment to test the integration between the Activity and the Workflow. The second test, `testMockedGetGreeting`, mocks the Activity implementation so it returns a successful execution. The test then executes the Workflow in the test environment and checks for a successful execution. Finally, the tests ensures the Workflow's return value returns the expected value.
+
+The `withoutAnnotations()` call in the mocked test matters. By default, Mockito copies the interface's annotations onto the generated mock class, and Temporal discovers Activity types from those annotations, so the copies confuse Activity registration. Stripping them leaves Temporal reading `@ActivityInterface` from the interface only, as it does for a real implementation.
 
 Run the following command from the project root to execute the unit tests:
 
@@ -696,6 +724,10 @@ Notice that an interface of `HelloWorldWorkflow` is used to create the Workflow 
 
 You can [get the results](https://docs.temporal.io/develop/java/client/temporal-client#get-workflow-results) from your Workflow right away, or you can get the results at a later time. This implementation stores the results in the `greeting` variable after the `getGreeting()` method is called, which blocks the program's execution until the Workflow Execution completes.
 
+:::tip Workflow IDs
+A Workflow ID is unique among running executions in a namespace. While `HelloWorldWorkflowID` is running, starting another Workflow with that ID fails. Once it completes, the default reuse policy lets you start a new run with the same ID. Use IDs that reflect a business entity, such as `order-8841`, so you can find and deduplicate executions later.
+:::
+
 You have a Workflow, an Activity, a Worker, and a way to start a Workflow Execution. It's time to run the Workflow.
 
 ## ![](/img/icons/run.png) Run the application
@@ -704,7 +736,7 @@ To run your Temporal Application, you need to start the Workflow and the Worker.
 
 First, ensure that your local Temporal Service is running. 
 
-To start the Worker, run this command from the project root:
+To start the Worker, run this command from the `app` directory (the one that contains `pom.xml`):
 
 ```command
 mvn compile exec:java -Dexec.mainClass="helloworldapp.HelloWorldWorker"
@@ -728,10 +760,10 @@ Based on the output above, it may appear that your application is stuck or non-r
 
 :::
 
-To start the Workflow, open a new terminal window and switch to your project root:
+To start the Workflow, open a new terminal window and switch to the `app` directory:
 
 ```command
-cd hello-world-temporal
+cd hello-world-temporal/app
 ```
 
 Run the following command to start the Workflow Execution:
@@ -799,6 +831,17 @@ Each Worker is configured to poll a specified Task Queue, whose name is specifie
 </summary>
 
 True. Workflows and Activities are defined as interfaces and their implementations will implement the interface.
+
+</details>
+
+<details>
+<summary>
+
+**Why must Workflow code be deterministic, but Activity code need not be?**
+
+</summary>
+
+Workflows are rebuilt by replaying their Event History, so they must make the same decisions each time. Activity results are recorded once and read back during replay, so they aren't re-executed.
 
 </details>
 
