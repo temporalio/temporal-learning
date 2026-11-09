@@ -153,7 +153,7 @@ const config = {
         {
           items: [
             {
-              label: "Github",
+              label: "GitHub",
               href: "https://github.com/temporalio",
             },
             {
