@@ -178,7 +178,7 @@ With your Workflow Definition created, you're ready to create the `say_hello` Ac
 
 ## Create an Activity
 
-In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
+In a Temporal Application, Activities are where you execute [non-deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls. Your Workflow Definitions call Activities and process the results. Complex Temporal Applications have Workflows that invoke many Activities, using the results of one Activity to execute another.
 
 For this tutorial, your Activity won't be complex; you'll define an Activity that takes a string as input and uses it to create a new string as output, which is then returned to the Workflow. This will let you see how Workflows and Activities work together without building something complicated.
 
