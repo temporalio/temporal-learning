@@ -47,7 +47,7 @@ Before starting this tutorial:
 
 
 - [Set up a local development environment for developing Temporal Applications using the Java language](/getting_started/java/dev_environment/).
-- Ensure you have Git installed to clone the project.
+- Install JDK 17 or later, Maven 3.9+, and Git to build and run the project.
 
 :::note Package Management
 
@@ -443,6 +443,12 @@ In the case of an error with the `deposit` Activity, the Workflow will attempt t
 In this Workflow, each Activity uses the same Retry Policy options, but you could specify different options for each Activity.
 
 
+Two timeouts also bound retries. Start-to-Close limits each attempt, and it's how Temporal detects a Worker that died mid-Activity, so always set it. Schedule-to-Close limits the whole Activity, across all attempts and waits.
+
+
+Some errors shouldn't be retried at all, such as a closed account. Throw them as `ApplicationFailure.newNonRetryableFailure(...)`, or list them with `setDoNotRetry(...)` on `RetryOptions`, and the Workflow compensates immediately.
+
+
 :::caution This is a simplified example.
 
 
@@ -788,6 +794,9 @@ Despite your best efforts, there's going to be a time when something goes wrong 
 Unlike many modern applications that require complex processes and external databases to handle failure, Temporal automatically preserves the state of your Workflow even if the server is down. You can test this by stopping the local Temporal Cluster while a Workflow is running.
 
 
+The `--db-filename=temporal.db` flag in the start command saves state to a local SQLite file. Without it, the dev server keeps everything in memory, and this exercise would lose the Workflow.
+
+
 Try it out by following these steps:
 
 
@@ -930,6 +939,7 @@ Try the following things before moving on to get more practice working with a Te
 
 - Change the Retry Policy in so it only retries 1 time.
 - Does the Workflow place the money back into the original account?
+- Throw `ApplicationFailure.newNonRetryableFailure("Account closed", "AccountClosed")` from `deposit` and confirm the Workflow refunds immediately, with no retries.
 
 
 ### Review
