@@ -14,6 +14,16 @@ import Link from '@docusaurus/Link';
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 
+## See Temporal in Action
+
+**Estimated time**: ⏱️ ~30 minutes
+
+Learn how durable applications survive crashes and outages by breaking one yourself. Hands-on, no code or sign-up required.
+
+<Link className="button button--primary" href="https://play.instruqt.com/temporal/invite/qsswtnkfs5i1">Try it in your browser</Link>&nbsp;
+
+----
+
 ## Set up your development environment
 
 **Estimated time**: ⏱️ ~5 minutes
