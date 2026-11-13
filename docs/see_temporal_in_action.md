@@ -1,6 +1,7 @@
 ---
 id: see-temporal-in-action
 title: "See Temporal in Action"
+hide_title: true
 sidebar_position: 1.5
 hide_table_of_contents: true
 description: Learn how durable applications survive crashes and outages by breaking one yourself. Hands-on, no code or sign-up required.
@@ -9,6 +10,8 @@ image: /img/temporal-logo-twitter-card.png
 ---
 
 import Link from '@docusaurus/Link';
+
+<img className="banner" src="/img/banners/see-temporal-in-action.png" alt="See Temporal in action" />
 
 **Estimated time**: ⏱️ ~30 minutes
 
