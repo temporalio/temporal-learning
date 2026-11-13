@@ -1,7 +1,7 @@
 ---
 title: Run your first Temporal application with the TypeScript SDK
 id: run-your-first-app-tutorial-typescript
-sidebar_position: 2
+sidebar_position: 3
 description: In this tutorial, you'll run your first Temporal app using the TypeScript SDK and explore Workflows, Activities, Task Queues, and compensating transactions. Then you'll see how Temporal recovers from failures.
 keywords: [ts, typescript, temporal, sdk, tutorial, example, workflow, worker, getting started, errors, failures, activity, temporal application, compensating transactions]
 tags: [TypeScript, SDK]
