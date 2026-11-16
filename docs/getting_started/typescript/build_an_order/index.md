@@ -65,7 +65,7 @@ Everything runs in the sandbox: the Temporal Service, the Web UI, a code editor,
     width="100%"
     height="472"
     sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts allow-popups-to-escape-sandbox"
-    src="https://play.instruqt.com/embed/temporal/invite/sqi7kbshmuba"
+    src="https://play.instruqt.com/embed/temporal/invite/sqi7kbshmuba?icp_source=learn.temporal.io"
     style={{border: 0}}
     allowFullScreen
 ></iframe>
