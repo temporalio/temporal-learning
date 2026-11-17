@@ -16,6 +16,15 @@ export default function Intro() {
     </div>
 
     <div className="row">
+      <div className="col col--12">
+        <h2><Link to="see-temporal-in-action" className="hover:underline" >See Temporal in Action</Link></h2>
+        <p>
+          Learn how durable applications survive crashes and outages by breaking one yourself. Hands-on, no code or sign-up required.
+        </p>
+      </div>
+    </div>
+
+    <div className="row">
       <div className="col col--6">
         <h2><Link to="getting_started" className="hover:underline" >Get started with Temporal</Link></h2>
         <p>
