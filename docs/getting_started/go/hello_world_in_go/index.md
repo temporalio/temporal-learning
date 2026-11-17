@@ -96,7 +96,7 @@ With the project created, you'll create the application's core logic.
 
 Your application will make two HTTP requests. The first request will return your current public IP, while the second request will use that IP to provide city, state, and country information.
 
-You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflows#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
+You'll use Temporal Activities to make these requests. You use Activities in your Temporal Applications to execute [non-deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) code or perform operations that may fail, such as API requests or database calls.
 
 If an Activity fails, Temporal can automatically retry it until it succeeds or reaches a specified retry limit. This ensures that transient issues, like network glitches or temporary service outages, don't result in data loss or incomplete processes.
 

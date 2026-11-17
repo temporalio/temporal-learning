@@ -265,7 +265,7 @@ const { getIP, getLocationInfo} = workflow.proxyActivities<typeof activities>({
 ```
 <!--SNIPEND-->
 
-The Temporal TypeScript SDK requires that Workflows and Activities run in separate environments. Temporal Workflows [must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash,  and the TypeScript SDK runs Workflows in a sandbox that checks code for determinism to enforce this.
+The Temporal TypeScript SDK requires that Workflows and Activities run in separate environments. Temporal Workflows [must be deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints) so that Temporal can replay your Workflow in the event of a crash,  and the TypeScript SDK runs Workflows in a sandbox that checks code for determinism to enforce this.
 
 Since you run your non-deterministic operations in Activities, you configure your Workflow to call Activities through a proxy. That's why you import their types rather than the functions themselves.
 
