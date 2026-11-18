@@ -59,15 +59,14 @@ class TicketRegistrationWorkflow:
             reserve_seat, fan, start_to_close_timeout=timedelta(seconds=10)
         )
         # Pause here until the payment_confirmed Signal arrives. This wait can last
-        # a few hours, and it's the reason one registration will later span
-        # more than one Lambda invocation: nothing runs while it waits.
+        # a few hours, and no Worker code runs while it waits.
         await workflow.wait_condition(lambda: self._paid)
         return await workflow.execute_activity(
             send_confirmation, fan, start_to_close_timeout=timedelta(seconds=10)
         )
 ```
 
-The Activities are stubs: in a real app, `reserve_seat` would hold a seat in your inventory system and `send_confirmation` would send an email or a text. Each one writes a log line, which we'll use later to spot the Activities running inside Lambda.
+The Activities are stubs: in a real app, `reserve_seat` would hold a seat in your inventory system and `send_confirmation` would send an email or a text. Each one writes a log line, so the Worker's output shows when each Activity runs.
 
 ```python title="activities.py"
 from temporalio import activity
@@ -85,11 +84,11 @@ async def send_confirmation(fan: str) -> str:
     return f"confirmation sent to {fan}"
 ```
 
-Notice there's no [versioning](https://docs.temporal.io/worker-versioning) behavior on the Workflow. Versioning tells Temporal what to do with a Workflow that's still running when we deploy new code: keep it on the build it started on, or move it to the new one. Ordinary Workers don't need one. Serverless Workers do, because Temporal can only start a Serverless Worker through Worker Versioning, and once versioning is on, every Workflow needs a behavior. We'll look at why in the next chapter.
+Notice there's no [versioning](https://docs.temporal.io/worker-versioning) behavior on the Workflow. Versioning tells Temporal what to do with a Workflow that's still running when we deploy new code: keep it on the build it started on, or move it to the new one. Ordinary Workers don't need one. Serverless Workers do, because Temporal can only start a Serverless Worker through Worker Versioning, and once versioning is on, every Workflow needs a behavior.
 
 ## Run it
 
-The Worker lives in `worker.py`, an ordinary long-lived Worker that registers the Workflow and both Activities on the `registrations` Task Queue, then polls until we stop it. We'll put it side by side with the Lambda handler in the next chapter.
+The Worker lives in `worker.py`, an ordinary long-lived Worker that registers the Workflow and both Activities on the `registrations` Task Queue, then polls until we stop it.
 
 <details>
 <summary>What's in <code>worker.py</code></summary>
@@ -251,6 +250,6 @@ Once it starts polling, it picks up `reg-2` and sends the confirmation, and the 
 
 ![The reg-2 Workflow in the local Web UI, Completed with the result confirmation sent to grace](/img/local-reg-2-completed.png)
 
-This works because the Workflow's state lives in Temporal, and a Worker only has to exist while there's a step to run. In a later chapter, we'll create the same gap on purpose, except nobody restarts a Worker by hand, because Temporal starts one when the payment Signal arrives.
+This works because the Workflow's state lives in Temporal, and a Worker only has to exist while there's a step to run. A Serverless Worker depends on the same property, with one difference: nobody restarts the Worker by hand, because Temporal starts one when the payment Signal arrives.
 
 Next, we'll look at [how Temporal starts a Worker on its own](../02-make-it-a-lambda-handler/index.md) and turn ours into a Lambda function it can invoke.
