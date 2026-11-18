@@ -48,7 +48,7 @@ We'll deploy on our own accounts, so you need:
 - The [`temporal` CLI](https://docs.temporal.io/cli), v1.7.0 or later
 
 :::caution This tutorial creates real, billable resources
-The deploy sections create a Lambda function, IAM roles, a CloudFormation stack, and a log group in your AWS account, and they cost money for as long as they exist. The [last chapter](./08-operate-and-tear-down/index.md) walks through tearing everything down, so follow it when you're done.
+The deploy sections create a Lambda function, IAM roles, a CloudFormation stack, and a log group in your AWS account, and they cost money for as long as they exist. [Operate and tear down](./08-operate-and-tear-down/index.md) walks through tearing everything down, so follow it when you're done.
 :::
 
 With that in place, we'll start by [meeting the Workflow and running it the old way](./01-run-it-the-old-way/index.md).
