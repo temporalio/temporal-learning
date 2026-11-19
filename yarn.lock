@@ -3144,10 +3144,10 @@
   dependencies:
     defer-to-connect "^2.0.1"
 
-"@temporalio-web/consent-banner@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@temporalio-web/consent-banner/-/consent-banner-1.0.1.tgz#926637817cddcde95acf695b9c9d54118056a453"
-  integrity sha512-RMcdRbXIvvwu1y/22s1rncQ89V8TQtt2wImScqLEfX4T18zZ7SnFy6TJ4mgh509AesWH90qqY9vSo7KkOzfHaw==
+"@temporalio-web/consent-banner@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@temporalio-web/consent-banner/-/consent-banner-1.0.3.tgz#cff83ca35d62b5e1b006e0673d44bf87990d1828"
+  integrity sha512-mGCyizUeT7aEFgO2nSpMWhLlaQNutoGm16adYkl7+JKpZutBC6rY8dInmBEdbKfXpZECpFzhUGLdjuQnX4GWSA==
   dependencies:
     lit "^3.2.1"
 
