@@ -21,7 +21,10 @@ In these exercises, you'll interact with a simple food delivery application. You
 
 When you're done, head over to <Link to="/getting_started">Get Started with Temporal</Link>.
 
-<Link className="button button--primary" href="https://play.instruqt.com/embed/temporal/tracks/why-temporal?token=em_WFxyAFZ5ZIZ727bp&icp_source=learn.temporal.io" target="_blank" rel="noopener noreferrer" style={{marginBottom: '1.5rem'}}>Open in a new window</Link>
+<div style={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem'}}>
+    <Link className="button button--primary" href="https://play.instruqt.com/embed/temporal/tracks/why-temporal?token=em_WFxyAFZ5ZIZ727bp&icp_source=learn.temporal.io" target="_blank" rel="noopener noreferrer">Open in a new window</Link>
+    <span style={{fontSize: '0.875rem', color: 'var(--ifm-color-emphasis-700)'}}>If the exercises don't load correctly, your network may be blocking them. Try again on a personal network or device.</span>
+</div>
 
 Or, try it here:
 
