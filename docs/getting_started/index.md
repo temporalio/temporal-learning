@@ -14,6 +14,14 @@ import Link from '@docusaurus/Link';
 
 Take your first steps into building apps with Temporal by exploring how Temporal apps work.
 
+## Build an Order That Can't Get Stuck
+
+**Estimated time**: ⏱️ ~1 hour
+
+Take down the kitchen's system mid-order and watch the app fail. Then write the Workflow that lets it recover, without charging anyone twice.
+
+<Link className="button button--primary" to="typescript/build_an_order/">TypeScript</Link>&nbsp;
+
 ## Set up your development environment
 
 **Estimated time**: ⏱️ ~5 minutes
