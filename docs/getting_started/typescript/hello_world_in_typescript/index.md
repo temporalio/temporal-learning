@@ -1,7 +1,7 @@
 ---
 id: hello-world-ts
 title: Build a Temporal Application from scratch in TypeScript
-sidebar_position: 3
+sidebar_position: 4
 keywords: [typescript, javascript, temporal, sdk, tutorial, learn]
 description: In this tutorial you will build a Temporal Application using the TypeScript SDK. You'll write a Workflow, an Activity, and define a Worker.
 tags: [TypeScript, SDK]
