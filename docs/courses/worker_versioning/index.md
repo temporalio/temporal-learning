@@ -24,7 +24,7 @@ image: /img/temporal-logo-twitter-card.png
 
 ## Description
 
-In this course, you'll be able to explain the benefits of Worker Versioning, you'll configure Workers to participate in Worker Versioning, you'll evaluate tradeoffs to choose Versioning Behavior for Workflows, you'll discover how to use Temporal's routing system to control exactly which Workflows run on which Worker Versions. Finally, you'll explore the drainage process that lets you safely sunset old deployment versions by monitoring when all Workflows complete naturally, plus emergency remdiation techniques for moving Workflows when critical issues arise.
+In this course, you'll be able to explain the benefits of Worker Versioning, you'll configure Workers to participate in Worker Versioning, you'll evaluate tradeoffs to choose Versioning Behavior for Workflows, you'll discover how to use Temporal's routing system to control exactly which Workflows run on which Worker Versions. Finally, you'll explore the drainage process that lets you safely sunset old deployment versions by monitoring when all Workflows complete naturally, plus emergency remediation techniques for moving Workflows when critical issues arise.
 
 Since this course requires a fundamental understanding of Temporal and Versioning, we recommend our "Introducing the Temporal Platform" course as a prerequisite. It's also important to remember that the example code used in this course was designed to support learning a specific aspect of Temporal, not to serve as a ready-to-use template for implementing a production system.
 
