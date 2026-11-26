@@ -211,7 +211,7 @@ export async function oneClickBuy(id: string): Promise<string> {
 
 This Workflow calls the `purchase` Activity and then uses `await sleep()` to create an artificial delay in the Workflow. A more complex Workflow would call more Activities.
 
-[Workflows must be deterministic](https://docs.temporal.io/workflows#deterministic-constraints), so you perform non-deterministic work in Activities.
+[Workflows must be deterministic](https://docs.temporal.io/workflow-definition#deterministic-constraints), so you perform non-deterministic work in Activities.
 The TypeScript SDK bundles Workflow code and runs it inside a [deterministic sandbox](https://docs.temporal.io/develop/typescript/workflows/basics#workflow-logic-requirements). This sandbox can help detect if you're using nondeterministic code.
 This is why you must separate Workflow code from Activity code, and why you have to use the `proxyActivities` function to load your Activity functions instead of directly importing them. The Activities will be nondeterministic, so you can't run in the same sandbox as the Workflow code.
 
